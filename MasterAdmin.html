@@ -22,64 +22,125 @@
       --accent: #4CAF50;
       --warn: #f44336;
       --logoff: #ff9800;
+      --input-dark: #2a2d30;
     }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Quicksand', sans-serif;
     }
+
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
       padding: 30px 20px;
     }
+
     .container {
       max-width: 1000px;
       margin: auto;
     }
+
     h1 {
       font-size: 28px;
       text-align: center;
       margin-bottom: 30px;
     }
+
     .panel {
       background: var(--section-light);
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 30px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
+
     .panel h2 {
       font-size: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+      padding-bottom: 6px;
     }
+
+    .panel h3 {
+      font-size: 18px;
+      margin: 20px 0 8px;
+    }
+
     input, select, button {
-      margin: 6px 0;
-      padding: 8px 10px;
+      width: 100%;
+      padding: 10px 12px;
+      margin: 6px 0 12px;
       border: none;
       border-radius: 6px;
       font-size: 15px;
+      background-color: var(--input-dark);
+      color: var(--text-main);
     }
+
+    input::placeholder, select:invalid {
+      color: #aaa;
+    }
+
+    select option {
+      background: var(--input-dark);
+      color: var(--text-main);
+    }
+
     button {
       background-color: var(--accent);
       color: white;
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
-    .warn {
+
+    button:hover {
+      background-color: #3e9144;
+    }
+
+    button.warn {
       background-color: var(--warn);
     }
-    .hidden { display: none; }
+
+    button.warn:hover {
+      background-color: #e53935;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    @media (min-width: 600px) {
+      .dual-row {
+        display: flex;
+        gap: 10px;
+      }
+      .dual-row input,
+      .dual-row select {
+        flex: 1;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Master Admin Panel</h1>
-
-    <div id="authPanel" class="panel">
+<div id="authPanel" class="panel">
       <h2>Admin Access</h2>
       <p>Please enter the admin password to unlock this page.</p>
       <input type="password" id="adminPass" placeholder="Enter password..." />
@@ -88,16 +149,53 @@
     </div>
 
     <div id="mainContent" class="hidden">
-      <!-- Rota Manager -->
+
       <div class="panel">
         <h2>Rota & Break Manager</h2>
         <label>Select Date:</label>
-        <input type="date" id="rotaDate" />
+        <input type="date" id="rotaDate" placeholder="Select date" />
         <div id="driverRotaList"></div>
       </div>
+
+      <div class="panel">
+        <h2>Manual Booking</h2>
+        <div class="dual-row">
+          <input id="bName" type="text" placeholder="Customer name" />
+          <input id="bPhone" type="text" placeholder="Phone number" />
+        </div>
+        <div class="dual-row">
+          <input id="bPickup" type="text" placeholder="Pickup address" />
+          <input id="bDropoff" type="text" placeholder="Drop-off address" />
+        </div>
+        <div class="dual-row">
+          <input id="bDate" type="date" placeholder="Date" />
+          <input id="bTime" type="time" placeholder="Time" />
+        </div>
+        <div class="dual-row">
+          <input id="bPassengers" type="number" placeholder="Passenger count" min="1" />
+          <select id="bLuggage" required>
+            <option value="" disabled selected>Select luggage</option>
+            <option value="None">None</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+          </select>
+        </div>
+        <input id="bPets" type="text" value="No" disabled />
+        <input id="bExtra" type="text" placeholder="Additional instructions (optional)" />
+        <select id="bAssignTo">
+          <option value="">Assign to driver (optional)</option>
+        </select>
+        <button onclick="addManualBooking()">Add Booking</button>
+      </div>
+
+      <div class="panel">
+        <h2>Live Bookings</h2>
+        <div id="liveBookingsList"><p>Loading...</p></div>
+      </div>
+
     </div>
   </div>
-
   <script>
     // Firebase Init
     const firebaseConfig = {
