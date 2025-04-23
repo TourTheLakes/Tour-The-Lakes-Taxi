@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Driver Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
@@ -12,7 +12,7 @@
   <!-- PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Styles & Fonts -->
+  <!-- Fonts & Styling -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -86,7 +86,7 @@
 </div>
 
 <script>
-  // Firebase Setup
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
     authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -99,7 +99,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // Session Validation
+  // Session Check
   const driverName = localStorage.getItem("driverName") || "";
   const driverDoor = localStorage.getItem("driverDoor") || "";
   const sessionExpires = localStorage.getItem("driverVerifiedUntil");
@@ -110,174 +110,143 @@
     window.location.href = "DriverLogin.html";
   }
 
-  // Unlock sounds after user interaction
+  // Audio Unlock
   const chimeNew = document.getElementById("chimeNew");
   const chimeCancel = document.getElementById("chimeCancel");
   const chimeAmend = document.getElementById("chimeAmend");
-
   function unlockAudio() {
     [chimeNew, chimeCancel, chimeAmend].forEach(audio => {
       audio.play().then(() => audio.pause()).catch(() => {});
     });
   }
   document.addEventListener("click", unlockAudio, { once: true });
-</script>
-// Format today's date
-const today = new Date();
-const yyyy = today.getFullYear();
-const mm = String(today.getMonth() + 1).padStart(2, '0');
-const dd = String(today.getDate()).padStart(2, '0');
-const todayKey = `${yyyy}-${mm}-${dd}`;
+  // Format today's date for rota/breaks
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const todayKey = `${yyyy}-${mm}-${dd}`;
 
-// Greet the driver
-const greetingText = document.getElementById("driverGreetingText");
+  const greetingText = document.getElementById("driverGreetingText");
+  const container = document.getElementById("bookingsContainer");
 
-db.ref("drivers").once("value").then(snapshot => {
-  const drivers = snapshot.val();
-  let matched = false;
-  for (const key in drivers) {
-    const d = drivers[key];
-    if (d.name?.toLowerCase() === driverName.toLowerCase() && d.doorCard?.toString() === driverDoor) {
-      greetingText.innerHTML = `
-        Hi <strong>${d.name}</strong>, you're in a
-        <strong>${d.vehicle.make} ${d.vehicle.model}, ${d.vehicle.color}</strong> today
-        that seats <strong>${d.vehicle.seats}</strong> passengers.
-        Your door card number is <strong>${d.doorCard}</strong>,
-        and the vehicle registration is <strong>${d.vehicle.registration}</strong>.
-        Your customers will be able to reach you on <strong>${d.phone}</strong>.
-      `;
-      matched = true;
-      break;
+  // Greeting
+  db.ref("drivers").once("value").then(snapshot => {
+    const drivers = snapshot.val();
+    for (const key in drivers) {
+      const d = drivers[key];
+      if (d.name?.toLowerCase() === driverName.toLowerCase() && String(d.doorCard) === driverDoor) {
+        greetingText.innerHTML = `
+          Hi <strong>${d.name}</strong>, you're in a
+          <strong>${d.vehicle.make} ${d.vehicle.model}, ${d.vehicle.color}</strong> today
+          that seats <strong>${d.vehicle.seats}</strong> passengers.
+          Your door card number is <strong>${d.doorCard}</strong>,
+          and the vehicle registration is <strong>${d.vehicle.registration}</strong>.
+          Your customers will be able to reach you on <strong>${d.phone}</strong>.
+        `;
+        break;
+      }
     }
-  }
-  if (!matched) {
-    greetingText.innerHTML = `<span style="color: var(--warn);">Driver profile not found in system.</span>`;
-  }
-});
+  });
 
-// Check if driver is on break
-db.ref(`breaks/${driverDoor}/${todayKey}`).once("value").then(snap => {
-  const isOnBreak = snap.val() === true;
-  const bookingsContainer = document.getElementById("bookingsContainer");
-  if (isOnBreak) {
-    bookingsContainer.innerHTML = `<div class="greeting"><p>You are currently marked as <strong>on break</strong>. No jobs will be assigned during this period.</p></div>`;
-    return;
-  }
-
-  // If not on break, load bookings
-  db.ref("bookings").on("value", snapshot => {
-    const allBookings = snapshot.val() || {};
-    bookingsContainer.innerHTML = "";
-
-    const myBookings = Object.entries(allBookings).filter(([id, data]) =>
-      data.claimedBy?.toLowerCase() === driverName.toLowerCase()
-    );
-
-    if (myBookings.length === 0) {
-      bookingsContainer.innerHTML = `<p>No bookings currently assigned.</p>`;
-      return;
+  // Break check
+  db.ref(`breaks/${driverDoor}/${todayKey}`).once("value").then(snap => {
+    const breakData = snap.val();
+    if (breakData?.from && breakData?.to) {
+      const nowTime = today.toTimeString().slice(0,5);
+      if (nowTime >= breakData.from && nowTime <= breakData.to) {
+        container.innerHTML = `
+          <div class="greeting">
+            <p>You are currently on break from <strong>${breakData.from}</strong> to <strong>${breakData.to}</strong>.</p>
+          </div>`;
+        return;
+      }
     }
 
-    myBookings.sort((a, b) => (a[1].pickupTime || "").localeCompare(b[1].pickupTime || ""));
+    // Load bookings if not on break
+    db.ref("bookings").on("value", snap => {
+      const bookings = snap.val() || {};
+      container.innerHTML = "";
 
-    myBookings.forEach(([id, b]) => {
-      const when = b.pickupType === "ASAP" ? "ASAP" : `${b.pickupDate || "?"} at ${b.pickupTime || "?"}`;
-      const div = document.createElement("div");
-      div.className = "job";
-      div.innerHTML = `
-        <p><strong>Customer:</strong> ${b.name}</p>
-        <p><strong>Phone:</strong> ${b.phone}</p>
-        <p><strong>Pickup:</strong> ${b.pickup}</p>
-        <p><strong>Drop-off:</strong> ${b.dropoff}</p>
-        <p><strong>Time:</strong> ${when}</p>
-        <p><strong>Passengers:</strong> ${b.passengers}</p>
-        <p><strong>Luggage:</strong> ${b.luggage}</p>
-        <p><strong>Pet:</strong> ${b.pets}</p>
-        <p><strong>Customer Notes:</strong> ${b.extra || "<em>None</em>"}</p>
-        <div class="status-buttons">
-          <button class="info" onclick="markEnRoute('${id}')">On the Way</button>
-          <button class="accent" onclick="markArrived('${id}')">Arrived</button>
-          <button class="warn" onclick="markComplete('${id}')">Complete Job</button>
-        </div>
-      `;
-      bookingsContainer.appendChild(div);
+      const myBookings = Object.entries(bookings).filter(([id, b]) =>
+        b.claimedBy?.toLowerCase() === driverName.toLowerCase()
+      );
+
+      if (myBookings.length === 0) {
+        container.innerHTML = `<p>No bookings currently assigned.</p>`;
+        return;
+      }
+
+      myBookings.forEach(([id, b]) => {
+        const when = b.pickupType === "ASAP" ? "ASAP" : `${b.pickupDate || "?"} at ${b.pickupTime || "?"}`;
+        const div = document.createElement("div");
+        div.className = "job";
+        div.innerHTML = `
+          <p><strong>Customer:</strong> ${b.name}</p>
+          <p><strong>Phone:</strong> ${b.phone}</p>
+          <p><strong>Pickup:</strong> ${b.pickup}</p>
+          <p><strong>Drop-off:</strong> ${b.dropoff}</p>
+          <p><strong>Time:</strong> ${when}</p>
+          <p><strong>Passengers:</strong> ${b.passengers}</p>
+          <p><strong>Luggage:</strong> ${b.luggage}</p>
+          <p><strong>Pet:</strong> ${b.pets}</p>
+          <p><strong>Customer Notes:</strong> ${b.extra || "<em>None</em>"}</p>
+          <div class="status-buttons">
+            <button class="info" onclick="markEnRoute('${id}')">On the Way</button>
+            <button class="accent" onclick="markArrived('${id}')">Arrived</button>
+            <button class="warn" onclick="markComplete('${id}')">Complete Job</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
     });
   });
-});
+
+  // Booking Status Updates
   function markEnRoute(id) {
-  db.ref("bookings/" + id + "/status").set("On the Way").then(() => {
-    alert(`Marked booking ${id} as 'On the Way'.`);
-  });
-}
-
-function markArrived(id) {
-  db.ref("bookings/" + id + "/status").set("Arrived").then(() => {
-    alert(`Marked booking ${id} as 'Arrived'.`);
-  });
-}
-
-function markComplete(id) {
-  const comment = prompt("Enter any driver notes for this job (optional):", "");
-  const completedAt = new Date().toISOString();
-
-  db.ref("bookings/" + id).once("value").then(snap => {
-    const original = snap.val();
-    if (!original) return alert("Booking not found.");
-
-    const completedJob = {
-      ...original,
-      driverComment: comment || "",
-      completedAt: completedAt,
-      completedBy: driverName
-    };
-
-    db.ref("completedJobs/" + id).set(completedJob).then(() => {
-      db.ref("bookings/" + id).remove();
-      showCompletedJobLog(id, completedJob);
-      chimeNew.play(); // Notify job complete
+    db.ref("bookings/" + id + "/status").set("On the Way").then(() => {
+      alert(`Marked booking ${id} as 'On the Way'.`);
     });
-  });
-}
+  }
 
-// Display completed job on screen
-function showCompletedJobLog(id, data) {
-  const div = document.createElement("div");
-  div.className = "log-entry";
-  div.innerHTML = `
-    <p><strong>Job Completed:</strong> ${id}</p>
-    <p><strong>Customer:</strong> ${data.name}</p>
-    <p><strong>Phone:</strong> ${data.phone}</p>
-    <p><strong>Pickup:</strong> ${data.pickup}</p>
-    <p><strong>Drop-off:</strong> ${data.dropoff}</p>
-    <p><strong>Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
-    <p><strong>Passenger(s):</strong> ${data.passengers}</p>
-    <p><strong>Luggage:</strong> ${data.luggage}</p>
-    <p><strong>Pet:</strong> ${data.pets}</p>
-    <p><strong>Customer Notes:</strong> ${data.extra || "None"}</p>
-    <p><strong>Driver Comment:</strong> ${data.driverComment || "None"}</p>
-    <p><strong>Completed By:</strong> ${data.completedBy}</p>
-    <p><strong>Completed At:</strong> ${data.completedAt}</p>
-    <button class="info" onclick="downloadJobPDF('${id}')">Download PDF</button>
-  `;
-  document.getElementById("bookingsContainer").prepend(div);
-}
-  function downloadJobPDF(jobID) {
-  db.ref("completedJobs/" + jobID).once("value").then(snapshot => {
-    const data = snapshot.val();
-    if (!data) return alert("Job not found in logs.");
+  function markArrived(id) {
+    db.ref("bookings/" + id + "/status").set("Arrived").then(() => {
+      alert(`Marked booking ${id} as 'Arrived'.`);
+    });
+  }
+  function markComplete(id) {
+    const comment = prompt("Enter any driver notes for this job (optional):", "");
+    const completedAt = new Date().toISOString();
 
-    const printable = document.createElement("div");
-    printable.style.padding = "20px";
-    printable.style.fontFamily = "Quicksand, sans-serif";
-    printable.style.maxWidth = "600px";
-    printable.innerHTML = `
-      <h2 style="margin-bottom: 10px;">Completed Booking Report</h2>
-      <p><strong>Job ID:</strong> ${jobID}</p>
+    db.ref("bookings/" + id).once("value").then(snap => {
+      const original = snap.val();
+      if (!original) return alert("Booking not found.");
+
+      const completedJob = {
+        ...original,
+        driverComment: comment || "",
+        completedAt,
+        completedBy: driverName
+      };
+
+      db.ref("completedJobs/" + id).set(completedJob).then(() => {
+        db.ref("bookings/" + id).remove();
+        showCompletedJobLog(id, completedJob);
+        chimeNew.play(); // Confirm tone
+      });
+    });
+  }
+
+  function showCompletedJobLog(id, data) {
+    const div = document.createElement("div");
+    div.className = "log-entry";
+    div.innerHTML = `
+      <p><strong>Job Completed:</strong> ${id}</p>
       <p><strong>Customer:</strong> ${data.name}</p>
       <p><strong>Phone:</strong> ${data.phone}</p>
       <p><strong>Pickup:</strong> ${data.pickup}</p>
       <p><strong>Drop-off:</strong> ${data.dropoff}</p>
-      <p><strong>Date & Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
+      <p><strong>Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
       <p><strong>Passenger(s):</strong> ${data.passengers}</p>
       <p><strong>Luggage:</strong> ${data.luggage}</p>
       <p><strong>Pet:</strong> ${data.pets}</p>
@@ -285,16 +254,45 @@ function showCompletedJobLog(id, data) {
       <p><strong>Driver Comment:</strong> ${data.driverComment || "None"}</p>
       <p><strong>Completed By:</strong> ${data.completedBy}</p>
       <p><strong>Completed At:</strong> ${data.completedAt}</p>
+      <button class="info" onclick="downloadJobPDF('${id}')">Download PDF</button>
     `;
+    document.getElementById("bookingsContainer").prepend(div);
+  }
 
-    html2pdf().from(printable).set({
-      margin: 10,
-      filename: `Booking_${jobID}.pdf`,
-      html2canvas: { scale: 2 },
-      jsPDF: { format: 'a4', orientation: 'portrait' }
-    }).save();
-  });
-}
+  function downloadJobPDF(jobID) {
+    db.ref("completedJobs/" + jobID).once("value").then(snapshot => {
+      const data = snapshot.val();
+      if (!data) return alert("Job not found in logs.");
+
+      const printable = document.createElement("div");
+      printable.style.padding = "20px";
+      printable.style.fontFamily = "Quicksand, sans-serif";
+      printable.style.maxWidth = "600px";
+      printable.innerHTML = `
+        <h2 style="margin-bottom: 10px;">Completed Booking Report</h2>
+        <p><strong>Job ID:</strong> ${jobID}</p>
+        <p><strong>Customer:</strong> ${data.name}</p>
+        <p><strong>Phone:</strong> ${data.phone}</p>
+        <p><strong>Pickup:</strong> ${data.pickup}</p>
+        <p><strong>Drop-off:</strong> ${data.dropoff}</p>
+        <p><strong>Date & Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
+        <p><strong>Passenger(s):</strong> ${data.passengers}</p>
+        <p><strong>Luggage:</strong> ${data.luggage}</p>
+        <p><strong>Pet:</strong> ${data.pets}</p>
+        <p><strong>Customer Notes:</strong> ${data.extra || "None"}</p>
+        <p><strong>Driver Comment:</strong> ${data.driverComment || "None"}</p>
+        <p><strong>Completed By:</strong> ${data.completedBy}</p>
+        <p><strong>Completed At:</strong> ${data.completedAt}</p>
+      `;
+
+      html2pdf().from(printable).set({
+        margin: 10,
+        filename: `Booking_${jobID}.pdf`,
+        html2canvas: { scale: 2 },
+        jsPDF: { format: 'a4', orientation: 'portrait' }
+      }).save();
+    });
+  }
   </script>
 </body>
 </html>
