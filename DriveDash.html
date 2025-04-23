@@ -12,8 +12,10 @@
   <!-- PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Fonts & Styling -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Theme Styling -->
   <style>
     :root {
       --bg-dark: #0e0f10;
@@ -55,7 +57,7 @@
       margin-bottom: 25px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
-    .status-buttons button {
+    .status-buttons button, .logoff-button {
       margin-top: 10px;
       margin-right: 10px;
       padding: 10px 14px;
@@ -64,28 +66,32 @@
       cursor: pointer;
       font-weight: 600;
     }
-    .status-buttons .logoff { background: var(--logoff); color: white; }
-    .status-buttons .info { background: var(--info); color: white; }
-    .status-buttons .accent { background: var(--accent); color: white; }
-    .status-buttons .warn { background: var(--warn); color: white; }
+    .logoff-button { background: var(--logoff); color: white; }
+    .info { background: var(--info); color: white; }
+    .accent { background: var(--accent); color: white; }
+    .warn { background: var(--warn); color: white; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>Driver Dashboard</h1>
-  <div id="driverGreeting" class="greeting">
-    <p id="driverGreetingText">Loading driver details...</p>
+  <div class="container">
+    <h1>Driver Dashboard</h1>
+
+    <div id="driverGreeting" class="greeting">
+      <p id="driverGreetingText">Loading driver details...</p>
+      <button class="logoff-button" onclick="logOffDriver()">Log Off</button>
+    </div>
+
+    <div id="bookingsContainer">
+      <p>Loading bookings...</p>
+    </div>
+
+    <!-- Audio Chimes -->
+    <audio id="chimeNew"><source src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg" type="audio/ogg"></audio>
+    <audio id="chimeCancel"><source src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" type="audio/ogg"></audio>
+    <audio id="chimeAmend"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
   </div>
-  <div id="bookingsContainer"><p>Loading bookings...</p></div>
-
-  <!-- Sound Alerts -->
-  <audio id="chimeNew"><source src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg" type="audio/ogg"></audio>
-  <audio id="chimeCancel"><source src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" type="audio/ogg"></audio>
-  <audio id="chimeAmend"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
-</div>
-
-<script>
+  <script>
   // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -110,32 +116,37 @@
     window.location.href = "DriverLogin.html";
   }
 
-  // Audio Unlock
+  // Audio unlock after interaction
   const chimeNew = document.getElementById("chimeNew");
   const chimeCancel = document.getElementById("chimeCancel");
   const chimeAmend = document.getElementById("chimeAmend");
+
   function unlockAudio() {
     [chimeNew, chimeCancel, chimeAmend].forEach(audio => {
       audio.play().then(() => audio.pause()).catch(() => {});
     });
   }
   document.addEventListener("click", unlockAudio, { once: true });
-  // Format today's date for rota/breaks
+
+  // Format today's date
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
   const todayKey = `${yyyy}-${mm}-${dd}`;
 
+  // Greet the driver
   const greetingText = document.getElementById("driverGreetingText");
-  const container = document.getElementById("bookingsContainer");
+  const bookingsContainer = document.getElementById("bookingsContainer");
 
-  // Greeting
   db.ref("drivers").once("value").then(snapshot => {
     const drivers = snapshot.val();
     for (const key in drivers) {
       const d = drivers[key];
-      if (d.name?.toLowerCase() === driverName.toLowerCase() && String(d.doorCard) === driverDoor) {
+      if (
+        d.name?.toLowerCase() === driverName.toLowerCase() &&
+        String(d.doorCard) === driverDoor
+      ) {
         greetingText.innerHTML = `
           Hi <strong>${d.name}</strong>, you're in a
           <strong>${d.vehicle.make} ${d.vehicle.model}, ${d.vehicle.color}</strong> today
@@ -155,7 +166,7 @@
     if (breakData?.from && breakData?.to) {
       const nowTime = today.toTimeString().slice(0,5);
       if (nowTime >= breakData.from && nowTime <= breakData.to) {
-        container.innerHTML = `
+        bookingsContainer.innerHTML = `
           <div class="greeting">
             <p>You are currently on break from <strong>${breakData.from}</strong> to <strong>${breakData.to}</strong>.</p>
           </div>`;
@@ -163,22 +174,25 @@
       }
     }
 
-    // Load bookings if not on break
+    // Otherwise, continue with bookings in next part
+     // Load and display bookings for this driver
     db.ref("bookings").on("value", snap => {
-      const bookings = snap.val() || {};
-      container.innerHTML = "";
+      const allBookings = snap.val() || {};
+      bookingsContainer.innerHTML = "";
 
-      const myBookings = Object.entries(bookings).filter(([id, b]) =>
+      const myBookings = Object.entries(allBookings).filter(([id, b]) =>
         b.claimedBy?.toLowerCase() === driverName.toLowerCase()
       );
 
       if (myBookings.length === 0) {
-        container.innerHTML = `<p>No bookings currently assigned.</p>`;
+        bookingsContainer.innerHTML = `<p>No bookings currently assigned.</p>`;
         return;
       }
 
       myBookings.forEach(([id, b]) => {
-        const when = b.pickupType === "ASAP" ? "ASAP" : `${b.pickupDate || "?"} at ${b.pickupTime || "?"}`;
+        const when = b.pickupType === "ASAP"
+          ? "ASAP"
+          : `${b.pickupDate || "?"} at ${b.pickupTime || "?"}`;
         const div = document.createElement("div");
         div.className = "job";
         div.innerHTML = `
@@ -197,23 +211,23 @@
             <button class="warn" onclick="markComplete('${id}')">Complete Job</button>
           </div>
         `;
-        container.appendChild(div);
+        bookingsContainer.appendChild(div);
       });
     });
   });
 
-  // Booking Status Updates
   function markEnRoute(id) {
     db.ref("bookings/" + id + "/status").set("On the Way").then(() => {
-      alert(`Marked booking ${id} as 'On the Way'.`);
+      alert(`Marked job ${id} as 'On the Way'.`);
     });
   }
 
   function markArrived(id) {
     db.ref("bookings/" + id + "/status").set("Arrived").then(() => {
-      alert(`Marked booking ${id} as 'Arrived'.`);
+      alert(`Marked job ${id} as 'Arrived'.`);
     });
   }
+
   function markComplete(id) {
     const comment = prompt("Enter any driver notes for this job (optional):", "");
     const completedAt = new Date().toISOString();
@@ -256,12 +270,12 @@
       <p><strong>Completed At:</strong> ${data.completedAt}</p>
       <button class="info" onclick="downloadJobPDF('${id}')">Download PDF</button>
     `;
-    document.getElementById("bookingsContainer").prepend(div);
+    bookingsContainer.prepend(div);
   }
 
-  function downloadJobPDF(jobID) {
-    db.ref("completedJobs/" + jobID).once("value").then(snapshot => {
-      const data = snapshot.val();
+  function downloadJobPDF(id) {
+    db.ref("completedJobs/" + id).once("value").then(snap => {
+      const data = snap.val();
       if (!data) return alert("Job not found in logs.");
 
       const printable = document.createElement("div");
@@ -270,13 +284,13 @@
       printable.style.maxWidth = "600px";
       printable.innerHTML = `
         <h2 style="margin-bottom: 10px;">Completed Booking Report</h2>
-        <p><strong>Job ID:</strong> ${jobID}</p>
+        <p><strong>Job ID:</strong> ${id}</p>
         <p><strong>Customer:</strong> ${data.name}</p>
         <p><strong>Phone:</strong> ${data.phone}</p>
         <p><strong>Pickup:</strong> ${data.pickup}</p>
         <p><strong>Drop-off:</strong> ${data.dropoff}</p>
         <p><strong>Date & Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
-        <p><strong>Passenger(s):</strong> ${data.passengers}</p>
+        <p><strong>Passengers:</strong> ${data.passengers}</p>
         <p><strong>Luggage:</strong> ${data.luggage}</p>
         <p><strong>Pet:</strong> ${data.pets}</p>
         <p><strong>Customer Notes:</strong> ${data.extra || "None"}</p>
@@ -287,12 +301,20 @@
 
       html2pdf().from(printable).set({
         margin: 10,
-        filename: `Booking_${jobID}.pdf`,
+        filename: `Booking_${id}.pdf`,
         html2canvas: { scale: 2 },
         jsPDF: { format: 'a4', orientation: 'portrait' }
       }).save();
     });
   }
-  </script>
+    function logOffDriver() {
+    if (confirm("You’re about to log off. Proceed?")) {
+      db.ref("driverStatus/" + driverDoor).set("Logged Off").then(() => {
+        localStorage.clear();
+        window.location.href = "DriverLogin.html";
+      });
+    }
+  }
+</script>
 </body>
 </html>
