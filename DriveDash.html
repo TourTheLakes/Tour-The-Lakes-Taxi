@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <!-- PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --warn: #f44336;
+      --logoff: #ff9800;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 30px;
+    }
+    .greeting {
+      background: var(--section-light);
+      border-left: 5px solid #0d2a45;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .status-buttons button {
+      margin: 10px 10px 0 0;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .status-buttons .logoff { background: var(--logoff); color: #fff; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Driver Dashboard</h1>
+  <div id="driverGreeting" class="greeting">
+    <p id="driverGreetingText">Loading driver details...</p>
+  </div>
+  <div id="bookingsContainer">
+    <p>Loading bookings...</p>
+  </div>
+  <audio id="chimeNew"><source src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg" type="audio/ogg"></audio>
+  <audio id="chimeCancel"><source src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" type="audio/ogg"></audio>
+  <audio id="chimeAmend"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
+</div><script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+    authDomain: "tourthelakes-1e165.firebaseapp.com",
+    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+    projectId: "tourthelakes-1e165",
+    storageBucket: "tourthelakes-1e165.appspot.com",
+    messagingSenderId: "470758171431",
+    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const driverName = localStorage.getItem("driverName") || "";
+  const driverDoor = localStorage.getItem("driverDoor") || "";
+  const sessionExpires = localStorage.getItem("driverVerifiedUntil");
+  if (!driverName || !driverDoor || !sessionExpires || Date.now() > parseInt(sessionExpires)) {
+    alert("Session expired or invalid. Please log in again.");
+    localStorage.clear();
+    window.location.href = "DriverLogin.html";
+  }
+
+  const greetingText = document.getElementById("driverGreetingText");
+  db.ref("drivers").once("value").then(snapshot => {
+    const drivers = snapshot.val();
+    for (const key in drivers) {
+      const d = drivers[key];
+      if (d.name?.toLowerCase() === driverName.toLowerCase() && d.doorCard?.toString() === driverDoor) {
+        greetingText.innerHTML = `
+          Hi <strong>${d.name}</strong>, you're in a
+          <strong>${d.vehicle.make} ${d.vehicle.model}, ${d.vehicle.color}</strong> today
+          that seats <strong>${d.vehicle.seats}</strong> passengers.
+          Your door card number is <strong>${d.doorCard}</strong>,
+          and the vehicle registration is <strong>${d.vehicle.registration}</strong>.
+          Your customers will be able to reach you on <strong>${d.phone}</strong>.
+        `;
+        break;
+      }
+    }
+  });
+
+  const bookingsContainer = document.getElementById("bookingsContainer");
+  db.ref("bookings").on("value", snapshot => {
+    const allBookings = snapshot.val() || {};
+    bookingsContainer.innerHTML = "";
+    const myBookings = Object.entries(allBookings).filter(([id, data]) =>
+      data.claimedBy?.toLowerCase() === driverName.toLowerCase()
+    );
+    if (myBookings.length === 0) {
+      bookingsContainer.innerHTML = `<p>No bookings currently assigned.</p>`;
+      return;
+    }
+    myBookings.sort((a, b) => (a[1].pickupTime || "").localeCompare(b[1].pickupTime || ""));
+    myBookings.forEach(([id, b]) => {
+      const div = document.createElement("div");
+      div.className = "greeting";
+      const when = b.pickupType === "ASAP" ? "ASAP" : `${b.pickupDate || "?"} at ${b.pickupTime || "?"}`;
+      div.innerHTML = `
+        <p><strong>Customer:</strong> ${b.name}</p>
+        <p><strong>Phone:</strong> ${b.phone}</p>
+        <p><strong>Pickup:</strong> ${b.pickup}</p>
+        <p><strong>Drop-off:</strong> ${b.dropoff}</p>
+        <p><strong>Time:</strong> ${when}</p>
+        <p><strong>Passengers:</strong> ${b.passengers}</p>
+        <p><strong>Luggage:</strong> ${b.luggage}</p>
+        <p><strong>Pet:</strong> ${b.pets}</p>
+        <p><strong>Notes:</strong> ${b.extra || "<em>None provided</em>"}</p>
+        <div class="status-buttons">
+          <button onclick="markEnRoute('${id}')">On the Way</button>
+          <button onclick="markArrived('${id}')">Arrived</button>
+          <button onclick="markComplete('${id}')">Complete Job</button>
+        </div>
+      `;
+      bookingsContainer.appendChild(div);
+    });
+  });
+
+  function markEnRoute(id) {
+    alert(`Marked job ${id} as 'On the Way'`);
+  }
+
+  function markArrived(id) {
+    alert(`Marked job ${id} as 'Arrived'`);
+  }
+
+  function markComplete(id) {
+    const comment = prompt("Enter any notes about the job (optional):", "");
+    const completedAt = new Date().toISOString();
+    db.ref("bookings/" + id).once("value").then(snap => {
+      const original = snap.val();
+      if (!original) return alert("Booking not found.");
+      const completedBooking = {
+        ...original,
+        driverComment: comment || "",
+        completedBy: driverName,
+        completedAt: completedAt
+      };
+      db.ref("completedJobs/" + id).set(completedBooking).then(() => {
+        db.ref("bookings/" + id).remove();
+        alert("Job marked complete and logged.");
+        showCompletedJobLog(id, completedBooking);
+      });
+    });
+  }
+
+  function showCompletedJobLog(id, data) {
+    const div = document.createElement("div");
+    div.className = "greeting";
+    div.innerHTML = `
+      <p><strong>Job Completed:</strong> ${id}</p>
+      <p><strong>Customer:</strong> ${data.name}</p>
+      <p><strong>Pickup:</strong> ${data.pickup}</p>
+      <p><strong>Drop-off:</strong> ${data.dropoff}</p>
+      <p><strong>Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
+      <p><strong>Passengers:</strong> ${data.passengers}</p>
+      <p><strong>Luggage:</strong> ${data.luggage}</p>
+      <p><strong>Pet:</strong> ${data.pets}</p>
+      <p><strong>Customer Notes:</strong> ${data.extra || "None"}</p>
+      <p><strong>Driver Comment:</strong> ${data.driverComment || "None"}</p>
+      <p><strong>Completed At:</strong> ${data.completedAt}</p>
+      <button onclick="downloadJobPDF('${id}')">Download PDF</button>
+    `;
+    bookingsContainer.prepend(div);
+  }
+
+  function downloadJobPDF(jobID) {
+    db.ref("completedJobs/" + jobID).once("value").then(snapshot => {
+      const data = snapshot.val();
+      if (!data) return alert("Job not found in logs.");
+      const printDiv = document.createElement("div");
+      printDiv.style.padding = "20px";
+      printDiv.style.fontFamily = "Quicksand, sans-serif";
+      printDiv.style.maxWidth = "600px";
+      printDiv.innerHTML = `
+        <h2 style='margin-bottom:10px;'>Completed Booking Report</h2>
+        <p><strong>Job ID:</strong> ${jobID}</p>
+        <p><strong>Customer:</strong> ${data.name}</p>
+        <p><strong>Phone:</strong> ${data.phone}</p>
+        <p><strong>Pickup:</strong> ${data.pickup}</p>
+        <p><strong>Drop-off:</strong> ${data.dropoff}</p>
+        <p><strong>Date & Time:</strong> ${data.pickupDate || ""} at ${data.pickupTime || ""}</p>
+        <p><strong>Passengers:</strong> ${data.passengers}</p>
+        <p><strong>Luggage:</strong> ${data.luggage}</p>
+        <p><strong>Pet:</strong> ${data.pets}</p>
+        <p><strong>Notes from Customer:</strong> ${data.extra || "None"}</p>
+        <p><strong>Driver Comment:</strong> ${data.driverComment || "None"}</p>
+        <p><strong>Completed By:</strong> ${data.completedBy}</p>
+        <p><strong>Completed At:</strong> ${data.completedAt}</p>
+      `;
+      html2pdf().from(printDiv).set({
+        margin: 10,
+        filename: `Booking_${jobID}.pdf`,
+        html2canvas: { scale: 2 },
+        jsPDF: { format: 'a4', orientation: 'portrait' }
+      }).save();
+    });
+  }
+</script>
+</body>
+</html>
