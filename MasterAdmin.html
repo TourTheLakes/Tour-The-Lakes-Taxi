@@ -5,12 +5,17 @@
   <title>Master Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Firebase -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
 
-  <!-- Fonts and Styles -->
+  <!-- Google Places (for address autocomplete) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
   <style>
     :root {
       --bg-dark: #0e0f10;
@@ -27,9 +32,9 @@
       font-family: 'Quicksand', sans-serif;
     }
     body {
-      background-color: var(--bg-dark);
+      background: var(--bg-dark);
       color: var(--text-main);
-      padding: 30px 20px;
+      padding: 40px 20px;
     }
     .container {
       max-width: 1000px;
@@ -51,254 +56,346 @@
       font-size: 20px;
       margin-bottom: 10px;
       border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+      padding-bottom: 6px;
     }
-    .hidden { display: none; }
     input, select, button {
-      margin: 6px 0;
-      padding: 8px 10px;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px 12px;
       border: none;
       border-radius: 6px;
       font-size: 15px;
     }
     button {
-      background-color: var(--accent);
+      background: var(--accent);
       color: white;
       font-weight: bold;
       cursor: pointer;
     }
     .warn {
-      background-color: var(--warn);
+      background: var(--warn);
+    }
+    .hidden {
+      display: none;
     }
     .error {
       color: var(--warn);
       font-weight: bold;
     }
+    .inline {
+      display: flex;
+      gap: 10px;
+    }
+    .inline > * {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>Master Admin Panel</h1>
-  <div id="authPanel" class="panel">
-    <h2>Admin Access</h2>
-    <p>Please enter the admin password to unlock this page.</p>
-    <input type="password" id="adminPass" placeholder="Enter password..." />
-    <button onclick="verifyAdmin()">Unlock</button>
-    <p id="authError" class="error hidden">Incorrect password.</p>
+  <div class="container">
+    <h1>Master Admin Panel</h1>
+
+    <!-- Secure Admin Access -->
+    <div id="authPanel" class="panel">
+      <h2>Admin Access</h2>
+      <p>Please enter the admin password to unlock this page.</p>
+      <input type="password" id="adminPass" placeholder="Enter password..." />
+      <button onclick="verifyAdmin()">Unlock</button>
+      <p id="authError" class="error hidden">Incorrect password.</p>
+    </div>
+
+    <!-- Main Panel Area -->
+    <div id="mainContent" class="hidden">
+      <!-- Rota Manager -->
+      <div class="panel">
+        <h2>Rota & Break Manager</h2>
+        <label for="rotaDate">Select Date:</label>
+        <input type="date" id="rotaDate" />
+        <div id="driverRotaList"></div>
+      </div>
+    </div>
   </div>
 
-  <div id="mainContent" class="hidden">
-    <!-- Remaining admin panels will go here -->
-  </div>
-</div>
-<div class="panel" id="rotaPanel">
-    <h2>Rota & Break Manager</h2>
-    <label>Select Date:</label>
-    <input type="date" id="rotaDate" />
-    <div id="driverRotaList"></div>
-</div>
-  <div class="panel" id="bookingPanel">
-    <h2>Booking Control</h2>
-    
-    <h3>Add Manual Booking</h3>
-    <input type="text" id="bName" placeholder="Customer name" />
-    <input type="text" id="bPhone" placeholder="Phone number" />
-    <input type="text" id="bPickup" placeholder="Pickup address" />
-    <input type="text" id="bDropoff" placeholder="Drop-off address" />
-    <input type="date" id="bDate" />
-    <input type="time" id="bTime" />
-    <input type="number" id="bPassengers" placeholder="Passengers" />
-    <input type="text" id="bLuggage" placeholder="Luggage details" />
-    <input type="text" id="bPets" placeholder="Pet info (yes/no)" />
-    <input type="text" id="bExtra" placeholder="Additional instructions" />
-    <input type="text" id="bAssignTo" placeholder="Assign to driver name (optional)" />
-    <button onclick="addManualBooking()">Add Booking</button>
-
-    <h3 style="margin-top:30px;">Live Bookings</h3>
-    <div id="liveBookingsList"><p>Loading...</p></div>
-  </div>
-  
-  
-<script>
-  // Firebase Init
-  const firebaseConfig = {
-    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-    authDomain: "tourthelakes-1e165.firebaseapp.com",
-    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
-    projectId: "tourthelakes-1e165",
-    storageBucket: "tourthelakes-1e165.appspot.com",
-    messagingSenderId: "470758171431",
-    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  const authPanel = document.getElementById("authPanel");
-  const mainContent = document.getElementById("mainContent");
-  const errorText = document.getElementById("authError");
-
-  const now = Date.now();
-  const sessionValidUntil = localStorage.getItem("adminAccessUntil");
-
-  if (sessionValidUntil && parseInt(sessionValidUntil) > now) {
-    unlockPanel();
-  }
-
-  function verifyAdmin() {
-    const input = document.getElementById("adminPass").value.trim();
-    db.ref("masterRotaPassword/password").once("value").then(snap => {
-      const correct = snap.val();
-      if (input === correct) {
-        const expiry = Date.now() + 15 * 60 * 1000; // 15 minutes
-        localStorage.setItem("adminAccessUntil", expiry.toString());
-        unlockPanel();
-      } else {
-        errorText.classList.remove("hidden");
-      }
-    });
-  }
-
-  function unlockPanel() {
-    authPanel.classList.add("hidden");
-    mainContent.classList.remove("hidden");
-  }
-  const rotaDateInput = document.getElementById("rotaDate");
-  const driverListDiv = document.getElementById("driverRotaList");
-
-  rotaDateInput.addEventListener("change", loadRotaForDate);
-
-  function loadRotaForDate() {
-    const date = rotaDateInput.value;
-    if (!date) return;
-
-    db.ref("drivers").once("value").then(driverSnap => {
-      const drivers = driverSnap.val() || {};
-      driverListDiv.innerHTML = "";
-
-      for (const key in drivers) {
-        const d = drivers[key];
-        const doorCard = d.doorCard;
-
-        const block = document.createElement("div");
-        block.className = "panel";
-        block.innerHTML = `
-          <p><strong>${d.name}</strong> – ${d.vehicle.make} ${d.vehicle.model}</p>
-          <label>Shift Start:</label>
-          <input type="time" id="start-${doorCard}" />
-          <label>Shift End:</label>
-          <input type="time" id="end-${doorCard}" />
-          <br/>
-          <label>Break From:</label>
-          <input type="time" id="breakFrom-${doorCard}" />
-          <label>Break To:</label>
-          <input type="time" id="breakTo-${doorCard}" />
-          <br/>
-          <button onclick="saveRota('${doorCard}')">Save Shift & Break</button>
-        `;
-        driverListDiv.appendChild(block);
-
-        // Load existing shift data
-        db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
-          const shift = snap.val();
-          if (shift) {
-            document.getElementById(`start-${doorCard}`).value = shift.start || "";
-            document.getElementById(`end-${doorCard}`).value = shift.end || "";
-          }
-        });
-
-        // Load existing break data
-        db.ref(`breaks/${doorCard}/${date}`).once("value").then(snap => {
-          const brk = snap.val();
-          if (brk && brk.from && brk.to) {
-            document.getElementById(`breakFrom-${doorCard}`).value = brk.from;
-            document.getElementById(`breakTo-${doorCard}`).value = brk.to;
-          }
-        });
-      }
-    });
-  }
-
-  function saveRota(doorCard) {
-    const date = rotaDateInput.value;
-    if (!date) return alert("Please select a date first.");
-
-    const start = document.getElementById(`start-${doorCard}`).value;
-    const end = document.getElementById(`end-${doorCard}`).value;
-    const breakFrom = document.getElementById(`breakFrom-${doorCard}`).value;
-    const breakTo = document.getElementById(`breakTo-${doorCard}`).value;
-
-    if (start && end) {
-      db.ref(`rota/${doorCard}/${date}`).set({ start, end });
-    }
-
-    if (breakFrom && breakTo) {
-      db.ref(`breaks/${doorCard}/${date}`).set({ from: breakFrom, to: breakTo });
-    } else {
-      db.ref(`breaks/${doorCard}/${date}`).remove();
-    }
-
-    alert("Saved.");
-  }
-function addManualBooking() {
-    const name = document.getElementById("bName").value.trim();
-    const phone = document.getElementById("bPhone").value.trim();
-    const pickup = document.getElementById("bPickup").value.trim();
-    const dropoff = document.getElementById("bDropoff").value.trim();
-    const date = document.getElementById("bDate").value;
-    const time = document.getElementById("bTime").value;
-    const passengers = document.getElementById("bPassengers").value.trim();
-    const luggage = document.getElementById("bLuggage").value.trim();
-    const pets = document.getElementById("bPets").value.trim();
-    const extra = document.getElementById("bExtra").value.trim();
-    const claimedBy = document.getElementById("bAssignTo").value.trim() || "unassigned";
-
-    if (!name || !phone || !pickup || !dropoff || !date || !time) {
-      alert("Missing required fields.");
-      return;
-    }
-
-    const booking = {
-      name, phone, pickup, dropoff,
-      pickupDate: date, pickupTime: time,
-      passengers, luggage, pets, extra,
-      claimedBy
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.appspot.com",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    const newKey = db.ref().child("bookings").push().key;
-    db.ref("bookings/" + newKey).set(booking).then(() => {
-      alert("Booking added.");
-      document.querySelectorAll('#bookingPanel input').forEach(input => input.value = "");
-    });
-  }
+    const authPanel = document.getElementById("authPanel");
+    const mainContent = document.getElementById("mainContent");
+    const errorText = document.getElementById("authError");
 
-  // Load and display live bookings
-  const liveList = document.getElementById("liveBookingsList");
-  db.ref("bookings").on("value", snap => {
-    const data = snap.val() || {};
-    liveList.innerHTML = "";
+    const sessionValidUntil = localStorage.getItem("adminAccessUntil");
+    if (sessionValidUntil && parseInt(sessionValidUntil) > Date.now()) {
+      unlockPanel();
+    }
 
-    Object.entries(data).reverse().forEach(([key, b]) => {
-      const div = document.createElement("div");
-      div.className = "panel";
-      div.innerHTML = `
-        <p><strong>${b.name}</strong> | ${b.pickupDate} ${b.pickupTime}</p>
-        <p>${b.pickup} → ${b.dropoff}</p>
-        <p><strong>Driver:</strong> ${b.claimedBy || "unassigned"}</p>
-        <button class="warn" onclick="cancelBooking('${key}')">Cancel</button>
-      `;
-      liveList.appendChild(div);
-    });
-  });
-
-  function cancelBooking(key) {
-    if (confirm("Cancel this booking?")) {
-      db.ref("bookings/" + key).remove().then(() => {
-        alert("Booking cancelled.");
+    function verifyAdmin() {
+      const input = document.getElementById("adminPass").value.trim();
+      db.ref("masterRotaPassword/password").once("value").then(snap => {
+        if (snap.val() === input) {
+          const expires = Date.now() + 15 * 60 * 1000;
+          localStorage.setItem("adminAccessUntil", expires.toString());
+          unlockPanel();
+        } else {
+          errorText.classList.remove("hidden");
+        }
       });
     }
-  }
-  
-  
-</script>
+
+    function unlockPanel() {
+      authPanel.classList.add("hidden");
+      mainContent.classList.remove("hidden");
+    }
+
+    const rotaDateInput = document.getElementById("rotaDate");
+    const driverListDiv = document.getElementById("driverRotaList");
+
+    rotaDateInput.addEventListener("change", loadRotaForDate);
+
+    function loadRotaForDate() {
+      const date = rotaDateInput.value;
+      if (!date) return;
+
+      db.ref("drivers").once("value").then(driverSnap => {
+        const drivers = driverSnap.val() || {};
+        driverListDiv.innerHTML = "";
+
+        for (const key in drivers) {
+          const d = drivers[key];
+          const doorCard = d.doorCard;
+
+          const block = document.createElement("div");
+          block.className = "panel";
+          block.innerHTML = `
+            <p><strong>${d.name}</strong> – ${d.vehicle.make} ${d.vehicle.model}</p>
+            <div class="inline">
+              <div>
+                <label>Shift Start</label>
+                <input type="time" id="start-${doorCard}" />
+              </div>
+              <div>
+                <label>Shift End</label>
+                <input type="time" id="end-${doorCard}" />
+              </div>
+            </div>
+            <div class="inline">
+              <div>
+                <label>Break From</label>
+                <input type="time" id="breakFrom-${doorCard}" />
+              </div>
+              <div>
+                <label>Break To</label>
+                <input type="time" id="breakTo-${doorCard}" />
+              </div>
+            </div>
+            <button onclick="saveRota('${doorCard}')">Save Shift & Break</button>
+          `;
+          driverListDiv.appendChild(block);
+
+          // Load shift
+          db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
+            const s = snap.val();
+            if (s) {
+              document.getElementById(`start-${doorCard}`).value = s.start || "";
+              document.getElementById(`end-${doorCard}`).value = s.end || "";
+            }
+          });
+
+          // Load break
+          db.ref(`breaks/${doorCard}/${date}`).once("value").then(snap => {
+            const brk = snap.val();
+            if (brk) {
+              document.getElementById(`breakFrom-${doorCard}`).value = brk.from || "";
+              document.getElementById(`breakTo-${doorCard}`).value = brk.to || "";
+            }
+          });
+        }
+      });
+    }
+
+    function saveRota(doorCard) {
+      const date = rotaDateInput.value;
+      if (!date) return alert("Select a date first.");
+
+      const start = document.getElementById(`start-${doorCard}`).value;
+      const end = document.getElementById(`end-${doorCard}`).value;
+      const breakFrom = document.getElementById(`breakFrom-${doorCard}`).value;
+      const breakTo = document.getElementById(`breakTo-${doorCard}`).value;
+
+      if (start && end) {
+        db.ref(`rota/${doorCard}/${date}`).set({ start, end });
+      }
+
+      if (breakFrom && breakTo) {
+        db.ref(`breaks/${doorCard}/${date}`).set({ from: breakFrom, to: breakTo });
+      } else {
+        db.ref(`breaks/${doorCard}/${date}`).remove();
+      }
+
+      alert("Saved successfully.");
+    }
+    // Manual Booking Panel
+    const mainPanel = document.createElement("div");
+    mainPanel.className = "panel";
+    mainPanel.innerHTML = `
+      <h2>Manual Booking</h2>
+
+      <input id="bName" type="text" placeholder="Customer name" />
+      <input id="bPhone" type="text" placeholder="Phone number" />
+      
+      <input id="bPickup" type="text" placeholder="Pickup address" />
+      <input id="bDropoff" type="text" placeholder="Drop-off address" />
+
+      <input id="bDate" type="date" />
+      <input id="bTime" type="time" />
+
+      <input id="bPassengers" type="number" placeholder="Passenger count" min="1" />
+
+      <select id="bLuggage">
+        <option value="">Select luggage size</option>
+        <option value="None">None</option>
+        <option value="Small">Small</option>
+        <option value="Medium">Medium</option>
+        <option value="Large">Large</option>
+      </select>
+
+      <input id="bPets" type="text" value="No" disabled />
+
+      <input id="bExtra" type="text" placeholder="Additional instructions (optional)" />
+
+      <select id="bAssignTo">
+        <option value="">Assign to driver (optional)</option>
+      </select>
+
+      <button onclick="addManualBooking()">Add Booking</button>
+    `;
+    mainContent.appendChild(mainPanel);
+
+    // Load drivers into assignment dropdown
+    const driverSelect = mainPanel.querySelector("#bAssignTo");
+    db.ref("drivers").once("value").then(snap => {
+      const drivers = snap.val() || {};
+      for (const key in drivers) {
+        const d = drivers[key];
+        const opt = document.createElement("option");
+        opt.value = d.name;
+        opt.textContent = `${d.name} (${d.vehicle.make})`;
+        driverSelect.appendChild(opt);
+      }
+    });
+
+    // Address autocomplete
+    let autocompletePickup, autocompleteDrop;
+    setTimeout(() => {
+      autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"));
+      autocompleteDrop = new google.maps.places.Autocomplete(document.getElementById("bDropoff"));
+    }, 500);
+
+    function addManualBooking() {
+      const name = document.getElementById("bName").value.trim();
+      const phone = document.getElementById("bPhone").value.trim();
+      const pickup = document.getElementById("bPickup").value.trim();
+      const dropoff = document.getElementById("bDropoff").value.trim();
+      const date = document.getElementById("bDate").value;
+      const time = document.getElementById("bTime").value;
+      const passengers = document.getElementById("bPassengers").value.trim();
+      const luggage = document.getElementById("bLuggage").value;
+      const pets = "No";
+      const extra = document.getElementById("bExtra").value.trim();
+      const claimedBy = document.getElementById("bAssignTo").value;
+
+      if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
+        alert("All fields except notes and assignment are required.");
+        return;
+      }
+
+      if (claimedBy) {
+        // Check rota availability for assigned driver
+        db.ref("drivers").once("value").then(driverSnap => {
+          const drivers = driverSnap.val();
+          const found = Object.values(drivers).find(d => d.name === claimedBy);
+          if (!found) return alert("Assigned driver not found.");
+
+          const doorCard = found.doorCard;
+          db.ref(`rota/${doorCard}/${date}`).once("value").then(rotaSnap => {
+            const rota = rotaSnap.val();
+            if (!rota || !rota.start || !rota.end) {
+              alert("Driver is not on shift for that date.");
+              return;
+            }
+
+            if (time < rota.start || time > rota.end) {
+              alert(`Driver shift is from ${rota.start} to ${rota.end}. Booking time is outside this.`);
+              return;
+            }
+
+            createManualBooking({
+              name, phone, pickup, dropoff, pickupDate: date, pickupTime: time,
+              passengers, luggage, pets, extra, claimedBy
+            });
+          });
+        });
+      } else {
+        createManualBooking({
+          name, phone, pickup, dropoff, pickupDate: date, pickupTime: time,
+          passengers, luggage, pets, extra, claimedBy: "unassigned"
+        });
+      }
+    }
+
+    function createManualBooking(data) {
+      const newKey = db.ref().child("bookings").push().key;
+      db.ref("bookings/" + newKey).set(data).then(() => {
+        alert("Booking added.");
+        document.querySelectorAll(".panel input, .panel select").forEach(i => {
+          if (i.id !== "bPets") i.value = "";
+        });
+      });
+    }
+    // Live bookings list
+    const livePanel = document.createElement("div");
+    livePanel.className = "panel";
+    livePanel.innerHTML = `<h2>Live Bookings</h2><div id="liveBookingsList"><p>Loading...</p></div>`;
+    mainContent.appendChild(livePanel);
+
+    const liveList = livePanel.querySelector("#liveBookingsList");
+
+    db.ref("bookings").on("value", snap => {
+      const bookings = snap.val() || {};
+      liveList.innerHTML = "";
+
+      Object.entries(bookings).reverse().forEach(([key, b]) => {
+        const div = document.createElement("div");
+        div.className = "panel";
+        div.innerHTML = `
+          <p><strong>${b.name}</strong> | ${b.pickupDate || "?"} ${b.pickupTime || "?"}</p>
+          <p>${b.pickup} → ${b.dropoff}</p>
+          <p><strong>Assigned:</strong> ${b.claimedBy || "Unassigned"}</p>
+          <button class="warn" onclick="cancelBooking('${key}')">Cancel Booking</button>
+        `;
+        liveList.appendChild(div);
+      });
+    });
+
+    function cancelBooking(id) {
+      if (confirm("Cancel this booking?")) {
+        db.ref("bookings/" + id).remove().then(() => {
+          alert("Booking cancelled.");
+        });
+      }
+    }
+  </script>
 </body>
 </html>
+
+    
