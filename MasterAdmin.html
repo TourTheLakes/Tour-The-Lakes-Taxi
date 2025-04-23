@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Master Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+
+  <!-- Fonts and Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --warn: #f44336;
+      --logoff: #ff9800;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 30px 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .panel {
+      background: var(--section-light);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .panel h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+    .hidden { display: none; }
+    input, select, button {
+      margin: 6px 0;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+    button {
+      background-color: var(--accent);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .warn {
+      background-color: var(--warn);
+    }
+    .error {
+      color: var(--warn);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Master Admin Panel</h1>
+  <div id="authPanel" class="panel">
+    <h2>Admin Access</h2>
+    <p>Please enter the admin password to unlock this page.</p>
+    <input type="password" id="adminPass" placeholder="Enter password..." />
+    <button onclick="verifyAdmin()">Unlock</button>
+    <p id="authError" class="error hidden">Incorrect password.</p>
+  </div>
+
+  <div id="mainContent" class="hidden">
+    <!-- Remaining admin panels will go here -->
+  </div>
+</div>
+<div class="panel" id="rotaPanel">
+    <h2>Rota & Break Manager</h2>
+    <label>Select Date:</label>
+    <input type="date" id="rotaDate" />
+    <div id="driverRotaList"></div>
+</div>
+  <div class="panel" id="bookingPanel">
+    <h2>Booking Control</h2>
+    
+    <h3>Add Manual Booking</h3>
+    <input type="text" id="bName" placeholder="Customer name" />
+    <input type="text" id="bPhone" placeholder="Phone number" />
+    <input type="text" id="bPickup" placeholder="Pickup address" />
+    <input type="text" id="bDropoff" placeholder="Drop-off address" />
+    <input type="date" id="bDate" />
+    <input type="time" id="bTime" />
+    <input type="number" id="bPassengers" placeholder="Passengers" />
+    <input type="text" id="bLuggage" placeholder="Luggage details" />
+    <input type="text" id="bPets" placeholder="Pet info (yes/no)" />
+    <input type="text" id="bExtra" placeholder="Additional instructions" />
+    <input type="text" id="bAssignTo" placeholder="Assign to driver name (optional)" />
+    <button onclick="addManualBooking()">Add Booking</button>
+
+    <h3 style="margin-top:30px;">Live Bookings</h3>
+    <div id="liveBookingsList"><p>Loading...</p></div>
+  </div>
+  
+  
+<script>
+  // Firebase Init
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+    authDomain: "tourthelakes-1e165.firebaseapp.com",
+    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+    projectId: "tourthelakes-1e165",
+    storageBucket: "tourthelakes-1e165.appspot.com",
+    messagingSenderId: "470758171431",
+    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const authPanel = document.getElementById("authPanel");
+  const mainContent = document.getElementById("mainContent");
+  const errorText = document.getElementById("authError");
+
+  const now = Date.now();
+  const sessionValidUntil = localStorage.getItem("adminAccessUntil");
+
+  if (sessionValidUntil && parseInt(sessionValidUntil) > now) {
+    unlockPanel();
+  }
+
+  function verifyAdmin() {
+    const input = document.getElementById("adminPass").value.trim();
+    db.ref("masterRotaPassword/password").once("value").then(snap => {
+      const correct = snap.val();
+      if (input === correct) {
+        const expiry = Date.now() + 15 * 60 * 1000; // 15 minutes
+        localStorage.setItem("adminAccessUntil", expiry.toString());
+        unlockPanel();
+      } else {
+        errorText.classList.remove("hidden");
+      }
+    });
+  }
+
+  function unlockPanel() {
+    authPanel.classList.add("hidden");
+    mainContent.classList.remove("hidden");
+  }
+  const rotaDateInput = document.getElementById("rotaDate");
+  const driverListDiv = document.getElementById("driverRotaList");
+
+  rotaDateInput.addEventListener("change", loadRotaForDate);
+
+  function loadRotaForDate() {
+    const date = rotaDateInput.value;
+    if (!date) return;
+
+    db.ref("drivers").once("value").then(driverSnap => {
+      const drivers = driverSnap.val() || {};
+      driverListDiv.innerHTML = "";
+
+      for (const key in drivers) {
+        const d = drivers[key];
+        const doorCard = d.doorCard;
+
+        const block = document.createElement("div");
+        block.className = "panel";
+        block.innerHTML = `
+          <p><strong>${d.name}</strong> – ${d.vehicle.make} ${d.vehicle.model}</p>
+          <label>Shift Start:</label>
+          <input type="time" id="start-${doorCard}" />
+          <label>Shift End:</label>
+          <input type="time" id="end-${doorCard}" />
+          <br/>
+          <label>Break From:</label>
+          <input type="time" id="breakFrom-${doorCard}" />
+          <label>Break To:</label>
+          <input type="time" id="breakTo-${doorCard}" />
+          <br/>
+          <button onclick="saveRota('${doorCard}')">Save Shift & Break</button>
+        `;
+        driverListDiv.appendChild(block);
+
+        // Load existing shift data
+        db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
+          const shift = snap.val();
+          if (shift) {
+            document.getElementById(`start-${doorCard}`).value = shift.start || "";
+            document.getElementById(`end-${doorCard}`).value = shift.end || "";
+          }
+        });
+
+        // Load existing break data
+        db.ref(`breaks/${doorCard}/${date}`).once("value").then(snap => {
+          const brk = snap.val();
+          if (brk && brk.from && brk.to) {
+            document.getElementById(`breakFrom-${doorCard}`).value = brk.from;
+            document.getElementById(`breakTo-${doorCard}`).value = brk.to;
+          }
+        });
+      }
+    });
+  }
+
+  function saveRota(doorCard) {
+    const date = rotaDateInput.value;
+    if (!date) return alert("Please select a date first.");
+
+    const start = document.getElementById(`start-${doorCard}`).value;
+    const end = document.getElementById(`end-${doorCard}`).value;
+    const breakFrom = document.getElementById(`breakFrom-${doorCard}`).value;
+    const breakTo = document.getElementById(`breakTo-${doorCard}`).value;
+
+    if (start && end) {
+      db.ref(`rota/${doorCard}/${date}`).set({ start, end });
+    }
+
+    if (breakFrom && breakTo) {
+      db.ref(`breaks/${doorCard}/${date}`).set({ from: breakFrom, to: breakTo });
+    } else {
+      db.ref(`breaks/${doorCard}/${date}`).remove();
+    }
+
+    alert("Saved.");
+  }
+function addManualBooking() {
+    const name = document.getElementById("bName").value.trim();
+    const phone = document.getElementById("bPhone").value.trim();
+    const pickup = document.getElementById("bPickup").value.trim();
+    const dropoff = document.getElementById("bDropoff").value.trim();
+    const date = document.getElementById("bDate").value;
+    const time = document.getElementById("bTime").value;
+    const passengers = document.getElementById("bPassengers").value.trim();
+    const luggage = document.getElementById("bLuggage").value.trim();
+    const pets = document.getElementById("bPets").value.trim();
+    const extra = document.getElementById("bExtra").value.trim();
+    const claimedBy = document.getElementById("bAssignTo").value.trim() || "unassigned";
+
+    if (!name || !phone || !pickup || !dropoff || !date || !time) {
+      alert("Missing required fields.");
+      return;
+    }
+
+    const booking = {
+      name, phone, pickup, dropoff,
+      pickupDate: date, pickupTime: time,
+      passengers, luggage, pets, extra,
+      claimedBy
+    };
+
+    const newKey = db.ref().child("bookings").push().key;
+    db.ref("bookings/" + newKey).set(booking).then(() => {
+      alert("Booking added.");
+      document.querySelectorAll('#bookingPanel input').forEach(input => input.value = "");
+    });
+  }
+
+  // Load and display live bookings
+  const liveList = document.getElementById("liveBookingsList");
+  db.ref("bookings").on("value", snap => {
+    const data = snap.val() || {};
+    liveList.innerHTML = "";
+
+    Object.entries(data).reverse().forEach(([key, b]) => {
+      const div = document.createElement("div");
+      div.className = "panel";
+      div.innerHTML = `
+        <p><strong>${b.name}</strong> | ${b.pickupDate} ${b.pickupTime}</p>
+        <p>${b.pickup} → ${b.dropoff}</p>
+        <p><strong>Driver:</strong> ${b.claimedBy || "unassigned"}</p>
+        <button class="warn" onclick="cancelBooking('${key}')">Cancel</button>
+      `;
+      liveList.appendChild(div);
+    });
+  });
+
+  function cancelBooking(key) {
+    if (confirm("Cancel this booking?")) {
+      db.ref("bookings/" + key).remove().then(() => {
+        alert("Booking cancelled.");
+      });
+    }
+  }
+  
+  
+</script>
+</body>
+</html>
