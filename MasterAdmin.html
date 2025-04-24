@@ -232,7 +232,7 @@
 </div>
 
       <script>
-  // Firebase Initialization
+  // === FIREBASE CONFIGURATION ===
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
     authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -245,7 +245,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // Admin Login Logic
+  // === ADMIN AUTHENTICATION ===
   const authPanel = document.getElementById("authPanel");
   const mainContent = document.getElementById("mainContent");
   const errorText = document.getElementById("authError");
@@ -272,8 +272,7 @@
     authPanel.classList.add("hidden");
     mainContent.classList.remove("hidden");
   }
-
-  // Rota & Break Setup
+     // === ROTA & BREAK MANAGER ===
   const rotaDateInput = document.getElementById("rotaDate");
   const driverListDiv = document.getElementById("driverRotaList");
 
@@ -347,66 +346,150 @@
 
     alert("Saved.");
   }
-        // --- DRIVER DROPDOWN INITIALISATION --- const driverDropdown = document.getElementById("bAssignTo"); let driverMap = {}; // Maps driver name to doorCard
+        // === DRIVER DROPDOWN INITIALISATION ===
+  const driverDropdown = document.getElementById("bAssignTo");
+  let driverMap = {}; // Maps driver name → doorCard
 
-// Populate driver dropdown live from Firebase db.ref("drivers").once("value").then(snapshot => { const drivers = snapshot.val() || {}; for (const key in drivers) { const d = drivers[key]; driverMap[d.name] = d.doorCard; const opt = document.createElement("option"); opt.value = d.name; opt.textContent = ${d.name} (${d.vehicle.make}); driverDropdown.appendChild(opt); } });
-
-// --- GOOGLE PLACES AUTOCOMPLETE (UK ONLY) --- let autocompletePickup, autocompleteDropoff; setTimeout(() => { const options = { componentRestrictions: { country: "gb" } }; autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"), options); autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"), options); }, 500);
-
-// --- LUGGAGE RESTRICTION BASED ON PASSENGER COUNT --- const passengersDropdown = document.getElementById("bPassengers"); const luggageWarning = document.getElementById("capacityWarning");
-
-passengersDropdown.addEventListener("change", () => { const value = parseInt(passengersDropdown.value); if (value >= 5) { luggageWarning.style.display = "block"; } else { luggageWarning.style.display = "none"; } });
-
-// --- ADD MANUAL BOOKING FUNCTION --- function addManualBooking() { const name = document.getElementById("bName").value.trim(); const phone = document.getElementById("bPhone").value.trim(); const pickup = document.getElementById("bPickup").value.trim(); const dropoff = document.getElementById("bDropoff").value.trim(); const date = document.getElementById("bDate").value; const time = document.getElementById("bTime").value; const passengers = document.getElementById("bPassengers").value.trim(); const luggage = document.getElementById("bLuggage").value; const pets = "No"; const extra = document.getElementById("bExtra").value.trim(); const claimedBy = document.getElementById("bAssignTo").value;
-
-if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) { alert("All fields except notes and assignment are required."); return; }
-
-// If assigned, check shift validity if (claimedBy) { const doorCard = driverMap[claimedBy]; if (!doorCard) { alert("Driver mapping not found."); return; }
-
-db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
-  const rota = snap.val();
-  if (!rota || !rota.start || !rota.end) {
-    alert("Driver has no shift set for that date.");
-    return;
-  }
-
-  if (time < rota.start || time > rota.end) {
-    alert(`Driver shift is from ${rota.start} to ${rota.end}. Booking time is outside that.`);
-    return;
-  }
-
-  createBooking({
-    name, phone, pickup, dropoff,
-    pickupDate: date, pickupTime: time,
-    passengers, luggage, pets, extra,
-    claimedBy, claimedDoor: doorCard
+  db.ref("drivers").once("value").then(snapshot => {
+    const drivers = snapshot.val() || {};
+    for (const key in drivers) {
+      const d = drivers[key];
+      driverMap[d.name] = d.doorCard;
+      const opt = document.createElement("option");
+      opt.value = d.name;
+      opt.textContent = `${d.name} (${d.vehicle.make})`;
+      driverDropdown.appendChild(opt);
+    }
   });
-});
 
-} else { createBooking({ name, phone, pickup, dropoff, pickupDate: date, pickupTime: time, passengers, luggage, pets, extra, claimedBy: "unassigned", claimedDoor: "unassigned" }); } }
+  // === GOOGLE PLACES AUTOCOMPLETE (UK ONLY) ===
+  let autocompletePickup, autocompleteDropoff;
+  setTimeout(() => {
+    const options = { componentRestrictions: { country: "gb" } };
+    autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"), options);
+    autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"), options);
+  }, 500);
 
-// === Booking Creation and Cleanup === function createBooking(data) { const newKey = db.ref("bookings").push().key; db.ref("bookings/" + newKey).set(data).then(() => { alert("Booking added successfully.");
+  // === LUGGAGE WARNING FOR LARGE PARTIES ===
+  const passengersDropdown = document.getElementById("bPassengers");
+  const luggageWarning = document.getElementById("capacityWarning");
 
-// Reset all fields except pets
-document.querySelectorAll(".panel input, .panel select").forEach(input => {
-  if (input.id !== "bPets") input.value = "";
-});
-document.getElementById("bPassengers").value = "";
-document.getElementById("bLuggage").value = "";
-document.getElementById("bAssignTo").value = "";
+  passengersDropdown.addEventListener("change", () => {
+    const count = parseInt(passengersDropdown.value);
+    if (count >= 5) {
+      luggageWarning.style.display = "block";
+    } else {
+      luggageWarning.style.display = "none";
+    }
+  });
 
-// Hide warning
-document.getElementById("capacityWarning").style.display = "none";
+  // === ADD MANUAL BOOKING FUNCTION ===
+  function addManualBooking() {
+    const name = document.getElementById("bName").value.trim();
+    const phone = document.getElementById("bPhone").value.trim();
+    const pickup = document.getElementById("bPickup").value.trim();
+    const dropoff = document.getElementById("bDropoff").value.trim();
+    const date = document.getElementById("bDate").value;
+    const time = document.getElementById("bTime").value;
+    const passengers = document.getElementById("bPassengers").value.trim();
+    const luggage = document.getElementById("bLuggage").value;
+    const pets = "No";
+    const extra = document.getElementById("bExtra").value.trim();
+    const claimedBy = document.getElementById("bAssignTo").value;
 
-}); }
+    if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
+      alert("All fields except notes and assignment are required.");
+      return;
+    }
 
-// === Live Booking List Rendering === const liveList = document.getElementById("liveBookingsList"); db.ref("bookings").on("value", snap => { const bookings = snap.val() || {}; liveList.innerHTML = "";
+    // --- Shift Check if assigned to driver ---
+    if (claimedBy) {
+      const doorCard = driverMap[claimedBy];
+      if (!doorCard) {
+        alert("Driver mapping not found.");
+        return;
+      }
 
-Object.entries(bookings).reverse().forEach(([key, b]) => { const div = document.createElement("div"); div.className = "panel"; div.innerHTML = <p><strong>${b.name}</strong> | ${b.pickupDate || "?"} ${b.pickupTime || "?"}</p> <p>${b.pickup} → ${b.dropoff}</p> <p><strong>Passengers:</strong> ${b.passengers} | <strong>Luggage:</strong> ${b.luggage} | <strong>Pets:</strong> ${b.pets}</p> <p><strong>Driver:</strong> ${b.claimedBy || "Unassigned"}</p> <p><strong>Notes:</strong> ${b.extra || "<em>None</em>"}</p> <button class="warn" onclick="cancelBooking('${key}')">Cancel Booking</button>; liveList.appendChild(div); }); });
+      db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
+        const rota = snap.val();
+        if (!rota || !rota.start || !rota.end) {
+          alert("Driver has no shift set for that date.");
+          return;
+        }
 
-// === Booking Cancellation === function cancelBooking(id) { if (confirm("Are you sure you want to cancel this booking?")) { db.ref("bookings/" + id).remove().then(() => { alert("Booking cancelled."); }); } }
+        if (time < rota.start || time > rota.end) {
+          alert(`Driver shift is from ${rota.start} to ${rota.end}. Booking time is outside that.`);
+          return;
+        }
 
-      </script>
+        createBooking({
+          name, phone, pickup, dropoff,
+          pickupDate: date, pickupTime: time,
+          passengers, luggage, pets, extra,
+          claimedBy, claimedDoor: doorCard
+        });
+      });
+    } else {
+      createBooking({
+        name, phone, pickup, dropoff,
+        pickupDate: date, pickupTime: time,
+        passengers, luggage, pets, extra,
+        claimedBy: "unassigned", claimedDoor: "unassigned"
+      });
+    }
+  }
+        // === BOOKING CREATION + CLEANUP ===
+  function createBooking(data) {
+    const newKey = db.ref("bookings").push().key;
+    db.ref("bookings/" + newKey).set(data).then(() => {
+      alert("Booking added successfully.");
+
+      // Reset fields (excluding pets)
+      document.querySelectorAll(".panel input, .panel select").forEach(el => {
+        if (el.id !== "bPets") el.value = "";
+      });
+
+      // Reset dropdowns explicitly
+      document.getElementById("bPassengers").value = "";
+      document.getElementById("bLuggage").value = "";
+      document.getElementById("bAssignTo").value = "";
+
+      // Hide luggage warning
+      document.getElementById("capacityWarning").style.display = "none";
+    });
+  }
+
+  // === LIVE BOOKINGS DISPLAY ===
+  const liveList = document.getElementById("liveBookingsList");
+
+  db.ref("bookings").on("value", snap => {
+    const bookings = snap.val() || {};
+    liveList.innerHTML = "";
+
+    Object.entries(bookings).reverse().forEach(([key, b]) => {
+      const div = document.createElement("div");
+      div.className = "panel";
+      div.innerHTML = `
+        <p><strong>${b.name}</strong> | ${b.pickupDate || "?"} ${b.pickupTime || "?"}</p>
+        <p>${b.pickup} → ${b.dropoff}</p>
+        <p><strong>Passengers:</strong> ${b.passengers} | <strong>Luggage:</strong> ${b.luggage} | <strong>Pets:</strong> ${b.pets}</p>
+        <p><strong>Driver:</strong> ${b.claimedBy || "Unassigned"}</p>
+        <p><strong>Notes:</strong> ${b.extra || "<em>None</em>"}</p>
+        <button class="warn" onclick="cancelBooking('${key}')">Cancel Booking</button>
+      `;
+      liveList.appendChild(div);
+    });
+  });
+
+  // === CANCEL BOOKING ===
+  function cancelBooking(id) {
+    if (confirm("Are you sure you want to cancel this booking?")) {
+      db.ref("bookings/" + id).remove().then(() => {
+        alert("Booking cancelled.");
+      });
+    }
+  }
+</script>
       
 
         
