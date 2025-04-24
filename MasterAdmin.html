@@ -391,7 +391,66 @@ option:disabled {
     }
   });
 
+// === GOOGLE PLACES AUTOCOMPLETE ===
+  let pickupCoords = null;
+  let dropoffCoords = null;
 
+  const pickupInput = document.getElementById("bPickup");
+  const dropoffInput = document.getElementById("bDropoff");
+  const estimateField = document.getElementById("bEstimate");
+
+  function updateEstimateDisplay() {
+    if (!pickupCoords || !dropoffCoords) {
+      estimateField.value = "";
+      return;
+    }
+
+    const service = new google.maps.DirectionsService();
+    service.route({
+      origin: pickupCoords,
+      destination: dropoffCoords,
+      travelMode: 'DRIVING'
+    }, (result, status) => {
+      if (status === 'OK' && result.routes.length > 0) {
+        const leg = result.routes[0].legs[0];
+        const distanceMiles = (leg.distance.value / 1609.34).toFixed(1);
+        const baseFare = 4.20;
+        const stepFare = 0.30;
+
+        let fare = baseFare;
+        if (distanceMiles > 1) fare += (distanceMiles - 1) * stepFare;
+
+        estimateField.value = `Distance: ${distanceMiles} miles | Est. Fare: £${fare.toFixed(2)}`;
+      } else {
+        estimateField.value = "Could not calculate route.";
+      }
+    });
+  }
+
+  function setupAddressAutocomplete(input, isPickup) {
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'gb' }
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (place.geometry && place.geometry.location) {
+        const coords = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        if (isPickup) {
+          pickupCoords = coords;
+        } else {
+          dropoffCoords = coords;
+        }
+        updateEstimateDisplay();
+      }
+    });
+  }
+
+  setupAddressAutocomplete(pickupInput, true);
+  setupAddressAutocomplete(dropoffInput, false);
   
 
   // === LUGGAGE WARNING ===
