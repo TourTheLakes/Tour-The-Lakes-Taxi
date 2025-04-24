@@ -594,7 +594,7 @@ function updateEstimateDisplay() {
     Object.entries(bookings).reverse().forEach(([key, b]) => {
       const div = document.createElement("div");
       div.className = "panel";
-     duv.innerHTML = `
+     div.innerHTML = `
   <p><strong>${b.name}</strong> | ${b.pickupDate || "?"} ${b.pickupTime || "?"}</p>
   <p>${b.pickup} → ${b.dropoff}</p>
   <p><strong>Passengers:</strong> ${b.passengers} | <strong>Luggage:</strong> ${b.luggage} | <strong>Pets:</strong> ${b.pets}</p>
