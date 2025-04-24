@@ -391,8 +391,111 @@ option:disabled {
     }
   });
 
+// === GOOGLE PLACES AUTOCOMPLETE + ESTIMATION LOGIC ===
+let pickupCoords = null;
+let dropoffCoords = null;
+let latestFare = null;
 
-  
+const pickupInput = document.getElementById("bPickup");
+const dropoffInput = document.getElementById("bDropoff");
+const estimateField = document.getElementById("bEstimate");
+const dateInput = document.getElementById("bDate");
+const timeInput = document.getElementById("bTime");
+
+// Set up Google Autocomplete
+function setupAddressAutocomplete(input, isPickup) {
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    componentRestrictions: { country: 'gb' }
+  });
+
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (place.geometry && place.geometry.location) {
+      const coords = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      };
+      if (isPickup) {
+        pickupCoords = coords;
+      } else {
+        dropoffCoords = coords;
+      }
+      updateEstimateDisplay();
+    }
+  });
+}
+
+setupAddressAutocomplete(pickupInput, true);
+setupAddressAutocomplete(dropoffInput, false);
+
+// Trigger estimate when date or time changes
+dateInput.addEventListener("change", updateEstimateDisplay);
+timeInput.addEventListener("change", updateEstimateDisplay);
+
+// Distance + fare estimate logic
+function updateEstimateDisplay() {
+  if (!pickupCoords || !dropoffCoords) {
+    estimateField.value = "";
+    return;
+  }
+
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    estimateField.value = "Select date and time to estimate fare.";
+    return;
+  }
+
+  const travelDate = new Date(`${dateVal}T${timeVal}`);
+  const hour = travelDate.getHours();
+  const day = travelDate.getDay(); // Sunday = 0
+  const month = travelDate.getMonth() + 1;
+  const date = travelDate.getDate();
+
+  // Fare bands (Westmorland & Furness)
+  let baseFare = 4.20;
+  let stepFare = 0.30;
+
+  const isHolidayEvening =
+    (month === 12 && date === 24 && hour >= 19) ||
+    (month === 12 && date === 31 && hour >= 19) ||
+    (day === 0 && hour >= 19); // Sunday evening
+
+  if (isHolidayEvening) {
+    baseFare = 8.40;
+    stepFare = 0.60;
+  } else if (hour >= 23 || hour < 7) {
+    baseFare = 6.30;
+    stepFare = 0.40;
+  }
+
+  const service = new google.maps.DirectionsService();
+  service.route({
+    origin: pickupCoords,
+    destination: dropoffCoords,
+    travelMode: 'DRIVING'
+  }, (result, status) => {
+    if (status !== 'OK' || !result.routes.length) {
+      estimateField.value = "Could not calculate route.";
+      latestFare = null;
+      return;
+    }
+
+    const leg = result.routes[0].legs[0];
+    const distanceMeters = leg.distance.value;
+    const distanceKm = (distanceMeters / 1000).toFixed(2);
+
+    let fare = baseFare;
+    const excessMeters = distanceMeters - 1609;
+    if (excessMeters > 0) {
+      const steps = Math.ceil(excessMeters / 161);
+      fare += steps * stepFare;
+    }
+
+    latestFare = fare.toFixed(2);
+    estimateField.value = `Distance: ${distanceKm} km | Estimated Fare: £${latestFare}`;
+  });
+     } 
 
   // === LUGGAGE WARNING ===
   const passengersDropdown = document.getElementById("bPassengers");
