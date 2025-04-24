@@ -399,8 +399,71 @@ option:disabled {
   const dropoffInput = document.getElementById("bDropoff");
   const estimateField = document.getElementById("bEstimate");
 
-  
+  function updateEstimateDisplay() {
+  if (!pickupCoords || !dropoffCoords) {
+    estimateField.value = "";
+    return;
+  }
 
+  const service = new google.maps.DirectionsService();
+  service.route({
+    origin: pickupCoords,
+    destination: dropoffCoords,
+    travelMode: 'DRIVING'
+  }, (result, status) => {
+    if (status !== 'OK' || result.routes.length === 0) {
+      estimateField.value = "Could not calculate route.";
+      return;
+    }
+
+    const leg = result.routes[0].legs[0];
+    const distanceMeters = leg.distance.value;
+    const distanceKm = (distanceMeters / 1000).toFixed(2);
+
+    const now = new Date();
+    const hour = now.getHours();
+    const minutes = now.getMinutes();
+    const timeStr = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    const day = now.getDay(); // Sunday = 0
+    const dateStr = now.toISOString().slice(5, 10); // MM-DD
+
+    let baseFare = 4.20;
+    let stepFare = 0.30;
+    let band = "Normal Fare";
+
+    // === HOLIDAY / CHRISTMAS EVE / NEW YEAR'S EVE ===
+    const isHolidayEvening = (
+      // Christmas Eve
+      (dateStr === "12-24" && hour >= 19) ||
+      // New Year's Eve
+      (dateStr === "12-31" && hour >= 19) ||
+      // Bank Holiday (rough check: Sundays or UK bank holidays can be listed manually if needed)
+      (day === 0 && hour >= 19) // Sunday from 19:00 — this is a simplification
+    );
+
+    if (isHolidayEvening) {
+      baseFare = 8.40;
+      stepFare = 0.60;
+      band = "Holiday Fare (from 19:00)";
+    } else if (hour >= 23 || hour < 7) {
+      baseFare = 6.30;
+      stepFare = 0.40;
+      band = "Night Fare (23:00–07:00)";
+    }
+
+    let fare = baseFare;
+    const excessMeters = distanceMeters - 1609;
+    if (excessMeters > 0) {
+      const steps = Math.ceil(excessMeters / 161);
+      fare += steps * stepFare;
+    }
+
+    estimateField.value = `${band}
+Distance: ${distanceMeters} m (${distanceKm} km)
+Estimated Fare: £${fare.toFixed(2)}`;
+  });
+  }
+  
   setupAddressAutocomplete(pickupInput, true);
   setupAddressAutocomplete(dropoffInput, false);
 
