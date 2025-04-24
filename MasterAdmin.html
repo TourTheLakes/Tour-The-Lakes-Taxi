@@ -149,14 +149,19 @@
     </div>
 
     <div id="mainContent" class="hidden">
-      <div class="panel">
-        <h2>Rota & Break Manager</h2>
-        <label>Select Date:</label>
-        <input type="date" id="rotaDate" placeholder="Select a date" />
-        <div id="driverRotaList"></div>
-      </div>
-
-      <div class="panel">
+  <div class="panel">
+    <h2>Rota & Break Manager</h2>
+    <div class="dual-row">
+      <label for="rotaDate">Select Date:</label>
+    </div>
+    <input 
+      type="date" 
+      id="rotaDate" 
+      aria-label="Select rota date"
+      style="background-color: var(--input-dark); color: var(--text-main);" 
+    />
+    <div id="driverRotaList"></div>
+  </div>
 
     <div class="panel">
   <h2>Manual Booking</h2><label for="bPickup">Pickup address:</label> <input id="bPickup" type="text" placeholder="Enter pickup address" />
