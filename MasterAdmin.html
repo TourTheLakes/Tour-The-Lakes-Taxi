@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Master Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
-
-  <!-- Google Maps Places API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places"></script>
-
-  <!-- Fonts & Styles -->
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>  <!-- Google Maps Places API -->  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places"></script>  <!-- Fonts & Styles -->  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-dark: #0e0f10;
@@ -23,119 +12,119 @@
       --warn: #f44336;
       --logoff: #ff9800;
       --input-dark: #2a2d30;
-    }
+    }* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+}
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Quicksand', sans-serif;
-    }
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  padding: 30px 20px;
+}
 
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      padding: 30px 20px;
-    }
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-    }
+h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 30px;
+}
 
-    h1 {
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 30px;
-    }
+.panel {
+  background: var(--section-light);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
 
-    .panel {
-      background: var(--section-light);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    }
+.panel h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
 
-    .panel h2 {
-      font-size: 20px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 6px;
-    }
+.panel h3 {
+  font-size: 18px;
+  margin: 20px 0 8px;
+}
 
-    .panel h3 {
-      font-size: 18px;
-      margin: 20px 0 8px;
-    }
+input, select, button {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 6px 0 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: var(--input-dark);
+  color: var(--text-main);
+}
 
-    input, select, button {
-      width: 100%;
-      padding: 10px 12px;
-      margin: 6px 0 12px;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      background-color: var(--input-dark);
-      color: var(--text-main);
-    }
+input::placeholder, select:invalid {
+  color: #aaa;
+}
 
-    input::placeholder, select:invalid {
-      color: #aaa;
-    }
+select option {
+  background: var(--input-dark);
+  color: var(--text-main);
+}
 
-    select option {
-      background: var(--input-dark);
-      color: var(--text-main);
-    }
+button {
+  background-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 10px;
+}
 
-    button {
-      background-color: var(--accent);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+button:hover {
+  background-color: #3e9144;
+}
 
-    button:hover {
-      background-color: #3e9144;
-    }
+button.warn {
+  background-color: var(--warn);
+}
 
-    button.warn {
-      background-color: var(--warn);
-    }
+button.warn:hover {
+  background-color: #e53935;
+}
 
-    button.warn:hover {
-      background-color: #e53935;
-    }
+.warn {
+  color: var(--warn);
+  font-weight: bold;
+}
 
-    .warn {
-      color: var(--warn);
-      font-weight: bold;
-    }
+.hidden {
+  display: none;
+}
 
-    .hidden {
-      display: none;
-    }
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
 
-    label {
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
+@media (min-width: 600px) {
+  .dual-row {
+    display: flex;
+    gap: 10px;
+  }
+  .dual-row input,
+  .dual-row select {
+    flex: 1;
+  }
+}
 
-    @media (min-width: 600px) {
-      .dual-row {
-        display: flex;
-        gap: 10px;
-      }
-      .dual-row input,
-      .dual-row select {
-        flex: 1;
-      }
-    }
-    option:disabled {
+option:disabled {
   color: #888 !important;
   background-color: #2a2d30;
   font-style: italic;
@@ -149,13 +138,24 @@
   padding: 6px 10px;
   border-left: 4px solid var(--warn);
   margin-top: 8px;
-  border-radius: 4px;
+  border-radius: 4px;
 }
+
+#bEstimate {
+  font-size: 0.95em;
+  background: #252729;
+  color: #ccc;
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Master Admin Panel</h1>
+
+    <!-- Admin Login Panel -->
     <div id="authPanel" class="panel">
       <h2>Admin Access</h2>
       <p>Please enter the admin password to unlock this page.</p>
@@ -164,84 +164,100 @@
       <p id="authError" class="warn hidden">Incorrect password.</p>
     </div>
 
+    <!-- Main Content -->
     <div id="mainContent" class="hidden">
-  <div class="panel">
-    <h2>Rota & Break Manager</h2>
-    <div class="dual-row">
-      <label for="rotaDate">Select Date:</label>
-    </div>
-    <input 
-      type="date" 
-      id="rotaDate" 
-      aria-label="Select rota date"
-      style="background-color: var(--input-dark); color: var(--text-main);" 
-    />
-    <div id="driverRotaList"></div>
-  </div>
 
-<div class="panel">
-  <h2>Manual Booking</h2><label for="bPickup">Pickup address:</label> <input id="bPickup" type="text" placeholder="Enter pickup address" />
-
-<label for="bDropoff">Drop-off address:</label> <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
-
-  <div class="dual-row">
-    <div style="flex: 1;">
-      <label for="bPassengers">Passenger count:</label>
-      <select id="bPassengers" required>
-        <option value="" disabled selected>Select number of passengers</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-      </select>
-    </div>
-    <div style="flex: 1;">
-      <label for="bLuggage">Luggage:</label>
-      <select id="bLuggage" required>
-        <option value="" disabled selected>Select luggage</option>
-        <option value="None" class="luggageOption">No luggage</option>
-        <option value="Small" class="luggageOption">Small – a backpack or a small carry-on</option>
-        <option value="Medium" class="luggageOption">Medium – a couple of suitcases</option>
-        <option value="Large" class="luggageOption">Large – multiple bags or oversized items</option>
-      </select>
-    </div>
-  </div>  <p id="capacityWarning" class="warn hidden" style="margin-top: 6px; font-size: 0.85em;">
-    Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited when all seats are in use.
-    Please pack light — only <strong>No</strong> or <strong>Small</strong> luggage can be accommodated.
-  </p>  <div class="dual-row">
-    <div style="flex: 1;">
-      <label for="bDate">Booking date:</label>
-      <input id="bDate" type="date" />
-    </div>
-    <div style="flex: 1;">
-      <label for="bTime">Booking time:</label>
-      <input id="bTime" type="time" />
-    </div>
-  </div><label for="bEstimate" style="margin-top: 6px;">Distance & Estimated Fare:</label> <input id="bEstimate" type="text" disabled style="font-size: 0.95em; background: #252729; color: #ccc;" placeholder="Distance and fare will appear here..." />
-
-<label for="bAssignTo">Assign to driver (optional):</label> <select id="bAssignTo"> <option value="">Select a driver</option> </select>
-
-<label for="bPets">Pets:</label> <input id="bPets" type="text" value="No" disabled />
-
-  <div class="dual-row">
-    <input id="bName" type="text" placeholder="Customer name" />
-    <input id="bPhone" type="text" placeholder="Phone number" />
-  </div><label for="bExtra">Additional information:</label> <input id="bExtra" type="text" placeholder="Optional instructions" />
-
-<button onclick="addManualBooking()">Add Booking</button>
-
-</div>
-
-
+      <!-- Rota & Break Manager -->
       <div class="panel">
-  <h2>Live Bookings</h2>
-  <div id="liveBookingsList"><p>Loading...</p></div>
-</div>
+        <h2>Rota & Break Manager</h2>
+        <label for="rotaDate">Select Date:</label>
+        <input type="date" id="rotaDate" aria-label="Select rota date" />
+        <div id="driverRotaList"></div>
+      </div>
 
+      <!-- Manual Booking Panel -->
+      <div class="panel">
+        <h2>Manual Booking</h2>
 
-      <script>
+        <label for="bPickup">Pickup address:</label>
+        <input id="bPickup" type="text" placeholder="Enter pickup address" />
+
+        <label for="bDropoff">Drop-off address:</label>
+        <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
+
+        <div class="dual-row">
+          <div>
+            <label for="bPassengers">Passenger count:</label>
+            <select id="bPassengers" required>
+              <option value="" disabled selected>Select number of passengers</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bLuggage">Luggage:</label>
+            <select id="bLuggage" required>
+              <option value="" disabled selected>Select luggage</option>
+              <option value="None">No luggage</option>
+              <option value="Small">Small – a backpack or a small carry-on</option>
+              <option value="Medium">Medium – a couple of suitcases</option>
+              <option value="Large">Large – multiple bags or oversized items</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="capacityWarning" class="warn hidden">
+          Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited when all seats are in use.
+          Please pack light — only <strong>No</strong> or <strong>Small</strong> luggage can be accommodated.
+        </p>
+
+        <div class="dual-row">
+          <div>
+            <label for="bDate">Booking date:</label>
+            <input id="bDate" type="date" />
+          </div>
+          <div>
+            <label for="bTime">Booking time:</label>
+            <input id="bTime" type="time" />
+          </div>
+        </div>
+
+        <label for="bEstimate">Distance & Estimated Fare:</label>
+        <input id="bEstimate" type="text" disabled placeholder="Distance and fare will appear here..." />
+
+        <label for="bAssignTo">Assign to driver (optional):</label>
+        <select id="bAssignTo">
+          <option value="">Select a driver</option>
+        </select>
+
+        <label for="bPets">Pets:</label>
+        <input id="bPets" type="text" value="No" disabled />
+
+        <div class="dual-row">
+          <input id="bName" type="text" placeholder="Customer name" />
+          <input id="bPhone" type="text" placeholder="Phone number" />
+        </div>
+
+        <label for="bExtra">Additional information:</label>
+        <input id="bExtra" type="text" placeholder="Optional instructions" />
+
+        <button onclick="addManualBooking()">Add Booking</button>
+      </div>
+
+      <!-- Live Bookings Display -->
+      <div class="panel">
+        <h2>Live Bookings</h2>
+        <div id="liveBookingsList"><p>Loading...</p></div>
+      </div>
+
+    </div>
+  </div>
+<script>
   // === FIREBASE CONFIGURATION ===
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -282,7 +298,8 @@
     authPanel.classList.add("hidden");
     mainContent.classList.remove("hidden");
   }
-     // === ROTA & BREAK MANAGER ===
+
+  // === ROTA & BREAK MANAGER ===
   const rotaDateInput = document.getElementById("rotaDate");
   const driverListDiv = document.getElementById("driverRotaList");
 
@@ -305,13 +322,13 @@
         block.innerHTML = `
           <p><strong>${d.name}</strong> – ${d.vehicle.make} ${d.vehicle.model}</p>
           <label>Shift Start:</label>
-          <input type="time" id="start-${doorCard}" placeholder="Start time" />
+          <input type="time" id="start-${doorCard}" />
           <label>Shift End:</label>
-          <input type="time" id="end-${doorCard}" placeholder="End time" />
+          <input type="time" id="end-${doorCard}" />
           <label>Break From:</label>
-          <input type="time" id="breakFrom-${doorCard}" placeholder="Break start" />
+          <input type="time" id="breakFrom-${doorCard}" />
           <label>Break To:</label>
-          <input type="time" id="breakTo-${doorCard}" placeholder="Break end" />
+          <input type="time" id="breakTo-${doorCard}" />
           <button onclick="saveRota('${doorCard}')">Save</button>
         `;
         driverListDiv.appendChild(block);
@@ -356,15 +373,17 @@
 
     alert("Saved.");
   }
-        // === DRIVER DROPDOWN INITIALISATION ===
+
+  // === DRIVER DROPDOWN INITIALISATION ===
   const driverDropdown = document.getElementById("bAssignTo");
-  let driverMap = {}; // Maps driver name → doorCard
+  let driverMap = {};
 
   db.ref("drivers").once("value").then(snapshot => {
     const drivers = snapshot.val() || {};
     for (const key in drivers) {
       const d = drivers[key];
       driverMap[d.name] = d.doorCard;
+
       const opt = document.createElement("option");
       opt.value = d.name;
       opt.textContent = `${d.name} (${d.vehicle.make})`;
@@ -372,133 +391,111 @@
     }
   });
 
-  // === GOOGLE PLACES AUTOCOMPLETE (UK ONLY) ===
-  let autocompletePickup, autocompleteDropoff;
-  setTimeout(() => {
-    const options = { componentRestrictions: { country: "gb" } };
-    autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"), options);
-    autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"), options);
-  }, 500);
+  // === GOOGLE PLACES AUTOCOMPLETE ===
+  let pickupCoords = null;
+  let dropoffCoords = null;
 
-// === LUGGAGE WARNING + RESTRICTION FOR LARGE PARTIES ===
-const passengersDropdown = document.getElementById("bPassengers");
-const luggageSelect = document.getElementById("bLuggage");
-const luggageWarning = document.getElementById("capacityWarning");
+  const pickupInput = document.getElementById("bPickup");
+  const dropoffInput = document.getElementById("bDropoff");
+  const estimateField = document.getElementById("bEstimate");
 
-const mediumOption = luggageSelect.querySelector('option[value="Medium"]');
-const largeOption = luggageSelect.querySelector('option[value="Large"]');
-
-passengersDropdown.addEventListener("change", () => {
-  const count = parseInt(passengersDropdown.value);
-
-  if (count >= 5) {
-    luggageWarning.style.display = "block";
-    mediumOption.disabled = true;
-    largeOption.disabled = true;
-
-    // Clear selection if it violates the restriction
-    if (luggageSelect.value === "Medium" || luggageSelect.value === "Large") {
-      luggageSelect.value = "";
+  function updateEstimateDisplay() {
+    if (!pickupCoords || !dropoffCoords) {
+      estimateField.value = "";
+      return;
     }
-  } else {
-    luggageWarning.style.display = "none";
-    mediumOption.disabled = false;
-    largeOption.disabled = false;
-  }
-});
 
-        // === DISTANCE + FARE ESTIMATION LOGIC ===
-const pickupInput = document.getElementById("bPickup");
-const dropoffInput = document.getElementById("bDropoff");
-const estimateField = document.getElementById("bEstimate");
+    const service = new google.maps.DirectionsService();
+    service.route({
+      origin: pickupCoords,
+      destination: dropoffCoords,
+      travelMode: 'DRIVING'
+    }, (result, status) => {
+      if (status === 'OK' && result.routes.length > 0) {
+        const leg = result.routes[0].legs[0];
+        const distanceMiles = (leg.distance.value / 1609.34).toFixed(1);
+        const baseFare = 4.20;
+        const stepFare = 0.30;
 
-let pickupCoords = null;
-let dropoffCoords = null;
+        let fare = baseFare;
+        if (distanceMiles > 1) fare += (distanceMiles - 1) * stepFare;
 
-function updateEstimateDisplay() {
-  if (!pickupCoords || !dropoffCoords) {
-    estimateField.value = "";
-    return;
+        estimateField.value = `Distance: ${distanceMiles} miles | Est. Fare: £${fare.toFixed(2)}`;
+      } else {
+        estimateField.value = "Could not calculate route.";
+      }
+    });
   }
 
-  const service = new google.maps.DirectionsService();
-  service.route({
-    origin: pickupCoords,
-    destination: dropoffCoords,
-    travelMode: 'DRIVING'
-  }, (result, status) => {
-    if (status === 'OK' && result.routes.length > 0) {
-      const leg = result.routes[0].legs[0];
-      const distanceMiles = (leg.distance.value / 1609.34).toFixed(1);
+  function setupAddressAutocomplete(input, isPickup) {
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'gb' }
+    });
 
-      const baseFare = 4.20;
-      const stepFare = 0.30;
-
-      let fare = baseFare;
-      if (distanceMiles > 1) {
-        fare += (distanceMiles - 1) * stepFare;
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (place.geometry && place.geometry.location) {
+        const coords = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        if (isPickup) {
+          pickupCoords = coords;
+        } else {
+          dropoffCoords = coords;
+        }
+        updateEstimateDisplay();
       }
+    });
+  }
 
-      estimateField.value = `Distance: ${distanceMiles} miles | Est. Fare: £${fare.toFixed(2)}`;
+  setupAddressAutocomplete(pickupInput, true);
+  setupAddressAutocomplete(dropoffInput, false);
+
+  // === LUGGAGE WARNING ===
+  const passengersDropdown = document.getElementById("bPassengers");
+  const luggageSelect = document.getElementById("bLuggage");
+  const luggageWarning = document.getElementById("capacityWarning");
+
+  const mediumOption = luggageSelect.querySelector('option[value="Medium"]');
+  const largeOption = luggageSelect.querySelector('option[value="Large"]');
+
+  passengersDropdown.addEventListener("change", () => {
+    const count = parseInt(passengersDropdown.value);
+    if (count >= 5) {
+      luggageWarning.style.display = "block";
+      mediumOption.disabled = true;
+      largeOption.disabled = true;
+      if (["Medium", "Large"].includes(luggageSelect.value)) luggageSelect.value = "";
     } else {
-      estimateField.value = "Could not calculate route.";
+      luggageWarning.style.display = "none";
+      mediumOption.disabled = false;
+      largeOption.disabled = false;
     }
   });
-}
 
-// === HOOK AUTOCOMPLETE TO UPDATE COORDINATES ===
-function setupAddressAutocomplete(input, isPickup) {
-  const autocomplete = new google.maps.places.Autocomplete(input, {
-    componentRestrictions: { country: 'gb' }
-  });
-
-  autocomplete.addListener("place_changed", () => {
-    const place = autocomplete.getPlace();
-    if (place.geometry && place.geometry.location) {
-      const coords = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng()
-      };
-      if (isPickup) {
-        pickupCoords = coords;
-      } else {
-        dropoffCoords = coords;
-      }
-      updateEstimateDisplay();
-    }
-  });
-}
-
-setupAddressAutocomplete(pickupInput, true);
-setupAddressAutocomplete(dropoffInput, false);
-        
-
-  // === ADD MANUAL BOOKING FUNCTION ===
+  // === ADD MANUAL BOOKING ===
   function addManualBooking() {
     const name = document.getElementById("bName").value.trim();
     const phone = document.getElementById("bPhone").value.trim();
-    const pickup = document.getElementById("bPickup").value.trim();
-    const dropoff = document.getElementById("bDropoff").value.trim();
+    const pickup = pickupInput.value.trim();
+    const dropoff = dropoffInput.value.trim();
     const date = document.getElementById("bDate").value;
     const time = document.getElementById("bTime").value;
-    const passengers = document.getElementById("bPassengers").value.trim();
-    const luggage = document.getElementById("bLuggage").value;
+    const passengers = passengersDropdown.value.trim();
+    const luggage = luggageSelect.value;
     const pets = "No";
     const extra = document.getElementById("bExtra").value.trim();
-    const claimedBy = document.getElementById("bAssignTo").value;
+    const claimedBy = driverDropdown.value;
 
     if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
       alert("All fields except notes and assignment are required.");
       return;
     }
 
-    // --- Shift Check if assigned to driver ---
     if (claimedBy) {
       const doorCard = driverMap[claimedBy];
-      if (!doorCard) {
-        alert("Driver mapping not found.");
-        return;
-      }
+      if (!doorCard) return alert("Driver mapping not found.");
 
       db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
         const rota = snap.val();
@@ -506,46 +503,29 @@ setupAddressAutocomplete(dropoffInput, false);
           alert("Driver has no shift set for that date.");
           return;
         }
-
         if (time < rota.start || time > rota.end) {
           alert(`Driver shift is from ${rota.start} to ${rota.end}. Booking time is outside that.`);
           return;
         }
 
-        createBooking({
-          name, phone, pickup, dropoff,
-          pickupDate: date, pickupTime: time,
-          passengers, luggage, pets, extra,
-          claimedBy, claimedDoor: doorCard
-        });
+        createBooking({ name, phone, pickup, dropoff, pickupDate: date, pickupTime: time, passengers, luggage, pets, extra, claimedBy, claimedDoor: doorCard });
       });
     } else {
-      createBooking({
-        name, phone, pickup, dropoff,
-        pickupDate: date, pickupTime: time,
-        passengers, luggage, pets, extra,
-        claimedBy: "unassigned", claimedDoor: "unassigned"
-      });
+      createBooking({ name, phone, pickup, dropoff, pickupDate: date, pickupTime: time, passengers, luggage, pets, extra, claimedBy: "unassigned", claimedDoor: "unassigned" });
     }
   }
-        // === BOOKING CREATION + CLEANUP ===
+
   function createBooking(data) {
     const newKey = db.ref("bookings").push().key;
     db.ref("bookings/" + newKey).set(data).then(() => {
       alert("Booking added successfully.");
-
-      // Reset fields (excluding pets)
       document.querySelectorAll(".panel input, .panel select").forEach(el => {
         if (el.id !== "bPets") el.value = "";
       });
-
-      // Reset dropdowns explicitly
-      document.getElementById("bPassengers").value = "";
-      document.getElementById("bLuggage").value = "";
-      document.getElementById("bAssignTo").value = "";
-
-      // Hide luggage warning
-      document.getElementById("capacityWarning").style.display = "none";
+      driverDropdown.value = "";
+      passengersDropdown.value = "";
+      luggageSelect.value = "";
+      luggageWarning.style.display = "none";
     });
   }
 
@@ -571,7 +551,6 @@ setupAddressAutocomplete(dropoffInput, false);
     });
   });
 
-  // === CANCEL BOOKING ===
   function cancelBooking(id) {
     if (confirm("Are you sure you want to cancel this booking?")) {
       db.ref("bookings/" + id).remove().then(() => {
@@ -579,11 +558,7 @@ setupAddressAutocomplete(dropoffInput, false);
       });
     }
   }
-      
-</script> 
-  </body>
-     </html>
-      
-
-    
+</script>
   
+</body>
+</html>
