@@ -180,13 +180,9 @@
   </div>
 
 <div class="panel">
-  <h2>Manual Booking</h2>
+  <h2>Manual Booking</h2><label for="bPickup">Pickup address:</label> <input id="bPickup" type="text" placeholder="Enter pickup address" />
 
-  <label for="bPickup">Pickup address:</label>
-  <input id="bPickup" type="text" placeholder="Enter pickup address" />
-
-  <label for="bDropoff">Drop-off address:</label>
-  <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
+<label for="bDropoff">Drop-off address:</label> <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
 
   <div class="dual-row">
     <div style="flex: 1;">
@@ -211,14 +207,10 @@
         <option value="Large" class="luggageOption">Large – multiple bags or oversized items</option>
       </select>
     </div>
-  </div>
-
-  <p id="capacityWarning" class="warn hidden" style="margin-top: 6px; font-size: 0.85em;">
-    Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited when all seats are in use. 
+  </div>  <p id="capacityWarning" class="warn hidden" style="margin-top: 6px; font-size: 0.85em;">
+    Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited when all seats are in use.
     Please pack light — only <strong>No</strong> or <strong>Small</strong> luggage can be accommodated.
-  </p>
-
-  <div class="dual-row">
+  </p>  <div class="dual-row">
     <div style="flex: 1;">
       <label for="bDate">Booking date:</label>
       <input id="bDate" type="date" />
@@ -227,26 +219,21 @@
       <label for="bTime">Booking time:</label>
       <input id="bTime" type="time" />
     </div>
-  </div>
+  </div><label for="bEstimate" style="margin-top: 6px;">Distance & Estimated Fare:</label> <input id="bEstimate" type="text" disabled style="font-size: 0.95em; background: #252729; color: #ccc;" placeholder="Distance and fare will appear here..." />
 
-  <label for="bAssignTo">Assign to driver (optional):</label>
-  <select id="bAssignTo">
-    <option value="">Select a driver</option>
-  </select>
+<label for="bAssignTo">Assign to driver (optional):</label> <select id="bAssignTo"> <option value="">Select a driver</option> </select>
 
-  <label for="bPets">Pets:</label>
-  <input id="bPets" type="text" value="No" disabled />
+<label for="bPets">Pets:</label> <input id="bPets" type="text" value="No" disabled />
 
   <div class="dual-row">
     <input id="bName" type="text" placeholder="Customer name" />
     <input id="bPhone" type="text" placeholder="Phone number" />
-  </div>
+  </div><label for="bExtra">Additional information:</label> <input id="bExtra" type="text" placeholder="Optional instructions" />
 
-  <label for="bExtra">Additional information:</label>
-  <input id="bExtra" type="text" placeholder="Optional instructions" />
+<button onclick="addManualBooking()">Add Booking</button>
 
-  <button onclick="addManualBooking()">Add Booking</button>
 </div>
+
 
       <div class="panel">
   <h2>Live Bookings</h2>
@@ -527,6 +514,11 @@ passengersDropdown.addEventListener("change", () => {
       });
     }
   }
+
+        
+
+
+        
 </script>
       
 
