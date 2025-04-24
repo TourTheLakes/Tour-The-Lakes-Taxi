@@ -553,10 +553,20 @@ function updateEstimateDisplay() {
           return;
         }
 
-        createBooking({ name, phone, pickup, dropoff, pickupDate: date, pickupTime: time, passengers, luggage, pets, extra, claimedBy, claimedDoor: doorCard });
+        createBooking({ name, phone, pickup, dropoff, 
+                       pickupDate: date, pickupTime: time, 
+                       passengers, luggage, pets, extra, 
+                       claimedBy, claimedDoor: doorCard,
+                      fare: latestFare || "0.00"
+                      });
       });
     } else {
-      createBooking({ name, phone, pickup, dropoff, pickupDate: date, pickupTime: time, passengers, luggage, pets, extra, claimedBy: "unassigned", claimedDoor: "unassigned" });
+      createBooking({ name, phone, pickup, dropoff, 
+                     pickupDate: date, pickupTime: time, 
+                     passengers, luggage, pets, extra, 
+                     claimedBy: "unassigned", claimedDoor: "unassigned",
+                    fare: latestFare || "0.00"
+                    });
     }
   }
 
