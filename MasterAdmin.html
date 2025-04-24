@@ -370,18 +370,30 @@
     autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"), options);
   }, 500);
 
-  // === LUGGAGE WARNING FOR LARGE PARTIES ===
-  const passengersDropdown = document.getElementById("bPassengers");
-  const luggageWarning = document.getElementById("capacityWarning");
+// === LUGGAGE WARNING + RESTRICTION FOR LARGE PARTIES ===
+const passengersDropdown = document.getElementById("bPassengers");
+const luggageSelect = document.getElementById("bLuggage");
+const luggageWarning = document.getElementById("capacityWarning");
+const mediumLuggageOption = luggageSelect.querySelector('option[value="Medium"]');
+const largeLuggageOption = luggageSelect.querySelector('option[value="Large"]');
 
-  passengersDropdown.addEventListener("change", () => {
-    const count = parseInt(passengersDropdown.value);
-    if (count >= 5) {
-      luggageWarning.style.display = "block";
-    } else {
-      luggageWarning.style.display = "none";
+passengersDropdown.addEventListener("change", () => {
+  const count = parseInt(passengersDropdown.value);
+  if (count >= 5) {
+    luggageWarning.style.display = "block";
+    mediumLuggageOption.disabled = true;
+    largeLuggageOption.disabled = true;
+
+    // Reset selection if an invalid option is already selected
+    if (luggageSelect.value === "Medium" || luggageSelect.value === "Large") {
+      luggageSelect.value = "";
     }
-  });
+  } else {
+    luggageWarning.style.display = "none";
+    mediumLuggageOption.disabled = false;
+    largeLuggageOption.disabled = false;
+  }
+});
 
   // === ADD MANUAL BOOKING FUNCTION ===
   function addManualBooking() {
