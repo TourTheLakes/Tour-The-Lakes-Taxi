@@ -158,7 +158,47 @@
 
       <div class="panel">
 
-        
+    <div class="panel">
+  <h2>Manual Booking</h2><label for="bPickup">Pickup address:</label> <input id="bPickup" type="text" placeholder="Enter pickup address" />
+
+<label for="bDropoff">Drop-off address:</label> <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
+
+  <div class="dual-row">
+    <div style="flex: 1;">
+      <label for="bPassengers">Passenger count:</label>
+      <input id="bPassengers" type="number" placeholder="e.g. 2" min="1" />
+    </div>
+    <div style="flex: 1;">
+      <label for="bLuggage">Select luggage:</label>
+      <select id="bLuggage" required>
+        <option value="" disabled selected>Select luggage</option>
+        <option value="None">None</option>
+        <option value="Small">Small</option>
+        <option value="Medium">Medium</option>
+        <option value="Large">Large</option>
+      </select>
+    </div>
+  </div>  <div class="dual-row">
+    <div style="flex: 1;">
+      <label for="bDate">Booking date:</label>
+      <input id="bDate" type="date" />
+    </div>
+    <div style="flex: 1;">
+      <label for="bTime">Booking time:</label>
+      <input id="bTime" type="time" />
+    </div>
+  </div><label for="bAssignTo">Assign to driver (optional):</label> <select id="bAssignTo"> <option value="">Select a driver</option> </select>
+
+<label for="bPets">Pets:</label> <input id="bPets" type="text" value="No" disabled />
+
+  <div class="dual-row">
+    <input id="bName" type="text" placeholder="Customer name" />
+    <input id="bPhone" type="text" placeholder="Phone number" />
+  </div><label for="bExtra">Additional information:</label> <input id="bExtra" type="text" placeholder="Optional instructions" />
+
+<button onclick="addManualBooking()">Add Booking</button>
+
+    </div>    
 
 
 
