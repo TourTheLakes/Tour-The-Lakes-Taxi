@@ -135,6 +135,22 @@
         flex: 1;
       }
     }
+    option:disabled {
+  color: #888 !important;
+  background-color: #2a2d30;
+  font-style: italic;
+}
+
+#capacityWarning {
+  display: none;
+  font-size: 13px;
+  color: #f1f1f1;
+  background: #333;
+  padding: 6px 10px;
+  border-left: 4px solid var(--warn);
+  margin-top: 8px;
+  border-radius: 4px;
+}
   </style>
 </head>
 <body>
@@ -163,7 +179,7 @@
     <div id="driverRotaList"></div>
   </div>
 
-  <div class="panel">
+<div class="panel">
   <h2>Manual Booking</h2>
 
   <label for="bPickup">Pickup address:</label>
@@ -197,9 +213,10 @@
     </div>
   </div>
 
-  <div id="capacityWarning" class="warn hidden" style="margin-top: 6px;">
-    Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited when all seats are in use. Please pack light — only <strong>No</strong> or <strong>Small</strong> luggage can be accommodated.
-  </div>
+  <p id="capacityWarning" class="warn hidden" style="margin-top: 6px; font-size: 13px;">
+    With 5 or more passengers, only <strong>None</strong> or <strong>Small</strong> luggage may be carried due to reduced boot space.
+  </p>
+</div>
 
   <div class="dual-row">
     <div style="flex: 1;">
@@ -374,26 +391,29 @@
 const passengersDropdown = document.getElementById("bPassengers");
 const luggageSelect = document.getElementById("bLuggage");
 const luggageWarning = document.getElementById("capacityWarning");
-const mediumLuggageOption = luggageSelect.querySelector('option[value="Medium"]');
-const largeLuggageOption = luggageSelect.querySelector('option[value="Large"]');
+
+const mediumOption = luggageSelect.querySelector('option[value="Medium"]');
+const largeOption = luggageSelect.querySelector('option[value="Large"]');
 
 passengersDropdown.addEventListener("change", () => {
   const count = parseInt(passengersDropdown.value);
+
   if (count >= 5) {
     luggageWarning.style.display = "block";
-    mediumLuggageOption.disabled = true;
-    largeLuggageOption.disabled = true;
+    mediumOption.disabled = true;
+    largeOption.disabled = true;
 
-    // Reset selection if an invalid option is already selected
+    // Clear selection if it violates the restriction
     if (luggageSelect.value === "Medium" || luggageSelect.value === "Large") {
       luggageSelect.value = "";
     }
   } else {
     luggageWarning.style.display = "none";
-    mediumLuggageOption.disabled = false;
-    largeLuggageOption.disabled = false;
+    mediumOption.disabled = false;
+    largeOption.disabled = false;
   }
 });
+
 
   // === ADD MANUAL BOOKING FUNCTION ===
   function addManualBooking() {
