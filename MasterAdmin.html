@@ -360,8 +360,9 @@
     // Google Places Autocomplete
     let autocompletePickup, autocompleteDropoff;
     setTimeout(() => {
-      autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"));
-      autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"));
+      const options = { componentRestrictions: { country: "gb" } };
+autocompletePickup = new google.maps.places.Autocomplete(document.getElementById("bPickup"), options);
+autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById("bDropoff"), options);
     }, 500);
 
     function addManualBooking() {
