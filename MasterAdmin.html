@@ -822,7 +822,41 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
   });
 }
 
-    
+ // === SUGGEST BEST AVAILABLE TIME (SAFE VERSION) ===
+let suggestionShown = false;
+
+function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  if (suggestionShown) return; // Prevent duplicate popups
+  suggestionShown = true;
+
+  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
+    if (earlierTime) {
+      const confirmEarlier = confirm(`No driver available at your requested time.\n\nClosest earlier available slot: ${earlierTime}.\n\nDo you want to update your booking to this time?`);
+      if (confirmEarlier) {
+        document.getElementById("bTime").value = earlierTime;
+        updateEstimateDisplay();
+        suggestionShown = false;
+        return;
+      }
+    }
+
+    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+      if (!nextTime) {
+        alert("No available time slots found for today.");
+        suggestionShown = false;
+        return;
+      }
+
+      const confirmLater = confirm(`Closest later available slot: ${nextTime}.\n\nDo you want to update your booking to this time?`);
+      if (confirmLater) {
+        document.getElementById("bTime").value = nextTime;
+        updateEstimateDisplay();
+      }
+
+      suggestionShown = false;
+    });
+  });
+}   
     
   // === UPDATED AUTO-ASSIGN DRIVER ===
 function autoAssignDriver() {
