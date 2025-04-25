@@ -223,6 +223,183 @@ function logOffDriver() {
   }
 }
 
+// === TIME STRING TO MINUTES ===
+function timeToMinutes(t) {
+  const [h, m] = t.split(":");
+  return parseInt(h) * 60 + parseInt(m);
+}
+
+// === DIARY AVAILABILITY CHECK ===
+function checkDiaryAvailability(driver, dateVal, timeVal) {
+  return new Promise(resolve => {
+    const doorCard = driver.doorCard;
+    const bookingMinutes = timeToMinutes(timeVal);
+
+    db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+      const shift = rotaSnap.val();
+      if (!shift || !shift.start || !shift.end) return resolve(false);
+
+      const shiftStart = timeToMinutes(shift.start);
+      const shiftEnd = timeToMinutes(shift.end);
+      if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return resolve(false);
+
+      db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
+        const brk = breakSnap.val();
+        if (brk && brk.from && brk.to) {
+          const breakStart = timeToMinutes(brk.from);
+          const breakEnd = timeToMinutes(brk.to);
+          if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return resolve(false);
+        }
+
+        db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
+          const bookings = bookingsSnap.val() || {};
+          for (const id in bookings) {
+            const b = bookings[id];
+            if (b.pickupDate !== dateVal) continue;
+            const jobMinutes = timeToMinutes(b.pickupTime);
+            if (Math.abs(bookingMinutes - jobMinutes) < 30) return resolve(false);
+          }
+          resolve(true); // No conflicts found
+        });
+      });
+    });
+  });
+}
+
+// === FIND EARLIER AVAILABLE SLOT ===
+function findEarlierAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5;
+    let attemptMinutes = timeToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return resolve(null);
+
+    const shiftStart = timeToMinutes(shift.start);
+
+    while (attemptMinutes > shiftStart) {
+      attemptMinutes -= increment;
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) return resolve(attemptTime);
+    }
+    resolve(null);
+  });
+}
+
+// === FIND NEXT AVAILABLE SLOT ===
+function findNextAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5;
+    let attemptMinutes = timeToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return resolve(null);
+
+    const shiftEnd = timeToMinutes(shift.end);
+
+    if (attemptMinutes > shiftEnd) return resolve(null);
+
+    while (attemptMinutes <= shiftEnd) {
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) return resolve(attemptTime);
+      attemptMinutes += increment;
+    }
+    resolve(null);
+  });
+}
+
+// === SUGGEST BEST AVAILABLE TIME (EARLIER THEN LATER) ===
+function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
+    if (earlierTime) {
+      if (confirm(`No driver available exactly at your requested time.\n\nClosest earlier available slot is ${earlierTime}.\n\nDo you want to update your booking to this time?`)) {
+        document.getElementById("bTime").value = earlierTime;
+        updateEstimateDisplay();
+        return;
+      }
+    }
+    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+      if (nextTime) {
+        if (confirm(`Closest later available slot is ${nextTime}.\n\nDo you want to update your booking to this time?`)) {
+          document.getElementById("bTime").value = nextTime;
+          updateEstimateDisplay();
+        }
+      } else {
+        alert("No available time slots found today.");
+      }
+    });
+  });
+}
+
+// === AUTO-ASSIGN DRIVER AFTER ESTIMATE ===
+function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  db.ref("drivers").once("value").then(driverSnap => {
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+
+    const promises = Object.keys(drivers).map(driverKey => {
+      const d = drivers[driverKey];
+      return checkDiaryAvailability(d, dateVal, timeVal).then(isAvailable => {
+        if (isAvailable) availableDrivers.push(d);
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      if (availableDrivers.length > 0) {
+        const selectedDriver = availableDrivers[0];
+        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
+      } else {
+        assignedDriverField.value = "No driver available at requested time.";
+        const anyDriver = Object.values(drivers)[0];
+        if (anyDriver) {
+          suggestBestAvailableTime(anyDriver, dateVal, timeVal);
+        }
+      }
+    });
+  });
+}
+
+// === LIVE DRIVER LOCATION TRACKING ===
+function updateDriverLocation(position) {
+  const coords = {
+    lat: position.coords.latitude,
+    lng: position.coords.longitude,
+    timestamp: Date.now()
+  };
+  db.ref(`liveLocations/${driverDoor}`).set(coords);
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(updateDriverLocation);
+  navigator.geolocation.watchPosition(updateDriverLocation, console.warn, {
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 10000
+  });
+} else {
+  console.warn("Geolocation not supported.");
+}
+
+</script>
 
     
   </body>
