@@ -222,6 +222,62 @@ function logOffDriver() {
     });
   }
 }
+    // === DIARY AVAILABILITY CHECK ===
+function checkDiaryAvailability(driver, dateVal, timeVal) {
+  return new Promise(resolve => {
+    const doorCard = driver.doorCard;
+    const bookingMinutes = timeToMinutes(timeVal);
+
+    // Fetch shift data
+    db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+      const shift = rotaSnap.val();
+      if (!shift || !shift.start || !shift.end) return resolve(false);
+
+      const shiftStart = timeToMinutes(shift.start);
+      const shiftEnd = timeToMinutes(shift.end);
+
+      // Booking must be inside shift bounds
+      if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return resolve(false);
+
+      // Fetch break
+      db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
+        const brk = breakSnap.val();
+        if (brk && brk.from && brk.to) {
+          const breakStart = timeToMinutes(brk.from);
+          const breakEnd = timeToMinutes(brk.to);
+          if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return resolve(false);
+        }
+
+        // Fetch other bookings for this driver
+        db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
+          const allBookings = bookingsSnap.val() || {};
+          let conflict = false;
+
+          for (const id in allBookings) {
+            const b = allBookings[id];
+            if (b.pickupDate !== dateVal) continue;
+
+            const jobMinutes = timeToMinutes(b.pickupTime);
+            if (Math.abs(bookingMinutes - jobMinutes) < 30) {
+              // 15 min job + 7 min buffer before + 7 min after
+              conflict = true;
+              break;
+            }
+          }
+
+          resolve(!conflict); // If no conflict, driver is available
+        });
+      });
+    });
+  });
+}
+
+// Converts "HH:MM" string to total minutes
+function timeToMinutes(t) {
+  const [h, m] = t.split(":");
+  return parseInt(h) * 60 + parseInt(m);
+}
+    
 </script>
   </body>
 </html>
