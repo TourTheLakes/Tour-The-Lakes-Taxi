@@ -372,23 +372,6 @@ option:disabled {
     alert("Saved.");
   }
 
-  // === DRIVER DROPDOWN INITIALISATION ===
-  const driverDropdown = document.getElementById("bAssignTo");
-  let driverMap = {};
-
-  db.ref("drivers").once("value").then(snapshot => {
-    const drivers = snapshot.val() || {};
-    for (const key in drivers) {
-      const d = drivers[key];
-      driverMap[d.name] = d.doorCard;
-
-      const opt = document.createElement("option");
-      opt.value = d.name;
-      opt.textContent = `${d.name} (${d.vehicle.make})`;
-      driverDropdown.appendChild(opt);
-    }
-  });
-
 // === GOOGLE PLACES AUTOCOMPLETE + ESTIMATION LOGIC ===
 let pickupCoords = null;
 let dropoffCoords = null;
