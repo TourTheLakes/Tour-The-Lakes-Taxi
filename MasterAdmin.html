@@ -256,7 +256,6 @@ option:disabled {
     </div>
   </div>
 <script>
-  
   // === FIREBASE CONFIGURATION ===
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -372,6 +371,23 @@ option:disabled {
 
     alert("Saved.");
   }
+
+  // === DRIVER DROPDOWN INITIALISATION ===
+  const driverDropdown = document.getElementById("bAssignTo");
+  let driverMap = {};
+
+  db.ref("drivers").once("value").then(snapshot => {
+    const drivers = snapshot.val() || {};
+    for (const key in drivers) {
+      const d = drivers[key];
+      driverMap[d.name] = d.doorCard;
+
+      const opt = document.createElement("option");
+      opt.value = d.name;
+      opt.textContent = `${d.name} (${d.vehicle.make})`;
+      driverDropdown.appendChild(opt);
+    }
+  });
 
 // === GOOGLE PLACES AUTOCOMPLETE + ESTIMATION LOGIC ===
 let pickupCoords = null;
@@ -502,7 +518,7 @@ function updateEstimateDisplay() {
     }
   });
 
-// === ADD MANUAL BOOKING ===
+ // === ADD MANUAL BOOKING ===
 function addManualBooking() {
   const name = document.getElementById("bName").value.trim();
   const phone = document.getElementById("bPhone").value.trim();
@@ -518,11 +534,6 @@ function addManualBooking() {
 
   if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
     alert("All fields except notes and assignment are required.");
-    return;
-  }
-
-  if (!latestFare) {
-    alert("Please wait while the fare is calculated...");
     return;
   }
 
@@ -542,7 +553,7 @@ function addManualBooking() {
       passengers, luggage, pets, extra,
       claimedBy: driverName,
       claimedDoor: doorCard,
-      fare: latestFare
+      fare: latestFare || "0.00"
     });
   } else {
     createBooking({
@@ -551,7 +562,7 @@ function addManualBooking() {
       passengers, luggage, pets, extra,
       claimedBy: "unassigned",
       claimedDoor: "unassigned",
-      fare: latestFare
+      fare: latestFare || "0.00"
     });
   }
 }
@@ -713,17 +724,6 @@ function checkFormCompletion() {
 ["bName", "bPhone", "bPickup", "bDropoff", "bDate", "bTime", "bPassengers", "bLuggage"].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", checkFormCompletion);
-});
-
-    // === LOAD DRIVER MAP INDEPENDENTLY ===
-let driverMap = {};
-
-db.ref("drivers").once("value").then(snapshot => {
-  const drivers = snapshot.val() || {};
-  for (const key in drivers) {
-    const d = drivers[key];
-    driverMap[d.name] = d.doorCard;
-  }
 });
     
   </script>
