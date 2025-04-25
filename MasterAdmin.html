@@ -605,7 +605,80 @@ function createBooking(data) {
 </script>
 
   <script>
+// === AUTO-ASSIGN DRIVER AFTER ESTIMATE ===
+const assignedDriverField = document.getElementById("bAssignedDriver");
 
+function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  db.ref("drivers").once("value").then(driverSnap => {
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+
+    const promises = Object.keys(drivers).map(driverKey => {
+      const d = drivers[driverKey];
+      const doorCard = d.doorCard;
+
+      return db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+        const rota = rotaSnap.val();
+        if (!rota || !rota.start || !rota.end) return;
+
+        const bookingTime = timeVal;
+        if (bookingTime < rota.start || bookingTime > rota.end) return;
+
+        return db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
+          const brk = breakSnap.val();
+          if (brk && brk.from && brk.to) {
+            if (bookingTime >= brk.from && bookingTime <= brk.to) return;
+          }
+
+          return db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
+            const bookings = bookingsSnap.val() || {};
+            let conflict = false;
+
+            for (const bid in bookings) {
+              const b = bookings[bid];
+              if (b.pickupDate === dateVal) {
+                const bookedMinutes = timeStringToMinutes(b.pickupTime);
+                const thisMinutes = timeStringToMinutes(bookingTime);
+                if (Math.abs(thisMinutes - bookedMinutes) < 30) {
+                  conflict = true;
+                  break;
+                }
+              }
+            }
+
+            if (!conflict) {
+              availableDrivers.push(d);
+            }
+          });
+        });
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      if (availableDrivers.length > 0) {
+        const selectedDriver = availableDrivers[0];
+        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
+      } else {
+        assignedDriverField.value = "No driver available at requested time.";
+        const anyDriver = Object.values(drivers)[0];
+        if (anyDriver) {
+          suggestBestAvailableTime(anyDriver, dateVal, timeVal);
+        }
+      }
+    });
+  });
+}
 
 // Helper to turn HH:MM into total minutes
 function timeStringToMinutes(t) {
