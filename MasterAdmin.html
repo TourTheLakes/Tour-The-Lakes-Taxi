@@ -725,6 +725,17 @@ function checkFormCompletion() {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", checkFormCompletion);
 });
+
+    // === LOAD DRIVER MAP INDEPENDENTLY ===
+let driverMap = {};
+
+db.ref("drivers").once("value").then(snapshot => {
+  const drivers = snapshot.val() || {};
+  for (const key in drivers) {
+    const d = drivers[key];
+    driverMap[d.name] = d.doorCard;
+  }
+});
     
   </script>
   
