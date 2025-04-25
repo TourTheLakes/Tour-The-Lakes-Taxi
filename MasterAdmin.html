@@ -244,7 +244,7 @@ option:disabled {
         <label for="bExtra">Additional information:</label>
         <input id="bExtra" type="text" placeholder="Optional instructions" />
 
-        
+       <button id="addBookingBtn" onclick="addManualBooking()" disabled>Add Booking</button>
       </div>
 
       <!-- Live Bookings Display -->
@@ -699,6 +699,33 @@ function timeStringToMinutes(t) {
   const parts = t.split(":");
   return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
+
+// === ENABLE ADD BOOKING BUTTON WHEN READY ===
+const addBookingBtn = document.getElementById("addBookingBtn");
+
+function checkFormCompletion() {
+  const name = document.getElementById("bName").value.trim();
+  const phone = document.getElementById("bPhone").value.trim();
+  const pickup = pickupInput.value.trim();
+  const dropoff = dropoffInput.value.trim();
+  const date = document.getElementById("bDate").value;
+  const time = document.getElementById("bTime").value;
+  const passengers = passengersDropdown.value.trim();
+  const luggage = luggageSelect.value;
+
+  if (name && phone && pickup && dropoff && date && time && passengers && luggage) {
+    addBookingBtn.disabled = false;
+  } else {
+    addBookingBtn.disabled = true;
+  }
+}
+
+// Watch for changes
+["bName", "bPhone", "bPickup", "bDropoff", "bDate", "bTime", "bPassengers", "bLuggage"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", checkFormCompletion);
+});
+    
   </script>
   
 </body>
