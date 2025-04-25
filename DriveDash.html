@@ -372,6 +372,32 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
     resolve(null); // No earlier slot found
   });
 }
+    // === DUAL SUGGESTION HANDLER ===
+function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
+    if (earlierTime) {
+      if (confirm(`No driver available exactly at your requested time.\n\nClosest earlier available slot is ${earlierTime}.\n\nDo you want to update your booking to this time?`)) {
+        document.getElementById("bTime").value = earlierTime;
+        updateEstimateDisplay();
+        return;
+      }
+    }
+
+    // If no earlier slot accepted or found, check forwards
+    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+      if (!nextTime) {
+        alert("No available time slots found for today.");
+        return;
+      }
+
+      if (confirm(`Closest later available slot is ${nextTime}.\n\nDo you want to update your booking to this time?`)) {
+        document.getElementById("bTime").value = nextTime;
+        updateEstimateDisplay();
+      }
+    });
+  });
+}
+    
     
 </script>
   </body>
