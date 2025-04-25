@@ -244,7 +244,7 @@ option:disabled {
         <label for="bExtra">Additional information:</label>
         <input id="bExtra" type="text" placeholder="Optional instructions" />
 
-       <button id="addBookingBtn" onclick="addManualBooking()" disabled>Add Booking</button>
+        <button onclick="addManualBooking()">Add Booking</button>
       </div>
 
       <!-- Live Bookings Display -->
@@ -492,7 +492,6 @@ function updateEstimateDisplay() {
 
     latestFare = fare.toFixed(2);
     estimateField.value = `Distance: ${distanceKm} km | Estimated Fare: £${latestFare}`;
-    autoAssignDriver();
   });
      } 
 
@@ -518,71 +517,71 @@ function updateEstimateDisplay() {
     }
   });
 
- // === ADD MANUAL BOOKING ===
-function addManualBooking() {
-  const name = document.getElementById("bName").value.trim();
-  const phone = document.getElementById("bPhone").value.trim();
-  const pickup = pickupInput.value.trim();
-  const dropoff = dropoffInput.value.trim();
-  const date = document.getElementById("bDate").value;
-  const time = document.getElementById("bTime").value;
-  const passengers = passengersDropdown.value.trim();
-  const luggage = luggageSelect.value;
-  const pets = "No";
-  const extra = document.getElementById("bExtra").value.trim();
-  const assignedDriverText = document.getElementById("bAssignedDriver").value.trim(); // NEW
+  // === ADD MANUAL BOOKING ===
+  function addManualBooking() {
+    const name = document.getElementById("bName").value.trim();
+    const phone = document.getElementById("bPhone").value.trim();
+    const pickup = pickupInput.value.trim();
+    const dropoff = dropoffInput.value.trim();
+    const date = document.getElementById("bDate").value;
+    const time = document.getElementById("bTime").value;
+    const passengers = passengersDropdown.value.trim();
+    const luggage = luggageSelect.value;
+    const pets = "No";
+    const extra = document.getElementById("bExtra").value.trim();
+    const claimedBy = driverDropdown.value;
 
-  if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
-    alert("All fields except notes and assignment are required.");
-    return;
-  }
-
-  if (assignedDriverText && !assignedDriverText.includes("No driver available")) {
-    // Extract driver name from assigned field
-    const driverName = assignedDriverText.split("–")[0].trim(); // Name is before the first dash
-    const doorCard = driverMap[driverName];
-
-    if (!doorCard) {
-      alert("Error: Driver mapping not found.");
+    if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
+      alert("All fields except notes and assignment are required.");
       return;
     }
 
-    createBooking({
-      name, phone, pickup, dropoff,
-      pickupDate: date, pickupTime: time,
-      passengers, luggage, pets, extra,
-      claimedBy: driverName,
-      claimedDoor: doorCard,
-      fare: latestFare || "0.00"
-    });
-  } else {
-    createBooking({
-      name, phone, pickup, dropoff,
-      pickupDate: date, pickupTime: time,
-      passengers, luggage, pets, extra,
-      claimedBy: "unassigned",
-      claimedDoor: "unassigned",
-      fare: latestFare || "0.00"
+    if (claimedBy) {
+      const doorCard = driverMap[claimedBy];
+      if (!doorCard) return alert("Driver mapping not found.");
+
+      db.ref(`rota/${doorCard}/${date}`).once("value").then(snap => {
+        const rota = snap.val();
+        if (!rota || !rota.start || !rota.end) {
+          alert("Driver has no shift set for that date.");
+          return;
+        }
+        if (time < rota.start || time > rota.end) {
+          alert(`Driver shift is from ${rota.start} to ${rota.end}. Booking time is outside that.`);
+          return;
+        }
+
+        createBooking({ name, phone, pickup, dropoff, 
+                       pickupDate: date, pickupTime: time, 
+                       passengers, luggage, pets, extra, 
+                       claimedBy, claimedDoor: doorCard,
+                      fare: latestFare || "0.00"
+                      });
+      });
+    } else {
+      createBooking({ name, phone, pickup, dropoff, 
+                     pickupDate: date, pickupTime: time, 
+                     passengers, luggage, pets, extra, 
+                     claimedBy: "unassigned", claimedDoor: "unassigned",
+                    fare: latestFare || "0.00"
+                    });
+    }
+  }
+
+  function createBooking(data) {
+    const newKey = db.ref("bookings").push().key;
+    db.ref("bookings/" + newKey).set(data).then(() => {
+      alert("Booking added successfully.");
+      document.querySelectorAll(".panel input, .panel select").forEach(el => {
+        if (el.id !== "bPets") el.value = "";
+      });
+      driverDropdown.value = "";
+      passengersDropdown.value = "";
+      luggageSelect.value = "";
+      luggageWarning.style.display = "none";
     });
   }
-}
 
-function createBooking(data) {
-  const newKey = db.ref("bookings").push().key;
-  db.ref("bookings/" + newKey).set(data).then(() => {
-    alert("Booking added successfully.");
-    document.querySelectorAll(".panel input, .panel select").forEach(el => {
-      if (el.id !== "bPets" && el.id !== "bAssignedDriver" && el.id !== "bEstimate") el.value = "";
-    });
-    passengersDropdown.value = "";
-    luggageSelect.value = "";
-    luggageWarning.style.display = "none";
-
-    // Reset assigned driver field
-    document.getElementById("bAssignedDriver").value = "Searching for driver...";
-  });
-}
-  
   // === LIVE BOOKINGS DISPLAY ===
   const liveList = document.getElementById("liveBookingsList");
 
@@ -699,33 +698,6 @@ function timeStringToMinutes(t) {
   const parts = t.split(":");
   return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
-
-// === ENABLE ADD BOOKING BUTTON WHEN READY ===
-const addBookingBtn = document.getElementById("addBookingBtn");
-
-function checkFormCompletion() {
-  const name = document.getElementById("bName").value.trim();
-  const phone = document.getElementById("bPhone").value.trim();
-  const pickup = pickupInput.value.trim();
-  const dropoff = dropoffInput.value.trim();
-  const date = document.getElementById("bDate").value;
-  const time = document.getElementById("bTime").value;
-  const passengers = passengersDropdown.value.trim();
-  const luggage = luggageSelect.value;
-
-  if (name && phone && pickup && dropoff && date && time && passengers && luggage) {
-    addBookingBtn.disabled = false;
-  } else {
-    addBookingBtn.disabled = true;
-  }
-}
-
-// Watch for changes
-["bName", "bPhone", "bPickup", "bDropoff", "bDate", "bTime", "bPassengers", "bLuggage"].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener("input", checkFormCompletion);
-});
-    
   </script>
   
 </body>
