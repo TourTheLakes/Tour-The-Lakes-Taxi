@@ -692,7 +692,47 @@ db.ref("drivers").once("value").then(snapshot => {
   }
 });
 
-    
+    // === DIARY AVAILABILITY CHECK (CLEAN ASYNC VERSION) ===
+async function checkDiaryAvailability(driver, dateVal, timeVal) {
+  const doorCard = driver.doorCard;
+  const bookingMinutes = timeStringToMinutes(timeVal);
+
+  try {
+    const shiftSnap = await db.ref(`rota/${doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return false;
+
+    const shiftStart = timeStringToMinutes(shift.start);
+    const shiftEnd = timeStringToMinutes(shift.end);
+    if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return false;
+
+    const breakSnap = await db.ref(`breaks/${doorCard}/${dateVal}`).once("value");
+    const brk = breakSnap.val();
+    if (brk && brk.from && brk.to) {
+      const breakStart = timeStringToMinutes(brk.from);
+      const breakEnd = timeStringToMinutes(brk.to);
+      if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return false;
+    }
+
+    const bookingsSnap = await db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value");
+    const allBookings = bookingsSnap.val() || {};
+
+    for (const id in allBookings) {
+      const b = allBookings[id];
+      if (b.pickupDate !== dateVal) continue;
+
+      const jobMinutes = timeStringToMinutes(b.pickupTime);
+      if (Math.abs(bookingMinutes - jobMinutes) < 30) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Error checking diary availability:", err);
+    return false;
+  }
+}
 
 // === FIND NEXT AVAILABLE SLOT (SAFE VERSION) ===
 function findNextAvailableSlot(driver, dateVal, timeVal) {
