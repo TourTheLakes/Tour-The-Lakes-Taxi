@@ -351,9 +351,6 @@ setupAddressAutocomplete(dropoffInput, false);
 dateInput.addEventListener("change", updateEstimateDisplay);
 timeInput.addEventListener("change", updateEstimateDisplay);
 
-    </script>
-    <script>
-
 // === DISTANCE & FARE ESTIMATION LOGIC ===
 function updateEstimateDisplay() {
   if (!pickupCoords || !dropoffCoords) {
@@ -461,9 +458,6 @@ async function autoAssignDriver() {
   }
 }
 
-    </script>
-    <script>
-
 // === ADD MANUAL BOOKING ===
 function addManualBooking() {
   const name = document.getElementById("bName").value.trim();
@@ -541,9 +535,6 @@ function cancelBooking(id) {
   }
 }
 
-    </script>
-    <script>
-
 // === LIVE BOOKINGS DISPLAY ===
 const liveList = document.getElementById("liveBookingsList");
 
@@ -593,9 +584,6 @@ function checkFormCompletion() {
   if (el) el.addEventListener("input", checkFormCompletion);
 });
 
-    </script>
-    <script>
-
 // === LOAD DRIVER MAP INDEPENDENTLY (for quick lookups) ===
 let driverMap = {};
 
@@ -612,9 +600,6 @@ function timeStringToMinutes(t) {
   const parts = t.split(":");
   return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
-
-    </script>
-    <script>
 
 // === DRIVER AUTO-ASSIGNMENT (TRAVEL-AWARE, SMART VERSION) ===
 const assignedDriverField = document.getElementById("bAssignedDriver");
@@ -665,9 +650,6 @@ async function autoAssignDriver() {
   }
 }
 
-    </script>
-    <script>
-
 // === CLEAN DIARY AVAILABILITY CHECK ===
 async function checkDiaryAvailability(driver, dateVal, timeVal) {
   const doorCard = driver.doorCard;
@@ -712,9 +694,6 @@ async function checkDiaryAvailability(driver, dateVal, timeVal) {
   }
 }
 
-    </script>
-    <script>
-
 // === SMART TRAVEL TIME ESTIMATOR ===
 async function getTravelMinutes(originAddress, destinationAddress) {
   return new Promise((resolve) => {
@@ -748,9 +727,6 @@ async function getTravelMinutes(originAddress, destinationAddress) {
     });
   });
 }
-
-    </script>
-    <script>
 
 // === HELPER: Convert "HH:MM" to Total Minutes ===
 function timeStringToMinutes(t) {
@@ -828,9 +804,6 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
   });
 }
 
-        </script>
-    <script>
-
 // === ENABLE "ADD BOOKING" BUTTON WHEN FORM IS READY ===
 const addBookingBtn = document.getElementById("addBookingBtn");
 
@@ -865,9 +838,6 @@ function checkFormCompletion() {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", checkFormCompletion);
 });
-
-    </script>
-    <script>
 
 // === LOAD DRIVER MAP (Name to DoorCard Mappings) ===
 let driverMap = {};
