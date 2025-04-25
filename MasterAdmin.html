@@ -492,6 +492,7 @@ function updateEstimateDisplay() {
 
     latestFare = fare.toFixed(2);
     estimateField.value = `Distance: ${distanceKm} km | Estimated Fare: £${latestFare}`;
+    autoAssignDriver();
   });
      } 
 
