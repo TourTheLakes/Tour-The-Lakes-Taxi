@@ -277,6 +277,29 @@ function timeToMinutes(t) {
   const [h, m] = t.split(":");
   return parseInt(h) * 60 + parseInt(m);
 }
+
+    // === LIVE DRIVER LOCATION CHECK ===
+function updateDriverLocation(position) {
+  const coords = {
+    lat: position.coords.latitude,
+    lng: position.coords.longitude,
+    timestamp: Date.now()
+  };
+  db.ref(`liveLocations/${driverDoor}`).set(coords);
+}
+
+// Request and watch location
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(updateDriverLocation); // Initial ping
+  navigator.geolocation.watchPosition(updateDriverLocation, console.warn, {
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 10000
+  });
+} else {
+  console.warn("Geolocation not supported");
+}
+    
     
 </script>
   </body>
