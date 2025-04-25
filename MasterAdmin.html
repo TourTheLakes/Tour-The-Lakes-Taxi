@@ -803,6 +803,88 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
     resolve(null); // No earlier slots found
   });
 }
+    // === UPDATED SUGGEST BEST AVAILABLE TIME (TRAVEL-AWARE VERSION) ===
+let suggestionShown = false;
+
+async function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  if (suggestionShown) return; // Prevent duplicate popups
+  suggestionShown = true;
+
+  const pickupAddress = document.getElementById("bPickup").value.trim();
+  if (!pickupAddress) {
+    alert("Pickup address is missing.");
+    suggestionShown = false;
+    return;
+  }
+
+  // Helper to get minutes between two locations using Google Directions
+  async function getTravelMinutes(originAddress, destinationAddress) {
+    return new Promise((resolve, reject) => {
+      const service = new google.maps.DirectionsService();
+      service.route({
+        origin: originAddress,
+        destination: destinationAddress,
+        travelMode: 'DRIVING'
+      }, (result, status) => {
+        if (status === 'OK' && result.routes.length) {
+          const meters = result.routes[0].legs[0].distance.value;
+          const minutes = result.routes[0].legs[0].duration.value / 60; // seconds to minutes
+          resolve(Math.ceil(minutes));
+        } else {
+          resolve(15); // fallback: assume 15 minutes if unknown
+        }
+      });
+    });
+  }
+
+  // Step 1: Find driver's latest job finish time
+  let latestFinishMinutes = 0;
+  let latestDropoff = "Windermere"; // default fallback
+
+  try {
+    const bookingsSnap = await db.ref("bookings").orderByChild("claimedDoor").equalTo(driver.doorCard).once("value");
+    const bookings = bookingsSnap.val() || {};
+
+    for (const id in bookings) {
+      const b = bookings[id];
+      if (b.pickupDate !== dateVal) continue;
+
+      const jobMinutes = timeStringToMinutes(b.pickupTime);
+      if (jobMinutes > latestFinishMinutes) {
+        latestFinishMinutes = jobMinutes;
+        latestDropoff = b.dropoff || "Windermere"; // capture where they're going
+      }
+    }
+  } catch (err) {
+    console.error("Error finding latest job:", err);
+  }
+
+  // Step 2: Add 7 min + travel time from last dropoff to new pickup
+  let bufferMinutes = 7; // static pause
+  let travelMinutes = await getTravelMinutes(latestDropoff, pickupAddress);
+
+  let availableMinutes = latestFinishMinutes + bufferMinutes + travelMinutes;
+
+  // Step 3: Compare requested time
+  const requestedMinutes = timeStringToMinutes(requestedTime);
+
+  if (requestedMinutes >= availableMinutes) {
+    suggestionShown = false;
+    return; // No adjustment needed — requested time is fine
+  }
+
+  // Step 4: Suggest corrected time
+  const h = String(Math.floor(availableMinutes / 60)).padStart(2, '0');
+  const m = String(availableMinutes % 60).padStart(2, '0');
+  const suggestedTime = `${h}:${m}`;
+
+  if (confirm(`Driver is unavailable at your requested time.\n\nClosest available slot is approximately ${suggestedTime}.\n\nWould you like to update your booking to this time?`)) {
+    document.getElementById("bTime").value = suggestedTime;
+    updateEstimateDisplay();
+  }
+
+  suggestionShown = false;
+}
 
 
   </script>
