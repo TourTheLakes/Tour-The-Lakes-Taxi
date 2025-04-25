@@ -606,56 +606,8 @@ function createBooking(data) {
 
   <script>
 
-    // === AUTO-ASSIGN DRIVER (FINAL – WITH SUGGESTION FAILSAFE) ===
-const assignedDriverField = document.getElementById("bAssignedDriver");
 
-function autoAssignDriver() {
-  if (!pickupCoords || !dropoffCoords) {
-    assignedDriverField.value = "Awaiting address input...";
-    return;
-  }
-
-  const dateVal = dateInput.value;
-  const timeVal = timeInput.value;
-  if (!dateVal || !timeVal) {
-    assignedDriverField.value = "Awaiting date and time...";
-    return;
-  }
-
-  db.ref("drivers").once("value").then(driverSnap => {
-    const drivers = driverSnap.val() || {};
-    const availableDrivers = [];
-    let fallbackDriver = null;
-
-    const promises = Object.keys(drivers).map(driverKey => {
-      const d = drivers[driverKey];
-      if (!d || !d.doorCard) return;
-
-      if (!fallbackDriver) fallbackDriver = d; // pick first valid driver as fallback
-
-      return checkDiaryAvailability(d, dateVal, timeVal).then(isFree => {
-        if (isFree) availableDrivers.push(d);
-      });
-    });
-
-    Promise.all(promises).then(() => {
-      if (availableDrivers.length > 0) {
-        const selected = availableDrivers[0];
-        assignedDriverField.value = `${selected.name} – ${selected.vehicle.make} ${selected.vehicle.model} – ${selected.vehicle.registration} – ${selected.vehicle.seats} Seats`;
-      } else {
-        assignedDriverField.value = "No driver available at requested time.";
-
-        // Force trigger fallback suggestion if a driver exists
-        if (fallbackDriver) {
-          setTimeout(() => {
-            suggestBestAvailableTime(fallbackDriver, dateVal, timeVal);
-          }, 100); // slight delay to avoid UI block
-        }
-      }
-    });
-  });
-}
-
+    
 // Helper to turn HH:MM into total minutes
 function timeStringToMinutes(t) {
   const parts = t.split(":");
