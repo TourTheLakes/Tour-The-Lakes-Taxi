@@ -804,38 +804,7 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
   });
 }
 
-// === UPDATED SUGGEST BEST AVAILABLE TIME (SAFE VERSION) ===
-let suggestionShown = false;
 
-function suggestBestAvailableTime(driver, dateVal, requestedTime) {
-  if (suggestionShown) return; // Prevent duplicate popups
-  suggestionShown = true;
-
-  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
-    if (earlierTime) {
-      if (confirm(`No driver available at your requested time.\n\nClosest earlier available slot is ${earlierTime}.\n\nWould you like to update your booking to this time?`)) {
-        document.getElementById("bTime").value = earlierTime;
-        updateEstimateDisplay();
-        suggestionShown = false;
-        return;
-      }
-    }
-
-    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
-      if (nextTime) {
-        if (confirm(`Closest later available slot is ${nextTime}.\n\nWould you like to update your booking to this time?`)) {
-          document.getElementById("bTime").value = nextTime;
-          updateEstimateDisplay();
-        }
-      } else {
-        alert("No available time slots earlier or later today.\nPlease try a different time.");
-      }
-      suggestionShown = false;
-    });
-  }).catch(() => {
-    suggestionShown = false;
-  });
-} 
   </script>
   
 </body>
