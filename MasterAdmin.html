@@ -675,7 +675,8 @@ function autoAssignDriver() {
     Promise.all(promises).then(() => {
       if (availableDrivers.length > 0) {
         const selectedDriver = availableDrivers[0]; // For now pick the first
-
+assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model}, ${selectedDriver.vehicle.color} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
+        
       } else {
         assignedDriverField.value = "No driver available at requested time.";
       }
