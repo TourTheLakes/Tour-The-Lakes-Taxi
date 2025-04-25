@@ -858,41 +858,7 @@ function suggestBestAvailableTime(driver, dateVal, requestedTime) {
   });
 }   
     
-  // === UPDATED AUTO-ASSIGN DRIVER ===
-function autoAssignDriver() {
-  if (!pickupCoords || !dropoffCoords) {
-    assignedDriverField.value = "Awaiting address input...";
-    return;
-  }
-  const dateVal = dateInput.value;
-  const timeVal = timeInput.value;
-  if (!dateVal || !timeVal) {
-    assignedDriverField.value = "Awaiting date and time...";
-    return;
-  }
-
-  db.ref("drivers").once("value").then(driverSnap => {
-    const drivers = driverSnap.val() || {};
-    const availableDrivers = [];
-
-    const promises = Object.keys(drivers).map(driverKey => {
-      const d = drivers[driverKey];
-      return checkDiaryAvailability(d, dateVal, timeVal).then(isAvailable => {
-        if (isAvailable) availableDrivers.push(d);
-      });
-    });
-
-    Promise.all(promises).then(() => {
-      if (availableDrivers.length > 0) {
-        const selectedDriver = availableDrivers[0];
-        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
-      } else {
-        assignedDriverField.value = "No driver available at requested time.";
-        suggestBestAvailableTime(Object.values(drivers)[0], dateVal, timeVal);
-      }
-    });
-  });
-}
+ 
      
   </script>
   
