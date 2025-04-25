@@ -606,55 +606,7 @@ function createBooking(data) {
 
   <script>
 
-// === AUTO-ASSIGN DRIVER (SAFE & FINAL VERSION) ===
-const assignedDriverField = document.getElementById("bAssignedDriver");
 
-function autoAssignDriver() {
-  if (!pickupCoords || !dropoffCoords) {
-    assignedDriverField.value = "Awaiting address input...";
-    return;
-  }
-
-  const dateVal = dateInput.value;
-  const timeVal = timeInput.value;
-  if (!dateVal || !timeVal) {
-    assignedDriverField.value = "Awaiting date and time...";
-    return;
-  }
-
-  db.ref("drivers").once("value").then(driverSnap => {
-    const drivers = driverSnap.val() || {};
-    const availableDrivers = [];
-
-    const promises = Object.keys(drivers).map(driverKey => {
-      const d = drivers[driverKey];
-      if (!d || !d.doorCard) return;
-
-      return checkDiaryAvailability(d, dateVal, timeVal).then(isFree => {
-        if (isFree) availableDrivers.push(d);
-      });
-    });
-
-    Promise.all(promises).then(() => {
-      console.log("Available drivers:", availableDrivers.map(d => d.name));
-
-      if (availableDrivers.length > 0) {
-        const selected = availableDrivers[0];
-        assignedDriverField.value = `${selected.name} – ${selected.vehicle.make} ${selected.vehicle.model} – ${selected.vehicle.registration} – ${selected.vehicle.seats} Seats`;
-        console.log("Assigned driver:", selected.name);
-      } else {
-        assignedDriverField.value = "No driver available at requested time.";
-        console.log("No driver available. Attempting fallback...");
-
-        const fallbackDriver = Object.values(drivers).find(d => d && d.doorCard);
-        if (fallbackDriver) {
-          console.log("Fallback driver found:", fallbackDriver.name);
-          suggestBestAvailableTime(fallbackDriver, dateVal, timeVal);
-        }
-      }
-    });
-  });
-}
     
 // Helper to turn HH:MM into total minutes
 function timeStringToMinutes(t) {
@@ -811,87 +763,7 @@ function findEarlierAvailableSlot(driver, dateVal, timeVal) {
   });
 }
 
-    // === UPDATED SUGGEST BEST AVAILABLE TIME (TRAVEL-AWARE & FINAL VERSION) ===
-let suggestionShown = false;
-
-async function suggestBestAvailableTime(driver, dateVal, requestedTime) {
-  if (suggestionShown) return; // Prevent duplicate popups
-  suggestionShown = true;
-
-  const pickupAddress = document.getElementById("bPickup").value.trim();
-  if (!pickupAddress) {
-    alert("Pickup address is missing.");
-    suggestionShown = false;
-    return;
-  }
-
-  // Helper to get minutes between two locations using Google Directions
-  async function getTravelMinutes(originAddress, destinationAddress) {
-    return new Promise((resolve) => {
-      const service = new google.maps.DirectionsService();
-      service.route({
-        origin: originAddress,
-        destination: destinationAddress,
-        travelMode: 'DRIVING'
-      }, (result, status) => {
-        if (status === 'OK' && result.routes.length) {
-          const minutes = result.routes[0].legs[0].duration.value / 60;
-          resolve(Math.ceil(minutes));
-        } else {
-          resolve(15); // fallback estimate
-        }
-      });
-    });
-  }
-
-  // Step 1: Find driver's latest job finish time
-  let latestFinishMinutes = 0;
-  let latestDropoff = "Windermere";
-
-  try {
-    const bookingsSnap = await db.ref("bookings").orderByChild("claimedDoor").equalTo(driver.doorCard).once("value");
-    const bookings = bookingsSnap.val() || {};
-
-    for (const id in bookings) {
-      const b = bookings[id];
-      if (b.pickupDate !== dateVal) continue;
-
-      const jobMinutes = timeStringToMinutes(b.pickupTime);
-      if (jobMinutes > latestFinishMinutes) {
-        latestFinishMinutes = jobMinutes;
-        latestDropoff = b.dropoff || "Windermere";
-      }
-    }
-  } catch (err) {
-    console.error("Error finding latest job:", err);
-  }
-
-  // Step 2: Calculate next possible time
-  const bufferMinutes = 7;
-  const travelMinutes = await getTravelMinutes(latestDropoff, pickupAddress);
-  const availableMinutes = latestFinishMinutes + bufferMinutes + travelMinutes;
-
-  // Step 3: Compare against requested time
-  const requestedMinutes = timeStringToMinutes(requestedTime);
-
-  if (requestedMinutes >= availableMinutes) {
-    console.log("Requested time is fine.");
-    suggestionShown = false;
-    return;
-  }
-
-  // Step 4: Suggest updated time
-  const h = String(Math.floor(availableMinutes / 60)).padStart(2, '0');
-  const m = String(availableMinutes % 60).padStart(2, '0');
-  const suggestedTime = `${h}:${m}`;
-
-  if (confirm(`Driver is unavailable at your requested time.\n\nClosest available slot is approximately ${suggestedTime}.\n\nWould you like to update your booking to this time?`)) {
-    document.getElementById("bTime").value = suggestedTime;
-    updateEstimateDisplay();
-  }
-
-  suggestionShown = false;
-}
+  
 
   </script>
   
