@@ -691,50 +691,8 @@ db.ref("drivers").once("value").then(snapshot => {
     driverMap[d.name] = d.doorCard;
   }
 });
-    // === DIARY AVAILABILITY CHECK ===
-function checkDiaryAvailability(driver, dateVal, timeVal) {
-  return new Promise(resolve => {
-    const doorCard = driver.doorCard;
-    const bookingMinutes = timeStringToMinutes(timeVal);
 
-    db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
-      const shift = rotaSnap.val();
-      if (!shift || !shift.start || !shift.end) return resolve(false);
-
-      const shiftStart = timeStringToMinutes(shift.start);
-      const shiftEnd = timeStringToMinutes(shift.end);
-
-      if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return resolve(false);
-
-      db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
-        const brk = breakSnap.val();
-        if (brk && brk.from && brk.to) {
-          const breakStart = timeStringToMinutes(brk.from);
-          const breakEnd = timeStringToMinutes(brk.to);
-          if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return resolve(false);
-        }
-
-        db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
-          const allBookings = bookingsSnap.val() || {};
-          let conflict = false;
-
-          for (const id in allBookings) {
-            const b = allBookings[id];
-            if (b.pickupDate !== dateVal) continue;
-
-            const jobMinutes = timeStringToMinutes(b.pickupTime);
-            if (Math.abs(bookingMinutes - jobMinutes) < 30) {
-              conflict = true;
-              break;
-            }
-          }
-
-          resolve(!conflict);
-        });
-      });
-    });
-  });
-}
+    
 
 // === FIND NEXT AVAILABLE SLOT (SAFE VERSION) ===
 function findNextAvailableSlot(driver, dateVal, timeVal) {
