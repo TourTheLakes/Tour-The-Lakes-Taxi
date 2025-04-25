@@ -735,35 +735,6 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
     });
   });
 }
-    // === NEXT AVAILABLE SLOT FINDER ===
-function findNextAvailableSlot(driver, dateVal, timeVal) {
-  return new Promise(async (resolve) => {
-    const increment = 5; // Minutes
-    let attemptMinutes = timeStringToMinutes(timeVal);
-
-    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
-    const shift = shiftSnap.val();
-    if (!shift || !shift.start || !shift.end) return resolve(null);
-
-    const shiftStart = timeStringToMinutes(shift.start);
-    const shiftEnd = timeStringToMinutes(shift.end);
-
-    if (attemptMinutes > shiftEnd) return resolve(null);
-
-    while (attemptMinutes <= shiftEnd) {
-      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
-      const m = String(attemptMinutes % 60).padStart(2, '0');
-      const attemptTime = `${h}:${m}`;
-
-      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
-      if (available) return resolve(attemptTime);
-
-      attemptMinutes += increment;
-    }
-
-    resolve(null);
-  });
-}
 
 // === FIND NEXT AVAILABLE SLOT (SAFE VERSION) ===
 function findNextAvailableSlot(driver, dateVal, timeVal) {
