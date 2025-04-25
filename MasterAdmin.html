@@ -1,1 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Master Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+
+  <!-- Google Maps API (with Places and Geometry libraries) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places,geometry"></script>
+
+  <!-- Fonts & Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --warn: #f44336;
+      --logoff: #ff9800;
+      --input-dark: #2a2d30;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      background: var(--section-light);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .panel h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+    }
+
+    .panel h3 {
+      font-size: 18px;
+      margin: 20px 0 8px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 8px 12px;
+      margin: 6px 0 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: var(--input-dark);
+      color: var(--text-main);
+    }
+
+    input::placeholder, select:invalid {
+      color: #aaa;
+    }
+
+    select option {
+      background: var(--input-dark);
+      color: var(--text-main);
+    }
+
+    button {
+      background-color: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #3e9144;
+    }
+
+    button.warn {
+      background-color: var(--warn);
+    }
+
+    button.warn:hover {
+      background-color: #e53935;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    @media (min-width: 600px) {
+      .dual-row {
+        display: flex;
+        gap: 10px;
+      }
+      .dual-row input,
+      .dual-row select {
+        flex: 1;
+      }
+    }
+
+    option:disabled {
+      color: #888 !important;
+      background-color: #2a2d30;
+      font-style: italic;
+    }
+
+    #capacityWarning {
+      display: none;
+      font-size: 13px;
+      color: #f1f1f1;
+      background: #333;
+      padding: 6px 10px;
+      border-left: 4px solid var(--warn);
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+
+    #bEstimate {
+      font-size: 0.95em;
+      background: #252729;
+      color: #ccc;
+      opacity: 0.85;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+  <body>
+  <div class="container">
+    <h1>Master Admin Panel</h1>
+
+    <!-- Admin Login Panel -->
+    <div id="authPanel" class="panel">
+      <h2>Admin Access</h2>
+      <p>Please enter the admin password to unlock this page.</p>
+      <input type="password" id="adminPass" placeholder="Enter password..." />
+      <button onclick="verifyAdmin()">Unlock</button>
+      <p id="authError" class="warn hidden">Incorrect password.</p>
+    </div>
+
+    <!-- Main Content (Hidden until logged in) -->
+    <div id="mainContent" class="hidden">
+
+      <!-- Rota & Break Manager -->
+      <div class="panel">
+        <h2>Rota & Break Manager</h2>
+        <label for="rotaDate">Select Date:</label>
+        <input type="date" id="rotaDate" aria-label="Select rota date" />
+        <div id="driverRotaList"></div>
+      </div>
+
+      <!-- Manual Booking Panel -->
+      <div class="panel">
+        <h2>Manual Booking</h2>
+
+        <label for="bPickup">Pickup address:</label>
+        <input id="bPickup" type="text" placeholder="Enter pickup address" />
+
+        <label for="bDropoff">Drop-off address:</label>
+        <input id="bDropoff" type="text" placeholder="Enter drop-off address" />
+
+        <div class="dual-row">
+          <div>
+            <label for="bPassengers">Passenger count:</label>
+            <select id="bPassengers" required>
+              <option value="" disabled selected>Select number of passengers</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bLuggage">Luggage:</label>
+            <select id="bLuggage" required>
+              <option value="" disabled selected>Select luggage size</option>
+              <option value="None">No luggage</option>
+              <option value="Small">Small – backpack/carry-on</option>
+              <option value="Medium">Medium – a couple of suitcases</option>
+              <option value="Large">Large – multiple or oversized items</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="capacityWarning" class="warn hidden">
+          Due to vehicle capacity, only <strong>No</strong> or <strong>Small</strong> luggage allowed with 5+ passengers.
+        </p>
+
+        <div class="dual-row">
+          <div style="flex:1;">
+            <label for="bDate">Booking date:</label>
+            <input id="bDate" type="date" />
+          </div>
+          <div style="flex:1;">
+            <label for="bTime">Booking time:</label>
+            <input id="bTime" type="time" />
+          </div>
+        </div>
+
+        <label for="bEstimate">Distance & Estimated Fare:</label>
+        <input id="bEstimate" type="text" disabled placeholder="Distance and fare will appear here..." />
+
+        <label for="bAssignedDriver">Assigned Driver:</label>
+        <input id="bAssignedDriver" type="text" disabled placeholder="Searching for driver..." />
+
+        <label for="bPets">Pets:</label>
+        <input id="bPets" type="text" value="No" disabled />
+
+        <div class="dual-row">
+          <input id="bName" type="text" placeholder="Customer name" />
+          <input id="bPhone" type="text" placeholder="Phone number" />
+        </div>
+
+        <label for="bExtra">Additional information:</label>
+        <input id="bExtra" type="text" placeholder="Optional instructions" />
+
+        <button id="addBookingBtn" onclick="addManualBooking()" disabled>Add Booking</button>
+      </div>
+
+      <!-- Live Bookings Display -->
+      <div class="panel">
+        <h2>Live Bookings</h2>
+        <div id="liveBookingsList">
+          <p>Loading...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+    <script>
+
+// === FIREBASE CONFIGURATION ===
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.appspot.com",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// === ADMIN AUTHENTICATION ===
+const authPanel = document.getElementById("authPanel");
+const mainContent = document.getElementById("mainContent");
+const errorText = document.getElementById("authError");
+
+const sessionValidUntil = localStorage.getItem("adminAccessUntil");
+if (sessionValidUntil && parseInt(sessionValidUntil) > Date.now()) {
+  unlockPanel();
+}
+
+function verifyAdmin() {
+  const input = document.getElementById("adminPass").value.trim();
+  db.ref("masterRotaPassword/password").once("value").then(snap => {
+    if (snap.val() === input) {
+      const expires = Date.now() + 15 * 60 * 1000;
+      localStorage.setItem("adminAccessUntil", expires.toString());
+      unlockPanel();
+    } else {
+      errorText.classList.remove("hidden");
+    }
+  });
+}
+
+function unlockPanel() {
+  authPanel.classList.add("hidden");
+  mainContent.classList.remove("hidden");
+}
+
+// === GOOGLE PLACES AUTOCOMPLETE SETUP ===
+let pickupCoords = null;
+let dropoffCoords = null;
+let latestFare = null;
+
+const pickupInput = document.getElementById("bPickup");
+const dropoffInput = document.getElementById("bDropoff");
+const estimateField = document.getElementById("bEstimate");
+const dateInput = document.getElementById("bDate");
+const timeInput = document.getElementById("bTime");
+
+function setupAddressAutocomplete(input, isPickup) {
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    componentRestrictions: { country: 'gb' }
+  });
+
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (place.geometry && place.geometry.location) {
+      const coords = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      };
+      if (isPickup) {
+        pickupCoords = coords;
+      } else {
+        dropoffCoords = coords;
+      }
+      updateEstimateDisplay();
+    }
+  });
+}
+
+setupAddressAutocomplete(pickupInput, true);
+setupAddressAutocomplete(dropoffInput, false);
+
+dateInput.addEventListener("change", updateEstimateDisplay);
+timeInput.addEventListener("change", updateEstimateDisplay);
+
+    </script>
+    <script>
+
+// === DISTANCE & FARE ESTIMATION LOGIC ===
+function updateEstimateDisplay() {
+  if (!pickupCoords || !dropoffCoords) {
+    estimateField.value = "";
+    return;
+  }
+
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    estimateField.value = "Select date and time to estimate fare.";
+    return;
+  }
+
+  const travelDate = new Date(`${dateVal}T${timeVal}`);
+  const hour = travelDate.getHours();
+  const day = travelDate.getDay(); // Sunday = 0
+  const month = travelDate.getMonth() + 1;
+  const date = travelDate.getDate();
+
+  let baseFare = 4.20;
+  let stepFare = 0.30;
+
+  const isHolidayEvening =
+    (month === 12 && date === 24 && hour >= 19) ||
+    (month === 12 && date === 31 && hour >= 19) ||
+    (day === 0 && hour >= 19); // Sunday evening
+
+  if (isHolidayEvening) {
+    baseFare = 8.40;
+    stepFare = 0.60;
+  } else if (hour >= 23 || hour < 7) {
+    baseFare = 6.30;
+    stepFare = 0.40;
+  }
+
+  const service = new google.maps.DirectionsService();
+  service.route({
+    origin: pickupCoords,
+    destination: dropoffCoords,
+    travelMode: 'DRIVING'
+  }, (result, status) => {
+    if (status !== 'OK' || !result.routes.length) {
+      estimateField.value = "Could not calculate route.";
+      latestFare = null;
+      return;
+    }
+
+    const leg = result.routes[0].legs[0];
+    const distanceMeters = leg.distance.value;
+    const distanceKm = (distanceMeters / 1000).toFixed(2);
+
+    let fare = baseFare;
+    const excessMeters = distanceMeters - 1609;
+    if (excessMeters > 0) {
+      const steps = Math.ceil(excessMeters / 161);
+      fare += steps * stepFare;
+    }
+
+    latestFare = fare.toFixed(2);
+    estimateField.value = `Distance: ${distanceKm} km | Estimated Fare: £${latestFare}`;
+    autoAssignDriver();
+  });
+}
+
+// === AUTO-ASSIGN DRIVER (SAFE & CLEAN VERSION) ===
+const assignedDriverField = document.getElementById("bAssignedDriver");
+
+async function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  const driverSnap = await db.ref("drivers").once("value");
+  const drivers = driverSnap.val() || {};
+  const availableDrivers = [];
+
+  const promises = Object.keys(drivers).map(driverKey => {
+    const d = drivers[driverKey];
+    if (!d || !d.doorCard) return;
+    return checkDiaryAvailability(d, dateVal, timeVal).then(isFree => {
+      if (isFree) availableDrivers.push(d);
+    });
+  });
+
+  await Promise.all(promises);
+
+  if (availableDrivers.length > 0) {
+    const selected = availableDrivers[0];
+    assignedDriverField.value = `${selected.name} – ${selected.vehicle.make} ${selected.vehicle.model} – ${selected.vehicle.registration} – ${selected.vehicle.seats} Seats`;
+  } else {
+    assignedDriverField.value = "No driver available at requested time.";
+    const fallbackDriver = Object.values(drivers).find(d => d && d.doorCard);
+    if (fallbackDriver) {
+      suggestBestAvailableTime(fallbackDriver, dateVal, timeVal);
+    }
+  }
+}
+
+    </script>
+    <script>
+
+// === ADD MANUAL BOOKING ===
+function addManualBooking() {
+  const name = document.getElementById("bName").value.trim();
+  const phone = document.getElementById("bPhone").value.trim();
+  const pickup = pickupInput.value.trim();
+  const dropoff = dropoffInput.value.trim();
+  const date = document.getElementById("bDate").value;
+  const time = document.getElementById("bTime").value;
+  const passengers = passengersDropdown.value.trim();
+  const luggage = luggageSelect.value;
+  const pets = "No";
+  const extra = document.getElementById("bExtra").value.trim();
+  const assignedDriverText = document.getElementById("bAssignedDriver").value.trim();
+
+  if (!name || !phone || !pickup || !dropoff || !date || !time || !passengers || !luggage) {
+    alert("All fields except notes and assignment are required.");
+    return;
+  }
+
+  if (!latestFare) {
+    alert("Please wait while the fare is calculated...");
+    return;
+  }
+
+  if (assignedDriverText && !assignedDriverText.includes("No driver available")) {
+    const driverName = assignedDriverText.split("–")[0].trim();
+    const doorCard = driverMap[driverName];
+
+    if (!doorCard) {
+      alert("Error: Driver mapping not found.");
+      return;
+    }
+
+    createBooking({
+      name, phone, pickup, dropoff,
+      pickupDate: date, pickupTime: time,
+      passengers, luggage, pets, extra,
+      claimedBy: driverName,
+      claimedDoor: doorCard,
+      fare: latestFare
+    });
+  } else {
+    createBooking({
+      name, phone, pickup, dropoff,
+      pickupDate: date, pickupTime: time,
+      passengers, luggage, pets, extra,
+      claimedBy: "unassigned",
+      claimedDoor: "unassigned",
+      fare: latestFare
+    });
+  }
+}
+
+// === CREATE BOOKING ENTRY ===
+function createBooking(data) {
+  const newKey = db.ref("bookings").push().key;
+  db.ref("bookings/" + newKey).set(data).then(() => {
+    alert("Booking added successfully.");
+    document.querySelectorAll(".panel input, .panel select").forEach(el => {
+      if (el.id !== "bPets" && el.id !== "bAssignedDriver" && el.id !== "bEstimate") el.value = "";
+    });
+    passengersDropdown.value = "";
+    luggageSelect.value = "";
+    luggageWarning.style.display = "none";
+    assignedDriverField.value = "Searching for driver...";
+  });
+}
+
+// === CANCEL EXISTING BOOKING ===
+function cancelBooking(id) {
+  if (confirm("Are you sure you want to cancel this booking?")) {
+    db.ref("bookings/" + id).remove().then(() => {
+      alert("Booking cancelled.");
+    });
+  }
+}
+
+    </script>
+    <script>
+
+// === LIVE BOOKINGS DISPLAY ===
+const liveList = document.getElementById("liveBookingsList");
+
+db.ref("bookings").on("value", snap => {
+  const bookings = snap.val() || {};
+  liveList.innerHTML = "";
+
+  Object.entries(bookings).reverse().forEach(([key, b]) => {
+    const div = document.createElement("div");
+    div.className = "panel";
+    div.innerHTML = `
+      <p><strong>${b.name}</strong> | ${b.pickupDate || "?"} ${b.pickupTime || "?"}</p>
+      <p>${b.pickup} → ${b.dropoff}</p>
+      <p><strong>Passengers:</strong> ${b.passengers} | <strong>Luggage:</strong> ${b.luggage} | <strong>Pets:</strong> ${b.pets}</p>
+      <p><strong>Driver:</strong> ${b.claimedBy || "Unassigned"}</p>
+      <p><strong>Notes:</strong> ${b.extra || "<em>None</em>"}</p>
+      <p><strong>Fare:</strong> £${b.fare || "N/A"}</p>
+      <button class="warn" onclick="cancelBooking('${key}')">Cancel Booking</button>
+    `;
+    liveList.appendChild(div);
+  });
+});
+
+// === ENABLE ADD BOOKING BUTTON WHEN READY ===
+const addBookingBtn = document.getElementById("addBookingBtn");
+
+function checkFormCompletion() {
+  const name = document.getElementById("bName").value.trim();
+  const phone = document.getElementById("bPhone").value.trim();
+  const pickup = pickupInput.value.trim();
+  const dropoff = dropoffInput.value.trim();
+  const date = document.getElementById("bDate").value;
+  const time = document.getElementById("bTime").value;
+  const passengers = passengersDropdown.value.trim();
+  const luggage = luggageSelect.value;
+
+  if (name && phone && pickup && dropoff && date && time && passengers && luggage) {
+    addBookingBtn.disabled = false;
+  } else {
+    addBookingBtn.disabled = true;
+  }
+}
+
+// Watch for changes on all fields
+["bName", "bPhone", "bPickup", "bDropoff", "bDate", "bTime", "bPassengers", "bLuggage"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", checkFormCompletion);
+});
+
+    </script>
+    <script>
+
+// === LOAD DRIVER MAP INDEPENDENTLY (for quick lookups) ===
+let driverMap = {};
+
+db.ref("drivers").once("value").then(snapshot => {
+  const drivers = snapshot.val() || {};
+  for (const key in drivers) {
+    const d = drivers[key];
+    driverMap[d.name] = d.doorCard;
+  }
+});
+
+// === HELPER: Turn "HH:MM" into total minutes ===
+function timeStringToMinutes(t) {
+  const parts = t.split(":");
+  return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+}
+
+    </script>
+    <script>
+
+// === DRIVER AUTO-ASSIGNMENT (TRAVEL-AWARE, SMART VERSION) ===
+const assignedDriverField = document.getElementById("bAssignedDriver");
+
+async function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  try {
+    const driverSnap = await db.ref("drivers").once("value");
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+
+    const promises = Object.keys(drivers).map(async driverKey => {
+      const d = drivers[driverKey];
+      if (!d || !d.doorCard) return;
+      const free = await checkDiaryAvailability(d, dateVal, timeVal);
+      if (free) availableDrivers.push(d);
+    });
+
+    await Promise.all(promises);
+
+    if (availableDrivers.length > 0) {
+      const selected = availableDrivers[0];
+      assignedDriverField.value = `${selected.name} – ${selected.vehicle.make} ${selected.vehicle.model} – ${selected.vehicle.registration} – ${selected.vehicle.seats} Seats`;
+    } else {
+      assignedDriverField.value = "No driver available at requested time.";
+      console.warn("No available drivers found — attempting fallback suggestion...");
+      
+      // Try suggesting time for the first available driver (even if off-shift now)
+      const fallbackDriver = Object.values(drivers).find(d => d && d.doorCard);
+      if (fallbackDriver) {
+        suggestBestAvailableTime(fallbackDriver, dateVal, timeVal);
+      }
+    }
+  } catch (err) {
+    console.error("Error in autoAssignDriver:", err);
+    assignedDriverField.value = "Error finding driver.";
+  }
+}
+
+    </script>
+    <script>
+
+// === CLEAN DIARY AVAILABILITY CHECK ===
+async function checkDiaryAvailability(driver, dateVal, timeVal) {
+  const doorCard = driver.doorCard;
+  const bookingMinutes = timeStringToMinutes(timeVal);
+
+  try {
+    // Check shift
+    const shiftSnap = await db.ref(`rota/${doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return false;
+
+    const shiftStart = timeStringToMinutes(shift.start);
+    const shiftEnd = timeStringToMinutes(shift.end);
+    if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return false;
+
+    // Check break
+    const breakSnap = await db.ref(`breaks/${doorCard}/${dateVal}`).once("value");
+    const brk = breakSnap.val();
+    if (brk && brk.from && brk.to) {
+      const breakStart = timeStringToMinutes(brk.from);
+      const breakEnd = timeStringToMinutes(brk.to);
+      if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return false;
+    }
+
+    // Check existing bookings (30min conflict buffer)
+    const bookingsSnap = await db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value");
+    const bookings = bookingsSnap.val() || {};
+
+    for (const id in bookings) {
+      const b = bookings[id];
+      if (b.pickupDate !== dateVal) continue;
+      const jobMinutes = timeStringToMinutes(b.pickupTime);
+      if (Math.abs(bookingMinutes - jobMinutes) < 30) {
+        return false; // Conflict
+      }
+    }
+
+    return true; // Driver available
+  } catch (err) {
+    console.error("Error checking diary availability:", err);
+    return false;
+  }
+}
+
+    </script>
+    <script>
+
+// === SMART TRAVEL TIME ESTIMATOR ===
+async function getTravelMinutes(originAddress, destinationAddress) {
+  return new Promise((resolve) => {
+    const service = new google.maps.DirectionsService();
+    service.route({
+      origin: originAddress,
+      destination: destinationAddress,
+      travelMode: 'DRIVING'
+    }, (result, status) => {
+      if (status === 'OK' && result.routes.length) {
+        const minutes = result.routes[0].legs[0].duration.value / 60; // Convert seconds to minutes
+        resolve(Math.ceil(minutes));
+      } else {
+        // If Directions API fails, fallback using straight-line distance
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: destinationAddress }, (destResults, destStatus) => {
+          geocoder.geocode({ address: originAddress }, (origResults, origStatus) => {
+            if (destStatus === 'OK' && origStatus === 'OK') {
+              const destLoc = destResults[0].geometry.location;
+              const origLoc = origResults[0].geometry.location;
+              const distanceMeters = google.maps.geometry.spherical.computeDistanceBetween(origLoc, destLoc);
+              const km = distanceMeters / 1000;
+              const estimatedMinutes = Math.max(7, Math.ceil(km)); // Assume minimum 7 minutes
+              resolve(estimatedMinutes);
+            } else {
+              resolve(15); // Hard fallback if even geocoding fails
+            }
+          });
+        });
+      }
+    });
+  });
+}
+
+    </script>
+    <script>
+
+// === HELPER: Convert "HH:MM" to Total Minutes ===
+function timeStringToMinutes(t) {
+  const parts = t.split(":");
+  return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+}
+
+// === FIND NEXT AVAILABLE SLOT (SAFE VERSION) ===
+function findNextAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5; // check every 5 minutes
+    let attemptMinutes = timeStringToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) {
+      resolve(null);
+      return;
+    }
+
+    const shiftEnd = timeStringToMinutes(shift.end);
+
+    if (attemptMinutes > shiftEnd) {
+      resolve(null);
+      return;
+    }
+
+    while (attemptMinutes <= shiftEnd) {
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) {
+        resolve(attemptTime);
+        return;
+      }
+
+      attemptMinutes += increment;
+    }
+
+    resolve(null); // No available slots after
+  });
+}
+
+// === FIND EARLIER AVAILABLE SLOT (SAFE VERSION) ===
+function findEarlierAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5;
+    let attemptMinutes = timeStringToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) {
+      resolve(null);
+      return;
+    }
+
+    const shiftStart = timeStringToMinutes(shift.start);
+
+    while (attemptMinutes > shiftStart) {
+      attemptMinutes -= increment;
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) {
+        resolve(attemptTime);
+        return;
+      }
+    }
+
+    resolve(null); // No available slots earlier
+  });
+}
+
+        </script>
+    <script>
+
+// === ENABLE "ADD BOOKING" BUTTON WHEN FORM IS READY ===
+const addBookingBtn = document.getElementById("addBookingBtn");
+
+function checkFormCompletion() {
+  const name = document.getElementById("bName").value.trim();
+  const phone = document.getElementById("bPhone").value.trim();
+  const pickup = pickupInput.value.trim();
+  const dropoff = dropoffInput.value.trim();
+  const date = document.getElementById("bDate").value;
+  const time = document.getElementById("bTime").value;
+  const passengers = passengersDropdown.value.trim();
+  const luggage = luggageSelect.value.trim();
+
+  if (name && phone && pickup && dropoff && date && time && passengers && luggage) {
+    addBookingBtn.disabled = false;
+  } else {
+    addBookingBtn.disabled = true;
+  }
+}
+
+// === MONITOR INPUTS FOR COMPLETION ===
+[
+  "bName",
+  "bPhone",
+  "bPickup",
+  "bDropoff",
+  "bDate",
+  "bTime",
+  "bPassengers",
+  "bLuggage"
+].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", checkFormCompletion);
+});
+
+    </script>
+    <script>
+
+// === LOAD DRIVER MAP (Name to DoorCard Mappings) ===
+let driverMap = {};
+
+db.ref("drivers").once("value").then(snapshot => {
+  const drivers = snapshot.val() || {};
+  for (const key in drivers) {
+    const d = drivers[key];
+    driverMap[d.name] = d.doorCard;
+  }
+});
+
+// === FINAL SCRIPT CLOSURE ===
+
+</script>
+
+</body>
+</html>
 
