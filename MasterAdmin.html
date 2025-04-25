@@ -770,8 +770,121 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
     });
   });
 }
-    
-    
+    // === NEXT AVAILABLE SLOT FINDER ===
+function findNextAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5; // Minutes
+    let attemptMinutes = timeStringToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return resolve(null);
+
+    const shiftStart = timeStringToMinutes(shift.start);
+    const shiftEnd = timeStringToMinutes(shift.end);
+
+    if (attemptMinutes > shiftEnd) return resolve(null);
+
+    while (attemptMinutes <= shiftEnd) {
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) return resolve(attemptTime);
+
+      attemptMinutes += increment;
+    }
+
+    resolve(null);
+  });
+}
+    // === EARLIER SLOT SCANNER ===
+function findEarlierAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5; // Minutes
+    let attemptMinutes = timeStringToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return resolve(null);
+
+    const shiftStart = timeStringToMinutes(shift.start);
+
+    while (attemptMinutes > shiftStart) {
+      attemptMinutes -= increment;
+
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) return resolve(attemptTime);
+    }
+
+    resolve(null);
+  });
+}
+    // === SUGGEST BEST AVAILABLE TIME ===
+function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
+    if (earlierTime) {
+      if (confirm(`No driver available exactly at your requested time.\n\nClosest earlier available slot is ${earlierTime}.\n\nDo you want to update your booking to this time?`)) {
+        document.getElementById("bTime").value = earlierTime;
+        updateEstimateDisplay();
+        return;
+      }
+    }
+
+    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+      if (!nextTime) {
+        alert("No available time slots found for today.");
+        return;
+      }
+
+      if (confirm(`Closest later available slot is ${nextTime}.\n\nDo you want to update your booking to this time?`)) {
+        document.getElementById("bTime").value = nextTime;
+        updateEstimateDisplay();
+      }
+    });
+  });
+}
+  // === UPDATED AUTO-ASSIGN DRIVER ===
+function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  db.ref("drivers").once("value").then(driverSnap => {
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+
+    const promises = Object.keys(drivers).map(driverKey => {
+      const d = drivers[driverKey];
+      return checkDiaryAvailability(d, dateVal, timeVal).then(isAvailable => {
+        if (isAvailable) availableDrivers.push(d);
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      if (availableDrivers.length > 0) {
+        const selectedDriver = availableDrivers[0];
+        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
+      } else {
+        assignedDriverField.value = "No driver available at requested time.";
+        suggestBestAvailableTime(Object.values(drivers)[0], dateVal, timeVal);
+      }
+    });
+  });
+}
+     
   </script>
   
 </body>
