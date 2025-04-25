@@ -606,7 +606,60 @@ function createBooking(data) {
 
   <script>
 
+// === AUTO-ASSIGN DRIVER (DEBUG VERSION) ===
+const assignedDriverField = document.getElementById("bAssignedDriver");
 
+function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    console.log("Waiting for pickup/dropoff address.");
+    return;
+  }
+
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    console.log("Waiting for date/time input.");
+    return;
+  }
+
+  db.ref("drivers").once("value").then(driverSnap => {
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+
+    const promises = Object.keys(drivers).map(driverKey => {
+      const d = drivers[driverKey];
+      if (!d || !d.doorCard) return;
+
+      return checkDiaryAvailability(d, dateVal, timeVal).then(isFree => {
+        if (isFree) availableDrivers.push(d);
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      console.log("Available drivers:", availableDrivers.map(d => d.name));
+
+      if (availableDrivers.length > 0) {
+        const selected = availableDrivers[0];
+        assignedDriverField.value = `${selected.name} – ${selected.vehicle.make} ${selected.vehicle.model} – ${selected.vehicle.registration} – ${selected.vehicle.seats} Seats`;
+        console.log(`Assigned driver: ${selected.name}`);
+      } else {
+        assignedDriverField.value = "No driver available at requested time.";
+        console.log("No driver available. Attempting fallback...");
+
+        const fallbackDriver = Object.values(drivers).find(d => d && d.doorCard);
+
+        if (fallbackDriver) {
+          console.log("Fallback driver found:", fallbackDriver.name);
+          suggestBestAvailableTime(fallbackDriver, dateVal, timeVal);
+        } else {
+          console.log("No fallback driver found.");
+        }
+      }
+    });
+  });
+}
     
 // Helper to turn HH:MM into total minutes
 function timeStringToMinutes(t) {
