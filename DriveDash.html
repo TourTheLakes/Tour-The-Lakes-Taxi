@@ -330,6 +330,20 @@ function findNextAvailableSlot(driver, dateVal, timeVal) {
     resolve(null); // No slot found
   });
 }
+   // === SUGGEST NEXT TIME POPUP ===
+function suggestNextAvailableTime(driver, dateVal, requestedTime) {
+  findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+    if (!nextTime) {
+      alert("No available time slots found for today.");
+      return;
+    }
+
+    if (confirm(`No drivers available at your selected time.\n\nClosest available slot is ${nextTime}.\n\nDo you want to update your booking to this time?`)) {
+      document.getElementById("bTime").value = nextTime;
+      updateEstimateDisplay(); // Refresh fare and driver assignment
+    }
+  });
+}
     
     
 </script>
