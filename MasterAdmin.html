@@ -834,63 +834,7 @@ function suggestBestAvailableTime(driver, dateVal, requestedTime) {
   }).catch(() => {
     suggestionShown = false;
   });
-}
-    
- // === UPDATED AUTO-ASSIGN DRIVER ===
-function autoAssignDriver() {
-  if (!pickupCoords || !dropoffCoords) {
-    assignedDriverField.value = "Awaiting address input...";
-    return;
-  }
-  const dateVal = dateInput.value;
-  const timeVal = timeInput.value;
-  if (!dateVal || !timeVal) {
-    assignedDriverField.value = "Awaiting date and time...";
-    return;
-  }
-
-  db.ref("drivers").once("value").then(driverSnap => {
-    const drivers = driverSnap.val() || {};
-    const availableDrivers = [];
-    const rotaDrivers = [];
-
-    const promises = Object.keys(drivers).map(driverKey => {
-      const d = drivers[driverKey];
-      rotaDrivers.push(d); // Keep drivers for rota lookup later
-      return checkDiaryAvailability(d, dateVal, timeVal).then(isAvailable => {
-        if (isAvailable) availableDrivers.push(d);
-      });
-    });
-
-    Promise.all(promises).then(() => {
-      if (availableDrivers.length > 0) {
-        const selectedDriver = availableDrivers[0];
-        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model}, ${selectedDriver.vehicle.color} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
-      } else {
-        assignedDriverField.value = "No driver available at requested time.";
-
-        // Instead of using ANY driver, find one with a valid shift today
-        const checkRotaPromises = rotaDrivers.map(d => {
-          return db.ref(`rota/${d.doorCard}/${dateVal}`).once("value").then(rotaSnap => {
-            const rota = rotaSnap.val();
-            if (rota && rota.start && rota.end) {
-              return d; // Valid shift found
-            }
-            return null;
-          });
-        });
-
-        Promise.all(checkRotaPromises).then(results => {
-          const driversWithShift = results.filter(d => d !== null);
-          if (driversWithShift.length > 0) {
-            suggestBestAvailableTime(driversWithShift[0], dateVal, timeVal);
-          }
-        });
-      }
-    });
-  });
-}
-     
+} 
   </script>
   
 </body>
