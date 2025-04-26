@@ -7,7 +7,7 @@
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -15,7 +15,7 @@
       authDomain: "tourthelakes-1e165.firebaseapp.com",
       databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
       projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      storageBucket: "tourthelakes-1e165.appspot.com",
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
@@ -25,14 +25,25 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Show office staff name on page
     window.addEventListener('DOMContentLoaded', () => {
       const staffName = localStorage.getItem('staffName');
+      const localSessionToken = localStorage.getItem('sessionToken');
 
-      if (staffName) {
+      if (staffName && localSessionToken) {
         document.getElementById('staffGreeting').textContent = `Welcome, ${staffName}`;
+
+        // Monitor session validity
+        const sessionRef = ref(database, `officeSessions/${staffName}`);
+        onValue(sessionRef, (snapshot) => {
+          const data = snapshot.val();
+          if (!data || data.sessionToken != localSessionToken) {
+            alert('Session expired. You have been logged out.');
+            localStorage.clear();
+            window.location.href = 'OfficeLogin.html';
+          }
+        });
+
       } else {
-        // If no session, redirect back to OfficeLogin.html
         window.location.href = 'OfficeLogin.html';
       }
     });
