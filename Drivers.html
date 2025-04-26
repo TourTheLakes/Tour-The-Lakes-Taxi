@@ -38,7 +38,7 @@
           const driverName = localStorage.getItem('driverName');
           const driverLocationRef = ref(database, `driversLocation/${driverName}`);
 
-          // Start live tracking every second
+           // Start live tracking every second
           setInterval(() => {
             navigator.geolocation.getCurrentPosition(
               (pos) => {
@@ -53,6 +53,11 @@
               },
               (error) => {
                 console.error('Location fetch error during tracking', error);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
               }
             );
           }, 1000);
@@ -61,6 +66,11 @@
           alert('Location permission is required. You have been logged out.');
           localStorage.clear();
           window.location.href = 'DriversLogin.html';
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       );
     }
@@ -72,6 +82,7 @@
       if (driverName && localSessionToken) {
         document.getElementById('driverGreeting').textContent = `Welcome, ${driverName}`;
         startLocationTracking();
+
 
         // Monitor session validity
         const sessionRef = ref(database, `driverSessions/${driverName}`);
