@@ -654,15 +654,14 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
             if (b.pickupDate === dateVal) {
               const jobPickupMinutes = timeStringToMinutes(b.pickupTime);
 
-              let jobDurationSeconds = 1800; // default 30 minutes in SECONDS
-              if (b.pickup && b.dropoff) {
-                jobDurationSeconds = await estimateJourneyDuration(b.pickup, b.dropoff);
+              let jobDuration = 30; // Assume base 30 minutes
+              if (b.dropoffCoords && b.pickup && b.dropoff) {
+                jobDuration = await estimateJourneyDuration(b.pickup, b.dropoff);
               }
 
-              const jobDurationMinutes = jobDurationSeconds / 60;
-              const jobEndMinutes = jobPickupMinutes + jobDurationMinutes + 10; // +10 min buffer after drop-off
+              const jobEndMinutes = jobPickupMinutes + (jobDuration / 60) + 10; // +10 mins buffer
 
-              if (bookingMinutes >= jobPickupMinutes && bookingMinutes < jobEndMinutes) {
+              if (bookingMinutes < jobEndMinutes) {
                 conflict = true;
                 break;
               }
@@ -675,9 +674,7 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
     });
   });
 }
-
-// === ESTIMATE JOURNEY DURATION IN SECONDS ===
-function estimateJourneyDuration(startAddress, endAddress) {
+  function estimateJourneyDuration(startAddress, endAddress) {
   return new Promise(resolve => {
     const service = new google.maps.DistanceMatrixService();
     service.getDistanceMatrix({
@@ -686,14 +683,14 @@ function estimateJourneyDuration(startAddress, endAddress) {
       travelMode: google.maps.TravelMode.DRIVING
     }, (response, status) => {
       if (status !== "OK" || !response.rows.length || !response.rows[0].elements.length) {
-        resolve(1800); // fallback to 30 min (1800 seconds)
+        resolve(1800); // fallback 30 min in seconds
         return;
       }
       const travelSeconds = response.rows[0].elements[0].duration.value;
       resolve(travelSeconds);
     });
   });
-}
+  }
 
 // === CHECK TRAVEL TIME FROM LAST DROP OR BASE ===
 function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
@@ -711,18 +708,15 @@ function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
         }
       }
 
-      let lastDropCoords = homeBase;
-      let lastDropTimeMinutes = 0;
-
-      if (latestJob && latestJob.pickup && latestJob.dropoff && latestJob.dropoffCoords) {
-        const pickupAddress = latestJob.pickup;
-        const dropoffAddress = latestJob.dropoff;
-        lastDropCoords = latestJob.dropoffCoords;
+      let startLocation = homeBase;
+      if (latestJob && latestJob.pickup && latestJob.dropoff) {
+        const pickupCoords = latestJob.pickupCoords || homeBase;
+        const dropoffCoords = latestJob.dropoffCoords || homeBase;
 
         const directionsService = new google.maps.DirectionsService();
         directionsService.route({
-          origin: pickupAddress,
-          destination: dropoffAddress,
+          origin: pickupCoords,
+          destination: dropoffCoords,
           travelMode: 'DRIVING'
         }, (response, status) => {
           if (status !== "OK" || !response.routes.length) {
@@ -730,41 +724,47 @@ function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
             return;
           }
 
-          const jobTravelSeconds = response.routes[0].legs[0].duration.value;
-          const jobBufferSeconds = 10 * 60; // 10 mins unloading after dropoff
-          const jobTotalSeconds = jobTravelSeconds + jobBufferSeconds;
+          const jobDuration = response.routes[0].legs[0].duration.value; // seconds
+          const finishMinutes = timeStringToMinutes(latestJob.pickupTime) + (jobDuration + 600) / 60; // add 10 min buffer after drop-off
 
-          lastDropTimeMinutes = timeStringToMinutes(latestJob.pickupTime) + (jobTotalSeconds / 60);
+          const service = new google.maps.DistanceMatrixService();
+          service.getDistanceMatrix({
+            origins: [dropoffCoords],
+            destinations: [pickupLocation],
+            travelMode: google.maps.TravelMode.DRIVING
+          }, (distResponse, distStatus) => {
+            if (distStatus !== "OK" || !distResponse.rows.length || !distResponse.rows[0].elements.length) {
+              resolve(false);
+              return;
+            }
 
-          continueToNewPickup();
+            const travelToNewPickupSeconds = distResponse.rows[0].elements[0].duration.value;
+            const totalAvailableTime = finishMinutes + (travelToNewPickupSeconds + 600) / 60; // another 10 min buffer
+
+            const requestedBookingMinutes = timeStringToMinutes(timeVal);
+
+            resolve(requestedBookingMinutes >= totalAvailableTime);
+          });
         });
       } else {
-        // No previous job — assume home base
-        lastDropTimeMinutes = 0;
-        continueToNewPickup();
-      }
-
-      function continueToNewPickup() {
+        // No previous job → just use distance from home base
         const service = new google.maps.DistanceMatrixService();
         service.getDistanceMatrix({
-          origins: [lastDropCoords],
+          origins: [startLocation],
           destinations: [pickupLocation],
           travelMode: google.maps.TravelMode.DRIVING
-        }, (distResponse, distStatus) => {
-          if (distStatus !== "OK" || !distResponse.rows.length || !distResponse.rows[0].elements.length) {
+        }, (response, status) => {
+          if (status !== "OK" || !response.rows.length || !response.rows[0].elements.length) {
             resolve(false);
             return;
           }
 
-          const travelToPickupSeconds = distResponse.rows[0].elements[0].duration.value;
-          const prePickupBufferSeconds = 10 * 60; // 10 mins buffer before pickup
-          const totalTravelToPickupMinutes = (travelToPickupSeconds + prePickupBufferSeconds) / 60;
-
-          const earliestPossiblePickup = lastDropTimeMinutes + totalTravelToPickupMinutes;
+          const travelSeconds = response.rows[0].elements[0].duration.value;
+          const totalTravelMinutes = (travelSeconds + 600) / 60; // 10 min buffer
 
           const requestedBookingMinutes = timeStringToMinutes(timeVal);
 
-          resolve(requestedBookingMinutes >= earliestPossiblePickup);
+          resolve(requestedBookingMinutes >= totalTravelMinutes);
         });
       }
     });
@@ -802,7 +802,7 @@ function findNextAvailableSlotAcrossDrivers(drivers, dateVal, startTime) {
 // === FIND NEXT SLOT FOR A SINGLE DRIVER ===
 function findNextAvailableSlot(driver, dateVal, startFromTime) {
   return new Promise(async (resolve) => {
-    const increment = 5; // search in 5-minute steps
+    const increment = 5;
     let attemptMinutes = timeStringToMinutes(startFromTime);
 
     const rotaSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
@@ -821,9 +821,7 @@ function findNextAvailableSlot(driver, dateVal, startFromTime) {
       const diaryFree = await checkDiaryAvailability(driver, dateVal, attemptTime);
       if (diaryFree) {
         const canReach = await checkTravelTime(driver, pickupCoords, dateVal, attemptTime);
-        if (canReach) {
-          return resolve(attemptTime);
-        }
+        if (canReach) return resolve(attemptTime);
       }
       attemptMinutes += increment;
     }
@@ -831,7 +829,6 @@ function findNextAvailableSlot(driver, dateVal, startFromTime) {
     resolve(null);
   });
 }
-  
 // === LIVE BOOKINGS DISPLAY ===
 const liveBookingsList = document.getElementById("liveBookingsList");
 
