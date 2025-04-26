@@ -40,46 +40,30 @@
 
           // Start live tracking every second
           setInterval(() => {
-navigator.geolocation.getCurrentPosition(
-  (position) => {
-    const driverName = localStorage.getItem('driverName');
-    const driverLocationRef = ref(database, `driversLocation/${driverName}`);
-
-    // Start live tracking every second
-    setInterval(() => {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          set(driverLocationRef, {
-            lat: latitude,
-            lng: longitude,
-            timestamp: Date.now()
-          }).catch((error) => {
-            console.error('Firebase write error:', error);
-          });
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                const { latitude, longitude } = pos.coords;
+                set(driverLocationRef, {
+                  lat: latitude,
+                  lng: longitude,
+                  timestamp: Date.now()
+                }).catch((error) => {
+                  console.error('Firebase write error:', error);
+                });
+              },
+              (error) => {
+                console.error('Location fetch error during tracking', error);
+              }
+            );
+          }, 1000);
         },
         (error) => {
-          console.error('Location fetch error during tracking', error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
+          alert('Location permission is required. You have been logged out.');
+          localStorage.clear();
+          window.location.href = 'DriversLogin.html';
         }
       );
-    }, 1000);
-  },
-  (error) => {
-    alert('Location permission is required. You have been logged out.');
-    localStorage.clear();
-    window.location.href = 'DriversLogin.html';
-  },
-  {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0
-  }
-);
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const driverName = localStorage.getItem('driverName');
