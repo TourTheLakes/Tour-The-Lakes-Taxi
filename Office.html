@@ -32,12 +32,13 @@
 <body>
   <h1 id="staffGreeting">Loading staff...</h1>
 
-  <div id="buttonRow">
-    <button onclick="window.location.href='ManualBooking.html'">Book</button>
-    <button onclick="window.location.href='Diary.html'">Diary</button>
-    <button onclick="window.location.href='Rota.html'">Rota</button>
-    <button onclick="window.location.href='Archive.html'">Archive</button>
-  </div>
+<div id="buttonRow">
+  <button onclick="window.location.href='ManualBooking.html'">Book</button>
+  <button onclick="window.location.href='Diary.html'">Diary</button>
+  <button onclick="window.location.href='Rota.html'">Rota</button>
+  <button onclick="window.location.href='Archive.html'">Archive</button>
+  <button onclick="logOff()">Log Off</button>
+</div>
 
   <div id="map"></div>
 
@@ -133,6 +134,14 @@
     // Make initMap visible to Google Maps
     window.initMap = initMap;
   </script>
+  <script>
+function logOff() {
+  localStorage.clear();
+  alert('You have been logged off.');
+  window.location.href = 'OfficeLogin.html';
+}
+</script>
+
 
 </body>
 </html>
