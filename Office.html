@@ -45,7 +45,6 @@
       measurementId: "G-W6JY1LZXTP"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
@@ -86,6 +85,7 @@
       });
     }
 
+    // <<< THIS LINE IS CRITICAL FOR THE MAP >>>
     window.initMap = initMap;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -112,8 +112,9 @@
     });
   </script>
 
-  <!-- Google Maps API script with your provided API Key -->
+  <!-- Correct placement of Google Maps script -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&callback=initMap" async defer></script>
+
 </head>
 <body>
   <h1 id="staffGreeting">Loading staff...</h1>
