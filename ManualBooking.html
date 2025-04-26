@@ -1,37 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Manual Booking</title>
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    p {
-      text-align: center;
-      font-size: 16px;
-    }
+    body { font-family: Arial; padding:20px; background:#f5f5f5; }
+    h1 { text-align:center; }
+    .section { background:#fff; padding:15px; margin:10px 0; border-radius:5px; }
+    label { display:block; margin:5px 0; font-weight:bold; }
+    input, select, button { width:100%; padding:8px; margin:5px 0; box-sizing:border-box; }
+    #returnButton { background:#444; color:#fff; }
   </style>
 </head>
 <body>
 
-  <h1>Manual Booking Page</h1>
-  <p>This page will allow office staff to manually create a booking for a customer.</p>
+  <h1>Manual Booking</h1>
 
-  <!-- Firebase v8.10.1 (simple non-module) -->
+  <!-- NEW BOOKING -->
+  <div class="section">
+    <h2>Create Booking</h2>
+    <label>Pickup Address</label>
+    <input id="pickup" placeholder="Type address"/>
+    <label>Drop-off Address</label>
+    <input id="dropoff" placeholder="Type address"/>
+    <label>Date</label>
+    <input type="date" id="bookingDate"/>
+    <label>Time</label>
+    <input type="time" id="bookingTime"/>
+    <button id="confirmBooking">Confirm Booking</button>
+  </div>
+
+  <!-- MANAGE EXISTING BOOKINGS -->
+  <div class="section">
+    <h2>Manage Bookings</h2>
+    <label>Select Driver</label>
+    <select id="driverSelect"><option>Loading…</option></select>
+    <label>Select Date</label>
+    <input type="date" id="manageDate"/>
+    <button id="loadBookings">Load Bookings</button>
+    <div id="bookingList"></div>
+    <button id="amendBooking">Amend Booking</button>
+    <button id="cancelBooking">Cancel Booking</button>
+  </div>
+
+  <button id="returnButton" onclick="window.location.href='Office.html'">Return to Office</button>
+
+  <!-- Firebase v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- Google Maps (Places + Distance Matrix) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places&callback=initMap" async defer></script>
 
   <script>
+    // Initialize Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -42,14 +64,159 @@
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    var db = firebase.database();
 
-    window.addEventListener('DOMContentLoaded', () => {
-      console.log('ManualBooking.html loaded and Firebase connected.');
-    });
+    var autocompletePickup, autocompleteDropoff, distanceService;
+
+    // Init Google Places and Distance Matrix
+    function initMap() {
+      // UK-only Autocomplete
+      var opts = { componentRestrictions: { country: 'gb' } };
+      autocompletePickup = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
+      autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById('dropoff'), opts);
+      distanceService = new google.maps.DistanceMatrixService();
+      loadDriverList();
+    }
+    window.initMap = initMap;
+
+    // Load drivers into dropdown
+    function loadDriverList() {
+      var sel = document.getElementById('driverSelect');
+      db.ref('driversProfile').once('value', function(snap) {
+        sel.innerHTML = '<option value="">Select driver</option>';
+        snap.forEach(function(ch) {
+          var opt = document.createElement('option');
+          opt.value = ch.key;
+          opt.textContent = ch.val().name;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    // Utility: format minutes → "HH:MM"
+    function formatTime(mins) {
+      var h = Math.floor(mins/60);
+      var m = mins%60;
+      if (h<10) h='0'+h;
+      if (m<10) m='0'+m;
+      return h+':'+m;
+    }
+
+    // Confirm booking logic
+    document.getElementById('confirmBooking').onclick = function() {
+      var p = autocompletePickup.getPlace();
+      var d = autocompleteDropoff.getPlace();
+      var date = document.getElementById('bookingDate').value;
+      var time = document.getElementById('bookingTime').value;
+      if (!p || !d || !date || !time) { alert('Fill all fields'); return; }
+
+      // Compute travel time + buffer to get drop-off end time
+      var origin = p.geometry.location;
+      var dest = d.geometry.location;
+      var tparts = time.split(':');
+      var startMin = parseInt(tparts[0])*60+parseInt(tparts[1]);
+
+      distanceService.getDistanceMatrix({
+        origins: [origin],
+        destinations: [dest],
+        travelMode: 'DRIVING',
+        drivingOptions: { departureTime: new Date(date+'T'+time) }
+      }, function(response, status) {
+        if (status !== 'OK') { alert('Distance error'); return; }
+        var durSec = response.rows[0].elements[0].duration.value;
+        var durMin = Math.ceil(durSec/60);
+        var endMin = startMin + durMin + 10; // +10min buffer
+        var endTime = formatTime(endMin);
+
+        // Loop through drivers to find first available
+        db.ref('driversProfile').once('value', function(dsnap) {
+          var booked = false;
+          dsnap.forEach(function(c) {
+            if (booked) return;
+            var driverId = c.key;
+            // Check shift
+            db.ref('shifts/'+driverId+'/'+date).once('value', function(ssh) {
+              var shift = ssh.val();
+              if (!shift) return;
+              var s0 = shift.shiftStart.split(':');
+              var s1 = shift.shiftEnd.split(':');
+              var sMin = parseInt(s0[0])*60+parseInt(s0[1]);
+              var eMin = parseInt(s1[0])*60+parseInt(s1[1]);
+              if (startMin < sMin || endMin > eMin) return;
+
+              // Check existing bookings
+              db.ref('bookings/'+driverId+'/'+date).once('value', function(bsnap) {
+                var conflict = false;
+                bsnap.forEach(function(bc) {
+                  var b = bc.val();
+                  var bt0 = b.bookingTime.split(':');
+                  var bt1 = b.bookingEndTime.split(':');
+                  var bStart = parseInt(bt0[0])*60+parseInt(bt0[1]);
+                  var bEnd = parseInt(bt1[0])*60+parseInt(bt1[1]);
+                  if (!(endMin <= bStart || startMin >= bEnd)) conflict = true;
+                });
+                if (conflict) return;
+
+                // All good → save booking
+                booked = true;
+                var newB = db.ref('bookings/'+driverId+'/'+date).push();
+                newB.set({
+                  pickup: p.formatted_address,
+                  dropoff: d.formatted_address,
+                  pickupCoords: { lat: origin.lat(), lng: origin.lng() },
+                  dropoffCoords: { lat: dest.lat(), lng: dest.lng() },
+                  bookingTime: time,
+                  bookingEndTime: endTime
+                }, function(err) {
+                  if (err) alert('Save error');
+                  else alert('Booked with '+c.val().name+' at '+time);
+                });
+              });
+            });
+          });
+          if (!booked) alert('No driver available');
+        });
+      });
+    };
+
+    // Load existing bookings
+    document.getElementById('loadBookings').onclick = function() {
+      var driver = document.getElementById('driverSelect').value;
+      var date = document.getElementById('manageDate').value;
+      if (!driver || !date) { alert('Select driver & date'); return; }
+
+      var list = document.getElementById('bookingList');
+      list.innerHTML = '';
+      db.ref('bookings/'+driver+'/'+date).once('value', function(snap) {
+        snap.forEach(function(ch) {
+          var b = ch.val();
+          var div = document.createElement('div');
+          div.innerHTML = '<input type="radio" name="bk" value="'+ch.key+'"/> '
+                        + b.bookingTime +' → '+ b.pickup +' to '+ b.dropoff;
+          list.appendChild(div);
+        });
+      });
+    };
+
+    // Amend booking (stub)
+    document.getElementById('amendBooking').onclick = function() {
+      var sel = document.querySelector('input[name=bk]:checked');
+      if (!sel) { alert('Select a booking'); return; }
+      alert('Amend logic for ID '+ sel.value);
+    };
+
+    // Cancel booking
+    document.getElementById('cancelBooking').onclick = function() {
+      var sel = document.querySelector('input[name=bk]:checked');
+      var driver = document.getElementById('driverSelect').value;
+      var date = document.getElementById('manageDate').value;
+      if (!sel || !driver || !date) { alert('Select booking, driver & date'); return; }
+      if (!confirm('Cancel this booking?')) return;
+      db.ref('bookings/'+driver+'/'+date+'/'+sel.value).remove(function(err) {
+        if (err) alert('Delete error'); else alert('Cancelled');
+      });
+    };
   </script>
-
 </body>
 </html>
