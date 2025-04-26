@@ -608,7 +608,6 @@ function createBooking(data) {
 // === AUTO-ASSIGN DRIVER AFTER ESTIMATE ===
 const assignedDriverField = document.getElementById("bAssignedDriver");
 
-// Call this after estimating fare
 function autoAssignDriver() {
   if (!pickupCoords || !dropoffCoords) {
     assignedDriverField.value = "Awaiting address input...";
@@ -621,7 +620,6 @@ function autoAssignDriver() {
     return;
   }
 
-  // Load drivers
   db.ref("drivers").once("value").then(driverSnap => {
     const drivers = driverSnap.val() || {};
     const availableDrivers = [];
@@ -637,27 +635,22 @@ function autoAssignDriver() {
         const bookingTime = timeVal;
         if (bookingTime < rota.start || bookingTime > rota.end) return;
 
-        // Now check for breaks
         return db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
           const brk = breakSnap.val();
           if (brk && brk.from && brk.to) {
             if (bookingTime >= brk.from && bookingTime <= brk.to) return;
           }
 
-          // Now check if driver already has a booking at this time
           return db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
             const bookings = bookingsSnap.val() || {};
-
             let conflict = false;
+
             for (const bid in bookings) {
               const b = bookings[bid];
               if (b.pickupDate === dateVal) {
-                // Allow 7 min travel time, assume 15 min default job
-                const bookedTime = b.pickupTime;
-                const bookedMinutes = timeStringToMinutes(bookedTime);
+                const bookedMinutes = timeStringToMinutes(b.pickupTime);
                 const thisMinutes = timeStringToMinutes(bookingTime);
-
-                if (Math.abs(thisMinutes - bookedMinutes) < 30) { // 15 min job + 7 min buffer either side
+                if (Math.abs(thisMinutes - bookedMinutes) < 30) {
                   conflict = true;
                   break;
                 }
@@ -674,10 +667,14 @@ function autoAssignDriver() {
 
     Promise.all(promises).then(() => {
       if (availableDrivers.length > 0) {
-        const selectedDriver = availableDrivers[0]; // For now pick the first
-        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.reg} – ${selectedDriver.vehicle.seats} Seats`;
+        const selectedDriver = availableDrivers[0];
+        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
       } else {
         assignedDriverField.value = "No driver available at requested time.";
+        const anyDriver = Object.values(drivers)[0];
+        if (anyDriver) {
+          suggestBestAvailableTime(anyDriver, dateVal, timeVal);
+        }
       }
     });
   });
@@ -725,7 +722,170 @@ db.ref("drivers").once("value").then(snapshot => {
     driverMap[d.name] = d.doorCard;
   }
 });
+    // === DIARY AVAILABILITY CHECK ===
+function checkDiaryAvailability(driver, dateVal, timeVal) {
+  return new Promise(resolve => {
+    const doorCard = driver.doorCard;
+    const bookingMinutes = timeStringToMinutes(timeVal);
+
+    db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+      const shift = rotaSnap.val();
+      if (!shift || !shift.start || !shift.end) return resolve(false);
+
+      const shiftStart = timeStringToMinutes(shift.start);
+      const shiftEnd = timeStringToMinutes(shift.end);
+
+      if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return resolve(false);
+
+      db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
+        const brk = breakSnap.val();
+        if (brk && brk.from && brk.to) {
+          const breakStart = timeStringToMinutes(brk.from);
+          const breakEnd = timeStringToMinutes(brk.to);
+          if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return resolve(false);
+        }
+
+        db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(bookingsSnap => {
+          const allBookings = bookingsSnap.val() || {};
+          let conflict = false;
+
+          for (const id in allBookings) {
+            const b = allBookings[id];
+            if (b.pickupDate !== dateVal) continue;
+
+            const jobMinutes = timeStringToMinutes(b.pickupTime);
+            if (Math.abs(bookingMinutes - jobMinutes) < 30) {
+              conflict = true;
+              break;
+            }
+          }
+
+          resolve(!conflict);
+        });
+      });
+    });
+  });
+}
+    // === NEXT AVAILABLE SLOT FINDER ===
+function findNextAvailableSlot(driver, dateVal, timeVal) {
+  return new Promise(async (resolve) => {
+    const increment = 5; // Minutes
+    let attemptMinutes = timeStringToMinutes(timeVal);
+
+    const shiftSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
+    const shift = shiftSnap.val();
+    if (!shift || !shift.start || !shift.end) return resolve(null);
+
+    const shiftStart = timeStringToMinutes(shift.start);
+    const shiftEnd = timeStringToMinutes(shift.end);
+
+    if (attemptMinutes > shiftEnd) return resolve(null);
+
+    while (attemptMinutes <= shiftEnd) {
+      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
+      const m = String(attemptMinutes % 60).padStart(2, '0');
+      const attemptTime = `${h}:${m}`;
+
+      const available = await checkDiaryAvailability(driver, dateVal, attemptTime);
+      if (available) return resolve(attemptTime);
+
+      attemptMinutes += increment;
+    }
+
+    resolve(null);
+  });
+}
+
     
+
+// === UPDATED SUGGEST BEST AVAILABLE TIME (SAFE VERSION) ===
+let suggestionShown = false;
+
+function suggestBestAvailableTime(driver, dateVal, requestedTime) {
+  if (suggestionShown) return; // Prevent duplicate popups
+  suggestionShown = true;
+
+  findEarlierAvailableSlot(driver, dateVal, requestedTime).then(earlierTime => {
+    if (earlierTime) {
+      if (confirm(`No driver available at your requested time.\n\nClosest earlier available slot is ${earlierTime}.\n\nWould you like to update your booking to this time?`)) {
+        document.getElementById("bTime").value = earlierTime;
+        updateEstimateDisplay();
+        suggestionShown = false;
+        return;
+      }
+    }
+
+    findNextAvailableSlot(driver, dateVal, requestedTime).then(nextTime => {
+      if (nextTime) {
+        if (confirm(`Closest later available slot is ${nextTime}.\n\nWould you like to update your booking to this time?`)) {
+          document.getElementById("bTime").value = nextTime;
+          updateEstimateDisplay();
+        }
+      } else {
+        alert("No available time slots earlier or later today.\nPlease try a different time.");
+      }
+      suggestionShown = false;
+    });
+  }).catch(() => {
+    suggestionShown = false;
+  });
+}
+    
+ // === UPDATED AUTO-ASSIGN DRIVER ===
+function autoAssignDriver() {
+  if (!pickupCoords || !dropoffCoords) {
+    assignedDriverField.value = "Awaiting address input...";
+    return;
+  }
+  const dateVal = dateInput.value;
+  const timeVal = timeInput.value;
+  if (!dateVal || !timeVal) {
+    assignedDriverField.value = "Awaiting date and time...";
+    return;
+  }
+
+  db.ref("drivers").once("value").then(driverSnap => {
+    const drivers = driverSnap.val() || {};
+    const availableDrivers = [];
+    const rotaDrivers = [];
+
+    const promises = Object.keys(drivers).map(driverKey => {
+      const d = drivers[driverKey];
+      rotaDrivers.push(d); // Keep drivers for rota lookup later
+      return checkDiaryAvailability(d, dateVal, timeVal).then(isAvailable => {
+        if (isAvailable) availableDrivers.push(d);
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      if (availableDrivers.length > 0) {
+        const selectedDriver = availableDrivers[0];
+        assignedDriverField.value = `${selectedDriver.name} – ${selectedDriver.vehicle.make} ${selectedDriver.vehicle.model}, ${selectedDriver.vehicle.color} – ${selectedDriver.vehicle.registration} – ${selectedDriver.vehicle.seats} Seats`;
+      } else {
+        assignedDriverField.value = "No driver available at requested time.";
+
+        // Instead of using ANY driver, find one with a valid shift today
+        const checkRotaPromises = rotaDrivers.map(d => {
+          return db.ref(`rota/${d.doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+            const rota = rotaSnap.val();
+            if (rota && rota.start && rota.end) {
+              return d; // Valid shift found
+            }
+            return null;
+          });
+        });
+
+        Promise.all(checkRotaPromises).then(results => {
+          const driversWithShift = results.filter(d => d !== null);
+          if (driversWithShift.length > 0) {
+            suggestBestAvailableTime(driversWithShift[0], dateVal, timeVal);
+          }
+        });
+      }
+    });
+  });
+}
+     
   </script>
   
 </body>
