@@ -12,21 +12,17 @@
       background-color: #f5f5f5;
       color: #333;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 20px;
     }
-
     #controls {
       text-align: center;
       margin-bottom: 20px;
     }
-
     #driverList {
       margin-top: 20px;
     }
-
     .driverCard {
       background: white;
       padding: 15px;
@@ -34,7 +30,10 @@
       border-radius: 5px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-
+    .bookingsList {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
     #returnButton {
       display: block;
       margin: 30px auto 0;
@@ -53,11 +52,7 @@
   </div>
 
   <div id="driverList">
-    <!-- Drivers and their shifts will appear here -->
-  </div>
-
-  <div id="bookingSection">
-    <!-- // Provision: Bookings from Firebase will be shown here in future -->
+    <!-- Drivers and their shifts + bookings will appear here -->
   </div>
 
   <button id="returnButton" onclick="window.location.href='Office.html'">Return to Office</button>
@@ -67,6 +62,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
+    // Initialize Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -77,7 +73,6 @@
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
     };
-
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -93,22 +88,23 @@
       datePicker.value = `${year}-${month}-${day}`;
     }
 
-    // Load drivers and their shifts
+    // Load drivers, their shifts, and bookings for the selected date
     function loadDiary(dateString) {
       driverList.innerHTML = '';
 
-      firebase.database().ref('driversProfile').once('value', snapshot => {
+      database.ref('driversProfile').once('value', snapshot => {
         snapshot.forEach(child => {
           const driverId = child.key;
           const driverName = child.val().name;
+          const driverDiv = document.createElement('div');
+          driverDiv.className = 'driverCard';
+          driverDiv.innerHTML = `<strong>${driverName}</strong><br>Loading shift…`;
+          driverList.appendChild(driverDiv);
 
-          // Get shift info for this driver on selected day
-          firebase.database().ref(`shifts/${driverId}/${dateString}`).once('value', shiftSnap => {
-            const driverDiv = document.createElement('div');
-            driverDiv.className = 'driverCard';
-
-            if (shiftSnap.exists()) {
-              const shift = shiftSnap.val();
+          // Get shift info
+          database.ref(`shifts/${driverId}/${dateString}`).once('value', shiftSnap => {
+            const shift = shiftSnap.val();
+            if (shift) {
               driverDiv.innerHTML = `
                 <strong>${driverName}</strong><br>
                 Shift Start: ${shift.shiftStart}<br>
@@ -117,28 +113,43 @@
                 Break End: ${shift.breakEnd}
               `;
             } else {
-              driverDiv.innerHTML = `
-                <strong>${driverName}</strong><br>
-                No shift assigned on this day.
-              `;
+              driverDiv.innerHTML = `<strong>${driverName}</strong><br>No shift assigned on this day.`;
             }
 
-            driverList.appendChild(driverDiv);
+            // Then load bookings for this driver and date
+            database.ref(`bookings/${driverId}/${dateString}`).once('value', bookingSnap => {
+              if (bookingSnap.exists()) {
+                const list = document.createElement('ul');
+                list.className = 'bookingsList';
+                bookingSnap.forEach(bc => {
+                  const b = bc.val();
+                  const item = document.createElement('li');
+                  item.textContent = `${b.bookingTime} → ${b.pickup} to ${b.dropoff}`;
+                  list.appendChild(item);
+                });
+                driverDiv.appendChild(document.createElement('hr'));
+                driverDiv.appendChild(document.createTextNode('Bookings:'));
+                driverDiv.appendChild(list);
+              } else {
+                driverDiv.appendChild(document.createElement('hr'));
+                driverDiv.appendChild(document.createTextNode('No bookings for this day.'));
+              }
+            });
           });
         });
       });
     }
 
-    // Change date handler
+    // When the date changes, reload
     datePicker.addEventListener('change', () => {
       loadDiary(datePicker.value);
     });
 
+    // On page load
     window.addEventListener('DOMContentLoaded', () => {
       setToday();
       loadDiary(datePicker.value);
     });
   </script>
-
 </body>
 </html>
