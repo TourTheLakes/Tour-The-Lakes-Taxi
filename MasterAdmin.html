@@ -769,6 +769,38 @@ function findNextAvailableSlot(driver, dateVal, startFromTime) {
     resolve(null);
   });
 }
+// === LIVE BOOKINGS DISPLAY ===
+const liveBookingsList = document.getElementById("liveBookingsList");
+
+db.ref("bookings").on("value", snapshot => {
+  const bookings = snapshot.val() || {};
+  liveBookingsList.innerHTML = "";
+
+  Object.entries(bookings).reverse().forEach(([key, booking]) => {
+    const div = document.createElement("div");
+    div.className = "panel";
+    div.innerHTML = `
+      <p><strong>${booking.name}</strong> | ${booking.pickupDate || "?"} ${booking.pickupTime || "?"}</p>
+      <p>${booking.pickup} → ${booking.dropoff}</p>
+      <p><strong>Passengers:</strong> ${booking.passengers} | <strong>Luggage:</strong> ${booking.luggage} | <strong>Pets:</strong> ${booking.pets}</p>
+      <p><strong>Driver:</strong> ${booking.claimedBy || "Unassigned"}</p>
+      <p><strong>Notes:</strong> ${booking.extra || "<em>None</em>"}</p>
+      <p><strong>Fare:</strong> £${booking.fare || "N/A"}</p>
+      <button class="warn" onclick="cancelBooking('${key}')">Cancel Booking</button>
+    `;
+    liveBookingsList.appendChild(div);
+  });
+});
+
+// === CANCEL BOOKING FUNCTION ===
+function cancelBooking(id) {
+  if (confirm("Are you sure you want to cancel this booking?")) {
+    db.ref("bookings/" + id).remove().then(() => {
+      alert("Booking cancelled.");
+    });
+  }
+}
+</script>
   </script>
   
 </body>
