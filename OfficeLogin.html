@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Driver Login</title>
+  <title>Office Login</title>
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
@@ -25,43 +25,44 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    async function driverLogin(event) {
+    async function officeLogin(event) {
       event.preventDefault();
 
-      const enteredName = document.getElementById('driverName').value.trim();
-      const enteredPassword = document.getElementById('driverPassword').value.trim();
+      const enteredName = document.getElementById('staffName').value.trim();
+      const enteredPassword = document.getElementById('staffPassword').value.trim();
 
       if (!enteredName || !enteredPassword) {
         alert('Please fill in both fields.');
         return;
       }
 
-      const profileRef = ref(database, `driversProfile/${enteredName}`);
+      const staffRef = ref(database, `officeStaff/${enteredName}`);
       
       try {
-        const snapshot = await get(profileRef);
+        const snapshot = await get(staffRef);
 
         if (snapshot.exists()) {
-          const profileData = snapshot.val();
-          if (profileData.password === enteredPassword) {
-            // Session token creation
+          const staffData = snapshot.val();
+          if (staffData.password === enteredPassword) {
             const sessionToken = Date.now();
-            localStorage.setItem('driverName', profileData.name);
+            localStorage.setItem('staffName', staffData.name);
             localStorage.setItem('sessionToken', sessionToken);
 
-            // Save the session token in Firebase
-            const sessionRef = ref(database, `driverSessions/${profileData.name}`);
+            const sessionRef = ref(database, `officeSessions/${staffData.name}`);
             await set(sessionRef, {
               sessionToken: sessionToken
+            }).catch((error) => {
+              console.error('Failed to save session token:', error);
+              alert('Login failed. Try again.');
+              return;
             });
 
-            // Redirect
-            window.location.href = 'Drivers.html';
+            window.location.href = 'Office.html';
           } else {
             alert('Incorrect password.');
           }
         } else {
-          alert('Driver not found.');
+          alert('Office staff not found.');
         }
       } catch (error) {
         console.error(error);
@@ -69,17 +70,17 @@
       }
     }
 
-    window.driverLogin = driverLogin;
+    window.officeLogin = officeLogin;
   </script>
 </head>
 <body>
-  <h1>Driver Login</h1>
-  <form onsubmit="driverLogin(event)">
-    <label for="driverName">Driver Name:</label><br>
-    <input type="text" id="driverName" name="driverName" required><br><br>
+  <h1>Office Staff Login</h1>
+  <form onsubmit="officeLogin(event)">
+    <label for="staffName">Staff Name:</label><br>
+    <input type="text" id="staffName" name="staffName" required><br><br>
 
-    <label for="driverPassword">Driver Password:</label><br>
-    <input type="password" id="driverPassword" name="driverPassword" required><br><br>
+    <label for="staffPassword">Password:</label><br>
+    <input type="password" id="staffPassword" name="staffPassword" required><br><br>
 
     <button type="submit">Login</button>
   </form>
