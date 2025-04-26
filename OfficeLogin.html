@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Office Login</title>
+  <title>Driver Login</title>
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -15,7 +15,7 @@
       authDomain: "tourthelakes-1e165.firebaseapp.com",
       databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
       projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      storageBucket: "tourthelakes-1e165.appspot.com",
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
@@ -25,34 +25,43 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    async function officeLogin(event) {
+    async function driverLogin(event) {
       event.preventDefault();
 
-      const enteredName = document.getElementById('staffName').value.trim();
-      const enteredPassword = document.getElementById('staffPassword').value.trim();
+      const enteredName = document.getElementById('driverName').value.trim();
+      const enteredPassword = document.getElementById('driverPassword').value.trim();
 
       if (!enteredName || !enteredPassword) {
         alert('Please fill in both fields.');
         return;
       }
 
-      const staffRef = ref(database, `officeStaff/${enteredName}`);
+      const profileRef = ref(database, `driversProfile/${enteredName}`);
       
       try {
-        const snapshot = await get(staffRef);
+        const snapshot = await get(profileRef);
 
         if (snapshot.exists()) {
-          const staffData = snapshot.val();
-          if (staffData.password === enteredPassword) {
-            // Save session
-            localStorage.setItem('staffName', staffData.name);
-            // Redirect to Office.html
-            window.location.href = 'Office.html';
+          const profileData = snapshot.val();
+          if (profileData.password === enteredPassword) {
+            // Session token creation
+            const sessionToken = Date.now();
+            localStorage.setItem('driverName', profileData.name);
+            localStorage.setItem('sessionToken', sessionToken);
+
+            // Save the session token in Firebase
+            const sessionRef = ref(database, `driverSessions/${profileData.name}`);
+            await set(sessionRef, {
+              sessionToken: sessionToken
+            });
+
+            // Redirect
+            window.location.href = 'Drivers.html';
           } else {
             alert('Incorrect password.');
           }
         } else {
-          alert('Office staff not found.');
+          alert('Driver not found.');
         }
       } catch (error) {
         console.error(error);
@@ -60,17 +69,17 @@
       }
     }
 
-    window.officeLogin = officeLogin;
+    window.driverLogin = driverLogin;
   </script>
 </head>
 <body>
-  <h1>Office Staff Login</h1>
-  <form onsubmit="officeLogin(event)">
-    <label for="staffName">Staff Name:</label><br>
-    <input type="text" id="staffName" name="staffName" required><br><br>
+  <h1>Driver Login</h1>
+  <form onsubmit="driverLogin(event)">
+    <label for="driverName">Driver Name:</label><br>
+    <input type="text" id="driverName" name="driverName" required><br><br>
 
-    <label for="staffPassword">Password:</label><br>
-    <input type="password" id="staffPassword" name="staffPassword" required><br><br>
+    <label for="driverPassword">Driver Password:</label><br>
+    <input type="password" id="driverPassword" name="driverPassword" required><br><br>
 
     <button type="submit">Login</button>
   </form>
