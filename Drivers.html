@@ -31,6 +31,7 @@
 
       if (driverName) {
         document.getElementById('driverGreeting').textContent = `Welcome, ${driverName}`;
+        startLocationTracking();
       } else {
         // If no driverName, redirect back to login
         window.location.href = 'DriversLogin.html';
