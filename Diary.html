@@ -95,8 +95,8 @@
     }
 
     function toMins(t) {
-      const p = t.split(':');
-      return parseInt(p[0])*60 + parseInt(p[1]);
+      const [hh,mm] = t.split(':').map(Number);
+      return hh*60 + mm;
     }
 
     function loadDiary(date) {
@@ -110,36 +110,48 @@
           card.innerHTML = `<strong>${name}</strong>`;
           driverList.appendChild(card);
 
-          // gather shift and bookings
+          // Fetch shift and bookings
           db.ref(`shifts/${driverId}/${date}`).once('value', shiftSnap => {
             const shift = shiftSnap.val() || {};
             db.ref(`bookings/${driverId}/${date}`).once('value', bkSnap => {
               const events = [];
-              // shift start/end
+
+              // Shift events
               if (shift.shiftStart) events.push({time: shift.shiftStart, label: 'Shift start'});
               if (shift.breakStart) events.push({time: shift.breakStart, label: 'Break start'});
               if (shift.breakEnd)   events.push({time: shift.breakEnd,   label: 'Break end'});
               if (shift.shiftEnd)   events.push({time: shift.shiftEnd,   label: 'Shift end'});
 
-              // bookings
+              // Booking events — **now showing full addresses**
               bkSnap.forEach(bc => {
                 const b = bc.val();
-                if (b.bookingTime)     events.push({time: b.bookingTime,    label: `Pickup →`});
-                if (b.bookingEndTime)  events.push({time: b.bookingEndTime, label: `Drop-off done`});
-                if (b.returnTime)      events.push({time: b.returnTime,     label: `Return to base`});
+                if (b.bookingTime && b.pickup) {
+                  events.push({
+                    time:  b.bookingTime,
+                    label: `Pickup: ${b.pickup}`
+                  });
+                }
+                if (b.bookingEndTime && b.dropoff) {
+                  events.push({
+                    time:  b.bookingEndTime,
+                    label: `Drop-off: ${b.dropoff}`
+                  });
+                }
+                if (b.returnTime) {
+                  events.push({
+                    time:  b.returnTime,
+                    label: 'Return to base'
+                  });
+                }
               });
 
-              // sort by time
-              events.sort((a, b) => toMins(a.time) - toMins(b.time));
-
-              // render timeline
+              // Sort & render
+              events.sort((a,b)=>toMins(a.time)-toMins(b.time));
               const ul = document.createElement('ul');
               ul.className = 'timeline';
               events.forEach(ev => {
                 const li = document.createElement('li');
-                li.innerHTML = 
-                  `<span class="time">${ev.time}</span> ` +
-                  `<span class="label">${ev.label}</span>`;
+                li.innerHTML = `<span class="time">${ev.time}</span> <span class="label">${ev.label}</span>`;
                 ul.appendChild(li);
               });
               card.appendChild(ul);
@@ -149,11 +161,8 @@
       });
     }
 
-    datePicker.addEventListener('change', () => {
-      loadDiary(datePicker.value);
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
+    datePicker.addEventListener('change', ()=>loadDiary(datePicker.value));
+    window.addEventListener('DOMContentLoaded', ()=>{
       setToday();
       loadDiary(datePicker.value);
     });
