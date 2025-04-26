@@ -7,7 +7,7 @@
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -25,7 +25,7 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Request and track driver's live location
+    // Live location tracking
     function startLocationTracking() {
       if (!navigator.geolocation) {
         alert('Geolocation is not supported by your device.');
@@ -35,7 +35,6 @@
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // Permission granted
           const driverName = localStorage.getItem('driverName');
           const driverLocationRef = ref(database, `driversLocation/${driverName}`);
 
@@ -59,21 +58,32 @@
           }, 1000);
         },
         (error) => {
-          // Permission denied or error
-          alert('Location permission is required. You will be logged out.');
+          alert('Location permission is required. You have been logged out.');
           localStorage.clear();
           window.location.href = 'DriversLogin.html';
         }
       );
     }
 
-    // When page loads
     window.addEventListener('DOMContentLoaded', () => {
       const driverName = localStorage.getItem('driverName');
+      const localSessionToken = localStorage.getItem('sessionToken');
 
-      if (driverName) {
+      if (driverName && localSessionToken) {
         document.getElementById('driverGreeting').textContent = `Welcome, ${driverName}`;
-        startLocationTracking(); // <<< Correctly called now
+        startLocationTracking();
+
+        // Monitor session validity
+        const sessionRef = ref(database, `driverSessions/${driverName}`);
+        onValue(sessionRef, (snapshot) => {
+          const data = snapshot.val();
+          if (!data || data.sessionToken != localSessionToken) {
+            alert('Session expired. You have been logged out.');
+            localStorage.clear();
+            window.location.href = 'DriversLogin.html';
+          }
+        });
+
       } else {
         window.location.href = 'DriversLogin.html';
       }
