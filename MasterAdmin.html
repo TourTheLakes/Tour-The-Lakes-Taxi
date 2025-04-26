@@ -623,7 +623,77 @@ function autoAssignDriver() {
   });
 }
 
+// === CHECK IF DRIVER FREE IN DIARY (No Conflict) ===
+function checkDiaryAvailability(driver, dateVal, timeVal) {
+  return new Promise(resolve => {
+    const doorCard = driver.doorCard;
+    const bookingMinutes = timeStringToMinutes(timeVal);
 
+    db.ref(`rota/${doorCard}/${dateVal}`).once("value").then(rotaSnap => {
+      const rota = rotaSnap.val();
+      if (!rota || !rota.start || !rota.end) return resolve(false);
+
+      const shiftStart = timeStringToMinutes(rota.start);
+      const shiftEnd = timeStringToMinutes(rota.end);
+      if (bookingMinutes < shiftStart || bookingMinutes > shiftEnd) return resolve(false);
+
+      db.ref(`breaks/${doorCard}/${dateVal}`).once("value").then(breakSnap => {
+        const brk = breakSnap.val();
+        if (brk && brk.from && brk.to) {
+          const breakStart = timeStringToMinutes(brk.from);
+          const breakEnd = timeStringToMinutes(brk.to);
+          if (bookingMinutes >= breakStart && bookingMinutes <= breakEnd) return resolve(false);
+        }
+
+        db.ref("bookings").orderByChild("claimedDoor").equalTo(doorCard).once("value").then(async bookingsSnap => {
+          const bookings = bookingsSnap.val() || {};
+          let conflict = false;
+
+          for (const id in bookings) {
+            const b = bookings[id];
+            if (b.pickupDate === dateVal) {
+              const jobPickupMinutes = timeStringToMinutes(b.pickupTime);
+
+              let jobDurationSeconds = 1800; // default 30 minutes in SECONDS
+              if (b.pickup && b.dropoff) {
+                jobDurationSeconds = await estimateJourneyDuration(b.pickup, b.dropoff);
+              }
+
+              const jobDurationMinutes = jobDurationSeconds / 60;
+              const jobEndMinutes = jobPickupMinutes + jobDurationMinutes + 10; // +10 min buffer after drop-off
+
+              if (bookingMinutes >= jobPickupMinutes && bookingMinutes < jobEndMinutes) {
+                conflict = true;
+                break;
+              }
+            }
+          }
+
+          resolve(!conflict);
+        });
+      });
+    });
+  });
+}
+
+// === ESTIMATE JOURNEY DURATION IN SECONDS ===
+function estimateJourneyDuration(startAddress, endAddress) {
+  return new Promise(resolve => {
+    const service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+      origins: [startAddress],
+      destinations: [endAddress],
+      travelMode: google.maps.TravelMode.DRIVING
+    }, (response, status) => {
+      if (status !== "OK" || !response.rows.length || !response.rows[0].elements.length) {
+        resolve(1800); // fallback to 30 min (1800 seconds)
+        return;
+      }
+      const travelSeconds = response.rows[0].elements[0].duration.value;
+      resolve(travelSeconds);
+    });
+  });
+}
 
 // === CHECK TRAVEL TIME FROM LAST DROP OR BASE ===
 function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
