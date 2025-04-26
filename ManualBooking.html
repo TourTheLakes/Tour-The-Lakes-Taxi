@@ -115,7 +115,7 @@
       return h+':'+m;
     }
 
-// Confirm booking logic
+// Confirm booking logic with “next available time” suggestion
 document.getElementById('confirmBooking').onclick = function() {
   var p     = autocompletePickup.getPlace();
   var d     = autocompleteDropoff.getPlace();
@@ -123,59 +123,97 @@ document.getElementById('confirmBooking').onclick = function() {
   var time  = document.getElementById('bookingTime').value;
   if (!p || !d || !date || !time) { alert('Fill all fields'); return; }
 
-  // Use full input values (name + address)
   var pickupStr  = document.getElementById('pickup').value;
   var dropoffStr = document.getElementById('dropoff').value;
+  var origin     = p.geometry.location;
+  var dest       = d.geometry.location;
+  var tparts     = time.split(':');
+  var startMin   = parseInt(tparts[0])*60 + parseInt(tparts[1]);
 
-  // Compute travel time + buffer to get drop-off end time
-  var origin = p.geometry.location;
-  var dest   = d.geometry.location;
-  var tparts = time.split(':');
-  var startMin = parseInt(tparts[0])*60 + parseInt(tparts[1]);
-
+  // first compute endMin for this trip
   distanceService.getDistanceMatrix({
-    origins: [ origin ],
-    destinations: [ dest ],
-    travelMode: 'DRIVING',
-    drivingOptions: { departureTime: new Date(date + 'T' + time) }
+    origins:      [ origin ],
+    destinations: [ dest   ],
+    travelMode:   'DRIVING',
+    drivingOptions:{ departureTime: new Date(date + 'T' + time) }
   }, function(response, status) {
     if (status !== 'OK') { alert('Distance error'); return; }
     var durSec = response.rows[0].elements[0].duration.value;
     var durMin = Math.ceil(durSec/60);
-    var endMin = startMin + durMin + 10; // +10min buffer
-    var endTime = formatTime(endMin);
+    var endMin = startMin + durMin + 10;           // +10min buffer
+    var endTime= formatTime(endMin);
 
-    // Loop through drivers to find first available
+    // now loop drivers
     db.ref('driversProfile').once('value', function(dsnap) {
-      var booked = false;
+      var booked     = false;
+      var suggestion = null;
+
       dsnap.forEach(function(c) {
         if (booked) return;
         var driverId = c.key;
 
-        // Check shift
+        // get shift for this driver & date
         db.ref('shifts/' + driverId + '/' + date).once('value', function(ssh) {
           var shift = ssh.val();
           if (!shift) return;
-          var s0 = shift.shiftStart.split(':');
-          var s1 = shift.shiftEnd.split(':');
-          var sMin = parseInt(s0[0])*60 + parseInt(s0[1]);
-          var eMin = parseInt(s1[0])*60 + parseInt(s1[1]);
+
+          var s0   = shift.shiftStart.split(':'),
+              s1   = shift.shiftEnd.split(':'),
+              sMin = parseInt(s0[0])*60 + parseInt(s0[1]),
+              eMin = parseInt(s1[0])*60 + parseInt(s1[1]);
           if (startMin < sMin || endMin > eMin) return;
 
-          // Check existing bookings
+          // load existing bookings
           db.ref('bookings/' + driverId + '/' + date).once('value', function(bsnap) {
-            var conflict = false;
+            var bookingsArr = [];
             bsnap.forEach(function(bc) {
-              var b = bc.val();
-              var bt0 = b.bookingTime.split(':');
-              var bt1 = b.bookingEndTime.split(':');
-              var bStart = parseInt(bt0[0])*60 + parseInt(bt0[1]);
-              var bEnd   = parseInt(bt1[0])*60 + parseInt(bt1[1]);
-              if (!(endMin <= bStart || startMin >= bEnd)) conflict = true;
+              var b      = bc.val(),
+                  bt0    = b.bookingTime.split(':'),
+                  bt1    = b.bookingEndTime.split(':'),
+                  bStart = parseInt(bt0[0])*60 + parseInt(bt0[1]),
+                  bEnd   = parseInt(bt1[0])*60 + parseInt(bt1[1]);
+              bookingsArr.push({
+                start:  bStart,
+                end:    bEnd,
+                coords: b.dropoffCoords
+              });
             });
-            if (conflict) return;
 
-            // All good → save booking
+            // determine lastEndMin & lastCoords
+            var lastEndMin = sMin,
+                lastCoords = { lat: origin.lat(), lng: origin.lng() };
+            if (bookingsArr.length) {
+              bookingsArr.sort(function(a,b){return a.end - b.end;});
+              var last = bookingsArr[bookingsArr.length - 1];
+              lastEndMin = last.end;
+              lastCoords  = last.coords;
+            }
+
+            // conflict?
+            if (startMin < lastEndMin) {
+              // compute next available = lastEndMin -> origin travel + buffer
+              distanceService.getDistanceMatrix({
+                origins:      [ new google.maps.LatLng(lastCoords.lat, lastCoords.lng) ],
+                destinations: [ origin ],
+                travelMode:   'DRIVING',
+                drivingOptions:{ departureTime: new Date(date + 'T' + formatTime(lastEndMin)) }
+              }, function(resp2, stat2) {
+                if (stat2 === 'OK') {
+                  var travelM = Math.ceil(resp2.rows[0].elements[0].duration.value/60);
+                  var nextMin = lastEndMin + travelM + 10;
+                  suggestion = formatTime(nextMin);
+                  alert(
+                    'No drivers available at ' + time +
+                    '.\nNext available time: ' + suggestion
+                  );
+                } else {
+                  alert('No drivers available at ' + time);
+                }
+              });
+              return;
+            }
+
+            // no conflict → save booking
             booked = true;
             var newB = db.ref('bookings/' + driverId + '/' + date).push();
             newB.set({
@@ -192,7 +230,13 @@ document.getElementById('confirmBooking').onclick = function() {
           });
         });
       });
-      if (!booked) alert('No driver available');
+
+      // if loop finishes with no booking and no suggestion
+      setTimeout(function(){
+        if (!booked && !suggestion) {
+          alert('No driver available on ' + date);
+        }
+      }, 500);
     });
   });
 };
