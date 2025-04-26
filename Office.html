@@ -27,13 +27,32 @@
       height: calc(100vh - 200px);
     }
   </style>
+</head>
 
-  <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+<body>
+  <h1 id="staffGreeting">Loading staff...</h1>
 
-    // Firebase config
+  <div id="buttonRow">
+    <button onclick="window.location.href='ManualBooking.html'">Book</button>
+    <button onclick="window.location.href='Diary.html'">Diary</button>
+    <button onclick="window.location.href='Rota.html'">Rota</button>
+    <button onclick="window.location.href='Archive.html'">Archive</button>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Scripts placed here AFTER body -->
+
+  <!-- Firebase setup -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js"></script>
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&callback=initMap" async defer></script>
+
+  <!-- Your main script -->
+  <script>
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -46,20 +65,22 @@
     };
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
+    // Driver map variables
     let map;
     let driverMarkers = {};
 
+    // Init Google Map
     function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
+      map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 54.4609, lng: -3.0886 },
-        zoom: 12,
+        zoom: 12
       });
 
-      const driversRef = ref(database, 'driversLocation');
-      onValue(driversRef, (snapshot) => {
+      const driversRef = database.ref('driversLocation');
+      driversRef.on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
           for (const driverName in data) {
@@ -67,10 +88,8 @@
             const position = { lat: driverData.lat, lng: driverData.lng };
 
             if (driverMarkers[driverName]) {
-              // Update existing marker
               driverMarkers[driverName].setPosition(position);
             } else {
-              // Create new marker
               const marker = new google.maps.Marker({
                 position,
                 map,
@@ -88,8 +107,7 @@
       });
     }
 
-    window.initMap = initMap;
-
+    // Session control
     window.addEventListener('DOMContentLoaded', () => {
       const staffName = localStorage.getItem('staffName');
       const localSessionToken = localStorage.getItem('sessionToken');
@@ -97,9 +115,8 @@
       if (staffName && localSessionToken) {
         document.getElementById('staffGreeting').textContent = `Welcome, ${staffName}`;
 
-        // Monitor session validity
-        const sessionRef = ref(database, `officeSessions/${staffName}`);
-        onValue(sessionRef, (snapshot) => {
+        const sessionRef = database.ref(`officeSessions/${staffName}`);
+        sessionRef.on('value', (snapshot) => {
           const data = snapshot.val();
           if (!data || data.sessionToken != localSessionToken) {
             alert('Session expired. You have been logged out.');
@@ -112,22 +129,10 @@
         window.location.href = 'OfficeLogin.html';
       }
     });
+
+    // Make initMap visible to Google Maps
+    window.initMap = initMap;
   </script>
 
-  <!-- Google Maps API script with your provided API Key -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&callback=initMap" async defer></script>
-</head>
-<body>
-  <h1 id="staffGreeting">Loading staff...</h1>
-
-  <div id="buttonRow">
-    <button>Button 1</button>
-    <button>Button 2</button>
-    <button>Button 3</button>
-    <button>Button 4</button>
-    <button>Button 5</button>
-  </div>
-
-  <div id="map"></div>
 </body>
 </html>
