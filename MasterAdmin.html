@@ -693,7 +693,80 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
   }
 
 // === CHECK TRAVEL TIME FROM LAST DROP OR BASE ===
+function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
+  return new Promise(resolve => {
+    db.ref("bookings").orderByChild("claimedDoor").equalTo(driver.doorCard).once("value").then(bookingsSnap => {
+      const bookings = bookingsSnap.val() || {};
+      let latestJob = null;
 
+      for (const id in bookings) {
+        const b = bookings[id];
+        if (b.pickupDate === dateVal) {
+          if (!latestJob || timeStringToMinutes(b.pickupTime) > timeStringToMinutes(latestJob.pickupTime)) {
+            latestJob = b;
+          }
+        }
+      }
+
+      let lastDropCoords = homeBase;
+      let lastDropTimeMinutes = 0;
+
+      if (latestJob && latestJob.pickup && latestJob.dropoff && latestJob.dropoffCoords) {
+        const pickupAddress = latestJob.pickup;
+        const dropoffAddress = latestJob.dropoff;
+        lastDropCoords = latestJob.dropoffCoords;
+
+        const directionsService = new google.maps.DirectionsService();
+        directionsService.route({
+          origin: pickupAddress,
+          destination: dropoffAddress,
+          travelMode: 'DRIVING'
+        }, (response, status) => {
+          if (status !== "OK" || !response.routes.length) {
+            resolve(false);
+            return;
+          }
+
+          const jobTravelSeconds = response.routes[0].legs[0].duration.value;
+          const jobBufferSeconds = 10 * 60; // 10 mins unloading after dropoff
+          const jobTotalSeconds = jobTravelSeconds + jobBufferSeconds;
+
+          lastDropTimeMinutes = timeStringToMinutes(latestJob.pickupTime) + (jobTotalSeconds / 60);
+
+          continueToNewPickup();
+        });
+      } else {
+        // No previous job — assume home base
+        lastDropTimeMinutes = 0;
+        continueToNewPickup();
+      }
+
+      function continueToNewPickup() {
+        const service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+          origins: [lastDropCoords],
+          destinations: [pickupLocation],
+          travelMode: google.maps.TravelMode.DRIVING
+        }, (distResponse, distStatus) => {
+          if (distStatus !== "OK" || !distResponse.rows.length || !distResponse.rows[0].elements.length) {
+            resolve(false);
+            return;
+          }
+
+          const travelToPickupSeconds = distResponse.rows[0].elements[0].duration.value;
+          const prePickupBufferSeconds = 10 * 60; // 10 mins buffer before pickup
+          const totalTravelToPickupMinutes = (travelToPickupSeconds + prePickupBufferSeconds) / 60;
+
+          const earliestPossiblePickup = lastDropTimeMinutes + totalTravelToPickupMinutes;
+
+          const requestedBookingMinutes = timeStringToMinutes(timeVal);
+
+          resolve(requestedBookingMinutes >= earliestPossiblePickup);
+        });
+      }
+    });
+  });
+}
   
 // === UTILITY: TIME STRING TO TOTAL MINUTES ===
 function timeStringToMinutes(t) {
