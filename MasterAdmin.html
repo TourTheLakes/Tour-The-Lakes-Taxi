@@ -692,49 +692,6 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
   });
   }
 
-// === CHECK TRAVEL TIME FROM LAST DROP OR BASE ===
-function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
-  return new Promise(resolve => {
-    db.ref("bookings").orderByChild("claimedDoor").equalTo(driver.doorCard).once("value").then(bookingsSnap => {
-      const bookings = bookingsSnap.val() || {};
-      let latestJob = null;
-
-      for (const id in bookings) {
-        const b = bookings[id];
-        if (b.pickupDate === dateVal) {
-          if (!latestJob || timeStringToMinutes(b.pickupTime) > timeStringToMinutes(latestJob.pickupTime)) {
-            latestJob = b;
-          }
-        }
-      }
-
-      let origin = homeBase;
-      if (latestJob && latestJob.dropoffCoords) {
-        origin = latestJob.dropoffCoords;
-      }
-
-      const service = new google.maps.DistanceMatrixService();
-      service.getDistanceMatrix({
-        origins: [origin],
-        destinations: [pickupLocation],
-        travelMode: google.maps.TravelMode.DRIVING
-      }, (response, status) => {
-        if (status !== "OK" || !response.rows.length || !response.rows[0].elements.length) {
-          resolve(false);
-          return;
-        }
-
-        const travelSeconds = response.rows[0].elements[0].duration.value;
-        const bufferSeconds = 10 * 60;
-        const totalTravelMinutes = (travelSeconds + bufferSeconds) / 60;
-
-        const bookingMinutes = timeStringToMinutes(timeVal);
-
-        resolve(bookingMinutes >= totalTravelMinutes);
-      });
-    });
-  });
-}
 
 // === UTILITY: TIME STRING TO TOTAL MINUTES ===
 function timeStringToMinutes(t) {
