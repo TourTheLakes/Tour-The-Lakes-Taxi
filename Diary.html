@@ -18,18 +18,51 @@
       margin-bottom: 20px;
     }
 
-    p {
+    #controls {
       text-align: center;
-      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    #driverList {
+      margin-top: 20px;
+    }
+
+    .driverCard {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    #returnButton {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
   <h1>Diary Page</h1>
-  <p>This page will display diary entries or booking records.</p>
 
-  <!-- Firebase v8.10.1 (simple version, no modules) -->
+  <div id="controls">
+    <input type="date" id="datePicker">
+  </div>
+
+  <div id="driverList">
+    <!-- Drivers and their shifts will appear here -->
+  </div>
+
+  <div id="bookingSection">
+    <!-- // Provision: Bookings from Firebase will be shown here in future -->
+  </div>
+
+  <button id="returnButton" onclick="window.location.href='Office.html'">Return to Office</button>
+
+  <!-- Firebase v8.10.1 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -48,8 +81,62 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    const datePicker = document.getElementById('datePicker');
+    const driverList = document.getElementById('driverList');
+
+    // Set today's date by default
+    function setToday() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      datePicker.value = `${year}-${month}-${day}`;
+    }
+
+    // Load drivers and their shifts
+    function loadDiary(dateString) {
+      driverList.innerHTML = '';
+
+      firebase.database().ref('driversProfile').once('value', snapshot => {
+        snapshot.forEach(child => {
+          const driverId = child.key;
+          const driverName = child.val().name;
+
+          // Get shift info for this driver on selected day
+          firebase.database().ref(`shifts/${driverId}/${dateString}`).once('value', shiftSnap => {
+            const driverDiv = document.createElement('div');
+            driverDiv.className = 'driverCard';
+
+            if (shiftSnap.exists()) {
+              const shift = shiftSnap.val();
+              driverDiv.innerHTML = `
+                <strong>${driverName}</strong><br>
+                Shift Start: ${shift.shiftStart}<br>
+                Shift End: ${shift.shiftEnd}<br>
+                Break Start: ${shift.breakStart}<br>
+                Break End: ${shift.breakEnd}
+              `;
+            } else {
+              driverDiv.innerHTML = `
+                <strong>${driverName}</strong><br>
+                No shift assigned on this day.
+              `;
+            }
+
+            driverList.appendChild(driverDiv);
+          });
+        });
+      });
+    }
+
+    // Change date handler
+    datePicker.addEventListener('change', () => {
+      loadDiary(datePicker.value);
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
-      console.log('Diary.html loaded and connected to Firebase.');
+      setToday();
+      loadDiary(datePicker.value);
     });
   </script>
 
