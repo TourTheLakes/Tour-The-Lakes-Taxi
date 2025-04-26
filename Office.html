@@ -4,6 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Office Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    #buttonRow {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px;
+    }
+    #buttonRow button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #map {
+      width: 100%;
+      height: calc(100vh - 200px);
+    }
+  </style>
+
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
@@ -24,6 +48,45 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    let map;
+    let driverMarkers = {};
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 54.3791, lng: -2.9075 },
+        zoom: 10,
+      });
+
+      const driversRef = ref(database, 'driversLocation');
+      onValue(driversRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          for (const driverName in data) {
+            const driverData = data[driverName];
+            const position = { lat: driverData.lat, lng: driverData.lng };
+
+            if (driverMarkers[driverName]) {
+              // Update existing marker
+              driverMarkers[driverName].setPosition(position);
+            } else {
+              // Create new marker
+              const marker = new google.maps.Marker({
+                position,
+                map,
+                label: {
+                  text: driverName,
+                  color: "black",
+                  fontWeight: "bold",
+                  fontSize: "12px"
+                }
+              });
+              driverMarkers[driverName] = marker;
+            }
+          }
+        }
+      });
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const staffName = localStorage.getItem('staffName');
@@ -48,8 +111,21 @@
       }
     });
   </script>
+
+  <!-- Google Maps API script with your provided API Key -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&callback=initMap" async defer></script>
 </head>
 <body>
   <h1 id="staffGreeting">Loading staff...</h1>
+
+  <div id="buttonRow">
+    <button>Button 1</button>
+    <button>Button 2</button>
+    <button>Button 3</button>
+    <button>Button 4</button>
+    <button>Button 5</button>
+  </div>
+
+  <div id="map"></div>
 </body>
 </html>
