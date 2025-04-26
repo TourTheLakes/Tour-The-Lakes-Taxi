@@ -674,6 +674,23 @@ function checkDiaryAvailability(driver, dateVal, timeVal) {
     });
   });
 }
+  function estimateJourneyDuration(startAddress, endAddress) {
+  return new Promise(resolve => {
+    const service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+      origins: [startAddress],
+      destinations: [endAddress],
+      travelMode: google.maps.TravelMode.DRIVING
+    }, (response, status) => {
+      if (status !== "OK" || !response.rows.length || !response.rows[0].elements.length) {
+        resolve(1800); // fallback 30 min in seconds
+        return;
+      }
+      const travelSeconds = response.rows[0].elements[0].duration.value;
+      resolve(travelSeconds);
+    });
+  });
+  }
 
 // === CHECK TRAVEL TIME FROM LAST DROP OR BASE ===
 function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
