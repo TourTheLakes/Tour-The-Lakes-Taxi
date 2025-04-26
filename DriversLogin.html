@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Drivers Login</title>
+  <title>Driver Login</title>
   <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -15,7 +15,7 @@
       authDomain: "tourthelakes-1e165.firebaseapp.com",
       databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
       projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      storageBucket: "tourthelakes-1e165.appspot.com",
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
@@ -44,8 +44,21 @@
         if (snapshot.exists()) {
           const profileData = snapshot.val();
           if (profileData.password === enteredPassword) {
-            // Store driver session data
+            // Create and save session token
+            const sessionToken = Date.now();
             localStorage.setItem('driverName', profileData.name);
+            localStorage.setItem('sessionToken', sessionToken);
+
+            // Save session token to Firebase
+            const sessionRef = ref(database, `driverSessions/${profileData.name}`);
+            await set(sessionRef, {
+              sessionToken: sessionToken
+            }).catch((error) => {
+              console.error('Failed to save session token:', error);
+              alert('Login failed. Try again.');
+              return; // Prevent redirect if session saving failed
+            });
+
             // Redirect to Drivers.html
             window.location.href = 'Drivers.html';
           } else {
