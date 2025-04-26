@@ -75,10 +75,16 @@
 
     // Init Google Map
     function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-       center: { lat: 54.3796, lng: -2.9033 },
-        zoom: 12
-      });
+map = new google.maps.Map(document.getElementById('map'), {
+  center: { lat: 54.3796, lng: -2.9033 },
+  zoom: 12,
+  streetViewControl: false,   // removes Street View man
+  fullscreenControl: false,   // removes fullscreen button
+  zoomControl: false,         // removes zoom buttons
+  mapTypeControl: false,      // removes map type selector
+  scaleControl: false,        // removes scale bar
+  rotateControl: false        // removes rotate button
+});
 
       const driversRef = database.ref('driversLocation');
       driversRef.on('value', (snapshot) => {
