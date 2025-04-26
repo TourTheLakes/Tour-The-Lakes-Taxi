@@ -729,10 +729,8 @@ function checkTravelTime(driver, pickupLocation, dateVal, timeVal) {
         const totalTravelMinutes = (travelSeconds + bufferSeconds) / 60;
 
         const bookingMinutes = timeStringToMinutes(timeVal);
-        const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
-        const timeUntilBooking = bookingMinutes - nowMinutes;
 
-        resolve(timeUntilBooking >= totalTravelMinutes);
+        resolve(bookingMinutes >= totalTravelMinutes);
       });
     });
   });
