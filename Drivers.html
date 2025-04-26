@@ -9,7 +9,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
     import { getDatabase } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
-    // Firebase configuration
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -25,11 +25,20 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Ready to read/write to database
-    window.database = database;
+    // Show driver name on page
+    window.addEventListener('DOMContentLoaded', () => {
+      const driverName = localStorage.getItem('driverName');
+
+      if (driverName) {
+        document.getElementById('driverGreeting').textContent = `Welcome, ${driverName}`;
+      } else {
+        // If no driverName, redirect back to login
+        window.location.href = 'DriversLogin.html';
+      }
+    });
   </script>
 </head>
 <body>
-  <h1>Driver Portal</h1>
+  <h1 id="driverGreeting">Loading driver...</h1>
 </body>
 </html>
