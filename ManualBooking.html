@@ -71,22 +71,21 @@
 
     // Init Google Places and Distance Matrix
     function initMap() {
-      // UK-only Autocomplete
       var opts = { componentRestrictions: { country: 'gb' } };
       autocompletePickup = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
       autocompleteDropoff = new google.maps.places.Autocomplete(document.getElementById('dropoff'), opts);
 
-        autocompletePickup.addListener('place_changed', function() {
-    var place = autocompletePickup.getPlace();
-    document.getElementById('pickup').value =
-      place.name + ', ' + place.formatted_address;
-  });
-  autocompleteDropoff.addListener('place_changed', function() {
-    var place = autocompleteDropoff.getPlace();
-    document.getElementById('dropoff').value =
-      place.name + ', ' + place.formatted_address;
-  });
-      
+      autocompletePickup.addListener('place_changed', function() {
+        var place = autocompletePickup.getPlace();
+        document.getElementById('pickup').value =
+          place.name + ', ' + place.formatted_address;
+      });
+      autocompleteDropoff.addListener('place_changed', function() {
+        var place = autocompleteDropoff.getPlace();
+        document.getElementById('dropoff').value =
+          place.name + ', ' + place.formatted_address;
+      });
+
       distanceService = new google.maps.DistanceMatrixService();
       loadDriverList();
     }
@@ -109,153 +108,143 @@
     // Utility: format minutes → "HH:MM"
     function formatTime(mins) {
       var h = Math.floor(mins/60);
-      var m = mins%60;
-      if (h<10) h='0'+h;
-      if (m<10) m='0'+m;
-      return h+':'+m;
+      var m = mins % 60;
+      if (h < 10) h = '0' + h;
+      if (m < 10) m = '0' + m;
+      return h + ':' + m;
     }
 
-// Confirm booking logic with “next available time” suggestion
-document.getElementById('confirmBooking').onclick = function() {
-  var p     = autocompletePickup.getPlace();
-  var d     = autocompleteDropoff.getPlace();
-  var date  = document.getElementById('bookingDate').value;
-  var time  = document.getElementById('bookingTime').value;
-  if (!p || !d || !date || !time) { alert('Fill all fields'); return; }
+    // Confirm booking logic with “next available time” suggestion
+    document.getElementById('confirmBooking').onclick = function() {
+      var p     = autocompletePickup.getPlace();
+      var d     = autocompleteDropoff.getPlace();
+      var date  = document.getElementById('bookingDate').value;
+      var time  = document.getElementById('bookingTime').value;
+      if (!p || !d || !date || !time) { alert('Fill all fields'); return; }
 
-  var pickupStr  = document.getElementById('pickup').value;
-  var dropoffStr = document.getElementById('dropoff').value;
-  var origin     = p.geometry.location;
-  var dest       = d.geometry.location;
-  var tparts     = time.split(':');
-  var startMin   = parseInt(tparts[0])*60 + parseInt(tparts[1]);
+      var pickupStr  = document.getElementById('pickup').value;
+      var dropoffStr = document.getElementById('dropoff').value;
+      var origin     = p.geometry.location;
+      var dest       = d.geometry.location;
+      var tparts     = time.split(':');
+      var startMin   = parseInt(tparts[0]) * 60 + parseInt(tparts[1]);
 
-  // first compute endMin for this trip
-  distanceService.getDistanceMatrix({
-    origins:      [ origin ],
-    destinations: [ dest   ],
-    travelMode:   'DRIVING',
-    drivingOptions:{ departureTime: new Date(date + 'T' + time) }
-  }, function(response, status) {
-    if (status !== 'OK') { alert('Distance error'); return; }
-    var durSec = response.rows[0].elements[0].duration.value;
-    var durMin = Math.ceil(durSec/60);
-    var endMin = startMin + durMin + 10;           // +10min buffer
-    var endTime= formatTime(endMin);
+      distanceService.getDistanceMatrix({
+        origins:      [ origin ],
+        destinations: [ dest   ],
+        travelMode:   'DRIVING',
+        drivingOptions:{ departureTime: new Date(date + 'T' + time) }
+      }, function(response, status) {
+        if (status !== 'OK') { alert('Distance error'); return; }
+        var durSec  = response.rows[0].elements[0].duration.value;
+        var durMin  = Math.ceil(durSec / 60);
+        var endMin  = startMin + durMin + 10;  // +10min buffer
+        var endTime = formatTime(endMin);
 
-    // now loop drivers
-    db.ref('driversProfile').once('value', function(dsnap) {
-      var booked     = false;
-      var suggestion = null;
+        db.ref('driversProfile').once('value', function(dsnap) {
+          var booked     = false;
+          var suggestion = null;
 
-      dsnap.forEach(function(c) {
-        if (booked) return;
-        var driverId = c.key;
+          dsnap.forEach(function(c) {
+            if (booked) return;
+            var driverId = c.key;
 
-        // get shift for this driver & date
-        db.ref('shifts/' + driverId + '/' + date).once('value', function(ssh) {
-          var shift = ssh.val();
-          if (!shift) return;
+            db.ref('shifts/' + driverId + '/' + date).once('value', function(ssh) {
+              var shift = ssh.val();
+              if (!shift) return;
 
-          var s0   = shift.shiftStart.split(':'),
-              s1   = shift.shiftEnd.split(':'),
-              sMin = parseInt(s0[0])*60 + parseInt(s0[1]),
-              eMin = parseInt(s1[0])*60 + parseInt(s1[1]);
-          if (startMin < sMin || endMin > eMin) return;
+              var s0   = shift.shiftStart.split(':'),
+                  s1   = shift.shiftEnd.split(':'),
+                  sMin = parseInt(s0[0]) * 60 + parseInt(s0[1]),
+                  eMin = parseInt(s1[0]) * 60 + parseInt(s1[1]);
+              if (startMin < sMin || endMin > eMin) return;
 
-          // load existing bookings
-          db.ref('bookings/' + driverId + '/' + date).once('value', function(bsnap) {
-            var bookingsArr = [];
-            bsnap.forEach(function(bc) {
-              var b      = bc.val(),
-                  bt0    = b.bookingTime.split(':'),
-                  bt1    = b.bookingEndTime.split(':'),
-                  bStart = parseInt(bt0[0])*60 + parseInt(bt0[1]),
-                  bEnd   = parseInt(bt1[0])*60 + parseInt(bt1[1]);
-              bookingsArr.push({
-                start:  bStart,
-                end:    bEnd,
-                coords: b.dropoffCoords
-              });
-            });
+              db.ref('bookings/' + driverId + '/' + date).once('value', function(bsnap) {
+                var bookingsArr = [];
+                bsnap.forEach(function(bc) {
+                  var b      = bc.val(),
+                      bt0    = b.bookingTime.split(':'),
+                      bt1    = b.bookingEndTime.split(':'),
+                      bStart = parseInt(bt0[0]) * 60 + parseInt(bt0[1]),
+                      bEnd   = parseInt(bt1[0]) * 60 + parseInt(bt1[1]);
+                  bookingsArr.push({
+                    start:  bStart,
+                    end:    bEnd,
+                    coords: b.dropoffCoords
+                  });
+                });
 
-            // determine lastEndMin & lastCoords
-            var lastEndMin = sMin,
-                lastCoords = { lat: origin.lat(), lng: origin.lng() };
-            if (bookingsArr.length) {
-              bookingsArr.sort(function(a,b){return a.end - b.end;});
-              var last = bookingsArr[bookingsArr.length - 1];
-              lastEndMin = last.end;
-              lastCoords  = last.coords;
-            }
-
-            // conflict?
-            if (startMin < lastEndMin) {
-              // compute next available = lastEndMin -> origin travel + buffer
-              distanceService.getDistanceMatrix({
-                origins:      [ new google.maps.LatLng(lastCoords.lat, lastCoords.lng) ],
-                destinations: [ origin ],
-                travelMode:   'DRIVING',
-                drivingOptions:{ departureTime: new Date(date + 'T' + formatTime(lastEndMin)) }
-              }, function(resp2, stat2) {
-                if (stat2 === 'OK') {
-                  var travelM = Math.ceil(resp2.rows[0].elements[0].duration.value/60);
-                  var nextMin = lastEndMin + travelM + 10;
-                  suggestion = formatTime(nextMin);
-                  alert(
-                    'No drivers available at ' + time +
-                    '.\nNext available time: ' + suggestion
-                  );
-                } else {
-                  alert('No drivers available at ' + time);
+                var lastEndMin = sMin,
+                    lastCoords = { lat: origin.lat(), lng: origin.lng() };
+                if (bookingsArr.length) {
+                  bookingsArr.sort(function(a, b) { return a.end - b.end; });
+                  var last = bookingsArr[bookingsArr.length - 1];
+                  lastEndMin = last.end;
+                  lastCoords  = last.coords;
                 }
-              });
-              return;
-            }
 
-            // no conflict → save booking
-            booked = true;
-            var newB = db.ref('bookings/' + driverId + '/' + date).push();
-            newB.set({
-              pickup:         pickupStr,
-              dropoff:        dropoffStr,
-              pickupCoords:   { lat: origin.lat(), lng: origin.lng() },
-              dropoffCoords:  { lat: dest.lat(),   lng: dest.lng()   },
-              bookingTime:    time,
-              bookingEndTime: endTime
-            }, function(err) {
-              if (err) alert('Save error');
-              else    alert('Booked with ' + c.val().name + ' at ' + time);
+                if (startMin < lastEndMin) {
+                  distanceService.getDistanceMatrix({
+                    origins:      [ new google.maps.LatLng(lastCoords.lat, lastCoords.lng) ],
+                    destinations: [ origin ],
+                    travelMode:   'DRIVING',
+                    drivingOptions:{ departureTime: new Date(date + 'T' + formatTime(lastEndMin)) }
+                  }, function(resp2, stat2) {
+                    if (stat2 === 'OK') {
+                      var travelM = Math.ceil(resp2.rows[0].elements[0].duration.value / 60);
+                      var nextMin = lastEndMin + travelM + 10;
+                      suggestion = formatTime(nextMin);
+                      alert(
+                        'No drivers available at ' + time +
+                        '.\nNext available time: ' + suggestion
+                      );
+                    } else {
+                      alert('No drivers available at ' + time);
+                    }
+                  });
+                  return;
+                }
+
+                booked = true;
+                var newB = db.ref('bookings/' + driverId + '/' + date).push();
+                newB.set({
+                  pickup:         pickupStr,
+                  dropoff:        dropoffStr,
+                  pickupCoords:   { lat: origin.lat(), lng: origin.lng() },
+                  dropoffCoords:  { lat: dest.lat(),   lng: dest.lng()   },
+                  bookingTime:    time,
+                  bookingEndTime: endTime
+                }, function(err) {
+                  if (err) alert('Save error');
+                  else    alert('Booked with ' + c.val().name + ' at ' + time);
+                });
+              });
             });
           });
+
+          setTimeout(function() {
+            if (!booked && !suggestion) {
+              alert('No driver available on ' + date);
+            }
+          }, 500);
         });
       });
-
-      // if loop finishes with no booking and no suggestion
-      setTimeout(function(){
-        if (!booked && !suggestion) {
-          alert('No driver available on ' + date);
-        }
-      }, 500);
-    });
-  });
-};
-
+    };
 
     // Load existing bookings
     document.getElementById('loadBookings').onclick = function() {
       var driver = document.getElementById('driverSelect').value;
-      var date = document.getElementById('manageDate').value;
+      var date   = document.getElementById('manageDate').value;
       if (!driver || !date) { alert('Select driver & date'); return; }
 
       var list = document.getElementById('bookingList');
       list.innerHTML = '';
-      db.ref('bookings/'+driver+'/'+date).once('value', function(snap) {
+      db.ref('bookings/' + driver + '/' + date).once('value', function(snap) {
         snap.forEach(function(ch) {
-          var b = ch.val();
+          var b   = ch.val();
           var div = document.createElement('div');
-          div.innerHTML = '<input type="radio" name="bk" value="'+ch.key+'"/> '
-                        + b.bookingTime +' → '+ b.pickup +' to '+ b.dropoff;
+          div.innerHTML = '<input type="radio" name="bk" value="' + ch.key + '"/> '
+                        + b.bookingTime + ' → ' + b.pickup + ' to ' + b.dropoff;
           list.appendChild(div);
         });
       });
@@ -265,17 +254,17 @@ document.getElementById('confirmBooking').onclick = function() {
     document.getElementById('amendBooking').onclick = function() {
       var sel = document.querySelector('input[name=bk]:checked');
       if (!sel) { alert('Select a booking'); return; }
-      alert('Amend logic for ID '+ sel.value);
+      alert('Amend logic for ID ' + sel.value);
     };
 
     // Cancel booking
     document.getElementById('cancelBooking').onclick = function() {
-      var sel = document.querySelector('input[name=bk]:checked');
+      var sel    = document.querySelector('input[name=bk]:checked');
       var driver = document.getElementById('driverSelect').value;
-      var date = document.getElementById('manageDate').value;
+      var date   = document.getElementById('manageDate').value;
       if (!sel || !driver || !date) { alert('Select booking, driver & date'); return; }
       if (!confirm('Cancel this booking?')) return;
-      db.ref('bookings/'+driver+'/'+date+'/'+sel.value).remove(function(err) {
+      db.ref('bookings/' + driver + '/' + date + '/' + sel.value).remove(function(err) {
         if (err) alert('Delete error'); else alert('Cancelled');
       });
     };
