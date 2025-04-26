@@ -68,8 +68,18 @@
   </div>
 
   <div class="form-group">
-    <label for="breakTime">Break Time:</label>
-    <input type="time" id="breakTime">
+    <label for="shiftEnd">Shift End Time:</label>
+    <input type="time" id="shiftEnd">
+  </div>
+
+  <div class="form-group">
+    <label for="breakStart">Break Start Time:</label>
+    <input type="time" id="breakStart">
+  </div>
+
+  <div class="form-group">
+    <label for="breakEnd">Break End Time:</label>
+    <input type="time" id="breakEnd">
   </div>
 
   <div id="buttons">
@@ -116,17 +126,21 @@
     document.getElementById('saveShift').onclick = () => {
       const driverId = document.getElementById('driverSelect').value;
       const date = document.getElementById('shiftDate').value;
-      const startTime = document.getElementById('shiftStart').value;
-      const breakTime = document.getElementById('breakTime').value;
+      const shiftStart = document.getElementById('shiftStart').value;
+      const shiftEnd = document.getElementById('shiftEnd').value;
+      const breakStart = document.getElementById('breakStart').value;
+      const breakEnd = document.getElementById('breakEnd').value;
 
-      if (!driverId || !date || !startTime || !breakTime) {
+      if (!driverId || !date || !shiftStart || !shiftEnd || !breakStart || !breakEnd) {
         alert('Please fill all fields.');
         return;
       }
 
       db.ref(`shifts/${driverId}/${date}`).set({
-        startTime,
-        breakTime
+        shiftStart,
+        shiftEnd,
+        breakStart,
+        breakEnd
       }, (err) => {
         if (err) alert('Error saving shift.');
         else alert('Shift saved successfully.');
@@ -145,8 +159,10 @@
 
       db.ref(`shifts/${driverId}/${date}`).once('value', snapshot => {
         if (snapshot.exists()) {
-          document.getElementById('shiftStart').value = snapshot.val().startTime;
-          document.getElementById('breakTime').value = snapshot.val().breakTime;
+          document.getElementById('shiftStart').value = snapshot.val().shiftStart;
+          document.getElementById('shiftEnd').value = snapshot.val().shiftEnd;
+          document.getElementById('breakStart').value = snapshot.val().breakStart;
+          document.getElementById('breakEnd').value = snapshot.val().breakEnd;
         } else {
           alert('No existing shift found.');
         }
