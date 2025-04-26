@@ -774,58 +774,8 @@ function timeStringToMinutes(t) {
   return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
 
-// === FIND NEXT AVAILABLE SLOT ACROSS MULTIPLE DRIVERS ===
-function findNextAvailableSlotAcrossDrivers(drivers, dateVal, startTime) {
-  const searchPromises = drivers.map(driver => {
-    return findNextAvailableSlot(driver, dateVal, startTime).then(nextTime => ({ driver, nextTime }));
-  });
 
-  Promise.all(searchPromises).then(results => {
-    const validOptions = results.filter(r => r.nextTime);
-    if (validOptions.length > 0) {
-      validOptions.sort((a, b) => timeStringToMinutes(a.nextTime) - timeStringToMinutes(b.nextTime));
-      const best = validOptions[0];
-
-      if (confirm(`Closest available slot: ${best.nextTime} with ${best.driver.name}.\n\nUpdate booking to this time?`)) {
-        document.getElementById("bTime").value = best.nextTime;
-        updateEstimateDisplay();
-      }
-    } else {
-      alert("No available slots today. Please choose another time.");
-    }
-  });
-}
-
-// === FIND NEXT SLOT FOR A SINGLE DRIVER ===
-function findNextAvailableSlot(driver, dateVal, startFromTime) {
-  return new Promise(async (resolve) => {
-    const increment = 5;
-    let attemptMinutes = timeStringToMinutes(startFromTime);
-
-    const rotaSnap = await db.ref(`rota/${driver.doorCard}/${dateVal}`).once("value");
-    const rota = rotaSnap.val();
-    if (!rota || !rota.start || !rota.end) return resolve(null);
-
-    const shiftStart = timeStringToMinutes(rota.start);
-    const shiftEnd = timeStringToMinutes(rota.end);
-    if (attemptMinutes > shiftEnd) return resolve(null);
-
-    while (attemptMinutes <= shiftEnd) {
-      const h = String(Math.floor(attemptMinutes / 60)).padStart(2, '0');
-      const m = String(attemptMinutes % 60).padStart(2, '0');
-      const attemptTime = `${h}:${m}`;
-
-      const diaryFree = await checkDiaryAvailability(driver, dateVal, attemptTime);
-      if (diaryFree) {
-        const canReach = await checkTravelTime(driver, pickupCoords, dateVal, attemptTime);
-        if (canReach) return resolve(attemptTime);
-      }
-      attemptMinutes += increment;
-    }
-
-    resolve(null);
-  });
-}
+  
 // === LIVE BOOKINGS DISPLAY ===
 const liveBookingsList = document.getElementById("liveBookingsList");
 
