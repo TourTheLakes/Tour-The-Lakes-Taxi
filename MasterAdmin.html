@@ -463,9 +463,6 @@ function updateEstimateDisplay() {
   });
 }
 
-// === OTHER SECTIONS CONTINUE... ===
-</script>
-  <script>
 // === LUGGAGE WARNING ===
 const passengersDropdown = document.getElementById("bPassengers");
 const luggageSelect = document.getElementById("bLuggage");
@@ -566,8 +563,7 @@ function createBooking(data) {
     document.getElementById("bAssignedDriver").value = "Searching for driver...";
   });
 }
-  </script>
-  <script>
+
 // === DRIVER AUTO-ASSIGN BASED ON ROTA, DIARY, TRAVEL ===
 const assignedDriverField = document.getElementById("bAssignedDriver");
 const homeBase = { lat: 54.3794, lng: -2.9056 };
@@ -720,8 +716,7 @@ function timeStringToMinutes(t) {
   const parts = t.split(":");
   return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
-  </script>
-  <script>
+
 // === FIND NEXT AVAILABLE SLOT ACROSS MULTIPLE DRIVERS ===
 function findNextAvailableSlotAcrossDrivers(drivers, dateVal, startTime) {
   const searchPromises = drivers.map(driver => {
