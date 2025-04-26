@@ -36,6 +36,47 @@
         window.location.href = 'DriversLogin.html';
       }
     });
+
+// Request and track driver's live location
+function startLocationTracking() {
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your device.');
+    window.location.href = 'DriversLogin.html';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      // Permission granted
+      const driverName = localStorage.getItem('driverName');
+      const driverLocationRef = ref(database, `driversLocation/${driverName}`);
+
+      // Start live tracking every second
+      setInterval(() => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            set(driverLocationRef, {
+              lat: latitude,
+              lng: longitude,
+              timestamp: Date.now()
+            });
+          },
+          (error) => {
+            console.error('Location fetch error during tracking', error);
+          }
+        );
+      }, 1000);
+    },
+    (error) => {
+      // Permission denied or error
+      alert('Location permission is required. You will be logged out.');
+      localStorage.clear();
+      window.location.href = 'DriversLogin.html';
+    }
+  );
+}
+    
   </script>
 </head>
 <body>
