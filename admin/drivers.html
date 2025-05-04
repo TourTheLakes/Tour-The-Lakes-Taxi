@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Driver Management - TourTheLakes Admin</title>
-  <!-- Tailwind CSS via CDN for styling -->
+  <!-- Tailwind CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -23,7 +23,7 @@
     <section class="mb-8">
       <h2 class="text-lg font-semibold mb-4">Existing Drivers</h2>
       <div id="drivers-list" class="space-y-4">
-        <!-- JS will inject driver cards here -->
+        <!-- JavaScript will inject driver cards here -->
       </div>
     </section>
 
@@ -32,35 +32,55 @@
       <h2 class="text-lg font-semibold mb-4">Add New Driver</h2>
       <form id="add-driver-form" class="bg-white p-4 rounded shadow space-y-4 max-w-md">
         <div>
-          <label class="block text-sm font-medium">Name</label>
-          <input id="new-name" class="mt-1 block w-full border rounded-md p-2" required />
+          <label class="block text-sm font-medium" for="new-first-name">First Name</label>
+          <input id="new-first-name" class="mt-1 block w-full border rounded-md p-2" required />
         </div>
         <div>
-          <label class="block text-sm font-medium">Door Card #</label>
+          <label class="block text-sm font-medium" for="new-last-name">Last Name</label>
+          <input id="new-last-name" class="mt-1 block w-full border rounded-md p-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-phone">Phone Number</label>
+          <input id="new-phone" type="tel" class="mt-1 block w-full border rounded-md p-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-driver-number">Driver Number</label>
+          <input id="new-driver-number" class="mt-1 block w-full border rounded-md p-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-doorcard">Door Card Number</label>
           <input id="new-doorcard" class="mt-1 block w-full border rounded-md p-2" required />
         </div>
         <div>
-          <label class="block text-sm font-medium">Password</label>
-          <input id="new-password" type="password" class="mt-1 block w-full border rounded-md p-2" required />
+          <label class="block text-sm font-medium" for="new-vehicle-make">Vehicle Make</label>
+          <input id="new-vehicle-make" class="mt-1 block w-full border rounded-md p-2" />
         </div>
         <div>
-          <label class="block text-sm font-medium">Vehicle</label>
-          <input id="new-vehicle" class="mt-1 block w-full border rounded-md p-2" />
+          <label class="block text-sm font-medium" for="new-vehicle-model">Vehicle Model</label>
+          <input id="new-vehicle-model" class="mt-1 block w-full border rounded-md p-2" />
         </div>
         <div>
-          <label class="block text-sm font-medium">Capacity</label>
+          <label class="block text-sm font-medium" for="new-vehicle-color">Vehicle Color</label>
+          <input id="new-vehicle-color" class="mt-1 block w-full border rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-capacity">Vehicle Capacity</label>
           <input id="new-capacity" type="number" min="1" class="mt-1 block w-full border rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-password">Password</label>
+          <input id="new-password" type="password" class="mt-1 block w-full border rounded-md p-2" required />
         </div>
         <button
           type="submit"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >Add Driver</button>
         <p id="add-error" class="text-red-500 mt-2"></p>
       </form>
     </section>
   </main>
 
-  <!-- 1) INLINE your Firebase config here: -->
+  <!-- 1) INLINE Firebase config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -83,7 +103,6 @@
   <script>
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
     const auth = firebase.auth();
     const db   = firebase.database();
 
@@ -92,11 +111,9 @@
       if (!user) window.location.href = 'login.html';
     });
 
-    // Logout button
+    // Logout
     document.getElementById('logout-btn').addEventListener('click', () => {
-      auth.signOut().then(() => {
-        window.location.href = 'login.html';
-      });
+      auth.signOut().then(() => window.location.href = 'login.html');
     });
 
     const driversRef = db.ref('drivers');
@@ -104,74 +121,108 @@
     const addForm    = document.getElementById('add-driver-form');
     const addErrorEl = document.getElementById('add-error');
 
-    // Render drivers when data changes
-    driversRef.on('value', snapshot => {
+    // Render list on any change
+    driversRef.on('value', snap => {
       listEl.innerHTML = '';
-      snapshot.forEach(child => {
+      snap.forEach(child => {
         const id = child.key;
         const d  = child.val();
         const card = document.createElement('div');
-        card.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
+        card.className = 'bg-white p-4 rounded shadow flex flex-col sm:flex-row justify-between items-start sm:items-center';
         card.innerHTML = `
           <div>
-            <p><strong>${d.name}</strong> (Card: ${d.doorCard})</p>
-            <p>Vehicle: ${d.vehicle || '–'} › Capacity: ${d.capacity || '–'}</p>
+            <p class="font-semibold">${d.firstName} ${d.lastName}</p>
+            <p>Phone: ${d.phone || '–'}</p>
+            <p>Driver #: ${d.driverNumber || '–'}</p>
+            <p>Door Card #: ${d.doorCard}</p>
+            <p>Vehicle: ${d.vehicleColor || '–'}, ${d.vehicleMake || '–'} ${d.vehicleModel || ''}</p>
+            <p>Capacity: ${d.capacity || '–'}</p>
           </div>
-          <div class="space-x-2">
-            <button data-action="edit"   data-id="${id}" class="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500">Edit</button>
-            <button data-action="delete" data-id="${id}" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+          <div class="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0">
+            <button data-action="edit"   data-id="${id}" class="w-full sm:w-auto px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500">Edit</button>
+            <button data-action="delete" data-id="${id}" class="w-full sm:w-auto px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
           </div>
         `;
         listEl.appendChild(card);
       });
     });
 
-    // Handle Edit/Delete clicks
+    // Handle edit & delete
     listEl.addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
       const id = btn.dataset.id;
+
       if (btn.dataset.action === 'delete') {
-        if (confirm('Are you sure you want to delete this driver?')) {
+        if (confirm('Delete this driver?')) {
           driversRef.child(id).remove();
         }
       }
+
       if (btn.dataset.action === 'edit') {
-        const name     = prompt('New name:', '')        ; if (name===null) return;
-        const doorCard = prompt('New Door Card #:', '') ; if (doorCard===null) return;
-        const vehicle  = prompt('New vehicle:', '')     ; if (vehicle===null) return;
-        const capRaw   = prompt('New capacity:', '')    ; if (capRaw===null) return;
-        const updates  = { name, doorCard };
-        if (vehicle) updates.vehicle  = vehicle;
-        if (capRaw)  updates.capacity = Number(capRaw);
-        driversRef.child(id).update(updates);
+        driversRef.child(id).once('value').then(snap => {
+          const d = snap.val();
+          const firstName   = prompt('First Name:',   d.firstName   || '')  ; if (firstName  === null) return;
+          const lastName    = prompt('Last Name:',    d.lastName    || '')  ; if (lastName   === null) return;
+          const phone       = prompt('Phone Number:', d.phone       || '')  ; if (phone      === null) return;
+          const driverNumber= prompt('Driver Number:',d.driverNumber|| '')  ; if (driverNumber=== null) return;
+          const doorCard    = prompt('Door Card #:',  d.doorCard    || '')  ; if (doorCard   === null) return;
+          const vehicleMake = prompt('Vehicle Make:', d.vehicleMake || '')  ; if (vehicleMake=== null) return;
+          const vehicleModel= prompt('Vehicle Model:',d.vehicleModel|| '')  ; if (vehicleModel=== null) return;
+          const vehicleColor= prompt('Vehicle Color:',d.vehicleColor|| '')  ; if (vehicleColor=== null) return;
+          const capacity    = prompt('Capacity:',     d.capacity    || '')  ; if (capacity   === null) return;
+
+          driversRef.child(id).update({
+            firstName,
+            lastName,
+            phone,
+            driverNumber,
+            doorCard,
+            vehicleMake,
+            vehicleModel,
+            vehicleColor,
+            capacity: capacity ? Number(capacity) : null
+          });
+        });
       }
     });
 
-    // Handle Add Driver form submit
+    // Handle Add Driver
     addForm.addEventListener('submit', e => {
       e.preventDefault();
       addErrorEl.textContent = '';
 
-      const name     = document.getElementById('new-name').value.trim();
-      const doorCard = document.getElementById('new-doorcard').value.trim();
-      const password = document.getElementById('new-password').value;
-      const vehicle  = document.getElementById('new-vehicle').value.trim();
-      const capVal   = document.getElementById('new-capacity').value;
+      const firstName    = document.getElementById('new-first-name').value.trim();
+      const lastName     = document.getElementById('new-last-name').value.trim();
+      const phone        = document.getElementById('new-phone').value.trim();
+      const driverNumber = document.getElementById('new-driver-number').value.trim();
+      const doorCard     = document.getElementById('new-doorcard').value.trim();
+      const vehicleMake  = document.getElementById('new-vehicle-make').value.trim();
+      const vehicleModel = document.getElementById('new-vehicle-model').value.trim();
+      const vehicleColor = document.getElementById('new-vehicle-color').value.trim();
+      const capacity     = document.getElementById('new-capacity').value;
+      const password     = document.getElementById('new-password').value;
 
-      if (!name || !doorCard || !password) {
-        addErrorEl.textContent = 'Name, door card and password are required.';
+      // Basic validation
+      if (!firstName || !lastName || !phone || !driverNumber || !doorCard || !password) {
+        addErrorEl.textContent = 'Please fill in all required fields.';
         return;
       }
 
       driversRef.push({
-        name,
+        firstName,
+        lastName,
+        phone,
+        driverNumber,
         doorCard,
         password,
-        vehicle: vehicle || null,
-        capacity: capVal ? Number(capVal) : null
-      }).then(() => addForm.reset())
-        .catch(err => addErrorEl.textContent = err.message);
+        vehicleMake: vehicleMake || null,
+        vehicleModel: vehicleModel || null,
+        vehicleColor: vehicleColor || null,
+        capacity: capacity ? Number(capacity) : null
+      })
+      .then(() => addForm.reset())
+      .catch(err => addErrorEl.textContent = err.message);
     });
   </script>
 </body>
