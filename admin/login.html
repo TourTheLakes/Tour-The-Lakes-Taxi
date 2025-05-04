@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - TourTheLakes</title>
+  <!-- Tailwind CSS via CDN for lightweight styling -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+  <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium" for="email">Email</label>
+        <input class="mt-1 block w-full border rounded-md p-2" type="email" id="email" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium" for="password">Password</label>
+        <input class="mt-1 block w-full border rounded-md p-2" type="password" id="password" required>
+      </div>
+      <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700" type="submit">Login</button>
+    </form>
+    <p id="error-message" class="mt-4 text-red-500"></p>
+  </div>
+
+  <!-- Firebase config placeholder; you will replace this with your own keys -->
+  <script src="../firebase-config.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    // Initialize Firebase (config comes from firebase-config.js)
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          // Redirect to the driver management page upon successful login
+          window.location.href = 'drivers.html';
+        })
+        .catch((error) => {
+          errorMessage.textContent = error.message;
+        });
+    });
+  </script>
+</body>
+</html>
