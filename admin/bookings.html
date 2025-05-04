@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Management – TourTheLakes Admin</title>
+  <!-- Tailwind CSS via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header / Logout -->
+  <header class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Booking Management</h1>
+    <button
+      id="logout-btn"
+      class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+    >Logout</button>
+  </header>
+
+  <main class="p-6">
+    <section>
+      <h2 class="text-lg font-semibold mb-4">Upcoming Bookings</h2>
+      <div id="bookings-list" class="space-y-4">
+        <!-- JS will inject booking cards here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- 1) INLINE Firebase config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+  </script>
+
+  <!-- 2) Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- 3) Booking CRUD & UI logic -->
+  <script>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.database();
+
+    // Redirect to login if not authenticated
+    auth.onAuthStateChanged(user => {
+      if (!user) window.location.href = 'login.html';
+    });
+
+    // Logout handler
+    document.getElementById('logout-btn').addEventListener('click', () =>
+      auth.signOut().then(() => window.location.href = 'login.html')
+    );
+
+    const driversRef  = db.ref('drivers');
+    const bookingsRef = db.ref('bookings').orderByChild('dateTime');
+    const listEl      = document.getElementById('bookings-list');
+    let driversList   = []; // will hold { id, firstName, lastName }
+
+    // Load drivers once, then start booking listener
+    driversRef.once('value').then(snap => {
+      driversList = [];
+      snap.forEach(ch => {
+        const d = ch.val();
+        driversList.push({ 
+          id: ch.key, 
+          name: d.firstName + ' ' + d.lastName 
+        });
+      });
+      renderBookingsListener();
+    });
+
+    function renderBookingsListener() {
+      bookingsRef.on('value', snap => {
+        listEl.innerHTML = '';
+        snap.forEach(ch => renderBookingCard(ch.key, ch.val()));
+      });
+    }
+
+    function renderBookingCard(id, d) {
+      // Build driver <option> list
+      const opts = ['<option value="">Unassigned</option>']
+        .concat(driversList.map(dr =>
+          `<option value="${dr.id}" ${dr.id===d.assignedDriverId?'selected':''}>${dr.name}</option>`
+        )).join('');
+
+      // Get assigned driver name
+      const assigned = driversList.find(dr => dr.id===d.assignedDriverId);
+      const driverName = assigned ? assigned.name : 'Unassigned';
+
+      // Create card element
+      const card = document.createElement('div');
+      card.className = 'bg-white p-4 rounded shadow flex flex-col sm:flex-row justify-between';
+      card.innerHTML = `
+        <div class="space-y-1">
+          <p class="font-semibold text-lg">${d.customerName || '—'}</p>
+          <p>Phone: ${d.phone || '—'}</p>
+          <p>Pickup: ${d.pickup || '—'}</p>
+          <p>Dropoff: ${d.dropoff || '—'}</p>
+          <p>Date/Time: ${new Date(d.dateTime).toLocaleString()}</p>
+          <p>Luggage: ${d.luggage != null ? d.luggage : '—'}</p>
+          <p>Status: <strong>${d.status || 'pending'}</strong></p>
+          <p>Driver: <strong>${driverName}</strong></p>
+        </div>
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2">
+          <select data-action="assign" data-id="${id}" class="border rounded p-1">
+            ${opts}
+          </select>
+          <button data-action="status" data-id="${id}" data-status="in-progress"
+            class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+            In-Progress
+          </button>
+          <button data-action="status" data-id="${id}" data-status="completed"
+            class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
+            Completed
+          </button>
+          <button data-action="edit" data-id="${id}"
+            class="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500">
+            Edit
+          </button>
+          <button data-action="cancel" data-id="${id}"
+            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+            Cancel
+          </button>
+        </div>
+      `;
+      listEl.appendChild(card);
+    }
+
+    // Handle interactions
+    listEl.addEventListener('change', e => {
+      const sel = e.target;
+      if (sel.dataset.action === 'assign') {
+        const bid = sel.dataset.id;
+        const drv = sel.value;
+        bookingsRef.ref.child(bid).update({ assignedDriverId: drv || null });
+      }
+    });
+
+    listEl.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+
+      if (action === 'status') {
+        const newStatus = btn.dataset.status;
+        bookingsRef.ref.child(id).update({ status: newStatus });
+      }
+
+      if (action === 'cancel') {
+        if (confirm('Are you sure you want to cancel this booking?')) {
+          bookingsRef.ref.child(id).remove();
+        }
+      }
+
+      if (action === 'edit') {
+        // Prompt for editable fields
+        bookingsRef.ref.child(id).once('value').then(snap => {
+          const b = snap.val();
+          const pickup   = prompt('Pickup Address:', b.pickup   || '') ; if (pickup   === null) return;
+          const dropoff  = prompt('Dropoff Address:', b.dropoff  || ''); if (dropoff  === null) return;
+          const dateTime = prompt('Date & Time (ISO):', b.dateTime || ''); if (dateTime === null) return;
+          const luggage  = prompt('Luggage (e.g. number of bags):', b.luggage != null ? b.luggage : ''); if (luggage  === null) return;
+          bookingsRef.ref.child(id).update({
+            pickup,
+            dropoff,
+            dateTime,
+            luggage
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
