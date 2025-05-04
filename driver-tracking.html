@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Driver Dashboard & Live Tracking</title>
+  <!-- Tailwind CSS via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    #map { width: 100%; height: 400px; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Login Screen -->
+  <div id="login-container" class="flex-grow flex items-center justify-center">
+    <form id="login-form" class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm space-y-4">
+      <h2 class="text-2xl font-bold text-center">Driver Login</h2>
+      <div>
+        <label class="block text-sm font-medium" for="door-card">Door Card #</label>
+        <input id="door-card" type="text" required
+               class="mt-1 block w-full border rounded-md p-2"/>
+      </div>
+      <div>
+        <label class="block text-sm font-medium" for="password">Password</label>
+        <input id="password" type="password" required
+               class="mt-1 block w-full border rounded-md p-2"/>
+      </div>
+      <p id="login-error" class="text-red-500 text-sm"></p>
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+        Login
+      </button>
+    </form>
+  </div>
+
+  <!-- Tracker Screen -->
+  <div id="tracker-container" class="hidden flex-grow flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow p-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">You’re <span id="status-indicator" class="px-2 py-1 bg-red-500 text-white rounded">Offline</span></h1>
+      <div class="space-x-2">
+        <button id="toggle-online"
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Go Online
+        </button>
+        <button id="logout-btn"
+                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+          Logout
+        </button>
+      </div>
+    </header>
+    <!-- Map -->
+    <div class="flex-grow p-4">
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <!-- 1) Inline Firebase config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+  </script>
+
+  <!-- 2) Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- 3) Google Maps JS API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ"></script>
+
+  <!-- 4) App Logic -->
+  <script>
+    // --- Initialize Firebase & References ---
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const driversRef = db.ref('drivers');
+
+    // --- UI Elements ---
+    const loginContainer   = document.getElementById('login-container');
+    const trackerContainer = document.getElementById('tracker-container');
+    const loginForm        = document.getElementById('login-form');
+    const loginError       = document.getElementById('login-error');
+    const statusIndicator  = document.getElementById('status-indicator');
+    const toggleBtn        = document.getElementById('toggle-online');
+    const logoutBtn        = document.getElementById('logout-btn');
+    let map, marker, watchId;
+    let currentDriverId = null;
+
+    // --- Driver Login ---
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      loginError.textContent = '';
+      const doorCard = document.getElementById('door-card').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Find driver by doorCard
+      driversRef.orderByChild('doorCard').equalTo(doorCard).once('value')
+        .then(snapshot => {
+          if (!snapshot.exists()) {
+            throw new Error('No driver found with that Door Card #');
+          }
+          let matched = false;
+          snapshot.forEach(child => {
+            const d = child.val();
+            if (d.password === password) {
+              matched = true;
+              currentDriverId = child.key;
+            }
+          });
+          if (!matched) throw new Error('Invalid password');
+          // Success!
+          startTracker();
+        })
+        .catch(err => loginError.textContent = err.message);
+    });
+
+    // --- Show Tracker UI & Init Map ---
+    function startTracker() {
+      loginContainer.classList.add('hidden');
+      trackerContainer.classList.remove('hidden');
+      // Initialize map centered on a default if needed
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 54.367, lng: -2.915 }, // Lake District approx
+        zoom: 13
+      });
+      marker = new google.maps.Marker({ map });
+    }
+
+    // --- Toggle Online/Offline ---
+    let online = false;
+    toggleBtn.addEventListener('click', () => {
+      if (!online) goOnline();
+      else          goOffline();
+    });
+
+    function goOnline() {
+      if (!map || !marker) return;
+      // Start watching geolocation
+      watchId = navigator.geolocation.watchPosition(pos => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        // Update map & marker
+        const ll = new google.maps.LatLng(lat, lng);
+        map.panTo(ll);
+        marker.setPosition(ll);
+        // Push to Firebase every update (~2s by default)
+        db.ref(`drivers/${currentDriverId}/location`).set({
+          lat, lng, timestamp: Date.now()
+        });
+      }, err => {
+        alert('Geolocation error: ' + err.message);
+      }, { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 });
+
+      online = true;
+      statusIndicator.textContent = 'Online';
+      statusIndicator.classList.replace('bg-red-500', 'bg-green-500');
+      toggleBtn.textContent = 'Go Offline';
+      toggleBtn.classList.replace('bg-green-600', 'bg-yellow-600');
+    }
+
+    function goOffline() {
+      if (watchId != null) navigator.geolocation.clearWatch(watchId);
+      online = false;
+      statusIndicator.textContent = 'Offline';
+      statusIndicator.classList.replace('bg-green-500', 'bg-red-500');
+      toggleBtn.textContent = 'Go Online';
+      toggleBtn.classList.replace('bg-yellow-600', 'bg-green-600');
+    }
+
+    // --- Logout (simply reload) ---
+    logoutBtn.addEventListener('click', () => window.location.reload());
+  </script>
+</body>
+</html>
