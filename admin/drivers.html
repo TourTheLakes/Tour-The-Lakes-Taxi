@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Driver Management - TourTheLakes Admin</title>
+  <title>Driver Management – TourTheLakes Admin</title>
   <!-- Tailwind CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
 </head>
@@ -19,15 +19,15 @@
   </header>
 
   <main class="p-6">
-    <!-- Section: List of Drivers -->
+    <!-- List of Drivers -->
     <section class="mb-8">
       <h2 class="text-lg font-semibold mb-4">Existing Drivers</h2>
       <div id="drivers-list" class="space-y-4">
-        <!-- JavaScript will inject driver cards here -->
+        <!-- JS injects driver cards here -->
       </div>
     </section>
 
-    <!-- Section: Add New Driver -->
+    <!-- Add New Driver -->
     <section>
       <h2 class="text-lg font-semibold mb-4">Add New Driver</h2>
       <form id="add-driver-form" class="bg-white p-4 rounded shadow space-y-4 max-w-md">
@@ -62,6 +62,10 @@
         <div>
           <label class="block text-sm font-medium" for="new-vehicle-color">Vehicle Color</label>
           <input id="new-vehicle-color" class="mt-1 block w-full border rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium" for="new-registration">Vehicle Registration Number</label>
+          <input id="new-registration" class="mt-1 block w-full border rounded-md p-2" />
         </div>
         <div>
           <label class="block text-sm font-medium" for="new-capacity">Vehicle Capacity</label>
@@ -101,32 +105,26 @@
 
   <!-- 3) Driver CRUD logic -->
   <script>
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db   = firebase.database();
 
-    // Redirect to login if not authenticated
     auth.onAuthStateChanged(user => {
       if (!user) window.location.href = 'login.html';
     });
-
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      auth.signOut().then(() => window.location.href = 'login.html');
-    });
+    document.getElementById('logout-btn')
+      .addEventListener('click', () => auth.signOut().then(() => window.location.href = 'login.html'));
 
     const driversRef = db.ref('drivers');
     const listEl     = document.getElementById('drivers-list');
     const addForm    = document.getElementById('add-driver-form');
     const addErrorEl = document.getElementById('add-error');
 
-    // Render list on any change
+    // Render existing drivers
     driversRef.on('value', snap => {
       listEl.innerHTML = '';
       snap.forEach(child => {
-        const id = child.key;
-        const d  = child.val();
+        const id = child.key, d = child.val();
         const card = document.createElement('div');
         card.className = 'bg-white p-4 rounded shadow flex flex-col sm:flex-row justify-between items-start sm:items-center';
         card.innerHTML = `
@@ -136,6 +134,7 @@
             <p>Driver #: ${d.driverNumber || '–'}</p>
             <p>Door Card #: ${d.doorCard}</p>
             <p>Vehicle: ${d.vehicleColor || '–'}, ${d.vehicleMake || '–'} ${d.vehicleModel || ''}</p>
+            <p>Registration #: ${d.registrationNumber || '–'}</p>
             <p>Capacity: ${d.capacity || '–'}</p>
           </div>
           <div class="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0">
@@ -147,30 +146,27 @@
       });
     });
 
-    // Handle edit & delete
+    // Edit/Delete handlers
     listEl.addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
       const id = btn.dataset.id;
-
       if (btn.dataset.action === 'delete') {
-        if (confirm('Delete this driver?')) {
-          driversRef.child(id).remove();
-        }
+        if (confirm('Delete this driver?')) driversRef.child(id).remove();
       }
-
       if (btn.dataset.action === 'edit') {
         driversRef.child(id).once('value').then(snap => {
           const d = snap.val();
-          const firstName   = prompt('First Name:',   d.firstName   || '')  ; if (firstName  === null) return;
-          const lastName    = prompt('Last Name:',    d.lastName    || '')  ; if (lastName   === null) return;
-          const phone       = prompt('Phone Number:', d.phone       || '')  ; if (phone      === null) return;
-          const driverNumber= prompt('Driver Number:',d.driverNumber|| '')  ; if (driverNumber=== null) return;
-          const doorCard    = prompt('Door Card #:',  d.doorCard    || '')  ; if (doorCard   === null) return;
-          const vehicleMake = prompt('Vehicle Make:', d.vehicleMake || '')  ; if (vehicleMake=== null) return;
-          const vehicleModel= prompt('Vehicle Model:',d.vehicleModel|| '')  ; if (vehicleModel=== null) return;
-          const vehicleColor= prompt('Vehicle Color:',d.vehicleColor|| '')  ; if (vehicleColor=== null) return;
-          const capacity    = prompt('Capacity:',     d.capacity    || '')  ; if (capacity   === null) return;
+          const firstName        = prompt('First Name:',            d.firstName         || ''); if (firstName        === null) return;
+          const lastName         = prompt('Last Name:',             d.lastName          || ''); if (lastName         === null) return;
+          const phone            = prompt('Phone Number:',          d.phone             || ''); if (phone            === null) return;
+          const driverNumber     = prompt('Driver Number:',         d.driverNumber      || ''); if (driverNumber     === null) return;
+          const doorCard         = prompt('Door Card #:',           d.doorCard          || ''); if (doorCard         === null) return;
+          const vehicleMake      = prompt('Vehicle Make:',          d.vehicleMake       || ''); if (vehicleMake      === null) return;
+          const vehicleModel     = prompt('Vehicle Model:',         d.vehicleModel      || ''); if (vehicleModel     === null) return;
+          const vehicleColor     = prompt('Vehicle Color:',         d.vehicleColor      || ''); if (vehicleColor     === null) return;
+          const registrationNumber = prompt('Vehicle Registration Number:', d.registrationNumber || ''); if (registrationNumber === null) return;
+          const capacity         = prompt('Capacity:',              d.capacity          || ''); if (capacity         === null) return;
 
           driversRef.child(id).update({
             firstName,
@@ -181,29 +177,30 @@
             vehicleMake,
             vehicleModel,
             vehicleColor,
+            registrationNumber,
             capacity: capacity ? Number(capacity) : null
           });
         });
       }
     });
 
-    // Handle Add Driver
+    // Add new driver
     addForm.addEventListener('submit', e => {
       e.preventDefault();
       addErrorEl.textContent = '';
 
-      const firstName    = document.getElementById('new-first-name').value.trim();
-      const lastName     = document.getElementById('new-last-name').value.trim();
-      const phone        = document.getElementById('new-phone').value.trim();
-      const driverNumber = document.getElementById('new-driver-number').value.trim();
-      const doorCard     = document.getElementById('new-doorcard').value.trim();
-      const vehicleMake  = document.getElementById('new-vehicle-make').value.trim();
-      const vehicleModel = document.getElementById('new-vehicle-model').value.trim();
-      const vehicleColor = document.getElementById('new-vehicle-color').value.trim();
-      const capacity     = document.getElementById('new-capacity').value;
-      const password     = document.getElementById('new-password').value;
+      const firstName        = document.getElementById('new-first-name').value.trim();
+      const lastName         = document.getElementById('new-last-name').value.trim();
+      const phone            = document.getElementById('new-phone').value.trim();
+      const driverNumber     = document.getElementById('new-driver-number').value.trim();
+      const doorCard         = document.getElementById('new-doorcard').value.trim();
+      const vehicleMake      = document.getElementById('new-vehicle-make').value.trim();
+      const vehicleModel     = document.getElementById('new-vehicle-model').value.trim();
+      const vehicleColor     = document.getElementById('new-vehicle-color').value.trim();
+      const registrationNumber = document.getElementById('new-registration').value.trim();
+      const capacity         = document.getElementById('new-capacity').value;
+      const password         = document.getElementById('new-password').value;
 
-      // Basic validation
       if (!firstName || !lastName || !phone || !driverNumber || !doorCard || !password) {
         addErrorEl.textContent = 'Please fill in all required fields.';
         return;
@@ -215,11 +212,12 @@
         phone,
         driverNumber,
         doorCard,
-        password,
         vehicleMake: vehicleMake || null,
         vehicleModel: vehicleModel || null,
         vehicleColor: vehicleColor || null,
-        capacity: capacity ? Number(capacity) : null
+        registrationNumber: registrationNumber || null,
+        capacity: capacity ? Number(capacity) : null,
+        password
       })
       .then(() => addForm.reset())
       .catch(err => addErrorEl.textContent = err.message);
