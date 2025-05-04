@@ -60,8 +60,20 @@
     </section>
   </main>
 
-  <!-- 1) Firebase config (your keys) -->
-  <script src="../firebase-config.js"></script>
+  <!-- 1) INLINE your Firebase config here: -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+  </script>
+
   <!-- 2) Firebase SDKs (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -70,9 +82,10 @@
   <!-- 3) Driver CRUD logic -->
   <script>
     // Initialize Firebase
-    firebase.initializeApp(window.firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
+
     const auth = firebase.auth();
-    const db = firebase.database();
+    const db   = firebase.database();
 
     // Redirect to login if not authenticated
     auth.onAuthStateChanged(user => {
@@ -87,17 +100,16 @@
     });
 
     const driversRef = db.ref('drivers');
-    const listEl = document.getElementById('drivers-list');
-    const addForm = document.getElementById('add-driver-form');
+    const listEl     = document.getElementById('drivers-list');
+    const addForm    = document.getElementById('add-driver-form');
     const addErrorEl = document.getElementById('add-error');
 
     // Render drivers when data changes
     driversRef.on('value', snapshot => {
-      listEl.innerHTML = ''; // clear
+      listEl.innerHTML = '';
       snapshot.forEach(child => {
         const id = child.key;
-        const d = child.val();
-        // Create card
+        const d  = child.val();
         const card = document.createElement('div');
         card.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
         card.innerHTML = `
@@ -106,7 +118,7 @@
             <p>Vehicle: ${d.vehicle || '–'} › Capacity: ${d.capacity || '–'}</p>
           </div>
           <div class="space-x-2">
-            <button data-action="edit" data-id="${id}" class="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500">Edit</button>
+            <button data-action="edit"   data-id="${id}" class="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500">Edit</button>
             <button data-action="delete" data-id="${id}" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
           </div>
         `;
@@ -125,18 +137,13 @@
         }
       }
       if (btn.dataset.action === 'edit') {
-        // Simple prompt-based edit
-        const name = prompt('New name:', '');
-        if (name === null) return;
-        const doorCard = prompt('New Door Card #:', '');
-        if (doorCard === null) return;
-        const vehicle = prompt('New vehicle (or leave blank):', '');
-        if (vehicle === null) return;
-        const capacity = prompt('New capacity (or leave blank):', '');
-        if (capacity === null) return;
-        const updates = { name, doorCard };
-        if (vehicle) updates.vehicle = vehicle;
-        if (capacity) updates.capacity = Number(capacity);
+        const name     = prompt('New name:', '')        ; if (name===null) return;
+        const doorCard = prompt('New Door Card #:', '') ; if (doorCard===null) return;
+        const vehicle  = prompt('New vehicle:', '')     ; if (vehicle===null) return;
+        const capRaw   = prompt('New capacity:', '')    ; if (capRaw===null) return;
+        const updates  = { name, doorCard };
+        if (vehicle) updates.vehicle  = vehicle;
+        if (capRaw)  updates.capacity = Number(capRaw);
         driversRef.child(id).update(updates);
       }
     });
@@ -145,29 +152,26 @@
     addForm.addEventListener('submit', e => {
       e.preventDefault();
       addErrorEl.textContent = '';
-      const name = document.getElementById('new-name').value.trim();
+
+      const name     = document.getElementById('new-name').value.trim();
       const doorCard = document.getElementById('new-doorcard').value.trim();
       const password = document.getElementById('new-password').value;
-      const vehicle = document.getElementById('new-vehicle').value.trim();
-      const capacity = document.getElementById('new-capacity').value;
+      const vehicle  = document.getElementById('new-vehicle').value.trim();
+      const capVal   = document.getElementById('new-capacity').value;
 
-      // Basic validation
       if (!name || !doorCard || !password) {
-        addErrorEl.textContent = 'Please fill in name, door card and password.';
+        addErrorEl.textContent = 'Name, door card and password are required.';
         return;
       }
-      // Push new driver
+
       driversRef.push({
         name,
         doorCard,
         password,
         vehicle: vehicle || null,
-        capacity: capacity ? Number(capacity) : null
-      }).then(() => {
-        addForm.reset();
-      }).catch(err => {
-        addErrorEl.textContent = err.message;
-      });
+        capacity: capVal ? Number(capVal) : null
+      }).then(() => addForm.reset())
+        .catch(err => addErrorEl.textContent = err.message);
     });
   </script>
 </body>
