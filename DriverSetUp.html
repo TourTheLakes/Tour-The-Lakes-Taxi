@@ -147,29 +147,38 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    function promptForPassword() {
+      localStorage.removeItem("adminAccess");
+      const pass = prompt("Enter admin password:");
+      if (pass) {
+        db.ref("adminPassword").once("value").then(snapshot => {
+          if (snapshot.val() === pass) {
+            localStorage.setItem("adminAccess", "true");
+            loadDrivers();
+            startSessionTimeout();
+          } else {
+            alert("Wrong password. Access denied.");
+            promptForPassword();
+          }
+        });
+      } else {
+        alert("Access denied.");
+        promptForPassword();
+      }
+    }
+
     window.onload = function() {
       if (!localStorage.getItem("adminAccess")) {
-        let pass = prompt("Enter admin password:");
-        if (pass) {
-          db.ref("adminPassword").once("value").then(snapshot => {
-            if (snapshot.val() === pass) {
-              localStorage.setItem("adminAccess", "true");
-              loadDrivers();
-              setTimeout(logoff, 10 * 60 * 1000); // 10 minutes timeout
-            } else {
-              alert("Wrong password. Access denied.");
-              window.location.href = "index.html";
-            }
-          });
-        } else {
-          alert("Access denied.");
-          window.location.href = "index.html";
-        }
+        promptForPassword();
       } else {
         loadDrivers();
-        setTimeout(logoff, 10 * 60 * 1000); // 10 minutes timeout
+        startSessionTimeout();
       }
     };
+
+    function startSessionTimeout() {
+      setTimeout(logoff, 10 * 60 * 1000); // 10 minutes
+    }
 
     function loadDrivers() {
       db.ref("drivers").once("value").then(snapshot => {
@@ -284,8 +293,7 @@
 
     function logoff() {
       localStorage.removeItem("adminAccess");
-      alert("You have been logged out.");
-      window.location.href = "index.html";
+      promptForPassword();
     }
   </script>
 </body>
