@@ -122,12 +122,12 @@
 <body>
   <div class="container">
     <div class="login-box">
-      <h2>Driver Login</h2>
-<label for="name">First Name:</label>
+      <h2>Driver Login</h2>
+      <label for="name">First Name:</label>
       <input type="text" id="name" placeholder="e.g. John">
 
       <label for="doorCard">Door Card Number:</label>
-      <input type="text" id="doorCard" maxlength="3" placeholder="e.g. 000">
+      <input type="text" id="doorCard" maxlength="5" placeholder="e.g. S138">
 
       <label for="password">Password:</label>
       <input type="password" id="password" placeholder="Your Password">
@@ -152,7 +152,7 @@
 
     async function driverLogin() {
       const name = document.getElementById("name").value.trim().toLowerCase();
-      const doorCard = document.getElementById("doorCard").value.trim();
+      const doorCard = document.getElementById("doorCard").value.trim().toUpperCase(); // <== force uppercase for comparison
       const password = document.getElementById("password").value.trim();
 
       if (!name || !doorCard || !password) {
