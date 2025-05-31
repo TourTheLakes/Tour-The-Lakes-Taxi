@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MainLanding</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --text-sub: #aaaaaa;
+      --accent: #f1f1f1;
+      --accent-hover: #e0e0e0;
+      --button-text: #111;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      height: 100%;
+    }
+
+body {
+  background-color: #0e0f10;
+  background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+  background-repeat: repeat;
+  background-size: auto;
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeInTop 1s ease;
+    }
+
+    header h1 {
+      font-size: 38px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 18px;
+      color: var(--text-sub);
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 1.2s ease;
+    }
+
+    .action-button {
+      background: var(--section-light);
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      border: 1px solid transparent;
+    }
+
+    .action-button:hover {
+      background: #232528;
+      transform: translateY(-2px);
+      border-color: #333;
+    }
+
+    .action-button span {
+      display: block;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .action-button small {
+      display: block;
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-top: 6px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInTop {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      header h1 {
+        font-size: 30px;
+      }
+      .action-button span {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Tour The Lakes</h1>
+    <p>Elegant Tours. Trusted Taxis. Seamless Service.</p>
+  </header>
+
+  <div class="actions">
+
+    <div class="action-button" onclick="location.href='ReturningCustomer.html'">
+      <span>Returning Customer</span>
+      <small>View, Amend or Cancel a Booking</small>
+    </div>
+
+    <div class="action-button" onclick="location.href='LakesTours.html'">
+      <span>Lakes Tours</span>
+      <small>Explore the Lake District with a local guide</small>
+    </div>
+
+    <div class="action-button" onclick="location.href='TaxiService.html'">
+      <span>Taxi Service</span>
+      <small>Based in Windermere</small>
+    </div>
+
+  </div>
+
+  <footer>
+    Independent. Local. Professional.
+  </footer>
+
+</body>
+</html>
