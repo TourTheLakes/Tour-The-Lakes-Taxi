@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Driver Setup</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Driver Set Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
@@ -12,103 +12,100 @@
       --bg-dark: #0e0f10;
       --section-light: #1c1e21;
       --text-main: #f1f1f1;
+      --text-sub: #aaaaaa;
       --accent: #4CAF50;
       --error: #cc0000;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
     }
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
-      font-family: 'Quicksand', sans-serif;
+      height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 40px 20px;
+      align-items: center;
     }
     .container {
+      width: 100%;
+      max-width: 480px;
       background: var(--section-light);
       padding: 30px;
       border-radius: 16px;
-      width: 100%;
-      max-width: 700px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 0.8s ease;
     }
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      font-size: 26px;
     }
     input, select {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 14px;
       border-radius: 8px;
       border: none;
-      background: #2c2f33;
+      background: #2a2d31;
       color: var(--text-main);
-      font-size: 15px;
     }
     button {
       width: 100%;
       padding: 14px;
-      margin: 12px 0;
-      background: var(--accent);
       border: none;
       border-radius: 8px;
+      background: var(--accent);
+      color: white;
       font-weight: 600;
       cursor: pointer;
-      color: white;
       transition: background 0.3s;
     }
     button:hover {
-      background: #45a049;
+      background: #3a8f3a;
     }
-    .driver-list {
-      margin-top: 30px;
+    #logoffBtn {
+      background: #ff9800;
     }
-    .driver-item {
-      background: #2c2f33;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-    .driver-item p {
-      margin: 6px 0;
-      font-size: 14px;
-    }
-    .driver-item button {
-      width: auto;
-      margin-right: 10px;
-      background: #f44336;
-    }
-    .driver-item button.edit-btn {
-      background: #2196F3;
+    #logoffBtn:hover {
+      background: #e67e00;
     }
     .hidden {
       display: none;
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="loginSection">
-      <h1>Enter Admin Password</h1>
-      <input type="password" id="adminPassword" placeholder="Password">
-      <button onclick="verifyPassword()">Login</button>
-      <p id="loginError" style="color: var(--error); text-align:center; display:none;">Incorrect password. Try again.</p>
-    </div>
+  <div class="container" id="loginSection">
+    <h1>Admin Login</h1>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <button onclick="verifyPassword()">Login</button>
+  </div>
 
-    <div id="driverSection" class="hidden">
-      <h1>Driver Management</h1>
-      <input type="text" id="name" placeholder="Driver Name">
-      <input type="tel" id="phone" placeholder="Phone Number">
-      <input type="text" id="doorCard" placeholder="Door Card Number">
-      <input type="text" id="make" placeholder="Vehicle Make">
-      <input type="text" id="model" placeholder="Vehicle Model">
-      <input type="text" id="color" placeholder="Vehicle Color">
-      <input type="text" id="registration" placeholder="Vehicle Registration">
-      <input type="number" id="seats" placeholder="Number of Seats">
-      <button onclick="saveDriver()">Save Driver</button>
-
-      <div class="driver-list" id="driverList"></div>
+  <div class="container hidden" id="formSection">
+    <h1>Driver Set Up</h1>
+    <input type="text" id="driverName" placeholder="Driver Name">
+    <input type="text" id="doorCard" placeholder="Door Card Number">
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="text" id="vehicleMake" placeholder="Vehicle Make">
+    <input type="text" id="vehicleModel" placeholder="Vehicle Model">
+    <input type="text" id="vehicleColor" placeholder="Vehicle Color">
+    <input type="text" id="registration" placeholder="Registration">
+    <input type="number" id="seats" placeholder="Number of Seats">
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button onclick="addDriver()">Add/Update Driver</button>
+      <button onclick="deleteDriver()">Delete Driver</button>
     </div>
+    <button id="logoffBtn" onclick="logOff()">Log Off</button>
   </div>
 
   <script>
@@ -124,105 +121,95 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let editId = null; // Used for editing existing driver
+    let timeoutHandle;
 
     function verifyPassword() {
       const inputPassword = document.getElementById("adminPassword").value.trim();
       db.ref("admin/setupPassword").once("value").then(snapshot => {
-        if (snapshot.exists() && snapshot.val() === inputPassword) {
-          document.getElementById("loginSection").classList.add("hidden");
-          document.getElementById("driverSection").classList.remove("hidden");
-          loadDrivers();
+        const realPassword = snapshot.val();
+        if (inputPassword === realPassword) {
+          sessionStorage.setItem("adminAccess", "granted");
+          showForm();
         } else {
-          document.getElementById("loginError").style.display = "block";
+          alert("Incorrect password.");
         }
       });
     }
 
-    function saveDriver() {
+    function showForm() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("formSection").classList.remove("hidden");
+      startTimeout();
+    }
+
+    function startTimeout() {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+      timeoutHandle = setTimeout(() => {
+        alert("Session expired. You have been logged off.");
+        logOff();
+      }, 10 * 60 * 1000); // 10 minutes
+    }
+
+    function checkAccess() {
+      if (sessionStorage.getItem("adminAccess") !== "granted") {
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("formSection").classList.add("hidden");
+      } else {
+        showForm();
+      }
+    }
+
+    function logOff() {
+      sessionStorage.removeItem("adminAccess");
+      location.reload();
+    }
+
+    function addDriver() {
+      const driverName = document.getElementById("driverName").value.trim();
+      const doorCard = document.getElementById("doorCard").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const vehicleMake = document.getElementById("vehicleMake").value.trim();
+      const vehicleModel = document.getElementById("vehicleModel").value.trim();
+      const vehicleColor = document.getElementById("vehicleColor").value.trim();
+      const registration = document.getElementById("registration").value.trim();
+      const seats = parseInt(document.getElementById("seats").value.trim());
+
+      if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats)) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
       const driverData = {
-        name: document.getElementById("name").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        doorCard: document.getElementById("doorCard").value.trim(),
+        name: driverName,
+        doorCard: doorCard,
+        phone: phone,
         vehicle: {
-          make: document.getElementById("make").value.trim(),
-          model: document.getElementById("model").value.trim(),
-          color: document.getElementById("color").value.trim(),
-          registration: document.getElementById("registration").value.trim(),
-          seats: parseInt(document.getElementById("seats").value.trim())
+          make: vehicleMake,
+          model: vehicleModel,
+          color: vehicleColor,
+          registration: registration,
+          seats: seats
         }
       };
 
-      if (editId) {
-        db.ref("drivers/" + editId).set(driverData).then(() => {
-          clearForm();
-          loadDrivers();
-        });
-      } else {
-        db.ref("drivers").push(driverData).then(() => {
-          clearForm();
-          loadDrivers();
-        });
+      db.ref("drivers/" + doorCard).set(driverData)
+        .then(() => alert("Driver added/updated successfully."))
+        .catch(err => alert("Error: " + err.message));
+    }
+
+    function deleteDriver() {
+      const doorCard = document.getElementById("doorCard").value.trim();
+      if (!doorCard) {
+        alert("Enter Door Card Number to delete.");
+        return;
       }
+
+      db.ref("drivers/" + doorCard).remove()
+        .then(() => alert("Driver deleted successfully."))
+        .catch(err => alert("Error: " + err.message));
     }
 
-    function clearForm() {
-      document.getElementById("name").value = "";
-      document.getElementById("phone").value = "";
-      document.getElementById("doorCard").value = "";
-      document.getElementById("make").value = "";
-      document.getElementById("model").value = "";
-      document.getElementById("color").value = "";
-      document.getElementById("registration").value = "";
-      document.getElementById("seats").value = "";
-      editId = null;
-    }
-
-    function loadDrivers() {
-      const list = document.getElementById("driverList");
-      list.innerHTML = "<h3>Existing Drivers:</h3>";
-
-      db.ref("drivers").once("value").then(snapshot => {
-        snapshot.forEach(child => {
-          const driver = child.val();
-          const id = child.key;
-
-          const div = document.createElement("div");
-          div.className = "driver-item";
-          div.innerHTML = `
-            <p><strong>Name:</strong> ${driver.name}</p>
-            <p><strong>Phone:</strong> ${driver.phone}</p>
-            <p><strong>Door Card:</strong> ${driver.doorCard}</p>
-            <p><strong>Vehicle:</strong> ${driver.vehicle.color} ${driver.vehicle.make} ${driver.vehicle.model} (${driver.vehicle.registration})</p>
-            <p><strong>Seats:</strong> ${driver.vehicle.seats}</p>
-            <button class="edit-btn" onclick="editDriver('${id}', ${JSON.stringify(driver).replace(/"/g, '&quot;')})">Edit</button>
-            <button onclick="deleteDriver('${id}')">Delete</button>
-          `;
-          list.appendChild(div);
-        });
-      });
-    }
-
-    function editDriver(id, driver) {
-      editId = id;
-      document.getElementById("name").value = driver.name;
-      document.getElementById("phone").value = driver.phone;
-      document.getElementById("doorCard").value = driver.doorCard;
-      document.getElementById("make").value = driver.vehicle.make;
-      document.getElementById("model").value = driver.vehicle.model;
-      document.getElementById("color").value = driver.vehicle.color;
-      document.getElementById("registration").value = driver.vehicle.registration;
-      document.getElementById("seats").value = driver.vehicle.seats;
-      window.scrollTo(0, 0);
-    }
-
-    function deleteDriver(id) {
-      if (confirm("Are you sure you want to delete this driver?")) {
-        db.ref("drivers/" + id).remove().then(() => {
-          loadDrivers();
-        });
-      }
-    }
+    window.onload = checkAccess;
   </script>
 </body>
 </html>
