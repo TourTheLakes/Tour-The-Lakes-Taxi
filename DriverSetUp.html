@@ -28,35 +28,34 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 🧠 Don't center vertically, align to top */
-    padding: 40px 20px;
-    overflow-y: auto; /* 🧠 Allow scrolling if necessary */
+    padding: 60px 20px 40px; /* 🧠 60px top margin, 40px bottom padding */
+    overflow-y: auto; /* 🧠 Scroll if needed */
   }
   .container {
     width: 100%;
     max-width: 480px;
     background: var(--section-light);
-    padding: 30px;
+    padding: 30px 20px;
     border-radius: 16px;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin-top: 40px; /* 🧠 Push it down slightly from the top */
+    gap: 16px; /* Tighter gap */
     animation: fadeIn 0.8s ease;
   }
   h1 {
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
     margin-bottom: 10px;
   }
   input, select {
     width: 100%;
-    padding: 14px;
+    padding: 12px 14px;
     border-radius: 8px;
     border: none;
     background: #2a2d31;
     color: var(--text-main);
+    font-size: 15px;
   }
   button {
     width: 100%;
@@ -70,7 +69,7 @@
     transition: background 0.3s;
   }
   button:hover {
-    background: #3a8f3a;
+    background-color: #3a8f3a;
   }
   #logoffBtn {
     background: #ff9800;
@@ -86,8 +85,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 </style>
-
-  
 </head>
 <body>
   <div class="container" id="loginSection">
