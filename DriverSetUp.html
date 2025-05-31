@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --error: #cc0000;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .container {
+      background: var(--section-light);
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 700px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: #2c2f33;
+      color: var(--text-main);
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .driver-list {
+      margin-top: 30px;
+    }
+    .driver-item {
+      background: #2c2f33;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .driver-item p {
+      margin: 6px 0;
+      font-size: 14px;
+    }
+    .driver-item button {
+      width: auto;
+      margin-right: 10px;
+      background: #f44336;
+    }
+    .driver-item button.edit-btn {
+      background: #2196F3;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loginSection">
+      <h1>Enter Admin Password</h1>
+      <input type="password" id="adminPassword" placeholder="Password">
+      <button onclick="verifyPassword()">Login</button>
+      <p id="loginError" style="color: var(--error); text-align:center; display:none;">Incorrect password. Try again.</p>
+    </div>
+
+    <div id="driverSection" class="hidden">
+      <h1>Driver Management</h1>
+      <input type="text" id="name" placeholder="Driver Name">
+      <input type="tel" id="phone" placeholder="Phone Number">
+      <input type="text" id="doorCard" placeholder="Door Card Number">
+      <input type="text" id="make" placeholder="Vehicle Make">
+      <input type="text" id="model" placeholder="Vehicle Model">
+      <input type="text" id="color" placeholder="Vehicle Color">
+      <input type="text" id="registration" placeholder="Vehicle Registration">
+      <input type="number" id="seats" placeholder="Number of Seats">
+      <button onclick="saveDriver()">Save Driver</button>
+
+      <div class="driver-list" id="driverList"></div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.appspot.com",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let editId = null; // Used for editing existing driver
+
+    function verifyPassword() {
+      const inputPassword = document.getElementById("adminPassword").value.trim();
+      db.ref("admin/setupPassword").once("value").then(snapshot => {
+        if (snapshot.exists() && snapshot.val() === inputPassword) {
+          document.getElementById("loginSection").classList.add("hidden");
+          document.getElementById("driverSection").classList.remove("hidden");
+          loadDrivers();
+        } else {
+          document.getElementById("loginError").style.display = "block";
+        }
+      });
+    }
+
+    function saveDriver() {
+      const driverData = {
+        name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        doorCard: document.getElementById("doorCard").value.trim(),
+        vehicle: {
+          make: document.getElementById("make").value.trim(),
+          model: document.getElementById("model").value.trim(),
+          color: document.getElementById("color").value.trim(),
+          registration: document.getElementById("registration").value.trim(),
+          seats: parseInt(document.getElementById("seats").value.trim())
+        }
+      };
+
+      if (editId) {
+        db.ref("drivers/" + editId).set(driverData).then(() => {
+          clearForm();
+          loadDrivers();
+        });
+      } else {
+        db.ref("drivers").push(driverData).then(() => {
+          clearForm();
+          loadDrivers();
+        });
+      }
+    }
+
+    function clearForm() {
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("doorCard").value = "";
+      document.getElementById("make").value = "";
+      document.getElementById("model").value = "";
+      document.getElementById("color").value = "";
+      document.getElementById("registration").value = "";
+      document.getElementById("seats").value = "";
+      editId = null;
+    }
+
+    function loadDrivers() {
+      const list = document.getElementById("driverList");
+      list.innerHTML = "<h3>Existing Drivers:</h3>";
+
+      db.ref("drivers").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const driver = child.val();
+          const id = child.key;
+
+          const div = document.createElement("div");
+          div.className = "driver-item";
+          div.innerHTML = `
+            <p><strong>Name:</strong> ${driver.name}</p>
+            <p><strong>Phone:</strong> ${driver.phone}</p>
+            <p><strong>Door Card:</strong> ${driver.doorCard}</p>
+            <p><strong>Vehicle:</strong> ${driver.vehicle.color} ${driver.vehicle.make} ${driver.vehicle.model} (${driver.vehicle.registration})</p>
+            <p><strong>Seats:</strong> ${driver.vehicle.seats}</p>
+            <button class="edit-btn" onclick="editDriver('${id}', ${JSON.stringify(driver).replace(/"/g, '&quot;')})">Edit</button>
+            <button onclick="deleteDriver('${id}')">Delete</button>
+          `;
+          list.appendChild(div);
+        });
+      });
+    }
+
+    function editDriver(id, driver) {
+      editId = id;
+      document.getElementById("name").value = driver.name;
+      document.getElementById("phone").value = driver.phone;
+      document.getElementById("doorCard").value = driver.doorCard;
+      document.getElementById("make").value = driver.vehicle.make;
+      document.getElementById("model").value = driver.vehicle.model;
+      document.getElementById("color").value = driver.vehicle.color;
+      document.getElementById("registration").value = driver.vehicle.registration;
+      document.getElementById("seats").value = driver.vehicle.seats;
+      window.scrollTo(0, 0);
+    }
+
+    function deleteDriver(id) {
+      if (confirm("Are you sure you want to delete this driver?")) {
+        db.ref("drivers/" + id).remove().then(() => {
+          loadDrivers();
+        });
+      }
+    }
+  </script>
+</body>
+</html>
