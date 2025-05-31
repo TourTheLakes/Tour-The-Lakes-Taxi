@@ -231,7 +231,10 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-</script><script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places&callback=initMap" async defer></script><script>
+</script>
+  
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places&callback=initMap" async defer></script>
+<script>
   let mapPickup, mapDropoff, markerPickup, markerDropoff;
 
   function initMap() {
@@ -268,9 +271,11 @@
 
     const pickupInput = document.getElementById("pickup");
     const dropoffInput = document.getElementById("dropoff");
+
     const pickupAuto = new google.maps.places.Autocomplete(pickupInput, {
       componentRestrictions: { country: 'gb' }
     });
+
     const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, {
       componentRestrictions: { country: 'gb' }
     });
@@ -281,7 +286,11 @@
         mapPickup.setCenter(place.geometry.location);
         markerPickup.setPosition(place.geometry.location);
         localStorage.setItem("pickupCoords", JSON.stringify(place.geometry.location.toJSON()));
-        pickupInput.value = place.formatted_address || place.name;
+
+        const name = place.name || "";
+        const address = place.formatted_address || "";
+
+        pickupInput.value = name && !address.includes(name) ? `${name}, ${address}` : address;
       }
     });
 
@@ -291,7 +300,11 @@
         mapDropoff.setCenter(place.geometry.location);
         markerDropoff.setPosition(place.geometry.location);
         localStorage.setItem("dropoffCoords", JSON.stringify(place.geometry.location.toJSON()));
-        dropoffInput.value = place.formatted_address || place.name;
+
+        const name = place.name || "";
+        const address = place.formatted_address || "";
+
+        dropoffInput.value = name && !address.includes(name) ? `${name}, ${address}` : address;
       }
     });
   }
@@ -299,7 +312,10 @@
   function showCustomNote() {
     document.getElementById("customNoteArea").style.display = "block";
   }
-</script><script>
+</script>
+
+  
+  <script>
   window.onload = function () {
     if (!localStorage.getItem("locationAllowed")) {
       navigator.geolocation.getCurrentPosition(
