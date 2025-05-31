@@ -2,191 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Amend Booking</title>
+  <title>Amend My Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
-<!-- Firebase -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
 
-  <!-- Google Maps -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places&callback=initMap" async defer></script>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-  :root {
-    --bg-dark: #0e0f10;
-    --section-light: #1c1e21;
-    --text-main: #f1f1f1;
-    --text-sub: #aaaaaa;
-    --accent: #f1f1f1;
-    --accent-hover: #e0e0e0;
-    --button-text: #111;
-    --error: #cc0000;
-  }
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --text-sub: #aaaaaa;
+      --accent: #4CAF50;
+      --error: #f44336;
+    }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Quicksand', sans-serif;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
 
-  html, body {
-    background-color: var(--bg-dark);
-    background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
-  }
+    html, body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
 
-  .container {
-    background: var(--section-light);
-    padding: 30px;
-    border-radius: 16px;
-    max-width: 640px;
-    width: 100%;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-    animation: fadeIn 1s ease;
-  }
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
 
-  h1, h2 {
-    text-align: center;
-    font-size: 26px;
-    margin-bottom: 20px;
-  }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--section-light);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.8s ease;
+    }
 
-  label {
-    font-weight: 600;
-    display: block;
-    margin: 16px 0 6px;
-  }
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
 
-  input[type="text"],
-  input[type="date"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #2a2d31;
-    color: var(--text-main);
-    font-size: 15px;
-    margin-bottom: 16px;
-  }
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: 600;
+    }
 
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: none;
+      background: #2a2d31;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
 
-  .map {
-    width: 100%;
-    height: 200px;
-    margin: 0 0 24px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #333;
-  }
+    textarea {
+      resize: vertical;
+    }
 
-  .button-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--accent);
+      color: #111;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-  button {
-    flex: 1;
-    padding: 14px;
-    background: var(--accent);
-    color: var(--button-text);
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
+    button:hover {
+      background-color: #43a047;
+    }
 
-  button:hover {
-    background: var(--accent-hover);
-  }
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 16px;
+      display: none;
+    }
 
-  .warning,
-  .disclaimer {
-    background: #2a2d31;
-    border-left: 4px solid #ffa500;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-top: 16px;
-    color: var(--text-sub);
-  }
+    .success {
+      color: var(--accent);
+    }
 
-  #capacityWarning {
-    display: none;
-  }
+    .error {
+      color: var(--error);
+    }
 
-  .disabledOption {
-    color: #777 !important;
-    background-color: #444 !important;
-    cursor: not-allowed;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 500px) {
-    .map {
-      height: 180px;
-    }
-  }
-</style>
-
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Update Your Booking</h1>
+    <h1>Amend My Booking</h1>
+    <form id="amendForm">
+      <label>Pickup Address:</label>
+      <input type="text" id="pickup" required />
 
-    <div id="step1">
-      <label for="pickup">Pickup Address:</label>
-      <input type="text" id="pickup" placeholder="Start typing...">
-      <div id="mapPickup" class="map"></div>
+      <label>Drop-off Address:</label>
+      <input type="text" id="dropoff" required />
 
-      <label for="dropoff">Drop-off Address:</label>
-      <input type="text" id="dropoff" placeholder="Start typing...">
-      <div id="mapDropoff" class="map"></div>
-
-      <label for="customNote">Additional info for your driver:</label>
-      <textarea id="customNote" placeholder="E.g. nearest landmark, gate code..."></textarea>
-
-      <div class="disclaimer">
-      Westmoreland and Furness Council Hackney Carriage Maximum Fares as of<br> 1 April 2024:<br>
-      <strong>Normal Fare:</strong> £4.20 for the first mile<br> (07:00 - 23:00), then £0.30 per 1/10 mile<br> after that.<br>
-      <strong>Night Rate:</strong> £6.30 for the first mile<br> (23:00 - 07:00), then £0.40 per 1/10 mile<br> after that.<br>
-      <strong>Bank Holidays:</strong> £8.40 for the first mile<br> (00:00 - 00:00), then £0.60 per 1/10 mile<br> after that.<br>
-      <strong>Waiting Time:</strong> 30p, 50p or 70p per minute depending on the tariff.
-      </div>
-
-      <div class="button-row">
-        <button onclick="window.location.href='CustomerBooking.html'">Cancel</button>
-        <button onclick="goToStep2()">Next</button>
-      </div>
-    </div>
-<div id="step2" style="display:none; margin-top: 30px;">
-      <h2>Journey Info</h2>
-
-      <p><strong>Pickup:</strong> <span id="pickupDisplay"></span></p>
-      <p><strong>Drop-off:</strong> <span id="dropoffDisplay"></span></p>
-      <p id="estimateMsg">Estimating your fare...</p>
-
-      <label for="passengers">How many people are travelling?</label>
-      <select id="passengers" onchange="updateLuggageOptions()">
+      <label>Passengers:</label>
+      <select id="passengers" required>
         <option value="">Select</option>
         <option>1</option>
         <option>2</option>
@@ -195,407 +138,166 @@
         <option>5</option>
         <option>6</option>
       </select>
-      <label style="margin-top: 8px; display: flex; align-items: center;">
-        <input type="checkbox" id="passengerConfirm"> I confirm this is correct.
-      </label>
 
-      <label for="luggage">Luggage:</label>
-      <select id="luggage">
+      <label>Luggage:</label>
+      <select id="luggage" required>
+        <option value="">Select</option>
         <option>No luggage</option>
-        <option class="luggageOption">Small - a backpack or a small carry-on</option>
-        <option class="luggageOption">Medium - a couple of suitcases</option>
-        <option class="luggageOption">Large - multiple bags and/or oversized items</option>
+        <option>Small - a backpack</option>
+        <option>Medium - a suitcase</option>
+        <option>Large - multiple bags</option>
       </select>
 
-      <div id="capacityWarning" class="warning">
-        Due to vehicle capacity and the design of the rear seats, luggage space is extremely limited. Please pack light.
-      </div>
-
-      <div class="disclaimer">
-        <strong>Important Notice Regarding Pets</strong><br>
-        We regret to inform you that due to multiple incidents involving damage to our vehicles, our drivers no longer accept animals on board.<br>
-        We are <strong>not a pet-friendly service</strong>. You must acknowledge this to proceed.<br>
-        <em>Failure to disclose the presence of a pet may result in refusal of travel.</em>
-      </div>
-
-      <label style="margin-top: 12px; display: flex; align-items: center;">
-        <input type="checkbox" id="petConfirm" style="margin-right: 8px;"> I acknowledge I am not travelling with a pet.
-      </label>
-
-      <label for="pickupDate">Pickup Date:</label>
-      <input type="date" id="pickupDate" />
-
-      <label for="pickupTime">Pickup Time:</label>
-      <select id="pickupTime">
-        <option value="">Select a time...</option>
+      <label>Travelling with a Pet?</label>
+      <select id="pets" required>
+        <option value="">Select</option>
+        <option>No</option>
       </select>
 
-      <p id="timeWarning" style="color: var(--error); font-size: 14px; margin-top: 10px; display: none;"></p>
+      <label>Pickup Type:</label>
+      <select id="pickupType" required>
+        <option value="">Select</option>
+        <option>ASAP</option>
+        <option>Scheduled</option>
+      </select>
 
-      <div class="button-row">
-        <button onclick="goBackToStep1()">Return</button>
-        <button onclick="submitAmendment()">Update Booking</button>
+      <div id="scheduledFields" style="display: none;">
+        <label>Pickup Date:</label>
+        <input type="date" id="pickupDate" />
+
+        <label>Pickup Time:</label>
+        <input type="time" id="pickupTime" />
       </div>
-    </div>
-  </div> <!-- closes .container -->
-<script>
-  let bookingID = null;
-  let mapPickup, mapDropoff, markerPickup, markerDropoff;
 
-  function initMap() {
-    const defaultLatLng = { lat: 54.3686, lng: -2.9067 };
+      <label>Additional Notes:</label>
+      <textarea id="customNote" rows="3"></textarea>
 
-    mapPickup = new google.maps.Map(document.getElementById("mapPickup"), {
-      center: defaultLatLng,
-      zoom: 13,
-      disableDefaultUI: true,
-      gestureHandling: "cooperative"
-    });
+      <button type="submit">Save Changes</button>
+    </form>
 
-    mapDropoff = new google.maps.Map(document.getElementById("mapDropoff"), {
-      center: defaultLatLng,
-      zoom: 13,
-      disableDefaultUI: true,
-      gestureHandling: "cooperative"
-    });
+    <p id="formMessage" class="message"></p>
+  </div>
 
-    markerPickup = new google.maps.Marker({ map: mapPickup, draggable: true });
-    markerDropoff = new google.maps.Marker({ map: mapDropoff, draggable: true });
-
-    mapPickup.addListener("click", (e) => {
-      markerPickup.setPosition(e.latLng);
-      localStorage.setItem("pickupCoords", JSON.stringify(e.latLng.toJSON()));
-    });
-
-    mapDropoff.addListener("click", (e) => {
-      markerDropoff.setPosition(e.latLng);
-      localStorage.setItem("dropoffCoords", JSON.stringify(e.latLng.toJSON()));
-    });
-
-    const pickupInput = document.getElementById("pickup");
-    const dropoffInput = document.getElementById("dropoff");
-
-    const pickupAuto = new google.maps.places.Autocomplete(pickupInput, {
-      componentRestrictions: { country: 'gb' }
-    });
-
-    const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, {
-      componentRestrictions: { country: 'gb' }
-    });
-
-pickupAuto.addListener("place_changed", () => {
-  const place = pickupAuto.getPlace();
-  if (place.geometry) {
-    const loc = place.geometry.location;
-    mapPickup.setCenter(loc);
-    markerPickup.setPosition(loc);
-    localStorage.setItem("pickupCoords", JSON.stringify(loc.toJSON()));
-
-    const name = place.name || "";
-    const address = place.formatted_address || "";
-    pickupInput.value = name && !address.includes(name) ? `${name}, ${address}` : address;
-  }
-});
-
-dropoffAuto.addListener("place_changed", () => {
-  const place = dropoffAuto.getPlace();
-  if (place.geometry) {
-    const loc = place.geometry.location;
-    mapDropoff.setCenter(loc);
-    markerDropoff.setPosition(loc);
-    localStorage.setItem("dropoffCoords", JSON.stringify(loc.toJSON()));
-
-    const name = place.name || "";
-    const address = place.formatted_address || "";
-    dropoffInput.value = name && !address.includes(name) ? `${name}, ${address}` : address;
-  }
-});
-
-  }
-
-  function goToStep2() {
-    const pickup = document.getElementById("pickup").value.trim();
-    const dropoff = document.getElementById("dropoff").value.trim();
-    const pickupCoords = localStorage.getItem("pickupCoords");
-    const dropoffCoords = localStorage.getItem("dropoffCoords");
-
-    if (!pickup || !dropoff) {
-      alert("Please fill in both addresses.");
-      return;
-    }
-
-    if (!pickupCoords || !dropoffCoords) {
-      alert("Please select addresses using dropdown or tap the map.");
-      return;
-    }
-
-    document.getElementById("pickupDisplay").innerText = pickup;
-    document.getElementById("dropoffDisplay").innerText = dropoff;
-
-    document.getElementById("step1").style.display = "none";
-    document.getElementById("step2").style.display = "block";
-
-    estimateJourney();
-    populateTimes();
-  }
-
-  function goBackToStep1() {
-    document.getElementById("step2").style.display = "none";
-    document.getElementById("step1").style.display = "block";
-  }
-
-  function updateLuggageOptions() {
-    const count = parseInt(document.getElementById("passengers").value);
-    const warning = document.getElementById("capacityWarning");
-    const luggage = document.getElementById("luggage");
-    const options = luggage.options;
-
-    for (let i = 0; i < options.length; i++) {
-      options[i].disabled = false;
-      options[i].classList.remove("disabledOption");
-    }
-
-    if (!isNaN(count) && count >= 5) {
-      warning.style.display = "block";
-
-      if (options[2]) {
-        options[2].disabled = true;
-        options[2].classList.add("disabledOption");
-      }
-      if (options[3]) {
-        options[3].disabled = true;
-        options[3].classList.add("disabledOption");
-      }
-
-      if (luggage.selectedIndex === 2 || luggage.selectedIndex === 3) {
-        luggage.selectedIndex = 1;
-        luggage.dispatchEvent(new Event("change"));
-      }
-    } else {
-      warning.style.display = "none";
-    }
-  }
-
-  function estimateJourney() {
-    const pickup = localStorage.getItem("pickupCoords");
-    const dropoff = localStorage.getItem("dropoffCoords");
-
-    if (!pickup || !dropoff) {
-      document.getElementById("estimateMsg").innerText = "Waiting for location input...";
-      return;
-    }
-
-    const origin = JSON.parse(pickup);
-    const destination = JSON.parse(dropoff);
-
-    const service = new google.maps.DirectionsService();
-    service.route({
-      origin,
-      destination,
-      travelMode: 'DRIVING'
-    }, (result, status) => {
-      if (status === 'OK' && result.routes.length > 0) {
-        const leg = result.routes[0].legs[0];
-        const dist = leg.distance.value;
-        const isNight = (new Date().getHours() >= 23 || new Date().getHours() < 7);
-        const baseFare = isNight ? 6.30 : 4.20;
-        const stepFare = isNight ? 0.40 : 0.30;
-        let fare = baseFare;
-
-        if (dist > 1609) {
-          const extra = Math.ceil((dist - 1609) / 161);
-          fare += extra * stepFare;
-        }
-
-        document.getElementById("estimateMsg").innerHTML = `
-          Estimated journey: <strong>${leg.distance.text}</strong>,
-          <strong>${leg.duration.text}</strong><br>
-          Estimated fare: <strong>£${fare.toFixed(2)}</strong>
-        `;
-      } else {
-        document.getElementById("estimateMsg").innerText = "Could not estimate journey.";
-      }
-    });
-  }
-
-  async function populateTimes() {
-    const pickupTime = document.getElementById("pickupTime");
-    const pickupDate = document.getElementById("pickupDate");
-    const warning = document.getElementById("timeWarning");
-
-    pickupTime.innerHTML = `<option value="">Select a time...</option>`;
-    const todayStr = new Date().toISOString().split("T")[0];
-    const selectedDate = pickupDate.value || todayStr;
-    pickupDate.value = selectedDate;
-    pickupDate.setAttribute("min", todayStr);
-
-    const isToday = selectedDate === todayStr;
-    const now = new Date();
-
-    const [shiftsSnap, statusSnap] = await Promise.all([
-      db.ref("driverShifts").once("value"),
-      db.ref("driverStatus").once("value")
-    ]);
-
-    const shifts = shiftsSnap.val() || {};
-    const statuses = statusSnap.val() || {};
-    const availableDrivers = [];
-
-    for (const doorCard in statuses) {
-      if (statuses[doorCard] !== "Available") continue;
-      const shift = shifts[doorCard];
-      if (!shift) continue;
-
-      const [fromHour] = shift.from.split(":").map(Number);
-      const [untilHour] = shift.until.split(":").map(Number);
-
-      if (isToday && (now.getHours() >= untilHour)) continue;
-
-      availableDrivers.push({ fromHour, untilHour });
-    }
-
-    if (!availableDrivers.length) {
-      warning.style.display = "block";
-      warning.textContent = "No drivers available for this day.";
-      return;
-    }
-
-    warning.style.display = "none";
-
-    let startTime = new Date(selectedDate);
-    let endTime = new Date(selectedDate);
-    const minTime = new Date(now.getTime() + 30 * 60000);
-
-    const shiftStart = 9;
-    const shiftEnd = 19;
-
-    startTime.setHours(shiftStart, 0, 0, 0);
-    endTime.setHours(shiftEnd, 0, 0, 0);
-    if (isToday) startTime = new Date(Math.max(startTime, minTime));
-
-    while (startTime <= endTime) {
-      const h = startTime.getHours().toString().padStart(2, "0");
-      const m = startTime.getMinutes().toString().padStart(2, "0");
-      pickupTime.innerHTML += `<option value="${h}:${m}">${h}:${m}</option>`;
-      startTime.setMinutes(startTime.getMinutes() + 15);
-    }
-  }
-</script>
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-    authDomain: "tourthelakes-1e165.firebaseapp.com",
-    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
-    projectId: "tourthelakes-1e165",
-    storageBucket: "tourthelakes-1e165.appspot.com",
-    messagingSenderId: "470758171431",
-    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.appspot.com",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
-<script>
-  const params = new URLSearchParams(window.location.search);
-  bookingID = params.get("id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get("id");
 
-  window.onload = function () {
-    if (!bookingID) {
-      alert("Missing booking ID. Returning to login.");
-      window.location.href = "ReturningCustomer.html";
-      return;
+    const form = document.getElementById("amendForm");
+    const formMessage = document.getElementById("formMessage");
+
+    const pickupTypeSelect = document.getElementById("pickupType");
+    const scheduledFields = document.getElementById("scheduledFields");
+
+    pickupTypeSelect.addEventListener("change", () => {
+      scheduledFields.style.display = pickupTypeSelect.value === "Scheduled" ? "block" : "none";
+    });
+
+    let timeoutHandle;
+
+    function startTimeout() {
+      timeoutHandle = setTimeout(() => {
+        alert("Session expired due to inactivity.");
+        window.location.href = "ReturningCustomer.html";
+      }, 60 * 1000);
     }
 
-    db.ref("bookings/" + bookingID).once("value").then(snapshot => {
-      const data = snapshot.val();
-      if (!data) {
-        alert("Booking not found.");
-        window.location.href = "ReturningCustomer.html";
+    function clearTimeoutHandle() {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+    }
+
+    async function loadBooking() {
+      if (!bookingId) {
+        formMessage.textContent = "Missing booking ID.";
+        formMessage.className = "message error";
+        formMessage.style.display = "block";
         return;
       }
 
-      document.getElementById("pickup").value = data.pickup || "";
-      document.getElementById("dropoff").value = data.dropoff || "";
-      document.getElementById("customNote").value = data.customNote || data.extra || "";
-      document.getElementById("passengers").value = data.passengers || "";
-      document.getElementById("luggage").value = data.luggage || "";
-      document.getElementById("passengerConfirm").checked = true;
-      document.getElementById("petConfirm").checked = true;
+      const snapshot = await db.ref("bookings/" + bookingId).once("value");
+      const booking = snapshot.val();
 
-      if (data.pickupDate) document.getElementById("pickupDate").value = data.pickupDate;
-      if (data.pickupTime) document.getElementById("pickupTime").value = data.pickupTime;
+      if (!booking) {
+        formMessage.textContent = "Booking not found.";
+        formMessage.className = "message error";
+        formMessage.style.display = "block";
+        return;
+      }
 
-      if (data.pickupCoords && data.dropoffCoords) {
-        localStorage.setItem("pickupCoords", JSON.stringify(data.pickupCoords));
-        localStorage.setItem("dropoffCoords", JSON.stringify(data.dropoffCoords));
+      document.getElementById("pickup").value = booking.pickup || "";
+      document.getElementById("dropoff").value = booking.dropoff || "";
+      document.getElementById("passengers").value = booking.passengers || "";
+      document.getElementById("luggage").value = booking.luggage || "";
+      document.getElementById("pets").value = booking.pets || "No";
+      document.getElementById("pickupType").value = booking.pickupType || "";
 
-        const pickupLatLng = new google.maps.LatLng(data.pickupCoords.lat, data.pickupCoords.lng);
-        const dropoffLatLng = new google.maps.LatLng(data.dropoffCoords.lat, data.dropoffCoords.lng);
+      if (booking.pickupType === "Scheduled") {
+        scheduledFields.style.display = "block";
+        document.getElementById("pickupDate").value = booking.pickupDate || "";
+        document.getElementById("pickupTime").value = booking.pickupTime || "";
+      }
 
-        if (markerPickup && mapPickup) {
-          markerPickup.setPosition(pickupLatLng);
-          mapPickup.setCenter(pickupLatLng);
+      document.getElementById("customNote").value = booking.customNote || "";
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearTimeoutHandle();
+
+      const updatedBooking = {
+        pickup: document.getElementById("pickup").value.trim(),
+        dropoff: document.getElementById("dropoff").value.trim(),
+        passengers: document.getElementById("passengers").value,
+        luggage: document.getElementById("luggage").value,
+        pets: document.getElementById("pets").value,
+        pickupType: document.getElementById("pickupType").value,
+        customNote: document.getElementById("customNote").value.trim()
+      };
+
+      if (updatedBooking.pickupType === "Scheduled") {
+        updatedBooking.pickupDate = document.getElementById("pickupDate").value;
+        updatedBooking.pickupTime = document.getElementById("pickupTime").value;
+        if (!updatedBooking.pickupDate || !updatedBooking.pickupTime) {
+          formMessage.textContent = "Scheduled bookings require both date and time.";
+          formMessage.className = "message error";
+          formMessage.style.display = "block";
+          return;
         }
+      } else {
+        updatedBooking.pickupDate = null;
+        updatedBooking.pickupTime = null;
+      }
 
-        if (markerDropoff && mapDropoff) {
-          markerDropoff.setPosition(dropoffLatLng);
-          mapDropoff.setCenter(dropoffLatLng);
-        }
+      try {
+        await db.ref("bookings/" + bookingId).update(updatedBooking);
+        formMessage.textContent = "Booking updated successfully!";
+        formMessage.className = "message success";
+        formMessage.style.display = "block";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 3000);
+      } catch (error) {
+        formMessage.textContent = "Failed to update booking.";
+        formMessage.className = "message error";
+        formMessage.style.display = "block";
       }
     });
-  };
 
-  function submitAmendment() {
-    if (!document.getElementById("passengerConfirm").checked) {
-      alert("Please confirm passenger count.");
-      return;
-    }
-
-    if (!document.getElementById("petConfirm").checked) {
-      alert("You must confirm you are not travelling with a pet.");
-      return;
-    }
-
-    const pickup = document.getElementById("pickup").value.trim();
-    const dropoff = document.getElementById("dropoff").value.trim();
-    const passengers = document.getElementById("passengers").value;
-    const luggage = document.getElementById("luggage").value;
-    const customNote = document.getElementById("customNote").value.trim();
-    const pickupDate = document.getElementById("pickupDate").value;
-    const pickupTime = document.getElementById("pickupTime").value;
-
-    const pickupCoords = JSON.parse(localStorage.getItem("pickupCoords") || "{}");
-    const dropoffCoords = JSON.parse(localStorage.getItem("dropoffCoords") || "{}");
-
-    if (!pickup || !dropoff || !pickupCoords.lat || !dropoffCoords.lat || !pickupDate || !pickupTime) {
-      alert("Please complete all fields including pickup time.");
-      return;
-    }
-
-    const updates = {
-      pickup,
-      dropoff,
-      pickupCoords,
-      dropoffCoords,
-      passengers,
-      luggage,
-      customNote,
-      pickupDate,
-      pickupTime,
-      status: "Amended",
-      claimedBy: null,
-      timestamp: new Date().toISOString()
+    window.onload = () => {
+      loadBooking();
+      startTimeout();
     };
-
-    db.ref("bookings/" + bookingID).update(updates).then(() => {
-      alert("Booking updated successfully.");
-      window.location.href = "CustomerBooking.html";
-    }).catch(err => {
-      console.error("Update failed:", err);
-      alert("Something went wrong. Please try again.");
-    });
-  }
-</script>
-
+  </script>
 </body>
 </html>
