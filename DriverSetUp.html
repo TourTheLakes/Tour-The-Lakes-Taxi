@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -107,8 +108,9 @@
     <input type="text" id="registration" placeholder="Registration">
     <input type="number" id="seats" placeholder="Number of Seats">
     <input type="password" id="driverPassword" placeholder="Set Driver Password">
-    <input type="text" id="lat" placeholder="Latitude (e.g. 54.3686)">
-    <input type="text" id="lng" placeholder="Longitude (e.g. -2.9067)">
+    <input type="text" id="address" placeholder="Driver Base Address (Select from List)">
+    <input type="hidden" id="lat">
+    <input type="hidden" id="lng">
     <div style="display: flex; gap: 10px; margin-top: 10px;">
       <button onclick="addDriver()">Add/Update Driver</button>
       <button onclick="deleteDriver()">Delete Driver</button>
@@ -131,6 +133,22 @@
 
     let timeoutHandle;
     let driversData = {};
+
+    let autocomplete;
+
+    function initAutocomplete() {
+      autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById("address"),
+        { componentRestrictions: { country: "gb" } }
+      );
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (place.geometry) {
+          document.getElementById("lat").value = place.geometry.location.lat();
+          document.getElementById("lng").value = place.geometry.location.lng();
+        }
+      });
+    }
 
     function verifyPassword() {
       const inputPassword = document.getElementById("adminPassword").value.trim();
@@ -157,7 +175,7 @@
       timeoutHandle = setTimeout(() => {
         alert("Session expired. You have been logged off.");
         logOff();
-      }, 10 * 60 * 1000); // 10 minutes
+      }, 10 * 60 * 1000);
     }
 
     function checkAccess() {
@@ -225,6 +243,7 @@
       document.getElementById("registration").value = "";
       document.getElementById("seats").value = "";
       document.getElementById("driverPassword").value = "";
+      document.getElementById("address").value = "";
       document.getElementById("lat").value = "";
       document.getElementById("lng").value = "";
     }
@@ -243,7 +262,7 @@
       const lng = document.getElementById("lng").value.trim();
 
       if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats) || !driverPassword || !lat || !lng) {
-        alert("Please fill all fields correctly.");
+        alert("Please fill all fields correctly and select an address.");
         return;
       }
 
@@ -292,7 +311,10 @@
         .catch(err => alert("Error: " + err.message));
     }
 
-    window.onload = checkAccess;
+    window.onload = () => {
+      checkAccess();
+      initAutocomplete();
+    };
   </script>
 </body>
 </html>
