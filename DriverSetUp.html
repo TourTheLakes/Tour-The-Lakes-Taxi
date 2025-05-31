@@ -104,6 +104,7 @@
     <input type="text" id="vehicleColor" placeholder="Vehicle Color">
     <input type="text" id="registration" placeholder="Registration">
     <input type="number" id="seats" placeholder="Number of Seats">
+    <input type="password" id="driverPassword" placeholder="Set Driver Password">
     <div style="display: flex; gap: 10px; margin-top: 10px;">
       <button onclick="addDriver()">Add/Update Driver</button>
       <button onclick="deleteDriver()">Delete Driver</button>
@@ -196,6 +197,7 @@
         document.getElementById("vehicleColor").value = driver.vehicle.color;
         document.getElementById("registration").value = driver.vehicle.registration;
         document.getElementById("seats").value = driver.vehicle.seats;
+        document.getElementById("driverPassword").value = driver.password || "";
       }
     }
 
@@ -216,6 +218,7 @@
       document.getElementById("vehicleColor").value = "";
       document.getElementById("registration").value = "";
       document.getElementById("seats").value = "";
+      document.getElementById("driverPassword").value = "";
     }
 
     function addDriver() {
@@ -227,8 +230,9 @@
       const vehicleColor = document.getElementById("vehicleColor").value.trim();
       const registration = document.getElementById("registration").value.trim();
       const seats = parseInt(document.getElementById("seats").value.trim());
+      const driverPassword = document.getElementById("driverPassword").value.trim();
 
-      if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats)) {
+      if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats) || !driverPassword) {
         alert("Please fill all fields correctly.");
         return;
       }
@@ -239,6 +243,7 @@
         name: driverName,
         doorCard: doorCard,
         phone: phone,
+        password: driverPassword,
         vehicle: {
           make: vehicleMake,
           model: vehicleModel,
