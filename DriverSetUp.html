@@ -93,6 +93,9 @@
 
   <div class="container hidden" id="formSection">
     <h1>Driver Set Up</h1>
+    <select id="driverList" onchange="loadDriver()" style="margin-bottom: 10px;">
+      <option value="">-- Select Existing Driver --</option>
+    </select>
     <input type="text" id="driverName" placeholder="Driver Name">
     <input type="text" id="doorCard" placeholder="Door Card Number">
     <input type="text" id="phone" placeholder="Phone Number">
@@ -122,6 +125,7 @@
     const db = firebase.database();
 
     let timeoutHandle;
+    let driversData = {};
 
     function verifyPassword() {
       const inputPassword = document.getElementById("adminPassword").value.trim();
@@ -139,6 +143,7 @@
     function showForm() {
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("formSection").classList.remove("hidden");
+      loadDriverList();
       startTimeout();
     }
 
@@ -164,10 +169,59 @@
       location.reload();
     }
 
+    function loadDriverList() {
+      db.ref("drivers").once("value").then(snapshot => {
+        const drivers = snapshot.val() || {};
+        driversData = drivers;
+        const driverList = document.getElementById("driverList");
+        driverList.innerHTML = '<option value="">-- Select Existing Driver --</option>';
+        for (const key in drivers) {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = drivers[key].name + " (" + key + ")";
+          driverList.appendChild(option);
+        }
+      });
+    }
+
+    function loadDriver() {
+      const selected = document.getElementById("driverList").value;
+      if (selected && driversData[selected]) {
+        const driver = driversData[selected];
+        document.getElementById("driverName").value = driver.name;
+        document.getElementById("doorCard").value = driver.doorCard;
+        document.getElementById("phone").value = driver.phone;
+        document.getElementById("vehicleMake").value = driver.vehicle.make;
+        document.getElementById("vehicleModel").value = driver.vehicle.model;
+        document.getElementById("vehicleColor").value = driver.vehicle.color;
+        document.getElementById("registration").value = driver.vehicle.registration;
+        document.getElementById("seats").value = driver.vehicle.seats;
+      }
+    }
+
+    function formatPhoneNumber(phone) {
+      phone = phone.replace(/\s+/g, ''); // remove spaces
+      if (phone.startsWith("0")) {
+        return "+44" + phone.substring(1);
+      }
+      return phone;
+    }
+
+    function clearFields() {
+      document.getElementById("driverName").value = "";
+      document.getElementById("doorCard").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("vehicleMake").value = "";
+      document.getElementById("vehicleModel").value = "";
+      document.getElementById("vehicleColor").value = "";
+      document.getElementById("registration").value = "";
+      document.getElementById("seats").value = "";
+    }
+
     function addDriver() {
       const driverName = document.getElementById("driverName").value.trim();
       const doorCard = document.getElementById("doorCard").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+      let phone = document.getElementById("phone").value.trim();
       const vehicleMake = document.getElementById("vehicleMake").value.trim();
       const vehicleModel = document.getElementById("vehicleModel").value.trim();
       const vehicleColor = document.getElementById("vehicleColor").value.trim();
@@ -178,6 +232,8 @@
         alert("Please fill all fields correctly.");
         return;
       }
+
+      phone = formatPhoneNumber(phone);
 
       const driverData = {
         name: driverName,
@@ -193,7 +249,11 @@
       };
 
       db.ref("drivers/" + doorCard).set(driverData)
-        .then(() => alert("Driver added/updated successfully."))
+        .then(() => {
+          alert("Driver added/updated successfully.");
+          clearFields();
+          loadDriverList();
+        })
         .catch(err => alert("Error: " + err.message));
     }
 
@@ -205,7 +265,11 @@
       }
 
       db.ref("drivers/" + doorCard).remove()
-        .then(() => alert("Driver deleted successfully."))
+        .then(() => {
+          alert("Driver deleted successfully.");
+          clearFields();
+          loadDriverList();
+        })
         .catch(err => alert("Error: " + err.message));
     }
 
