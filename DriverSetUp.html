@@ -1,136 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Driver Set Up</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Firebase -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0e0f10;
+    --section-light: #1c1e21;
+    --text-main: #f1f1f1;
+    --text-sub: #aaaaaa;
+    --accent: #4CAF50;
+    --error: #cc0000;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+  }
+  html, body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 🧠 Don't center vertically, align to top */
+    padding: 40px 20px;
+    overflow-y: auto; /* 🧠 Allow scrolling if necessary */
+  }
+  .container {
+    width: 100%;
+    max-width: 480px;
+    background: var(--section-light);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px; /* 🧠 Push it down slightly from the top */
+    animation: fadeIn 0.8s ease;
+  }
+  h1 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  input, select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2d31;
+    color: var(--text-main);
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #3a8f3a;
+  }
+  #logoffBtn {
+    background: #ff9800;
+  }
+  #logoffBtn:hover {
+    background: #e67e00;
+  }
+  .hidden {
+    display: none;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 
-  <style>
-    :root {
-      --bg-dark: #0e0f10;
-      --section-light: #1c1e21;
-      --text-main: #f1f1f1;
-      --text-sub: #aaaaaa;
-      --accent: #4CAF50;
-      --accent-hover: #43a047;
-      --button-text: #111;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Quicksand', sans-serif;
-    }
-
-    html, body {
-      background-color: var(--bg-dark);
-      background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-      background-repeat: repeat;
-      background-size: auto;
-      color: var(--text-main);
-      min-height: 100vh;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    .container {
-      background: var(--section-light);
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-      width: 100%;
-      max-width: 500px;
-      margin-top: 40px;
-    }
-
-    h2 {
-      font-size: 26px;
-      text-align: center;
-      margin-bottom: 20px;
-      color: var(--accent);
-    }
-
-    label {
-      display: block;
-      margin-top: 14px;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border: none;
-      border-radius: 8px;
-      background: #2a2d31;
-      color: var(--text-main);
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 14px;
-      width: 100%;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      background: var(--accent);
-      color: var(--button-text);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .button-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .button-row button {
-      flex: 1;
-    }
-  </style>
+  
 </head>
 <body>
-  <div class="container">
-    <h2>Driver Set Up</h2>
+  <div class="container" id="loginSection">
+    <h1>Admin Login</h1>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <button onclick="verifyPassword()">Login</button>
+  </div>
 
-    <select id="existingDriver" onchange="loadDriverDetails()">
+  <div class="container hidden" id="formSection">
+    <h1>Driver Set Up</h1>
+    <select id="driverList" onchange="loadDriver()" style="margin-bottom: 10px;">
       <option value="">-- Select Existing Driver --</option>
     </select>
-
-    <input type="text" id="name" placeholder="Driver Name">
-    <input type="text" id="doorCard" placeholder="Door Card Number e.g. S138">
-    <input type="text" id="phone" placeholder="Phone Number (+44...)">
-    <input type="text" id="make" placeholder="Vehicle Make">
-    <input type="text" id="model" placeholder="Vehicle Model">
-    <input type="text" id="color" placeholder="Vehicle Color">
+    <input type="text" id="driverName" placeholder="Driver Name">
+    <input type="text" id="doorCard" placeholder="Door Card Number">
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="text" id="vehicleMake" placeholder="Vehicle Make">
+    <input type="text" id="vehicleModel" placeholder="Vehicle Model">
+    <input type="text" id="vehicleColor" placeholder="Vehicle Color">
     <input type="text" id="registration" placeholder="Registration">
-    <input type="text" id="seats" placeholder="Seat Capacity">
-    <input type="text" id="password" placeholder="Password">
-
-    <div class="button-row">
-      <button onclick="addUpdateDriver()">Add/Update Driver</button>
+    <input type="number" id="seats" placeholder="Number of Seats">
+    <input type="password" id="driverPassword" placeholder="Set Driver Password">
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button onclick="addDriver()">Add/Update Driver</button>
       <button onclick="deleteDriver()">Delete Driver</button>
-      <button onclick="logoff()">Log Off</button>
     </div>
+    <button id="logoffBtn" onclick="logOff()">Log Off</button>
   </div>
 
   <script>
@@ -143,158 +127,163 @@
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function promptForPassword() {
-      localStorage.removeItem("adminAccess");
-      const pass = prompt("Enter admin password:");
-      if (pass) {
-        db.ref("adminPassword").once("value").then(snapshot => {
-          if (snapshot.val() === pass) {
-            localStorage.setItem("adminAccess", "true");
-            loadDrivers();
-            startSessionTimeout();
-          } else {
-            alert("Wrong password. Access denied.");
-            promptForPassword();
-          }
-        });
+    let timeoutHandle;
+    let driversData = {};
+
+    function verifyPassword() {
+      const inputPassword = document.getElementById("adminPassword").value.trim();
+      db.ref("admin/setupPassword").once("value").then(snapshot => {
+        const realPassword = snapshot.val();
+        if (inputPassword === realPassword) {
+          sessionStorage.setItem("adminAccess", "granted");
+          showForm();
+        } else {
+          alert("Incorrect password.");
+        }
+      });
+    }
+
+    function showForm() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("formSection").classList.remove("hidden");
+      loadDriverList();
+      startTimeout();
+    }
+
+    function startTimeout() {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+      timeoutHandle = setTimeout(() => {
+        alert("Session expired. You have been logged off.");
+        logOff();
+      }, 10 * 60 * 1000); // 10 minutes
+    }
+
+    function checkAccess() {
+      if (sessionStorage.getItem("adminAccess") !== "granted") {
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("formSection").classList.add("hidden");
       } else {
-        alert("Access denied.");
-        promptForPassword();
+        showForm();
       }
     }
 
-    window.onload = function() {
-      if (!localStorage.getItem("adminAccess")) {
-        promptForPassword();
-      } else {
-        loadDrivers();
-        startSessionTimeout();
-      }
-    };
-
-    function startSessionTimeout() {
-      setTimeout(logoff, 10 * 60 * 1000); // 10 minutes
+    function logOff() {
+      sessionStorage.removeItem("adminAccess");
+      location.reload();
     }
 
-    function loadDrivers() {
+    function loadDriverList() {
       db.ref("drivers").once("value").then(snapshot => {
-        const drivers = snapshot.val();
-        const dropdown = document.getElementById("existingDriver");
-        dropdown.innerHTML = '<option value="">-- Select Existing Driver --</option>';
-        if (drivers) {
-          Object.keys(drivers).forEach(key => {
-            const driver = drivers[key];
-            const option = document.createElement("option");
-            option.value = key;
-            option.textContent = driver.name + " (" + driver.doorCard + ")";
-            dropdown.appendChild(option);
-          });
+        const drivers = snapshot.val() || {};
+        driversData = drivers;
+        const driverList = document.getElementById("driverList");
+        driverList.innerHTML = '<option value="">-- Select Existing Driver --</option>';
+        for (const key in drivers) {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = drivers[key].name + " (" + key + ")";
+          driverList.appendChild(option);
         }
       });
     }
 
-    function loadDriverDetails() {
-      const key = document.getElementById("existingDriver").value;
-      if (!key) return clearFields();
-
-      db.ref("drivers/" + key).once("value").then(snapshot => {
-        const driver = snapshot.val();
-        if (driver) {
-          document.getElementById("name").value = driver.name || "";
-          document.getElementById("doorCard").value = driver.doorCard || "";
-          document.getElementById("phone").value = driver.phone || "";
-          document.getElementById("make").value = driver.vehicle?.make || "";
-          document.getElementById("model").value = driver.vehicle?.model || "";
-          document.getElementById("color").value = driver.vehicle?.color || "";
-          document.getElementById("registration").value = driver.vehicle?.registration || "";
-          document.getElementById("seats").value = driver.vehicle?.seats || "";
-          document.getElementById("password").value = driver.password || "";
-        }
-      });
+    function loadDriver() {
+      const selected = document.getElementById("driverList").value;
+      if (selected && driversData[selected]) {
+        const driver = driversData[selected];
+        document.getElementById("driverName").value = driver.name;
+        document.getElementById("doorCard").value = driver.doorCard;
+        document.getElementById("phone").value = driver.phone;
+        document.getElementById("vehicleMake").value = driver.vehicle.make;
+        document.getElementById("vehicleModel").value = driver.vehicle.model;
+        document.getElementById("vehicleColor").value = driver.vehicle.color;
+        document.getElementById("registration").value = driver.vehicle.registration;
+        document.getElementById("seats").value = driver.vehicle.seats;
+        document.getElementById("driverPassword").value = driver.password || "";
+      }
     }
 
-    function addUpdateDriver() {
-      const name = document.getElementById("name").value.trim();
-      let doorCard = document.getElementById("doorCard").value.trim().toUpperCase();
-      let phone = document.getElementById("phone").value.trim();
-      const make = document.getElementById("make").value.trim();
-      const model = document.getElementById("model").value.trim();
-      const color = document.getElementById("color").value.trim();
-      const registration = document.getElementById("registration").value.trim();
-      const seats = document.getElementById("seats").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!name || !doorCard || !phone || !make || !model || !color || !registration || !seats || !password) {
-        alert("All fields are mandatory.");
-        return;
-      }
-
-      if (!/^S\d{3}$/.test(doorCard)) {
-        alert("Door Card must start with 'S' followed by 3 digits (e.g. S138).");
-        return;
-      }
-
+    function formatPhoneNumber(phone) {
+      phone = phone.replace(/\s+/g, ''); // remove spaces
       if (phone.startsWith("0")) {
-        phone = "+44" + phone.substring(1);
-      } else if (!phone.startsWith("+44")) {
-        alert("Phone number must start with +44 or 0.");
-        return;
+        return "+44" + phone.substring(1);
       }
-
-      const newDriver = {
-        name,
-        doorCard,
-        phone,
-        vehicle: { make, model, color, registration, seats },
-        password
-      };
-
-      const key = document.getElementById("existingDriver").value || db.ref("drivers").push().key;
-
-      db.ref("drivers/" + key).set(newDriver).then(() => {
-        alert("Driver saved successfully.");
-        clearFields();
-        loadDrivers();
-      });
-    }
-
-    function deleteDriver() {
-      const key = document.getElementById("existingDriver").value;
-      if (!key) {
-        alert("Select a driver to delete.");
-        return;
-      }
-
-      if (confirm("Are you sure you want to delete this driver?")) {
-        db.ref("drivers/" + key).remove().then(() => {
-          alert("Driver deleted.");
-          clearFields();
-          loadDrivers();
-        });
-      }
+      return phone;
     }
 
     function clearFields() {
-      document.getElementById("name").value = "";
+      document.getElementById("driverName").value = "";
       document.getElementById("doorCard").value = "";
       document.getElementById("phone").value = "";
-      document.getElementById("make").value = "";
-      document.getElementById("model").value = "";
-      document.getElementById("color").value = "";
+      document.getElementById("vehicleMake").value = "";
+      document.getElementById("vehicleModel").value = "";
+      document.getElementById("vehicleColor").value = "";
       document.getElementById("registration").value = "";
       document.getElementById("seats").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("existingDriver").selectedIndex = 0;
+      document.getElementById("driverPassword").value = "";
     }
 
-    function logoff() {
-      localStorage.removeItem("adminAccess");
-      promptForPassword();
+    function addDriver() {
+      const driverName = document.getElementById("driverName").value.trim();
+      const doorCard = document.getElementById("doorCard").value.trim();
+      let phone = document.getElementById("phone").value.trim();
+      const vehicleMake = document.getElementById("vehicleMake").value.trim();
+      const vehicleModel = document.getElementById("vehicleModel").value.trim();
+      const vehicleColor = document.getElementById("vehicleColor").value.trim();
+      const registration = document.getElementById("registration").value.trim();
+      const seats = parseInt(document.getElementById("seats").value.trim());
+      const driverPassword = document.getElementById("driverPassword").value.trim();
+
+      if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats) || !driverPassword) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      phone = formatPhoneNumber(phone);
+
+      const driverData = {
+        name: driverName,
+        doorCard: doorCard,
+        phone: phone,
+        password: driverPassword,
+        vehicle: {
+          make: vehicleMake,
+          model: vehicleModel,
+          color: vehicleColor,
+          registration: registration,
+          seats: seats
+        }
+      };
+
+      db.ref("drivers/" + doorCard).set(driverData)
+        .then(() => {
+          alert("Driver added/updated successfully.");
+          clearFields();
+          loadDriverList();
+        })
+        .catch(err => alert("Error: " + err.message));
     }
+
+    function deleteDriver() {
+      const doorCard = document.getElementById("doorCard").value.trim();
+      if (!doorCard) {
+        alert("Enter Door Card Number to delete.");
+        return;
+      }
+
+      db.ref("drivers/" + doorCard).remove()
+        .then(() => {
+          alert("Driver deleted successfully.");
+          clearFields();
+          loadDriverList();
+        })
+        .catch(err => alert("Error: " + err.message));
+    }
+
+    window.onload = checkAccess;
   </script>
 </body>
 </html>
