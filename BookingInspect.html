@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inspect Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --accent-hover: #43a047;
+      --warn: #f44336;
+      --logoff: #ff9800;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--section-light);
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 15px;
+      margin: 10px 0;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .buttons button {
+      flex: 1;
+      padding: 14px;
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #acceptBtn {
+      background-color: var(--accent);
+    }
+
+    #acceptBtn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    #unassignBtn {
+      background-color: var(--warn);
+    }
+
+    #returnBtn {
+      background-color: var(--logoff);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Inspect Booking</h2>
+    <div id="bookingDetails">Loading booking...</div>
+
+    <div class="buttons">
+      <button id="acceptBtn">Accept</button>
+      <button id="unassignBtn">Unassign</button>
+      <button id="returnBtn">Return</button>
+    </div>
+  </div>
+
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+    authDomain: "tourthelakes-1e165.firebaseapp.com",
+    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+    projectId: "tourthelakes-1e165",
+    storageBucket: "tourthelakes-1e165.appspot.com",
+    messagingSenderId: "470758171431",
+    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const bookingKey = localStorage.getItem("bookingInspectKey");
+  const driverName = localStorage.getItem("driverName") || "";
+  const container = document.getElementById("bookingDetails");
+
+  if (!bookingKey) {
+    container.innerHTML = "<p>No booking ID found.</p>";
+  } else {
+    db.ref("bookings/" + bookingKey).once("value").then(snapshot => {
+      const booking = snapshot.val();
+      if (!booking) {
+        container.innerHTML = "<p>Booking not found in database.</p>";
+        return;
+      }
+
+      const claimedBy = booking.claimedBy || "unassigned";
+      const isClaimed = claimedBy !== "unassigned";
+      const isClaimedByCurrentDriver = claimedBy.toLowerCase() === driverName.toLowerCase();
+
+      if (isClaimed && !isClaimedByCurrentDriver) {
+        alert("This booking is already being handled by another driver.");
+        setTimeout(() => {
+          window.location.href = "DriverDashboard.html";
+        }, 200);
+        return;
+      }
+
+      const pickupNote = booking.customNote || booking.extra || "";
+
+      container.innerHTML = `
+        <p><strong>Name:</strong> ${booking.name}</p>
+        <p><strong>Phone:</strong> ${booking.phone}</p>
+        <p><strong>Area:</strong> ${booking.area || "-"}</p>
+        <p><strong>Pickup:</strong> ${booking.pickup}${pickupNote ? ' (' + pickupNote + ')' : ''}</p>
+        <p><strong>Drop-off:</strong> ${booking.dropoff}</p>
+        <p><strong>Passengers:</strong> ${booking.passengers}</p>
+        <p><strong>Luggage:</strong> ${booking.luggage}</p>
+        <p><strong>Travelling with Pet:</strong> ${booking.pets}</p>
+        <p><strong>Pickup Time:</strong> ${booking.time || booking.pickupTime || "ASAP"}</p>
+        ${isClaimed ? `<p><strong>Claimed By:</strong> ${claimedBy}</p>` : ``}
+      `;
+
+      document.getElementById("acceptBtn").style.display = !isClaimed ? "block" : "none";
+      document.getElementById("unassignBtn").style.display = isClaimedByCurrentDriver ? "block" : "none";
+    }).catch(err => {
+      container.innerHTML = "<p>Error loading booking.</p>";
+      console.error(err);
+    });
+  }
+
+  document.getElementById("acceptBtn").onclick = () => {
+    db.ref("drivers").once("value").then(driverSnap => {
+      const drivers = driverSnap.val();
+      for (const key in drivers) {
+        const d = drivers[key];
+        if (d.name.toLowerCase() === driverName.toLowerCase()) {
+          const seats = parseInt(d.vehicle.seats);
+          db.ref("bookings/" + bookingKey).once("value").then(snapshot => {
+            const booking = snapshot.val();
+            const passengers = parseInt(booking.passengers);
+
+            if (passengers > seats) {
+              alert(`You can't accept this booking. Your vehicle only has ${seats} seats, but this booking is for ${passengers} passengers.`);
+              return;
+            }
+
+            db.ref("bookings/" + bookingKey + "/claimedBy").set(driverName).then(() => {
+              window.location.href = "DriverDashboard.html";
+            });
+          });
+          break;
+        }
+      }
+    });
+  };
+
+  document.getElementById("unassignBtn").onclick = () => {
+    db.ref("bookings/" + bookingKey + "/claimedBy").set("unassigned").then(() => {
+      window.location.href = "DriverDashboard.html";
+    });
+  };
+
+  document.getElementById("returnBtn").onclick = () => {
+    window.location.href = "DriverDashboard.html";
+  };
+</script>
+
+
+</body>
+</html>
