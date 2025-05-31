@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Schedule</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0e0f10;
+      --section-light: #1c1e21;
+      --text-main: #f1f1f1;
+      --accent: #4CAF50;
+      --warning: #ff9800;
+      --error: #f44336;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    html, body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--section-light);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #2a2d31;
+      color: var(--text-main);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .add-update {
+      background: var(--accent);
+      color: white;
+    }
+    .add-update:hover {
+      background: #43a047;
+    }
+
+    .delete-btn {
+      background: var(--error);
+      color: white;
+    }
+    .delete-btn:hover {
+      background: #e53935;
+    }
+
+    .logoff-btn {
+      background: var(--warning);
+      color: white;
+    }
+    .logoff-btn:hover {
+      background: #fb8c00;
+    }
+
+    .shift-list {
+      background: #2a2d31;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .shift-item {
+      margin-bottom: 8px;
+      font-size: 14px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="loginSection">
+    <h1>Admin Login</h1>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <button class="add-update" onclick="verifyPassword()">Login</button>
+  </div>
+
+  <div class="container hidden" id="formSection">
+    <h1>Driver Schedule</h1>
+    <select id="driverList" onchange="loadShifts()">
+      <option value="">-- Select Driver --</option>
+    </select>
+
+    <div class="shift-list" id="shiftList">
+      <p>No shifts yet...</p>
+    </div>
+
+    <input type="date" id="shiftDate">
+    <select id="shiftFrom"></select>
+    <select id="shiftUntil"></select>
+
+    <button class="add-update" onclick="addOrUpdateShift()">Add/Update Shift</button>
+    <button class="delete-btn" onclick="deleteShift()">Delete Shift</button>
+    <button class="logoff-btn" onclick="logOff()">Log Off</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.appspot.com",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentDriver = "";
+
+    function verifyPassword() {
+      const inputPassword = document.getElementById("adminPassword").value.trim();
+      db.ref("admin/setupPassword").once("value").then(snapshot => {
+        const realPassword = snapshot.val();
+        if (inputPassword === realPassword) {
+          sessionStorage.setItem("adminAccess", "granted");
+          showForm();
+        } else {
+          alert("Incorrect password.");
+        }
+      });
+    }
+
+    function showForm() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("formSection").classList.remove("hidden");
+      loadDriverList();
+      buildTimeOptions();
+    }
+
+    function buildTimeOptions() {
+      const fromSelect = document.getElementById("shiftFrom");
+      const untilSelect = document.getElementById("shiftUntil");
+      fromSelect.innerHTML = "";
+      untilSelect.innerHTML = "";
+
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+          const option1 = new Option(timeStr, timeStr);
+          const option2 = new Option(timeStr, timeStr);
+          fromSelect.add(option1.cloneNode(true));
+          untilSelect.add(option2.cloneNode(true));
+        }
+      }
+    }
+
+    function loadDriverList() {
+      db.ref("drivers").once("value").then(snapshot => {
+        const drivers = snapshot.val() || {};
+        const driverList = document.getElementById("driverList");
+        driverList.innerHTML = '<option value="">-- Select Driver --</option>';
+        for (const key in drivers) {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = drivers[key].name + " (" + key + ")";
+          driverList.appendChild(option);
+        }
+      });
+    }
+
+    function loadShifts() {
+      currentDriver = document.getElementById("driverList").value;
+      const shiftList = document.getElementById("shiftList");
+      shiftList.innerHTML = "<p>Loading shifts...</p>";
+
+      if (!currentDriver) {
+        shiftList.innerHTML = "<p>Select a driver to view shifts.</p>";
+        return;
+      }
+
+      db.ref(`driverShifts/${currentDriver}`).once("value").then(snapshot => {
+        const shifts = snapshot.val();
+        if (!shifts) {
+          shiftList.innerHTML = "<p>No shifts yet...</p>";
+          return;
+        }
+        shiftList.innerHTML = "";
+        const sortedDates = Object.keys(shifts).sort();
+        sortedDates.forEach(date => {
+          const shift = shifts[date];
+          const item = document.createElement("div");
+          item.className = "shift-item";
+          item.textContent = `${date} — ${shift.from} to ${shift.until}`;
+          shiftList.appendChild(item);
+        });
+      });
+    }
+
+    function addOrUpdateShift() {
+      const date = document.getElementById("shiftDate").value;
+      const from = document.getElementById("shiftFrom").value;
+      const until = document.getElementById("shiftUntil").value;
+
+      if (!currentDriver || !date || !from || !until) {
+        alert("Please select driver, date, from and until times.");
+        return;
+      }
+
+      if (from >= until) {
+        alert("Shift end must be after start time.");
+        return;
+      }
+
+      const shiftData = {
+        from: from,
+        until: until
+      };
+
+      db.ref(`driverShifts/${currentDriver}/${date}`).set(shiftData).then(() => {
+        alert("Shift added/updated successfully.");
+        loadShifts();
+      }).catch(err => alert("Error: " + err.message));
+    }
+
+    function deleteShift() {
+      const date = document.getElementById("shiftDate").value;
+      if (!currentDriver || !date) {
+        alert("Please select driver and date to delete shift.");
+        return;
+      }
+
+      db.ref(`driverShifts/${currentDriver}/${date}`).remove().then(() => {
+        alert("Shift deleted successfully.");
+        loadShifts();
+      }).catch(err => alert("Error: " + err.message));
+    }
+
+    function logOff() {
+      sessionStorage.removeItem("adminAccess");
+      location.reload();
+    }
+
+    window.onload = () => {
+      if (sessionStorage.getItem("adminAccess") === "granted") {
+        showForm();
+      }
+    };
+  </script>
+</body>
+</html>
