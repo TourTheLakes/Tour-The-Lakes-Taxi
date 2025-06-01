@@ -4,11 +4,17 @@
   <meta charset="UTF-8" />
   <title>Driver Set Up</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  
+  <!-- Google Maps Places API -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places"></script>
+  
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg-dark: #0e0f10;
@@ -52,12 +58,6 @@
       background: #2a2d31;
       color: var(--text-main);
     }
-    .map {
-      width: 100%;
-      height: 200px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-    }
     button {
       width: 100%;
       padding: 14px;
@@ -83,7 +83,7 @@
 <body>
   <div class="container" id="loginSection">
     <h1>Admin Login</h1>
-    <input type="password" id="adminPassword" />
+    <input type="password" id="adminPassword" placeholder="Enter Admin Password" />
     <button onclick="verifyPassword()">Login</button>
   </div>
 
@@ -92,16 +92,19 @@
     <select id="driverList" onchange="loadDriver()">
       <option value="">-- Select Existing Driver --</option>
     </select>
-    <input type="text" id="driverName" />
-    <input type="text" id="doorCard" />
-    <input type="text" id="phone" />
-    <input type="password" id="driverPassword" />
-    <input type="text" id="vehicleMake" />
-    <input type="text" id="vehicleModel" />
-    <input type="text" id="vehicleColor" />
-    <input type="text" id="registration" />
-    <input type="number" id="seats" />
-    <div id="map" class="map"></div>
+    <input type="text" id="driverName" placeholder="Driver Name" />
+    <input type="text" id="doorCard" placeholder="Door Card Number" />
+    <input type="text" id="phone" placeholder="Phone Number" />
+    <input type="password" id="driverPassword" placeholder="Password" />
+    <input type="text" id="vehicleMake" placeholder="Vehicle Make" />
+    <input type="text" id="vehicleModel" placeholder="Vehicle Model" />
+    <input type="text" id="vehicleColor" placeholder="Vehicle Color" />
+    <input type="text" id="registration" placeholder="Registration" />
+    <input type="number" id="seats" placeholder="Seats" />
+    <input type="text" id="stationedAddress" placeholder="Stationed Address" />
+    <input type="hidden" id="lat" />
+    <input type="hidden" id="lng" />
+
     <button onclick="addDriver()">Add/Update Driver</button>
     <button onclick="deleteDriver()">Delete Driver</button>
     <button id="logoffBtn" onclick="logOff()">Log Off</button>
@@ -120,20 +123,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  let map, marker;
-  const neutralCenter = { lat: 54.3781, lng: -2.9186 };
-
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: neutralCenter,
-      zoom: 12
-    });
-    marker = new google.maps.Marker({
-      map: map,
-      draggable: true,
-      position: neutralCenter
-    });
-  }
+  let timeoutHandle;
 
   function verifyPassword() {
     const inputPassword = document.getElementById("adminPassword").value.trim();
@@ -156,7 +146,8 @@
   }
 
   function startTimeout() {
-    setTimeout(() => {
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+    timeoutHandle = setTimeout(() => {
       alert("Session expired. Logging off.");
       logOff();
     }, 10 * 60 * 1000);
@@ -196,10 +187,6 @@
         document.getElementById("vehicleColor").value = driver.vehicle.color;
         document.getElementById("registration").value = driver.vehicle.registration;
         document.getElementById("seats").value = driver.vehicle.seats;
-        if (driver.coords) {
-          marker.setPosition(driver.coords);
-          map.setCenter(driver.coords);
-        }
       }
     });
   }
@@ -214,26 +201,52 @@
     document.getElementById("vehicleColor").value = "";
     document.getElementById("registration").value = "";
     document.getElementById("seats").value = "";
-    marker.setPosition(neutralCenter);
-    map.setCenter(neutralCenter);
+    document.getElementById("stationedAddress").value = "";
+    document.getElementById("lat").value = "";
+    document.getElementById("lng").value = "";
   }
 
   function addDriver() {
+    const driverName = document.getElementById("driverName").value.trim();
+    const doorCard = document.getElementById("doorCard").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    const vehicleMake = document.getElementById("vehicleMake").value.trim();
+    const vehicleModel = document.getElementById("vehicleModel").value.trim();
+    const vehicleColor = document.getElementById("vehicleColor").value.trim();
+    const registration = document.getElementById("registration").value.trim();
+    const seats = parseInt(document.getElementById("seats").value.trim());
+    const driverPassword = document.getElementById("driverPassword").value.trim();
+    const lat = document.getElementById("lat").value;
+    const lng = document.getElementById("lng").value;
+
+    if (!driverName || !doorCard || !phone || !vehicleMake || !vehicleModel || !vehicleColor || !registration || isNaN(seats) || !driverPassword || !lat || !lng) {
+      alert("Please fill all fields and select an address properly.");
+      return;
+    }
+
+    if (phone.startsWith("0")) {
+      phone = "+44" + phone.substring(1);
+    }
+
     const driverData = {
-      name: document.getElementById("driverName").value.trim(),
-      doorCard: document.getElementById("doorCard").value.trim(),
-      phone: document.getElementById("phone").value.trim(),
-      password: document.getElementById("driverPassword").value.trim(),
-      coords: marker.getPosition().toJSON(),
+      name: driverName,
+      doorCard: doorCard,
+      phone: phone,
+      password: driverPassword,
       vehicle: {
-        make: document.getElementById("vehicleMake").value.trim(),
-        model: document.getElementById("vehicleModel").value.trim(),
-        color: document.getElementById("vehicleColor").value.trim(),
-        registration: document.getElementById("registration").value.trim(),
-        seats: parseInt(document.getElementById("seats").value.trim())
+        make: vehicleMake,
+        model: vehicleModel,
+        color: vehicleColor,
+        registration: registration,
+        seats: seats
+      },
+      stationedCoords: {
+        lat: parseFloat(lat),
+        lng: parseFloat(lng)
       }
     };
-    db.ref(`drivers/${driverData.doorCard}`).set(driverData).then(() => {
+
+    db.ref(`drivers/${doorCard}`).set(driverData).then(() => {
       alert("Driver added/updated successfully.");
       clearFields();
       loadDriverList();
@@ -250,7 +263,26 @@
     }).catch(err => alert("Error: " + err.message));
   }
 
-  window.onload = initMap;
+  // Google Places Autocomplete
+  const addressInput = document.getElementById('stationedAddress');
+  const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+    componentRestrictions: { country: 'gb' }
+  });
+  autocomplete.addListener('place_changed', () => {
+    const place = autocomplete.getPlace();
+    if (!place.geometry) {
+      alert("Please select an address from the dropdown list.");
+      return;
+    }
+    document.getElementById('lat').value = place.geometry.location.lat();
+    document.getElementById('lng').value = place.geometry.location.lng();
+  });
+
+  window.onload = function () {
+    if (sessionStorage.getItem("adminAccess") === "granted") {
+      showForm();
+    }
+  };
 </script>
 </body>
 </html>
