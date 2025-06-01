@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Confirm Booking</title>
+  <meta charset="UTF-8" />
+  <title>Booking Summary</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
@@ -18,115 +18,64 @@
       --section-light: #1c1e21;
       --text-main: #f1f1f1;
       --accent: #4CAF50;
-      --warning: #ff9800;
-      --error: #f44336;
-      --text-sub: #aaaaaa;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Quicksand', sans-serif;
     }
-
-    body, html {
+    body {
       background-color: var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
-    }
-
-    body {
       display: flex;
       justify-content: center;
       padding: 40px 20px;
     }
-
     .container {
-      width: 100%;
-      max-width: 600px;
       background: var(--section-light);
       padding: 30px;
       border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-      animation: fadeIn 0.8s ease;
     }
-
     h1 {
       text-align: center;
-      font-size: 26px;
       margin-bottom: 20px;
-      color: var(--accent);
     }
-
-    .details {
-      margin-top: 20px;
+    .summary {
+      margin-bottom: 20px;
     }
-
-    .detail-row {
-      margin-bottom: 12px;
+    .summary p {
+      margin: 10px 0;
     }
-
-    .detail-row strong {
-      display: inline-block;
-      width: 140px;
-      color: var(--text-sub);
-    }
-
     button {
       width: 100%;
       padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background-color: var(--accent);
+      background: var(--accent);
       color: #111;
-      transition: background 0.3s;
-      margin-top: 30px;
-    }
-
-    button:hover {
-      background-color: #43a047;
-    }
-
-    .message {
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
       margin-top: 20px;
-      text-align: center;
-      font-size: 16px;
-      color: var(--accent);
-      display: none;
     }
-
-    .error {
-      color: var(--error);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 500px) {
-      .detail-row strong {
-        width: 100px;
-      }
+    button:hover {
+      background: #43a047;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <h1>Confirm Your Booking</h1>
-    <div id="bookingDetails" class="details">
-      Loading details...
-    </div>
-    <button onclick="submitBooking()">Submit Booking</button>
-    <p id="successMessage" class="message"></p>
+    <h1>Booking Summary</h1>
+    <div class="summary" id="summary"></div>
+    <button onclick="submitBooking()">Confirm and Continue</button>
   </div>
 
   <script>
-    // Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -139,79 +88,74 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const detailsEl = document.getElementById("bookingDetails");
-    const successMessage = document.getElementById("successMessage");
+    function loadSummary() {
+      const pickup = localStorage.getItem('pickup');
+      const dropoff = localStorage.getItem('dropoff');
+      const passengers = localStorage.getItem('passengers');
+      const luggage = localStorage.getItem('luggage');
+      const customNote = localStorage.getItem('customNote');
+      const pickupType = localStorage.getItem('pickupType');
+      const pickupDate = localStorage.getItem('pickupDate') || 'Today';
+      const pickupTime = localStorage.getItem('pickupTime') || 'ASAP';
+      const assignedDriverName = localStorage.getItem('assignedDriverName');
+      const assignedDriverDoor = localStorage.getItem('assignedDriverDoor');
 
-    // Load booking summary from localStorage
-    function loadBookingSummary() {
-      const pickup = localStorage.getItem("pickup");
-      const dropoff = localStorage.getItem("dropoff");
-      const passengers = localStorage.getItem("passengers");
-      const luggage = localStorage.getItem("luggage");
-      const pets = localStorage.getItem("petConfirm") === "true" ? "No Pets" : "No Pets";
-      const customNote = localStorage.getItem("customNote") || "None";
-      const pickupType = localStorage.getItem("pickupType");
-      const pickupDate = localStorage.getItem("pickupDate");
-      const pickupTime = localStorage.getItem("pickupTime");
-      const phone = localStorage.getItem("phoneNumber");
-      const name = localStorage.getItem("customerName");
-
-      if (!pickup || !dropoff || !phone || !name) {
-        detailsEl.innerHTML = `<p class="error">Missing booking information. Please start again.</p>`;
-        return;
-      }
-
-      const timeInfo = pickupType === "ASAP" ? "ASAP" : `${pickupDate} at ${pickupTime}`;
-
-      detailsEl.innerHTML = `
-        <div class="detail-row"><strong>Name:</strong> ${name}</div>
-        <div class="detail-row"><strong>Phone:</strong> ${phone}</div>
-        <div class="detail-row"><strong>Pickup:</strong> ${pickup}</div>
-        <div class="detail-row"><strong>Drop-off:</strong> ${dropoff}</div>
-        <div class="detail-row"><strong>Passengers:</strong> ${passengers}</div>
-        <div class="detail-row"><strong>Luggage:</strong> ${luggage}</div>
-        <div class="detail-row"><strong>Pet:</strong> ${pets}</div>
-        <div class="detail-row"><strong>Pickup Time:</strong> ${timeInfo}</div>
-        <div class="detail-row"><strong>Notes:</strong> ${customNote}</div>
+      const summaryDiv = document.getElementById('summary');
+      summaryDiv.innerHTML = `
+        <p><strong>Pickup:</strong> ${pickup}</p>
+        <p><strong>Drop-off:</strong> ${dropoff}</p>
+        <p><strong>Passengers:</strong> ${passengers}</p>
+        <p><strong>Luggage:</strong> ${luggage}</p>
+        <p><strong>Custom Note:</strong> ${customNote}</p>
+        <p><strong>Pickup Type:</strong> ${pickupType}</p>
+        <p><strong>Date:</strong> ${pickupDate}</p>
+        <p><strong>Time:</strong> ${pickupTime}</p>
+        <p><strong>Assigned Driver:</strong> ${assignedDriverName}</p>
       `;
     }
 
-    // Submit to Firebase
-    async function submitBooking() {
-      const bookingData = {
-        name: localStorage.getItem("customerName"),
-        phone: localStorage.getItem("phoneNumber"),
-        pickup: localStorage.getItem("pickup"),
-        dropoff: localStorage.getItem("dropoff"),
-        passengers: localStorage.getItem("passengers"),
-        luggage: localStorage.getItem("luggage"),
-        pets: localStorage.getItem("petConfirm") === "true" ? "No Pets" : "No Pets",
-        customNote: localStorage.getItem("customNote") || "None",
-        pickupType: localStorage.getItem("pickupType"),
-        pickupDate: localStorage.getItem("pickupDate") || "",
-        pickupTime: localStorage.getItem("pickupTime") || "",
-        claimedBy: "unassigned",
-        claimedDoor: ""
+    function submitBooking() {
+      const pickup = localStorage.getItem('pickup');
+      const dropoff = localStorage.getItem('dropoff');
+      const pickupCoords = JSON.parse(localStorage.getItem('pickupCoords'));
+      const dropoffCoords = JSON.parse(localStorage.getItem('dropoffCoords'));
+      const passengers = localStorage.getItem('passengers');
+      const luggage = localStorage.getItem('luggage');
+      const customNote = localStorage.getItem('customNote');
+      const pickupType = localStorage.getItem('pickupType');
+      const pickupDate = localStorage.getItem('pickupDate');
+      const pickupTime = localStorage.getItem('pickupTime');
+      const assignedDriverName = localStorage.getItem('assignedDriverName');
+      const assignedDriverDoor = localStorage.getItem('assignedDriverDoor');
+
+      if (!pickup || !dropoff || !pickupCoords || !dropoffCoords || !passengers || !luggage || !pickupType || !assignedDriverName || !assignedDriverDoor) {
+        alert("Missing booking details. Please go back and complete all steps.");
+        return;
+      }
+
+      const booking = {
+        pickup,
+        dropoff,
+        pickupCoords,
+        dropoffCoords,
+        passengers,
+        luggage,
+        customNote,
+        pickupType,
+        pickupDate: pickupDate || '',
+        pickupTime: pickupTime || '',
+        assignedDriverName,
+        assignedDriverDoor,
+        claimedBy: assignedDriverName,
+        claimedDoor: assignedDriverDoor,
+        status: "preview"
       };
 
-      try {
-        await db.ref("bookings").push(bookingData);
-        successMessage.textContent = "Booking submitted successfully!";
-        successMessage.style.display = "block";
-
-        // Clear localStorage after successful submission
-        localStorage.clear();
-
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 3000); // Redirect after 3s
-      } catch (error) {
-        alert("Failed to submit booking. Please try again.");
-        console.error(error);
-      }
+      localStorage.setItem('finalBooking', JSON.stringify(booking));
+      window.location.href = 'VerifyPhone.html';
     }
 
-    window.onload = loadBookingSummary;
+    document.addEventListener('DOMContentLoaded', loadSummary);
   </script>
 </body>
 </html>
