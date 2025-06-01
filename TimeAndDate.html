@@ -160,164 +160,188 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ&libraries=places"></script>
     <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-    authDomain: "tourthelakes-1e165.firebaseapp.com",
-    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
-    projectId: "tourthelakes-1e165",
-    storageBucket: "tourthelakes-1e165.appspot.com",
-    messagingSenderId: "470758171431",
-    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  async function dispatcher(pickupDate, pickupTime, pickupCoords) {
-    const [snapshotDrivers, snapshotShifts, snapshotBookings] = await Promise.all([
-      db.ref("drivers").once("value"),
-      db.ref("driverShifts").once("value"),
-      db.ref("bookings").once("value")
-    ]);
-
-    const drivers = snapshotDrivers.val() || {};
-    const shifts = snapshotShifts.val() || {};
-    const bookings = snapshotBookings.val() || {};
-
-    const pickupTimestamp = new Date(`${pickupDate}T${pickupTime}`).getTime();
-
-    let candidates = [];
-
-    for (const doorCard in shifts) {
-      const shift = shifts[doorCard][pickupDate];
-      if (!shift) continue;
-
-      const shiftStart = parseTimeToTimestamp(pickupDate, shift.from);
-      const shiftEnd = parseTimeToTimestamp(pickupDate, shift.until);
-
-      if (pickupTimestamp < shiftStart || pickupTimestamp > shiftEnd) continue;
-
-      const driverBookings = Object.values(bookings).filter(b => b.claimedDoor === doorCard && b.pickupDate === pickupDate);
-
-      let conflict = false;
-      let lastJobCoords = null;
-      let lastJobEndTime = shiftStart;
-
-      for (const booking of driverBookings) {
-        const jobTime = parseTimeToTimestamp(pickupDate, booking.pickupTime);
-        if (Math.abs(jobTime - pickupTimestamp) < 30 * 60 * 1000) {
-          conflict = true;
-          break;
-        }
-        if (jobTime < pickupTimestamp && jobTime > lastJobEndTime) {
-          lastJobEndTime = jobTime;
-          lastJobCoords = booking.dropoffCoords;
-        }
-      }
-
-      if (conflict) continue;
-
-      candidates.push({
-        doorCard,
-        driver: drivers[doorCard],
-        lastJobCoords,
-        lastJobEndTime
-      });
-    }
-
-    if (candidates.length === 0) {
-      return { status: "unavailable" };
-    }
-
-    const results = await Promise.all(candidates.map(async (candidate) => {
-      const origin = candidate.lastJobCoords || candidate.driver.stationedCoords;
-      const travelTimeMinutes = await calculateDriveTime(origin, pickupCoords);
-      const availableAt = candidate.lastJobEndTime + (travelTimeMinutes + 5) * 60000;
-      return { ...candidate, availableAt };
-    }));
-
-    results.sort((a, b) => a.availableAt - b.availableAt);
-
-    const bestMatch = results[0];
-
-    if (bestMatch.availableAt <= pickupTimestamp) {
-      return {
-        status: "assigned",
-        driverDoorCard: bestMatch.doorCard,
-        driverName: bestMatch.driver.name
+      const firebaseConfig = {
+        apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+        authDomain: "tourthelakes-1e165.firebaseapp.com",
+        databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+        projectId: "tourthelakes-1e165",
+        storageBucket: "tourthelakes-1e165.appspot.com",
+        messagingSenderId: "470758171431",
+        appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
       };
-    } else {
-      const suggestedTime = new Date(bestMatch.availableAt).toISOString().substr(11, 5);
-      return {
-        status: "suggest",
-        driverDoorCard: bestMatch.doorCard,
-        driverName: bestMatch.driver.name,
-        suggestedTime
-      };
-    }
-  }
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
 
-  function parseTimeToTimestamp(date, time) {
-    return new Date(`${date}T${time}`).getTime();
-  }
+      async function dispatcher(pickupDate, pickupTime, pickupCoords) {
+        const [snapshotDrivers, snapshotShifts, snapshotBookings] = await Promise.all([
+          db.ref("drivers").once("value"),
+          db.ref("driverShifts").once("value"),
+          db.ref("bookings").once("value")
+        ]);
 
-  async function calculateDriveTime(originCoords, destCoords) {
-    const service = new google.maps.DistanceMatrixService();
-    return new Promise((resolve, reject) => {
-      service.getDistanceMatrix({
-        origins: [new google.maps.LatLng(originCoords.lat, originCoords.lng)],
-        destinations: [new google.maps.LatLng(destCoords.lat, destCoords.lng)],
-        travelMode: 'DRIVING'
-      }, (response, status) => {
-        if (status !== 'OK') return reject(status);
-        const duration = response.rows[0].elements[0].duration.value;
-        resolve(Math.ceil(duration / 60));
-      });
-    });
-  }
+        const drivers = snapshotDrivers.val() || {};
+        const shifts = snapshotShifts.val() || {};
+        const bookings = snapshotBookings.val() || {};
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const pickupDate = document.getElementById("pickupDate");
-    const pickupTime = document.getElementById("pickupTime");
-    const continueBtn = document.getElementById("continueBtn");
+        const pickupTimestamp = new Date(`${pickupDate}T${pickupTime}`).getTime();
 
-    continueBtn.addEventListener("click", async function () {
-      const date = pickupDate.value;
-      const time = pickupTime.value;
+        let candidates = [];
 
-      if (!date || !time) {
-        alert("Please select both a date and a time.");
-        return;
-      }
+        for (const doorCard in shifts) {
+          const shift = shifts[doorCard][pickupDate];
+          if (!shift) continue;
 
-      // Retrieve coords from localStorage
-      const pickupCoords = JSON.parse(localStorage.getItem("pickupCoords"));
+          const shiftStart = parseTimeToTimestamp(pickupDate, shift.from);
+          const shiftEnd = parseTimeToTimestamp(pickupDate, shift.until);
 
-      if (!pickupCoords) {
-        alert("Pickup location not set.");
-        return;
-      }
+          if (pickupTimestamp < shiftStart || pickupTimestamp > shiftEnd) continue;
 
-      try {
-        const result = await dispatcher(date, time, pickupCoords);
-        if (result.status === "assigned") {
-          localStorage.setItem("assignedDriverDoor", result.driverDoorCard);
-          localStorage.setItem("assignedDriverName", result.driverName);
-          localStorage.setItem("pickupDate", date);
-          localStorage.setItem("pickupTime", time);
-          location.href = "VerifyPhone.html";
-        } else if (result.status === "suggest") {
-          alert(`No drivers available at requested time.\nNext available slot: ${result.suggestedTime}`);
+          const driverBookings = Object.values(bookings).filter(b => b.claimedDoor === doorCard && b.pickupDate === pickupDate);
+
+          let conflict = false;
+          let lastJobCoords = null;
+          let lastJobEndTime = shiftStart;
+
+          for (const booking of driverBookings) {
+            const jobTime = parseTimeToTimestamp(pickupDate, booking.pickupTime);
+            if (Math.abs(jobTime - pickupTimestamp) < 30 * 60 * 1000) {
+              conflict = true;
+              break;
+            }
+            if (jobTime < pickupTimestamp && jobTime > lastJobEndTime) {
+              lastJobEndTime = jobTime;
+              lastJobCoords = booking.dropoffCoords;
+            }
+          }
+
+          if (conflict) continue;
+
+          candidates.push({
+            doorCard,
+            driver: drivers[doorCard],
+            lastJobCoords,
+            lastJobEndTime
+          });
+        }
+
+        if (candidates.length === 0) {
+          return { status: "unavailable" };
+        }
+
+        const results = await Promise.all(candidates.map(async (candidate) => {
+          const origin = candidate.lastJobCoords || candidate.driver.stationedCoords;
+          const travelTimeMinutes = await calculateDriveTime(origin, pickupCoords);
+          const availableAt = candidate.lastJobEndTime + (travelTimeMinutes + 5) * 60000;
+          return { ...candidate, availableAt };
+        }));
+
+        results.sort((a, b) => a.availableAt - b.availableAt);
+
+        const bestMatch = results[0];
+
+        if (bestMatch.availableAt <= pickupTimestamp) {
+          return {
+            status: "assigned",
+            driverDoorCard: bestMatch.doorCard,
+            driverName: bestMatch.driver.name
+          };
         } else {
-          alert("No drivers are available for the selected date.");
+          const suggestedTime = new Date(bestMatch.availableAt).toISOString().substr(11, 5);
+          return {
+            status: "suggest",
+            driverDoorCard: bestMatch.doorCard,
+            driverName: bestMatch.driver.name,
+            suggestedTime
+          };
         }
-      } catch (error) {
-        console.error(error);
-        alert("Something went wrong. Please try again.");
       }
-    });
-  });
-</script>
+
+      function parseTimeToTimestamp(date, time) {
+        return new Date(`${date}T${time}`).getTime();
+      }
+
+      async function calculateDriveTime(originCoords, destCoords) {
+        const service = new google.maps.DistanceMatrixService();
+        return new Promise((resolve, reject) => {
+          service.getDistanceMatrix({
+            origins: [new google.maps.LatLng(originCoords.lat, originCoords.lng)],
+            destinations: [new google.maps.LatLng(destCoords.lat, destCoords.lng)],
+            travelMode: 'DRIVING'
+          }, (response, status) => {
+            if (status !== 'OK') return reject(status);
+            const duration = response.rows[0].elements[0].duration.value;
+            resolve(Math.ceil(duration / 60));
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const pickupDate = document.getElementById("pickupDate");
+        const pickupTime = document.getElementById("pickupTime");
+        const asapCheckbox = document.getElementById("asapCheckbox");
+        const continueBtn = document.getElementById("continueBtn");
+        const asapMessage = document.getElementById("asapMessage");
+
+        const today = new Date().toISOString().split("T")[0];
+        pickupDate.setAttribute("min", today);
+        pickupDate.value = today;
+
+        asapCheckbox.addEventListener("change", function () {
+          if (this.checked) {
+            asapMessage.style.display = "block";
+            pickupDate.disabled = true;
+            pickupTime.disabled = true;
+          } else {
+            asapMessage.style.display = "none";
+            pickupDate.disabled = false;
+            pickupTime.disabled = false;
+          }
+        });
+
+        continueBtn.addEventListener("click", async function () {
+          let date, time;
+          const pickupCoords = JSON.parse(localStorage.getItem("pickupCoords"));
+
+          if (!pickupCoords) {
+            alert("Pickup location not set.");
+            return;
+          }
+
+          if (asapCheckbox.checked) {
+            const now = new Date();
+            date = now.toISOString().split("T")[0];
+            time = now.toTimeString().substr(0, 5);
+          } else {
+            date = pickupDate.value;
+            time = pickupTime.value;
+            if (!date || !time) {
+              alert("Please select both a date and a time.");
+              return;
+            }
+          }
+
+          try {
+            const result = await dispatcher(date, time, pickupCoords);
+            if (result.status === "assigned") {
+              localStorage.setItem("assignedDriverDoor", result.driverDoorCard);
+              localStorage.setItem("assignedDriverName", result.driverName);
+              localStorage.setItem("pickupDate", date);
+              localStorage.setItem("pickupTime", time);
+              location.href = "VerifyPhone.html";
+            } else if (result.status === "suggest") {
+              alert(`No drivers available at requested time.\nNext available slot: ${result.suggestedTime}`);
+            } else {
+              alert("No drivers are available for the selected date.");
+            }
+          } catch (error) {
+            console.error(error);
+            alert("Something went wrong. Please try again.");
+          }
+        });
+      });
+    </script>
   </div>
 </body>
 </html>
