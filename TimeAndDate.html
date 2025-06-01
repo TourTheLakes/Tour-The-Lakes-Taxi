@@ -174,6 +174,51 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
 
+      async function populateTimes() {
+        const pickupDateValue = document.getElementById('pickupDate').value;
+        const pickupTimeSelect = document.getElementById('pickupTime');
+        pickupTimeSelect.innerHTML = '<option value="">Select a time...</option>';
+
+        const shiftsSnap = await db.ref('driverShifts').once('value');
+        const shifts = shiftsSnap.val() || {};
+        const dateShifts = [];
+
+        for (const driver in shifts) {
+          if (shifts[driver][pickupDateValue]) {
+            const shift = shifts[driver][pickupDateValue];
+            dateShifts.push({
+              from: shift.from,
+              until: shift.until
+            });
+          }
+        }
+
+        if (dateShifts.length === 0) {
+          document.getElementById('inlineWarning').style.display = "block";
+          document.getElementById('inlineWarning').innerText = "No drivers are available for the selected date.";
+          return;
+        } else {
+          document.getElementById('inlineWarning').style.display = "none";
+        }
+
+        let startMinutes = 1440, endMinutes = 0;
+        for (const shift of dateShifts) {
+          const [fromH, fromM] = shift.from.split(":").map(Number);
+          const [untilH, untilM] = shift.until.split(":").map(Number);
+          startMinutes = Math.min(startMinutes, fromH * 60 + fromM);
+          endMinutes = Math.max(endMinutes, untilH * 60 + untilM);
+        }
+
+        for (let min = startMinutes; min <= endMinutes; min += 15) {
+          const h = String(Math.floor(min / 60)).padStart(2, '0');
+          const m = String(min % 60).padStart(2, '0');
+          const option = document.createElement('option');
+          option.value = `${h}:${m}`;
+          option.text = `${h}:${m}`;
+          pickupTimeSelect.appendChild(option);
+        }
+      }
+
       async function dispatcher(pickupDate, pickupTime, pickupCoords) {
         const [snapshotDrivers, snapshotShifts, snapshotBookings] = await Promise.all([
           db.ref("drivers").once("value"),
@@ -280,46 +325,48 @@
       document.addEventListener("DOMContentLoaded", function () {
         const pickupDate = document.getElementById("pickupDate");
         const pickupTime = document.getElementById("pickupTime");
-        const asapCheckbox = document.getElementById("asapCheckbox");
         const continueBtn = document.getElementById("continueBtn");
+        const asapCheckbox = document.getElementById("asapCheckbox");
         const asapMessage = document.getElementById("asapMessage");
+        const inlineWarning = document.getElementById("inlineWarning");
 
         const today = new Date().toISOString().split("T")[0];
         pickupDate.setAttribute("min", today);
         pickupDate.value = today;
 
+        pickupDate.addEventListener("change", populateTimes);
+        populateTimes();
+
         asapCheckbox.addEventListener("change", function () {
-          if (this.checked) {
-            asapMessage.style.display = "block";
-            pickupDate.disabled = true;
-            pickupTime.disabled = true;
-          } else {
-            asapMessage.style.display = "none";
-            pickupDate.disabled = false;
-            pickupTime.disabled = false;
+          const now = new Date();
+          const currentHour = now.getHours();
+          if (currentHour < 9 || currentHour >= 19) {
+            inlineWarning.textContent = "ASAP bookings are only available between 09:00 and 19:00.";
+            inlineWarning.style.display = "block";
+            this.checked = false;
+            return;
           }
+          inlineWarning.style.display = "none";
+          const isChecked = this.checked;
+          pickupDate.disabled = isChecked;
+          pickupTime.disabled = isChecked;
+          asapMessage.style.display = isChecked ? "block" : "none";
         });
 
         continueBtn.addEventListener("click", async function () {
-          let date, time;
-          const pickupCoords = JSON.parse(localStorage.getItem("pickupCoords"));
+          const date = pickupDate.value;
+          const time = pickupTime.value;
+          if (!date || !time) {
+            inlineWarning.textContent = "Please select both a date and time.";
+            inlineWarning.style.display = "block";
+            return;
+          }
+          inlineWarning.style.display = "none";
 
+          const pickupCoords = JSON.parse(localStorage.getItem("pickupCoords"));
           if (!pickupCoords) {
             alert("Pickup location not set.");
             return;
-          }
-
-          if (asapCheckbox.checked) {
-            const now = new Date();
-            date = now.toISOString().split("T")[0];
-            time = now.toTimeString().substr(0, 5);
-          } else {
-            date = pickupDate.value;
-            time = pickupTime.value;
-            if (!date || !time) {
-              alert("Please select both a date and a time.");
-              return;
-            }
           }
 
           try {
