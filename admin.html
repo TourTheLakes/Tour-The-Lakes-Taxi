@@ -3,211 +3,162 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Admin · Tour The Lakes</title>
-  <meta name="robots" content="noindex, nofollow"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Admin – Tour The Lakes</title>
+
+  <!-- Favicon = Admin Circle -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%23ffb84d' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#0e1116; --smoke:#12171e; --smoke2:#0b0d10;
-      --ink:#e8f1f8; --muted:#a8b0bb;
-      --neon:#55f0ff; --neon2:#00d2ff;
-      --line:#273341; --shadow:0 18px 50px rgba(0,0,0,.35);
-      --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
-      --radius:18px;
+      --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
+      --neon:#55f0ff; --line:#273341;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
-    a{color:var(--neon);text-decoration:none}
-
-    /* banner */
-    header{position:relative;overflow:hidden;padding:40px 14px;text-align:center}
-    header .layer{position:absolute;inset:-25% -10% auto -10%;height:125%;background:var(--grad)}
-    .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55}
-    .g1{width:420px;height:420px;left:-140px;top:-160px;background:radial-gradient(closest-side, rgba(85,240,255,.28), rgba(85,240,255,0))}
-    .g2{width:320px;height:320px;right:-100px;bottom:-140px;background:radial-gradient(closest-side, rgba(0,210,255,.22), rgba(0,210,255,0))}
-    header .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto}
-    .circle{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:140px;height:140px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%, var(--neon), var(--neon2));
-      color:#00242a;font-family:Outfit;font-size:28px;font-weight:800;
-      box-shadow:0 0 40px rgba(85,240,255,.4);
-      margin-bottom:16px;
-    }
-    header p{margin:0;color:var(--muted)}
-    .logout{position:absolute;top:16px;right:16px}
-    .btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer}
-    .ghost{background:transparent;border:1px solid #2a3948;color:#dfeaf3}
-    .primary{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a}
-
-    main{max-width:1100px;margin:18px auto 40px;padding:0 14px}
-
-    /* panels */
-    .panel{position:relative;padding:18px;border-radius:var(--radius);
-      background: linear-gradient(180deg, rgba(19,24,32,.85), rgba(19,24,32,.74));
-      border:1px solid var(--line);box-shadow: var(--shadow);backdrop-filter: blur(6px);margin:16px 0;}
-    .panel h2{text-align:center;margin:0 0 14px}
-    .panel h2::after{content:"";display:block;height:3px;margin:8px auto 0;
-      width: clamp(90px, 14vw, 180px);
-      background: linear-gradient(90deg, var(--neon), var(--neon2));
-      border-radius:2px;}
-
-    label{display:block;font-weight:600;margin:10px 0 6px}
-    input, select, textarea{
-      width:100%; padding:12px; border-radius:12px;
-      border:1px solid #2a3948; background:#0f141b; color:#dfeaf3
-    }
-    textarea{min-height:120px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:760px){ .row.two{grid-template-columns:1fr 1fr} .row.three{grid-template-columns:1fr 1fr 1fr} }
-
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .muted{color:var(--muted)}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui}
+    h1,h2{font-family:Outfit}
+    .wrap{max-width:900px;margin:0 auto;padding:20px}
+    .stamp{margin:40px auto 20px;width:150px;height:150px;border-radius:50%;
+      background:#1a2633;border:4px solid #ffb84d;display:flex;align-items:center;justify-content:center;
+      font-family:Outfit;font-weight:800;font-size:22px;text-align:center}
+    .logout{display:block;margin:10px auto 40px;padding:10px 18px;background:#222;color:var(--ink);
+      border:1px solid var(--line);border-radius:8px;cursor:pointer}
+    form{background:#151b22;padding:20px;border:1px solid #222c3a;border-radius:12px;margin-bottom:30px}
+    form label{display:block;margin:12px 0 6px}
+    form input, form textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #2a3948;background:#0f141b;color:var(--ink)}
+    .btn{margin-top:12px;padding:12px 16px;background:linear-gradient(90deg,var(--neon),#00d2ff);color:#00242a;font-weight:800;border:0;border-radius:10px;cursor:pointer}
+    .list{margin-top:30px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px 10px;border-bottom:1px solid #2a3948}
+    th{text-align:left;color:var(--neon)}
+    .export{margin:20px 0;text-align:right}
+    .export button{padding:8px 14px;border-radius:8px;border:1px solid #2a3948;background:#111820;color:var(--ink);cursor:pointer}
   </style>
 </head>
 <body>
-  <header>
-    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
-    <div class="inner">
-      <div class="circle">Admin</div>
-      <p class="muted">Create and manage tours & events<br><span id="who"></span></p>
-      <div class="logout"><button class="btn ghost" id="logoutBtn">Log out</button></div>
+  <div class="wrap">
+    <div class="stamp">Admin</div>
+    <button id="logoutBtn" class="logout">Log out</button>
+
+    <h1>Create / Manage</h1>
+
+    <!-- Create Tour/Event Form -->
+    <form id="addForm">
+      <label>Title <input name="title" required></label>
+      <label>Description <textarea name="description" rows="4"></textarea></label>
+      <label>Date <input type="date" name="date" required></label>
+      <label>Cut off <input type="date" name="cutoff"></label>
+      <label>Price (£) <input type="number" name="price"></label>
+      <label>Capacity <input type="number" name="capacity" placeholder="optional"></label>
+      <label>Min to run <input type="number" name="minNeeded" placeholder="default 20"></label>
+      <label>Payment Info <textarea name="paymentInfo" rows="2"></textarea></label>
+      <label>Image URL <input name="imageUrl" placeholder="https://..."></label>
+      <label>Type
+        <select name="type">
+          <option value="tours">Tour</option>
+          <option value="events">Event</option>
+        </select>
+      </label>
+      <button class="btn">Add</button>
+    </form>
+
+    <div class="export">
+      <button id="exportCSV">Export Interests CSV</button>
     </div>
-  </header>
 
-  <main>
-    <!-- Create / Edit -->
-    <section class="panel">
-      <h2>Create / Edit</h2>
-      <form id="form">
-        <input type="hidden" id="editingId">
-        <input type="hidden" id="editingCol">
-        <div class="row two">
-          <div>
-            <label for="type">Type</label>
-            <select id="type" required>
-              <option value="tours">Tour</option>
-              <option value="events">Event</option>
-            </select>
-          </div>
-          <div>
-            <label for="title">Title</label>
-            <input id="title" required placeholder="Windermere & Ambleside Day"/>
-          </div>
-        </div>
-        <div class="row three">
-          <div>
-            <label for="date">Event date</label>
-            <input id="date" type="date" required/>
-          </div>
-          <div>
-            <label for="cutoff">Payment cut-off</label>
-            <input id="cutoff" type="date" required/>
-          </div>
-          <div>
-            <label for="price">Price (£)</label>
-            <input id="price" type="number" min="0" required/>
-          </div>
-        </div>
-        <div class="row two">
-          <div>
-            <label for="minNeeded">Min to run</label>
-            <input id="minNeeded" type="number" value="20"/>
-          </div>
-          <div>
-            <label for="capacity">Capacity</label>
-            <input id="capacity" type="number" placeholder="30"/>
-          </div>
-        </div>
-        <div>
-          <label for="description">Description</label>
-          <textarea id="description" required></textarea>
-        </div>
-        <div>
-          <label for="paymentInfo">Payment instructions</label>
-          <textarea id="paymentInfo" placeholder="Preferred: BACS (no fees). Card accepted (+10% surcharge). Refunds via BACS only."></textarea>
-        </div>
-        <div>
-          <label for="image">Feature image</label>
-          <input id="image" type="file" accept="image/*"/>
-        </div>
-        <div class="actions" style="margin-top:12px">
-          <button type="submit" class="btn primary" id="saveBtn">Save</button>
-          <button type="button" class="btn ghost" id="cancelBtn" style="display:none">Cancel</button>
-        </div>
-        <p id="msg" class="muted" style="margin-top:8px"></p>
-      </form>
-    </section>
-
-    <!-- Listings will render below (same as before) -->
-    <section class="panel">
-      <h2>Listings</h2>
-      <div id="lists"></div>
-    </section>
-  </main>
+    <div class="list">
+      <h2>Current Listings</h2>
+      <table id="listings">
+        <thead><tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, collection, addDoc, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
       projectId: "tourthelakes-1e165",
       storageBucket: "tourthelakes-1e165.firebasestorage.app",
-      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
     };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
-    const ALLOWED = ["info@tourthelakes.com"];
-    const who = document.getElementById("who");
+    const addForm = document.getElementById("addForm");
     const logoutBtn = document.getElementById("logoutBtn");
+    const listTable = document.querySelector("#listings tbody");
 
+    // auth gate
     onAuthStateChanged(auth, user=>{
-      if(!user || !ALLOWED.includes(user.email ?? "")){
-        alert("Not authorised."); signOut(auth); window.location.href="/"; return;
-      }
-      who.textContent = `Signed in as ${user.email}`;
+      if(!user) window.location.href="index.html";
     });
-    logoutBtn.onclick=()=>signOut(auth).then(()=>location.href="/");
 
-    // form save logic...
-    const form=document.getElementById("form");
-    form.onsubmit=async e=>{
+    logoutBtn.addEventListener("click", ()=>signOut(auth));
+
+    // add form submit
+    addForm.addEventListener("submit", async e=>{
       e.preventDefault();
-      const col=document.getElementById("type").value;
-      const data={
-        title:document.getElementById("title").value.trim(),
-        date:document.getElementById("date").value,
-        cutoff:document.getElementById("cutoff").value,
-        price:+document.getElementById("price").value,
-        minNeeded:+document.getElementById("minNeeded").value||20,
-        capacity:+document.getElementById("capacity").value||0,
-        description:document.getElementById("description").value.trim(),
-        paymentInfo:document.getElementById("paymentInfo").value.trim(),
-        createdAt:serverTimestamp()
-      };
-      const f=document.getElementById("image").files[0];
-      if(f){
-        const path=`images/${col}/${Date.now()}_${f.name}`;
-        const uploadTask=uploadBytesResumable(ref(storage,path),f);
-        await new Promise((res,rej)=>{uploadTask.on("state_changed",null,rej,res)});
-        data.imageUrl=await getDownloadURL(ref(storage,path));
+      const fd = new FormData(addForm);
+      const type = fd.get("type");
+      try{
+        await addDoc(collection(db, type), {
+          title: fd.get("title"),
+          description: fd.get("description"),
+          date: fd.get("date"),
+          cutoff: fd.get("cutoff"),
+          price: Number(fd.get("price")||0),
+          capacity: Number(fd.get("capacity")||0),
+          minNeeded: Number(fd.get("minNeeded")||20),
+          paymentInfo: fd.get("paymentInfo"),
+          imageUrl: fd.get("imageUrl"),
+          createdAt: serverTimestamp()
+        });
+        addForm.reset();
+        loadListings();
+      }catch(err){console.error(err);}
+    });
+
+    async function loadListings(){
+      listTable.innerHTML="";
+      for(const col of ["tours","events"]){
+        const snap = await getDocs(query(collection(db,col), orderBy("date","asc")));
+        snap.forEach(doc=>{
+          const d=doc.data();
+          const tr=document.createElement("tr");
+          tr.innerHTML=`<td>${d.title}</td><td>${d.date}</td><td>${col}</td><td>${d.closed?"Closed":"Open"}</td>`;
+          listTable.appendChild(tr);
+        });
       }
-      await addDoc(collection(db,col),data);
-      form.reset();
-      document.getElementById("msg").textContent="Saved.";
-    };
+    }
+    loadListings();
+
+    // CSV export
+    document.getElementById("exportCSV").addEventListener("click", async ()=>{
+      let rows=[["Type","ListingID","Name","Email","Phone","Seats","Method","Created"]];
+      for(const col of ["tours","events"]){
+        const snap = await getDocs(collection(db,col));
+        for(const doc of snap.docs){
+          const subs = await getDocs(collection(db,col,doc.id,"interests"));
+          subs.forEach(s=>{
+            const x=s.data();
+            rows.push([col,doc.id,x.name,x.email,x.phone,x.seats,x.method,x.createdAt?.toDate().toISOString()||""]);
+          });
+        }
+      }
+      let csv = rows.map(r=>r.map(v=>`"${(v||"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
+      let blob=new Blob([csv],{type:"text/csv"});
+      let a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download="interests.csv"; a.click();
+    });
   </script>
 </body>
 </html>
