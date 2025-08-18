@@ -5,34 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
   <meta name="description" content="Guided tours and special events across the Lake District, with commentary, scenic stops and time to explore."/>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Favicon = Tour circle -->
+  <!-- Favicon = Tour circle (cyan) -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='46' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ETour%3C/text%3E%3Ctext x='60' y='68' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3EThe%3C/text%3E%3Ctext x='60' y='90' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ELakes%3C/text%3E%3C/svg%3E"/>
 
   <style>
     :root{
       --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
       --neon:#55f0ff; --neon2:#00d2ff;
-      --line:#273341; --shadow:0 18px 50px rgba(0,0,0,.35);
-      --logo: 188px;
+      --line:#273341; --panel:#151b22; --panelBorder:#222c3a;
+      --shadow:0 18px 40px rgba(0,0,0,.40);
+      --logo:188px;
     }
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui;line-height:1.55}
     h1,h2,h3{font-family:Outfit}
 
-    /* Banner */
-    .banner{position:relative;overflow:hidden;color:var(--ink);background:linear-gradient(180deg,#12171e,#0c0f14)}
-    .banner .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5}
+    /* Banner (header & footer vibe) */
+    .banner{position:relative;overflow:hidden;background:linear-gradient(180deg,#12171e,#0c0f14);color:var(--ink)}
+    .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5}
     .g1{width:540px;height:540px;left:-180px;top:-180px;background:radial-gradient(closest-side,rgba(85,240,255,.3),transparent)}
     .g2{width:420px;height:420px;right:-140px;bottom:-160px;background:radial-gradient(closest-side,rgba(0,210,255,.25),transparent)}
 
     /* Hero */
     header.banner{padding:80px 16px 64px}
-    .hero{position:relative;z-index:2;max-width:1100px;margin:0 auto;
-      display:grid;gap:20px;grid-template-columns:1fr;text-align:center}
-    .stamp{justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
+    .hero{
+      position:relative;z-index:2;max-width:1100px;margin:0 auto;
+      display:grid;gap:20px;grid-template-columns:1fr;text-align:center;
+    }
+    .stamp{
+      justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
       border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:#1a2633;border:4px solid #86f6ff;
+      background:#1a2633;border:4px solid var(--neon);
       box-shadow:inset 0 12px 26px rgba(0,0,0,.45);
       color:#eaf6ff;font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase}
     .hero-copy h1{margin:0 0 10px;font-size:clamp(30px,7vw,46px)}
@@ -50,30 +57,32 @@
     nav a:hover{background:#121822;color:#f2fbff}
 
     /* Sections */
-    main{max-width:1100px;margin:30px auto;padding:0 14px}
+    main{max-width:1100px;margin:30px auto;padding:0 16px}
     .section{margin:20px 0}
-    .panel{padding:22px;border-radius:18px;background:rgba(19,24,32,.8);border:1px solid var(--line);box-shadow:var(--shadow)}
-    .panel h2{margin:0 0 12px;color:#eaf4fb;border-bottom:2px solid var(--neon);display:inline-block;padding-bottom:6px}
+    .panel{background:var(--panel);border:1px solid var(--panelBorder);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+    .panel h2{margin:0 0 12px;color:#eaf4fb;display:inline-block;padding-bottom:6px;border-bottom:2px solid var(--neon)}
     .muted{color:var(--muted)}
 
     /* Cards */
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
     @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-    .event{background:#0f141b;border:1px solid #1f2a36;border-radius:14px;overflow:hidden;transition:transform .15s ease}
-    .event:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+    .event{background:#0f141b;border:1px solid #1f2a36;border-radius:12px;overflow:hidden;transition:transform .15s ease}
+    .event:hover{transform:translateY(-2px)}
     .imgwrap{width:100%;aspect-ratio:16/9;background:#0b1016}
     .imgwrap img{width:100%;height:100%;object-fit:cover}
-    .pad{padding:14px;color:#d6e2ed}
-    .event h3{margin:0 0 6px;color:#eaf4fb}
+    .pad{padding:14px}
+    .event h3{margin:0 0 8px;color:#eaf4fb}
     .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;margin-left:6px;background:#1c2c36;color:#86f6ff}
     .pill.closed{background:#2a1a1a;color:#ffb4a6}
+    .muteline{color:#9eb0c4;font-size:14px;margin-bottom:10px}
+
     .btn{display:inline-block;margin-top:10px;border:0;border-radius:10px;padding:10px 16px;
       background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a;font-weight:800;cursor:pointer}
 
-    /* Expandable section */
-    .more{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease}
-    .more.open{padding-top:10px;max-height:400px}
-    .toggle{background:none;border:none;color:var(--neon);cursor:pointer;font-size:14px;padding:0;margin-top:8px}
+    /* Expandable */
+    .toggle{background:none;border:none;color:var(--neon);cursor:pointer;font-size:14px;padding:0;margin-top:6px}
+    .more{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s ease}
+    .more.open{padding-top:8px;max-height:420px}
 
     /* Footer */
     footer.banner{padding:36px 16px;text-align:center;color:#cfe6ee}
@@ -94,6 +103,7 @@
     </div>
   </header>
 
+  <!-- Nav -->
   <nav>
     <a href="#about">About</a>
     <a href="#tours">Tours</a>
@@ -101,11 +111,12 @@
     <a href="#contact">Contact</a>
   </nav>
 
+  <!-- Body -->
   <main>
     <section id="about" class="section">
       <div class="panel">
         <h2>About</h2>
-        <p class="muted">Full day tours with commentary, scenic stops and time to explore. Tours only run once 20 fully paid participants are confirmed before cut-off.</p>
+        <p class="muted">Full-day guided tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut-off. No pay on the day.</p>
       </div>
     </section>
 
@@ -131,20 +142,20 @@
     </section>
   </main>
 
+  <!-- Footer -->
   <footer class="banner">
     © <span id="yr"></span> Tour The Lakes
-    <button id="signinDot">•</button>
+    <button id="signinDot" title="Staff access">•</button>
     <small id="authMsg"></small>
   </footer>
 
-  <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- Firebase -->
+  <!-- App -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-    import { getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -154,66 +165,90 @@
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db   = getFirestore(app);
     const provider = new GoogleAuthProvider();
     const ALLOWED = ["info@tourthelakes.com"];
-    const authMsg=document.getElementById("authMsg");
+    const authMsg = document.getElementById("authMsg");
 
-    function fmt(s){return s? s.split("-").reverse().join("/"):"";}
-    function isClosed(d,c){const now=new Date();return now>new Date(c)||now>new Date(d);}
+    const fmt = s => s ? s.split("-").reverse().join("/") : "";
+    const isClosed = (d,c)=> {
+      const now = new Date();
+      return (c && now > new Date(c)) || (d && now > new Date(d));
+    };
 
-    // build card with expandable section
-    async function card(col, id, d){
-      const closed=isClosed(d.date,d.cutoff);
-      let countSnap = await getCountFromServer(collection(db,col,id,"interests"));
-      let interested = countSnap.data().count||0;
-      const el=document.createElement("div");
-      el.className="event"+(closed?" closed":"");
-      el.innerHTML=`
-        <div class="imgwrap">${d.imageUrl? `<img src="${d.imageUrl}" alt="">`: ""}</div>
+    // Build a card (with interest count + expandable “Read more”)
+    async function buildCard(col, id, d){
+      const closed = isClosed(d.date, d.cutoff);
+      let cnt = 0;
+      try{
+        const snap = await getCountFromServer(collection(db,col,id,"interests"));
+        cnt = snap.data().count || 0;
+      }catch(e){ console.warn("count error", e); }
+
+      const el = document.createElement("div");
+      el.className = "event" + (closed ? " closed" : "");
+      el.innerHTML = `
+        <div class="imgwrap">${d.imageUrl ? `<img src="${d.imageUrl}" alt="">` : ""}</div>
         <div class="pad">
-          <h3>${d.title} ${closed? `<span class="pill closed">Closed</span>`:`<span class="pill">Open</span>`} <span class="pill">${interested} interested</span></h3>
-          <div class="muted">Date: ${fmt(d.date)} • Cut off: ${fmt(d.cutoff)} • £${Number(d.price||0).toFixed(0)}</div>
+          <h3>${d.title || ""} ${closed ? `<span class="pill closed">Closed</span>` : `<span class="pill">Open</span>`} <span class="pill">${cnt} interested</span></h3>
+          <div class="muteline">Date: ${fmt(d.date)} • Cut off: ${fmt(d.cutoff)} • £${Number(d.price||0).toFixed(0)}</div>
           <button class="toggle">Read more</button>
           <div class="more">
-            <p>${d.description||""}</p>
-            ${closed? `<p class="muted"><em>Closed</em></p>`: `<button class="btn" onclick="window.open('${d.paymentLink||""}','_blank')">Book now</button>`}
+            <p class="muted" style="color:#d6e2ed">${(d.description||"").replace(/\n/g,"<br>")}</p>
+            ${closed ? `<p class="muted"><em>This listing is closed.</em></p>` :
+              (d.paymentLink ? `<button class="btn" onclick="window.open('${d.paymentLink}','_blank')">Book now</button>` : ``)}
           </div>
-        </div>`;
-      // attach toggle logic
-      el.querySelector(".toggle").onclick=(e)=>{
-        const more=el.querySelector(".more");
-        more.classList.toggle("open");
-        e.target.textContent= more.classList.contains("open")? "Hide details":"Read more";
+        </div>
+      `;
+      el.querySelector(".toggle").onclick = (e)=>{
+        const more = el.querySelector(".more");
+        const open = more.classList.toggle("open");
+        e.target.textContent = open ? "Hide details" : "Read more";
       };
       return el;
     }
 
-    async function render(col,mountId){
-      const q=query(collection(db,col),orderBy("date","asc"));
-      const snap=await getDocs(q);
-      const mount=document.getElementById(mountId);
-      mount.innerHTML="";
-      for(const doc of snap.docs){
-        mount.appendChild(await card(col,doc.id,doc.data()));
+    async function render(col, mountId){
+      const mount = document.getElementById(mountId);
+      mount.innerHTML = "";
+      try{
+        const q = query(collection(db,col), orderBy("date","asc"));
+        const snap = await getDocs(q);
+        if (snap.empty){ mount.innerHTML = `<span class="muted">No ${col} yet.</span>`; return; }
+        for (const doc of snap.docs){
+          mount.appendChild(await buildCard(col, doc.id, doc.data()));
+        }
+      }catch(err){
+        console.error(err);
+        mount.innerHTML = `<span class="muted">Could not load ${col}.</span>`;
       }
-      if(snap.empty) mount.innerHTML="<span class='muted'>No "+col+" yet</span>";
     }
     render("tours","toursList");
     render("events","eventsList");
 
+    // Staff sign-in (manual only)
     async function openIfAllowed(user){
-      if(ALLOWED.includes(user?.email)) window.open("admin.html","_blank");
-      else if(user){authMsg.textContent="Not authorised";setTimeout(()=>authMsg.textContent="",3000);await signOut(auth);}
+      if (ALLOWED.includes(user?.email)) {
+        window.open("admin.html","_blank","noopener");
+      } else if (user) {
+        authMsg.textContent = "Not authorised";
+        setTimeout(()=>authMsg.textContent="", 3000);
+        await signOut(auth);
+      }
     }
-    document.getElementById("signinDot").onclick=async()=>{
-      if(auth.currentUser) return openIfAllowed(auth.currentUser);
-      try{const res=await signInWithPopup(auth,provider);openIfAllowed(res.user);}
-      catch(err){if(err.code.includes("popup")) await signInWithRedirect(auth,provider);}
+    document.getElementById("signinDot").onclick = async ()=>{
+      if (auth.currentUser) return openIfAllowed(auth.currentUser);
+      try{
+        const res = await signInWithPopup(auth, provider);
+        openIfAllowed(res.user);
+      }catch(err){
+        if (err?.code?.includes("popup")) await signInWithRedirect(auth, provider);
+      }
     };
-    getRedirectResult(auth).then(res=>{if(res) openIfAllowed(res.user)}).catch(()=>{});
+    getRedirectResult(auth).then(res => { if (res) openIfAllowed(res.user); }).catch(()=>{});
   </script>
 </body>
 </html>
