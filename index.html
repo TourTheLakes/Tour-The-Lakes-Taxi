@@ -7,70 +7,45 @@
   <meta name="description" content="Guided tours and special events across the Lake District." />
   <style>
     :root{
-      --ink:#0f2f4f;          /* deep blue */
-      --ink-2:#1b3f66;        /* mid blue */
-      --accent:#0fa3b1;       /* teal pop for CTAs */
-      --bg:#f3f5f7;           /* light grey page bg */
-      --card:#ffffff;         /* cards */
-      --muted:#6b7280;        /* grey text */
-      --ok:#0fa3b1;
-      --warn:#c2410c;
+      --ink:#0f2f4f;
+      --ink-2:#1b3f66;
+      --accent:#0fa3b1;
+      --bg:#f3f5f7;
+      --card:#ffffff;
+      --muted:#6b7280;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     a{color:var(--ink-2);text-decoration:none}
-    header{
-      background:linear-gradient(180deg,var(--ink) 0%, var(--ink-2) 100%);
-      color:#fff;
-      padding:28px 16px 22px;
-      text-align:center
-    }
+    header{background:linear-gradient(180deg,var(--ink) 0%, var(--ink-2) 100%);color:#fff;padding:28px 16px 22px;text-align:center}
     header h1{margin:0;font-size:28px;letter-spacing:.5px}
     header p{margin:6px 0 0;color:#e5e7eb}
-    nav{
-      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
-      background:#152a44;padding:8px
-    }
-    nav a{
-      color:#e5e7eb;padding:10px 14px;border-radius:8px;font-weight:600
-    }
+    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:8px}
+    nav a{color:#e5e7eb;padding:10px 14px;border-radius:8px;font-weight:600}
     nav a:hover{background:#0e223a}
     main{max-width:980px;margin:22px auto;padding:0 12px}
-    section{
-      background:var(--card);border-radius:14px;margin:14px 0;padding:18px;
-      box-shadow:0 6px 18px rgba(15,47,79,.08)
-    }
+    section{background:var(--card);border-radius:14px;margin:14px 0;padding:18px;box-shadow:0 6px 18px rgba(15,47,79,.08)}
     h2{margin:0 0 12px;padding-bottom:8px;border-bottom:3px solid #e8eef5;color:var(--ink)}
     .grid{display:grid;grid-template-columns:1fr;gap:14px}
     @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-    .event{
-      border:1px solid #e5e7eb;border-radius:12px;padding:12px
-    }
+    .event{border:1px solid #e5e7eb;border-radius:12px;padding:12px}
     .event h3{margin:0 0 4px;color:#0f2f4f}
     .meta{font-size:14px;color:var(--muted);margin:4px 0 10px}
     .event.closed{opacity:.62}
-    .btn{
-      display:inline-block;border:0;border-radius:10px;padding:10px 14px;
-      background:var(--accent);color:#fff;font-weight:700;cursor:pointer
-    }
+    .btn{display:inline-block;border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
     .btn:hover{filter:brightness(.94)}
     .btn.secondary{background:#e5e7eb;color:#111827}
     .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;margin-left:6px}
     .pill.ok{background:#e6fffb;color:#064e4e}
     .pill.closed{background:#fff1e6;color:#9a3412}
     .muted{color:var(--muted)}
-    /* Admin */
     #adminPanel{display:none}
-    .admin-bar{
-      display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px
-    }
+    .admin-bar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px}
     .admin-bar small{color:var(--muted)}
     form .row{display:grid;gap:10px;grid-template-columns:1fr}
     @media(min-width:760px){form .row{grid-template-columns:1fr 1fr}}
     label{font-size:14px;font-weight:600;color:#374151}
-    input, textarea, select{
-      width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff
-    }
+    input, textarea, select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
     textarea{min-height:90px}
     .hr{height:1px;background:#e5e7eb;margin:14px 0}
     footer{color:#94a3b8;text-align:center;padding:28px 12px}
@@ -179,13 +154,11 @@
 
   <footer>© <span id="yr"></span> Tour The Lakes</footer>
 
-  <!-- Firebase (ESM) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // 1) Firebase config (yours)
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -201,13 +174,10 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // 2) Admin allowlist
-    // Set this to the Google account you want to use for admin.
-    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // edit if needed
+    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // change if needed
 
-    // 3) Helpers
     const $ = (id)=>document.getElementById(id);
-    const yrEl = $("yr"); yrEl.textContent = new Date().getFullYear();
+    $("yr").textContent = new Date().getFullYear();
 
     function isClosed(dateStr, cutoffStr){
       const now = new Date();
@@ -243,30 +213,22 @@
         const snap = await getDocs(q);
         mount.innerHTML = "";
         if (snap.empty){ mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`; return; }
-        snap.forEach(doc=>{
-          const data = doc.data();
-          mount.appendChild(eventCard(data));
-        });
+        snap.forEach(doc=> mount.appendChild(eventCard(doc.data())) );
       }catch(err){
         mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
         console.error(err);
       }
     }
 
-    // Initial public loads
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // 4) Auth UI
     const signInBtn = $("signInBtn");
     const signOutBtn = $("signOutBtn");
     const authStatus = $("authStatus");
     const adminPanel = $("adminPanel");
 
-    signInBtn.onclick = async ()=>{
-      try { await signInWithPopup(auth, provider); }
-      catch(e){ console.error(e); alert("Sign in failed"); }
-    };
+    signInBtn.onclick = async ()=>{ try{ await signInWithPopup(auth, provider); } catch(e){ alert("Sign in failed"); } };
     signOutBtn.onclick = ()=>signOut(auth);
 
     onAuthStateChanged(auth, user=>{
@@ -280,16 +242,10 @@
       authStatus.textContent = `${user.email}`;
       signInBtn.style.display = "none";
       signOutBtn.style.display = "inline-block";
-
-      // show admin only if allowlisted
-      const allowed = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
-      adminPanel.style.display = allowed ? "block" : "none";
-      if (!allowed){
-        authStatus.textContent += " (not authorised)";
-      }
+      adminPanel.style.display = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "") ? "block" : "none";
+      if (!ALLOWED_ADMIN_EMAILS.includes(user.email ?? "")){ authStatus.textContent += " (not authorised)"; }
     });
 
-    // 5) Admin create form
     const createForm = $("createForm");
     const saveMsg = $("saveMsg");
 
@@ -297,10 +253,8 @@
       e.preventDefault();
       saveMsg.textContent = "";
 
-      // quick front-end guard
       const user = auth.currentUser;
-      const allowed = user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
-      if (!allowed){ alert("Not authorised"); return; }
+      if (!(user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? ""))){ alert("Not authorised"); return; }
 
       const payload = {
         title: $("title").value.trim(),
@@ -313,19 +267,9 @@
       };
       const colName = $("type").value;
 
-      // simple validation
-      if (!payload.title || !payload.date || !payload.cutoff || !payload.paymentLink){
-        alert("Please fill all required fields");
-        return;
-      }
-      if (new Date(payload.cutoff) > new Date(payload.date)){
-        // allowed, but warn if cutoff after event date
-      }
-
       try{
         await addDoc(collection(db, colName), payload);
         saveMsg.textContent = "Saved. Lists refreshed.";
-        // refresh public lists so you see it immediately
         renderList("tours","toursList");
         renderList("events","eventsList");
         createForm.reset();
