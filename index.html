@@ -22,37 +22,32 @@
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--ink2);text-decoration:none}
 
-    /* Shared hero/foot visuals */
-    .banner{
-      position:relative; overflow:hidden; color:#fff; text-align:center;
-      padding:56px 16px 40px;
-    }
-    .layer{
-      position:absolute; inset:-20% -10% auto -10%; height:120%;
-      background: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%);
-      filter:saturate(1.05);
-    }
+    /* Floaty banner (used for header & footer) */
+    .banner{position:relative; overflow:hidden; text-align:center; color:#fff; padding:68px 16px 40px}
+    .layer{position:absolute; inset:-20% -10% auto -10%; height:120%;
+      background: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%); filter:saturate(1.05)}
     .blob{position:absolute; border-radius:50%;
       background: radial-gradient(closest-side, rgba(15,163,177,.35), rgba(15,163,177,0));
       animation: float 12s ease-in-out infinite alternate}
     .b1{width:40vw; height:40vw; top:-8vw; left:-10vw}
     .b2{width:32vw; height:32vw; bottom:-6vw; right:-8vw; animation-duration:14s}
     @keyframes float{to{transform:translateY(-12px) translateX(8px) scale(1.03)}}
+    .banner .inner{position:relative; z-index:2; max-width:980px; margin:0 auto}
 
-    .banner-inner{
-      position:relative; z-index:2; max-width:1100px; margin:0 auto;
-      display:grid; align-items:center; gap:26px; grid-template-columns:160px 1fr;
+    /* Smooth circular badge (the original look) */
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:120px; height:120px; margin:0 auto 14px; border-radius:50%;
+      box-shadow: inset 0 6px 18px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.25);
+      background:
+        radial-gradient(circle at 30% 30%, #1c4776, #173a61 60%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.15) 0 2px, rgba(0,0,0,0) 2px 4px);
+      border:6px solid rgba(255,255,255,.7);
     }
-    .stamp-svg{filter:drop-shadow(0 14px 32px rgba(0,0,0,.28))}
-    .stamp-svg svg{transform:rotate(-5deg); transition:transform .6s ease}
-    .banner:hover .stamp-svg svg{transform:rotate(-3deg) scale(1.015)}
-    .banner-copy h1{margin:6px 0 8px; font-size:42px; color:#fff}
-    .banner-copy p{margin:0; color:#e5e7eb}
-    @media (max-width:720px){
-      .banner-inner{grid-template-columns:1fr; text-align:center}
-      .stamp-svg{margin:0 auto}
-      .banner-copy h1{font-size:32px}
-    }
+    .badge span{font-family:Outfit; font-weight:800; font-size:15px; line-height:1; text-transform:uppercase; color:#fff; letter-spacing:.6px; text-align:center}
+    .banner h1{margin:8px 0 6px; font-size:38px}
+    .banner p{margin:0; color:#e5e7eb}
+    @media (max-width:720px){ .banner h1{font-size:30px} }
 
     nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:10px}
     nav a{color:#e5e7eb;padding:10px 14px;border-radius:10px;font-weight:600}
@@ -78,57 +73,27 @@
     .pill.ok{background:#e6fffb;color:#064e4e}
     .pill.closed{background:#fff1e6;color:#9a3412}
 
-    /* Footer mirrors header, plus small login row */
-    footer{margin-top:24px}
-    .footer-inner{align-items:center}
-    .foot-controls{display:flex;gap:12px;justify-content:flex-end;align-items:center}
-    .foot-controls small{color:#d1e3f7}
-    .signin{background:#0fa3b1}
+    /* Footer: mirrors header; tiny hidden sign-in dot */
+    footer .inner{display:flex; flex-direction:column; align-items:center; gap:8px}
+    .legal{color:#d1e3f7}
+    #signinDot{
+      background:none; border:none; color:#d1e3f7; cursor:pointer; opacity:.45;
+      font-size:16px; line-height:1; padding:2px 6px; border-radius:999px;
+    }
+    #signinDot:focus-visible{outline:2px solid rgba(255,255,255,.6)}
+    #authMsg{color:#d1e3f7; font-size:12px; min-height:16px}
   </style>
 </head>
 <body>
-  <!-- HEADER (left aligned) -->
+  <!-- HEADER -->
   <header class="banner">
     <div class="layer"></div>
     <div class="blob b1"></div>
     <div class="blob b2"></div>
-    <div class="banner-inner">
-      <!-- stamp -->
-      <div class="stamp-svg" aria-hidden="true">
-        <svg viewBox="0 0 200 200" width="160" height="160" role="img">
-          <defs>
-            <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-            <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#224b7a"/><stop offset="100%" stop-color="#193a60"/>
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough)"/>
-          <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough)"/>
-          <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".85" filter="url(#rough)"/>
-          <g fill="#0fa3b1" transform="rotate(-6 100 100)">
-            <polygon points="100,26 104,38 117,38 106,45 110,57 100,49 90,57 94,45 83,38 96,38"/>
-            <polygon points="174,100 178,112 191,112 180,119 184,131 174,123 164,131 168,119 157,112 170,112"/>
-            <polygon points="100,174 104,186 117,186 106,193 110,205 100,197 90,205 94,193 83,186 96,186"/>
-            <polygon points="26,100 30,112 43,112 32,119 36,131 26,123 16,131 20,119 9,112 22,112"/>
-          </g>
-          <g filter="url(#rough)" transform="rotate(-6 100 100)">
-            <rect x="20" y="80" rx="14" ry="14" width="160" height="40" fill="url(#bandGrad)" stroke="#173a61" stroke-width="3"/>
-            <rect x="22" y="90" rx="10" ry="10" width="156" height="22" fill="none" stroke="#0fa3b1" stroke-width="2" opacity=".9"/>
-            <text x="100" y="100" dominant-baseline="middle" text-anchor="middle"
-                  fill="#ffffff" stroke="#0fa3b1" stroke-width="0.8" paint-order="stroke fill"
-                  font-family="Outfit, Inter, sans-serif" font-weight="900" font-size="22" letter-spacing="2.4">
-              TOUR THE LAKES
-            </text>
-          </g>
-        </svg>
-      </div>
-      <div class="banner-copy">
-        <h1>Guided days in the Lake District</h1>
-        <p>Stories, stops, and scenery — without the parking stress</p>
-      </div>
+    <div class="inner">
+      <div class="badge"><span>Tour<br>The<br>Lakes</span></div>
+      <h1>Guided days in the Lake District</h1>
+      <p>Stories, stops, and scenery — without the parking stress</p>
     </div>
   </header>
 
@@ -161,60 +126,30 @@
     </section>
   </main>
 
-  <!-- FOOTER: visually mirrors header, includes Sign in -->
-  <footer class="banner" style="padding:32px 16px 36px">
+  <!-- FOOTER (mirrors header) with discreet sign-in) -->
+  <footer class="banner" style="padding:36px 16px">
     <div class="layer"></div>
     <div class="blob b1"></div>
     <div class="blob b2"></div>
-    <div class="banner-inner footer-inner">
-      <!-- same stamp for symmetry -->
-      <div class="stamp-svg" aria-hidden="true">
-        <!-- reuse the exact same SVG for consistency -->
-        <svg viewBox="0 0 200 200" width="100" height="100" role="img" aria-hidden="true">
-          <defs>
-            <filter id="rough2" x="-10%" y="-10%" width="120%" height="120%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-            <linearGradient id="bandGrad2" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#224b7a"/><stop offset="100%" stop-color="#193a60"/>
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough2)"/>
-          <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough2)"/>
-          <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".85" filter="url(#rough2)"/>
-          <g filter="url(#rough2)" transform="rotate(-6 100 100)">
-            <rect x="35" y="92" rx="10" ry="10" width="130" height="26" fill="url(#bandGrad2)" stroke="#173a61" stroke-width="2"/>
-            <text x="100" y="105" dominant-baseline="middle" text-anchor="middle"
-                  fill="#ffffff" stroke="#0fa3b1" stroke-width="0.6" paint-order="stroke fill"
-                  font-family="Outfit, Inter, sans-serif" font-weight="900" font-size="16" letter-spacing="1.8">
-              TOUR THE LAKES
-            </text>
-          </g>
-        </svg>
-      </div>
+    <div class="inner">
+      <div class="badge" style="width:90px;height:90px;border-width:5px;margin-bottom:6px"><span style="font-size:12px">Tour<br>The<br>Lakes</span></div>
+      <div class="legal">© <span id="yr"></span> Tour The Lakes</div>
 
-      <div class="foot-controls" style="justify-content:space-between; width:100%">
-        <small>© <span id="yr"></span> Tour The Lakes</small>
-        <div>
-          <button id="signInBtn" class="btn signin">Sign in with Google</button>
-          <small id="authStatus"></small>
-        </div>
-      </div>
+      <!-- Tiny dot triggers Google sign-in; also Shift + A -->
+      <button id="signinDot" title=" " aria-label="Staff">•</button>
+      <small id="authMsg" aria-live="polite"></small>
     </div>
   </footer>
 
-  <!-- DATA + AUTH (reads only here; auth just launches admin.html) -->
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+  <!-- PUBLIC DATA + DISCREET AUTH -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { 
-      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut 
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { 
-      getFirestore, collection, getDocs, query, orderBy 
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // Firebase config (unchanged)
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -230,106 +165,91 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // Only these accounts can open admin.html
+    // Allowed admins
     const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"];
 
+    // Helpers
     const $ = (id)=>document.getElementById(id);
-    $("yr").textContent = new Date().getFullYear();
-    const signInBtn = $("signInBtn");
-    const authStatus = $("authStatus");
+    const authMsg = $("authMsg");
 
-    // --- PUBLIC LISTS ---
+    // Render public lists
     const isClosed = (dateStr, cutoffStr)=>{
       const now = new Date(), d = new Date(dateStr), c = new Date(cutoffStr);
       return now > c || now > d;
     };
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
 
-    function card(data){
-      const closed = isClosed(data.date, data.cutoff);
-      const div = document.createElement("div");
-      div.className = "event" + (closed ? " closed" : "");
+    function card(d){
+      const closed = isClosed(d.date, d.cutoff);
+      const el = document.createElement("div");
+      el.className = "event" + (closed ? " closed" : "");
       const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
-      const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
-      div.innerHTML = `
+      const img = d.imageUrl ? `<div class="imgwrap"><img src="${d.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
+      el.innerHTML = `
         ${img}
         <div class="pad">
-          <h3>${data.title} ${pill}</h3>
-          <div class="meta">
-            <strong>Date:</strong> ${fmtUK(data.date)}
-            &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
-            &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price).toFixed(0)}
-          </div>
-          <p>${data.description}</p>
-          ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` :
-            `<button class="btn" onclick="window.open('${data.paymentLink}','_blank')">Book now</button>`}
-        </div>
-      `;
-      return div;
+          <h3>${d.title} ${pill}</h3>
+          <div class="meta"><strong>Date:</strong> ${fmtUK(d.date)} &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(d.cutoff)} &nbsp; • &nbsp; <strong>Price:</strong> £${Number(d.price).toFixed(0)}</div>
+          <p>${d.description}</p>
+          ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` : `<button class="btn" onclick="window.open('${d.paymentLink}','_blank')">Book now</button>`}
+        </div>`;
+      return el;
     }
 
-    async function renderList(colName, mountId){
+    async function renderList(col, mountId){
       const mount = $(mountId);
       mount.innerHTML = `<p class="muted">Loading…</p>`;
       try{
-        const q = query(collection(db, colName), orderBy("date","asc"));
+        const q = query(collection(db, col), orderBy("date","asc"));
         const snap = await getDocs(q);
-        const items = [];
-        snap.forEach(d=> items.push(d.data()));
-        const open = items.filter(x=>!isClosed(x.date,x.cutoff));
-        const closed = items.filter(x=>isClosed(x.date,x.cutoff));
+        const arr = [];
+        snap.forEach(x=> arr.push(x.data()));
+        const open = arr.filter(x=>!isClosed(x.date,x.cutoff));
+        const closed = arr.filter(x=>isClosed(x.date,x.cutoff));
         mount.innerHTML = "";
-        [...open,...closed].forEach(data=> mount.appendChild(card(data)));
-        if (items.length===0) mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`;
-      }catch(err){
-        console.error(err); mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
-      }
+        [...open, ...closed].forEach(d=> mount.appendChild(card(d)));
+        if (arr.length===0) mount.innerHTML = `<p class="muted">No ${col} yet.</p>`;
+      }catch(e){ console.error(e); mount.innerHTML = `<p class="muted">Could not load ${col}.</p>`; }
     }
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // --- FOOTER SIGN-IN -> open admin.html in a new tab if allowed ---
-    signInBtn.onclick = async ()=>{
+    // Discreet sign-in: footer dot + Shift+A
+    async function doSignIn(){
       try{
         const res = await signInWithPopup(auth, provider);
         const email = res.user?.email ?? "";
         if (ALLOWED_ADMIN_EMAILS.includes(email)){
-          authStatus.textContent = email;
+          authMsg.textContent = "";
           window.open("admin.html","_blank","noopener");
         } else {
-          authStatus.textContent = "Not authorised";
-          alert("That account isn't authorised for admin.");
+          authMsg.textContent = "Not authorised";
+          setTimeout(()=>authMsg.textContent="", 3000);
           await signOut(auth);
         }
       }catch(err){
-        // Fallback to redirect if popup blocked
-        if (err?.code === 'auth/operation-not-supported-in-this-environment' ||
-            err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user'){
+        if (err?.code === 'auth/operation-not-supported-in-this-environment' || err?.code === 'auth/popup-blocked'){
           await signInWithRedirect(auth, provider);
         }else{
-          console.error("Auth error:", err?.code, err?.message);
-          alert("Sign in failed.");
+          console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
         }
       }
-    };
+    }
+    $("signinDot").addEventListener("click", doSignIn);
+    document.addEventListener("keydown", e=>{
+      if (e.shiftKey && (e.key==='A' || e.key==='a')) doSignIn();
+    });
 
     // If returning from redirect, auto-open admin for allowed users
     onAuthStateChanged(auth, user=>{
       if (!user) return;
       const email = user.email ?? "";
-      authStatus.textContent = email;
       if (ALLOWED_ADMIN_EMAILS.includes(email)){
-        // Only open if we're on the public page (defensive)
-        if (!/admin\.html$/i.test(location.pathname)){
-          window.open("admin.html","_blank","noopener");
-        }
+        if (!/admin\.html$/i.test(location.pathname)) window.open("admin.html","_blank","noopener");
       } else {
-        authStatus.textContent = "Not authorised";
         signOut(auth);
       }
     });
   </script>
-
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
