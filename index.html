@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
-  <!-- Tiny inline favicon -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%231b3f66'/%3E%3Cpath d='M10 42c10-6 16-10 22-10s12 4 22 10' stroke='%23fff' stroke-width='6' fill='none'/%3E%3Ccircle cx='26' cy='24' r='5' fill='%230fa3b1'/%3E%3C/svg%3E">
+  
+  <!-- Favicon (the circle logo) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%231b3f66' stroke='white' stroke-width='6'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' fill='white' font-family='Outfit' font-weight='800' font-size='18'%3ETour%0AThe%0ALakes%3C/text%3E%3C/svg%3E" />
+
   <style>
     :root{
       --ink:#0f2f4f; --ink2:#1b3f66; --accent:#0fa3b1;
@@ -22,78 +24,67 @@
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--ink2);text-decoration:none}
 
-    /* Floaty banner (used for header & footer) */
-    .banner{position:relative; overflow:hidden; text-align:center; color:#fff; padding:68px 16px 40px}
-    .layer{position:absolute; inset:-20% -10% auto -10%; height:120%;
-      background: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%); filter:saturate(1.05)}
+    /* Hero */
+    header{
+      position:relative;overflow:hidden;padding:80px 16px 60px;color:#fff
+    }
+    .hero-layer{
+      position:absolute;inset:-20% -10% auto -10%;height:120%;
+      background: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%);
+    }
     .blob{position:absolute; border-radius:50%;
       background: radial-gradient(closest-side, rgba(15,163,177,.35), rgba(15,163,177,0));
       animation: float 12s ease-in-out infinite alternate}
-    .b1{width:40vw; height:40vw; top:-8vw; left:-10vw}
-    .b2{width:32vw; height:32vw; bottom:-6vw; right:-8vw; animation-duration:14s}
+    .blob.b1{width:40vw; height:40vw; top:-8vw; left:-10vw}
+    .blob.b2{width:32vw; height:32vw; bottom:-6vw; right:-8vw; animation-duration:14s}
     @keyframes float{to{transform:translateY(-12px) translateX(8px) scale(1.03)}}
-    .banner .inner{position:relative; z-index:2; max-width:980px; margin:0 auto}
 
-    /* Smooth circular badge (the original look) */
-    .badge{
-      display:inline-flex; align-items:center; justify-content:center;
-      width:120px; height:120px; margin:0 auto 14px; border-radius:50%;
+    .hero-inner{position:relative; z-index:2; max-width:1000px; margin:0 auto; display:flex; align-items:center; gap:30px; text-align:left}
+    .stamp{
+      flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      width:130px;height:130px;border-radius:50%;
       box-shadow: inset 0 6px 18px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.25);
       background:
         radial-gradient(circle at 30% 30%, #1c4776, #173a61 60%),
         repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.15) 0 2px, rgba(0,0,0,0) 2px 4px);
       border:6px solid rgba(255,255,255,.7);
     }
-    .badge span{font-family:Outfit; font-weight:800; font-size:15px; line-height:1; text-transform:uppercase; color:#fff; letter-spacing:.6px; text-align:center}
-    .banner h1{margin:8px 0 6px; font-size:38px}
-    .banner p{margin:0; color:#e5e7eb}
-    @media (max-width:720px){ .banner h1{font-size:30px} }
+    .stamp span{
+      font-family:Outfit; font-weight:800; font-size:16px; line-height:1.2;
+      text-transform:uppercase; color:#fff; letter-spacing:.6px; text-align:center; white-space:pre-line
+    }
+    .hero-text h1{margin:0 0 8px;font-size:40px}
+    .hero-text p{margin:0;font-size:18px;color:#e5e7eb;max-width:600px}
 
-    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:10px}
+    /* Navigation */
+    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:12px}
     nav a{color:#e5e7eb;padding:10px 14px;border-radius:10px;font-weight:600}
     nav a:hover{background:#0e223a}
 
+    /* Sections */
     main{max-width:1100px;margin:22px auto;padding:0 14px}
     section{background:var(--card);border-radius:var(--radius);margin:18px 0;padding:20px;box-shadow:var(--shadow)}
     h2{margin:0 0 12px;padding-bottom:8px;border-bottom:3px solid #e8eef5;color:var(--ink)}
 
-    .grid{display:grid;grid-template-columns:1fr;gap:16px}
-    @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-    .event{border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s ease, box-shadow .15s ease}
-    .event:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,47,79,.12)}
-    .imgwrap{width:100%;aspect-ratio:16/9;background:#eef3f8}
-    .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
-    .pad{padding:14px}
-    .event h3{margin:0 0 6px;color:var(--ink)}
-    .meta{font-size:14px;color:var(--muted);margin:2px 0 10px}
-    .closed{opacity:.62}
-    .btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn:hover{filter:brightness(.94)}
-    .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
-    .pill.ok{background:#e6fffb;color:#064e4e}
-    .pill.closed{background:#fff1e6;color:#9a3412}
-
-    /* Footer: mirrors header; tiny hidden sign-in dot */
-    footer .inner{display:flex; flex-direction:column; align-items:center; gap:8px}
-    .legal{color:#d1e3f7}
-    #signinDot{
-      background:none; border:none; color:#d1e3f7; cursor:pointer; opacity:.45;
-      font-size:16px; line-height:1; padding:2px 6px; border-radius:999px;
-    }
-    #signinDot:focus-visible{outline:2px solid rgba(255,255,255,.6)}
-    #authMsg{color:#d1e3f7; font-size:12px; min-height:16px}
+    /* Footer */
+    footer{color:#94a3b8;text-align:center;padding:28px 12px}
+    footer .staff{font-size:0; opacity:.5}
+    footer .staff a{font-size:12px; opacity:.5}
   </style>
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="banner">
-    <div class="layer"></div>
+  <!-- Floaty Hero -->
+  <header>
+    <div class="hero-layer"></div>
     <div class="blob b1"></div>
     <div class="blob b2"></div>
-    <div class="inner">
-      <div class="badge"><span>Tour<br>The<br>Lakes</span></div>
-      <h1>Guided days in the Lake District</h1>
-      <p>Stories, stops, and scenery — without the parking stress</p>
+    <div class="hero-inner">
+      <div class="stamp"><span>Tour\nThe\nLakes</span></div>
+      <div class="hero-text">
+        <h1>Guided days in the Lake District</h1>
+        <p>Stories, stops, and scenery — without the parking stress</p>
+      </div>
     </div>
   </header>
 
@@ -109,147 +100,27 @@
       <h2>About</h2>
       <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
     </section>
-
     <section id="tours">
       <h2>Upcoming Tours</h2>
-      <div id="toursList" class="grid"><p class="muted">Loading tours…</p></div>
+      <p class="muted">Loading tours…</p>
     </section>
-
     <section id="events">
       <h2>Special Events</h2>
-      <div id="eventsList" class="grid"><p class="muted">Loading events…</p></div>
+      <p class="muted">Loading events…</p>
     </section>
-
     <section id="contact">
       <h2>Contact</h2>
       <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
     </section>
   </main>
 
-  <!-- FOOTER (mirrors header) with discreet sign-in) -->
-  <footer class="banner" style="padding:36px 16px">
-    <div class="layer"></div>
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="inner">
-      <div class="badge" style="width:90px;height:90px;border-width:5px;margin-bottom:6px"><span style="font-size:12px">Tour<br>The<br>Lakes</span></div>
-      <div class="legal">© <span id="yr"></span> Tour The Lakes</div>
-
-      <!-- Tiny dot triggers Google sign-in; also Shift + A -->
-      <button id="signinDot" title=" " aria-label="Staff">•</button>
-      <small id="authMsg" aria-live="polite"></small>
-    </div>
+  <footer>
+    © <span id="yr"></span> Tour The Lakes
+    <span class="staff"> · <a href="#" aria-label="Admin">•</a></span>
   </footer>
 
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
-
-  <!-- PUBLIC DATA + DISCREET AUTH -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-      authDomain: "tourthelakes-1e165.firebaseapp.com",
-      projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
-      messagingSenderId: "470758171431",
-      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
-      measurementId: "G-W6JY1LZXTP"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    // Allowed admins
-    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"];
-
-    // Helpers
-    const $ = (id)=>document.getElementById(id);
-    const authMsg = $("authMsg");
-
-    // Render public lists
-    const isClosed = (dateStr, cutoffStr)=>{
-      const now = new Date(), d = new Date(dateStr), c = new Date(cutoffStr);
-      return now > c || now > d;
-    };
-    const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
-
-    function card(d){
-      const closed = isClosed(d.date, d.cutoff);
-      const el = document.createElement("div");
-      el.className = "event" + (closed ? " closed" : "");
-      const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
-      const img = d.imageUrl ? `<div class="imgwrap"><img src="${d.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
-      el.innerHTML = `
-        ${img}
-        <div class="pad">
-          <h3>${d.title} ${pill}</h3>
-          <div class="meta"><strong>Date:</strong> ${fmtUK(d.date)} &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(d.cutoff)} &nbsp; • &nbsp; <strong>Price:</strong> £${Number(d.price).toFixed(0)}</div>
-          <p>${d.description}</p>
-          ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` : `<button class="btn" onclick="window.open('${d.paymentLink}','_blank')">Book now</button>`}
-        </div>`;
-      return el;
-    }
-
-    async function renderList(col, mountId){
-      const mount = $(mountId);
-      mount.innerHTML = `<p class="muted">Loading…</p>`;
-      try{
-        const q = query(collection(db, col), orderBy("date","asc"));
-        const snap = await getDocs(q);
-        const arr = [];
-        snap.forEach(x=> arr.push(x.data()));
-        const open = arr.filter(x=>!isClosed(x.date,x.cutoff));
-        const closed = arr.filter(x=>isClosed(x.date,x.cutoff));
-        mount.innerHTML = "";
-        [...open, ...closed].forEach(d=> mount.appendChild(card(d)));
-        if (arr.length===0) mount.innerHTML = `<p class="muted">No ${col} yet.</p>`;
-      }catch(e){ console.error(e); mount.innerHTML = `<p class="muted">Could not load ${col}.</p>`; }
-    }
-    renderList("tours","toursList");
-    renderList("events","eventsList");
-
-    // Discreet sign-in: footer dot + Shift+A
-    async function doSignIn(){
-      try{
-        const res = await signInWithPopup(auth, provider);
-        const email = res.user?.email ?? "";
-        if (ALLOWED_ADMIN_EMAILS.includes(email)){
-          authMsg.textContent = "";
-          window.open("admin.html","_blank","noopener");
-        } else {
-          authMsg.textContent = "Not authorised";
-          setTimeout(()=>authMsg.textContent="", 3000);
-          await signOut(auth);
-        }
-      }catch(err){
-        if (err?.code === 'auth/operation-not-supported-in-this-environment' || err?.code === 'auth/popup-blocked'){
-          await signInWithRedirect(auth, provider);
-        }else{
-          console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
-        }
-      }
-    }
-    $("signinDot").addEventListener("click", doSignIn);
-    document.addEventListener("keydown", e=>{
-      if (e.shiftKey && (e.key==='A' || e.key==='a')) doSignIn();
-    });
-
-    // If returning from redirect, auto-open admin for allowed users
-    onAuthStateChanged(auth, user=>{
-      if (!user) return;
-      const email = user.email ?? "";
-      if (ALLOWED_ADMIN_EMAILS.includes(email)){
-        if (!/admin\.html$/i.test(location.pathname)) window.open("admin.html","_blank","noopener");
-      } else {
-        signOut(auth);
-      }
-    });
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
