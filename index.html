@@ -36,12 +36,12 @@
     .b2{width:32vw;height:32vw;bottom:-6vw;right:-8vw;animation-duration:14s}
     @keyframes float{to{transform:translateY(-12px) translateX(8px) scale(1.03)}}
 
-    /* ===== HERO: circle left, text perfectly centred ===== */
+    /* ===== HERO ===== */
     header.banner{padding:78px 16px 60px}
+    /* Desktop: circle left, text centred by symmetric grid */
     .hero{
       position:relative;z-index:2;max-width:1100px;margin:0 auto;
       display:grid;align-items:center;gap:26px;
-      /* 3 columns: circle | centered text | spacer same width as circle */
       grid-template-columns: clamp(140px, 16vw, 190px) 1fr clamp(140px, 16vw, 190px);
     }
     .stamp{
@@ -70,9 +70,8 @@
     .hero-copy p{
       margin:0; color:#e5e7eb; font-size: clamp(15px, 2vw, 18px);
     }
-
-    /* Stack + center everything on tablets/phones */
-    @media (max-width:1024px){
+    /* Phones/tablets: logo on its OWN row, then headline below (no side-by-side) */
+    @media (max-width:1200px){
       .hero{grid-template-columns:1fr; gap:18px; padding-inline:6px}
       .stamp{justify-self:center; width: clamp(120px, 36vw, 150px); height: clamp(120px, 36vw, 150px); border-width:6px}
       .hero-copy{text-align:center}
@@ -185,10 +184,13 @@
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- ===== PUBLIC DATA + DISCREET AUTH ===== -->
+  <!-- ===== PUBLIC DATA + DISCREET AUTH (no auto-open on refresh) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { 
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+      getRedirectResult, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -210,7 +212,7 @@
     const $ = (id)=>document.getElementById(id);
     const authMsg = $("authMsg");
 
-    // Render public lists
+    // ===== Render public lists =====
     const isClosed = (dateStr, cutoffStr)=>{const n=new Date(),d=new Date(dateStr),c=new Date(cutoffStr);return n>c||n>d;};
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
     function card(d){
@@ -245,37 +247,45 @@
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // Discreet sign-in: tiny dot + Shift+A
+    // ===== Sign-in flow (no auto-open on refresh) =====
+    async function openIfAllowed(user){
+      const email = user?.email ?? "";
+      if (ALLOWED_ADMIN_EMAILS.includes(email)){
+        window.open("admin.html","_blank","noopener");
+      } else if (user) {
+        authMsg.textContent = "Not authorised";
+        setTimeout(()=>authMsg.textContent="", 3000);
+        await signOut(auth);
+      }
+    }
+
     async function doSignIn(){
+      // If already signed in, respect the click and open immediately if allowed
+      if (auth.currentUser) { return openIfAllowed(auth.currentUser); }
       try{
         const res = await signInWithPopup(auth, provider);
-        const email = res.user?.email ?? "";
-        if (ALLOWED_ADMIN_EMAILS.includes(email)){
-          authMsg.textContent = "";
-          window.open("admin.html","_blank","noopener");
-        } else {
-          authMsg.textContent = "Not authorised";
-          setTimeout(()=>authMsg.textContent="", 3000);
-          await signOut(auth);
-        }
+        await openIfAllowed(res.user);
       }catch(err){
         if (err?.code === 'auth/operation-not-supported-in-this-environment' || err?.code === 'auth/popup-blocked'){
+          // Use redirect only when needed – handle the result once when we return
           await signInWithRedirect(auth, provider);
         }else{
           console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
         }
       }
     }
+
+    // Handle redirect result ONCE (only when we actually did a redirect)
+    getRedirectResult(auth).then(async (res)=>{
+      if (!res) return;                // Plain refresh will skip this
+      await openIfAllowed(res.user);
+    }).catch(err=>{
+      console.error("Redirect error:", err);
+      authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
+    });
+
     document.getElementById("signinDot").addEventListener("click", doSignIn);
     document.addEventListener("keydown", e=>{ if (e.shiftKey && (e.key==='A'||e.key==='a')) doSignIn(); });
-
-    onAuthStateChanged(auth, user=>{
-      if (!user) return;
-      const email = user.email ?? "";
-      if (ALLOWED_ADMIN_EMAILS.includes(email)){
-        if (!/admin\.html$/i.test(location.pathname)) window.open("admin.html","_blank","noopener");
-      } else { signOut(auth); }
-    });
   </script>
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
