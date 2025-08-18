@@ -5,40 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Admin – Tour The Lakes</title>
 
-  <!-- Favicon = Admin Circle -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%23ffb84d' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
+  <!-- Favicon = Admin circle (cyan, same family as index) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
-      --neon:#55f0ff; --accent:#ffb84d;
-      --line:#273341; --shadow:0 18px 40px rgba(0,0,0,.4);
+      --neon:#55f0ff; --line:#273341; --panel:#151b22; --panelBorder:#222c3a;
+      --shadow:0 18px 40px rgba(0,0,0,.40);
     }
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui;line-height:1.5}
-    h1,h2{font-family:Outfit;margin:0 0 12px;text-align:center}
-    .wrap{max-width:960px;margin:0 auto;padding:20px}
-    .stamp{margin:40px auto 20px;width:160px;height:160px;border-radius:50%;
-      background:#1a2633;border:4px solid var(--accent);
-      display:flex;align-items:center;justify-content:center;
-      font-family:Outfit;font-weight:800;font-size:22px;text-align:center;
-      box-shadow:inset 0 12px 26px rgba(0,0,0,.45)}
-    .logout{display:block;margin:12px auto 50px;padding:10px 18px;background:#1a1f27;color:var(--ink);
-      border:1px solid var(--line);border-radius:8px;cursor:pointer}
-    .panel{background:#151b22;padding:24px;border:1px solid #222c3a;border-radius:14px;margin-bottom:40px;box-shadow:var(--shadow)}
-    form label{display:block;margin:14px 0 6px;font-weight:600}
-    form input,form textarea,form select{width:100%;padding:12px;border-radius:8px;border:1px solid #2a3948;
-      background:#0f141b;color:var(--ink);font-size:15px}
-    .btn{margin-top:20px;padding:14px 18px;background:linear-gradient(90deg,var(--neon),#00d2ff);
-      color:#00242a;font-weight:800;border:0;border-radius:10px;cursor:pointer;display:block}
-    .list h2{text-align:left}
-    table{width:100%;border-collapse:collapse;background:#0f141b;border-radius:10px;overflow:hidden}
-    th,td{padding:12px 14px;border-bottom:1px solid #2a3948}
-    th{background:#131a22;color:var(--neon);text-align:left}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui;line-height:1.55}
+
+    .wrap{max-width:960px;margin:0 auto;padding:24px 16px}
+    .stamp{
+      margin:36px auto 12px; width:160px; height:160px; border-radius:50%;
+      background:#1a2633; border:4px solid var(--neon);
+      display:flex; align-items:center; justify-content:center;
+      font-family:Outfit; font-weight:800; font-size:22px; text-align:center;
+      box-shadow: inset 0 12px 26px rgba(0,0,0,.45);
+    }
+    .logout{
+      display:block; margin:8px auto 36px; padding:10px 18px;
+      background:#1a1f27; color:var(--ink); border:1px solid var(--line);
+      border-radius:10px; cursor:pointer;
+    }
+
+    .panel{
+      background:var(--panel); border:1px solid var(--panelBorder);
+      border-radius:14px; padding:22px; box-shadow:var(--shadow); margin-bottom:28px;
+    }
+    .panel h1, .panel h2{
+      font-family:Outfit; text-align:center; margin:0 0 12px;
+    }
+    .subtle{color:var(--muted); text-align:center; margin-top:-6px; margin-bottom:16px}
+
+    /* Form layout */
+    form label{display:block; margin:12px 0 6px; font-weight:600}
+    input[type="text"], input[type="date"], input[type="number"], select, textarea{
+      width:100%; padding:12px; border-radius:10px; border:1px solid #2a3948;
+      background:#0f141b; color:#e8f1f8; font-size:15px;
+      outline:none;
+    }
+    textarea{resize:none}
+    #desc{height:120px}
+    #payInfo{height:90px}
+
+    /* number inputs – keep simple, hide spinners */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+    input[type=number]{ -moz-appearance: textfield; }
+
+    .btn{
+      display:block; width:100%; margin-top:16px; padding:14px 18px;
+      background:linear-gradient(90deg,var(--neon),#00d2ff); color:#00242a;
+      font-weight:800; border:0; border-radius:12px; cursor:pointer;
+    }
+
+    /* Table */
+    table{width:100%; border-collapse:collapse; background:#0f141b; border-radius:12px; overflow:hidden}
+    th,td{padding:12px 14px; border-bottom:1px solid #2a3948}
+    th{background:#131a22; text-align:left; color:#bfe9ff}
     tr:hover td{background:#151d27}
-    .export{text-align:right;margin-top:-20px;margin-bottom:20px}
-    .export button{padding:10px 16px;border-radius:8px;border:1px solid #2a3948;background:#111820;color:var(--ink);cursor:pointer}
+    .table-wrap{overflow:auto}
+
+    .actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+    .secondary{
+      padding:10px 14px; border-radius:10px; border:1px solid #2a3948;
+      background:#111820; color:#e8f1f8; cursor:pointer;
+    }
+
+    @media (max-width:520px){
+      .wrap{padding-inline:14px}
+      .stamp{width:140px;height:140px}
+    }
   </style>
 </head>
 <body>
@@ -46,41 +88,72 @@
     <div class="stamp">Admin</div>
     <button id="logoutBtn" class="logout">Log out</button>
 
-    <div class="panel">
+    <!-- Create / Manage -->
+    <section class="panel">
       <h1>Create / Manage</h1>
-      <!-- Create Tour/Event Form -->
-      <form id="addForm">
-        <label>Title <input name="title" required></label>
-        <label>Description <textarea name="description" rows="4"></textarea></label>
-        <label>Date <input type="date" name="date" required></label>
-        <label>Cut off <input type="date" name="cutoff"></label>
-        <label>Price (£) <input type="number" name="price"></label>
-        <label>Capacity <input type="number" name="capacity" placeholder="optional"></label>
-        <label>Min to run <input type="number" name="minNeeded" placeholder="default 20"></label>
-        <label>Payment Info <textarea name="paymentInfo" rows="2"></textarea></label>
-        <label>Image URL <input name="imageUrl" placeholder="https://..."></label>
+      <p class="subtle">Add a tour or event. All fields are simple, stacked and mobile-friendly.</p>
+      <form id="addForm" novalidate>
+        <label>Title
+          <input type="text" name="title" required placeholder="Windermere & Ambleside Full Day">
+        </label>
+
+        <label>Description
+          <textarea id="desc" name="description" placeholder="Route, highlights, timings..."></textarea>
+        </label>
+
+        <label>Date
+          <input type="date" name="date" required>
+        </label>
+
+        <label>Cut off
+          <input type="date" name="cutoff">
+        </label>
+
+        <label>Price (£)
+          <input type="number" name="price" step="1" inputmode="numeric" placeholder="130">
+        </label>
+
+        <label>Capacity
+          <input type="number" name="capacity" step="1" inputmode="numeric" placeholder="e.g. 30">
+        </label>
+
+        <label>Min to run
+          <input type="number" name="minNeeded" step="1" inputmode="numeric" placeholder="default 20">
+        </label>
+
+        <label>Payment Info
+          <textarea id="payInfo" name="paymentInfo" placeholder="BACS preferred. Card +10%..."></textarea>
+        </label>
+
         <label>Type
           <select name="type">
             <option value="tours">Tour</option>
             <option value="events">Event</option>
           </select>
         </label>
+
         <button class="btn">Add</button>
       </form>
-    </div>
+    </section>
 
-    <div class="panel">
-      <div class="export">
-        <button id="exportCSV">Export Interests CSV</button>
-      </div>
+    <!-- Listings + Export -->
+    <section class="panel">
       <h2>Current Listings</h2>
-      <table id="listings">
-        <thead><tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+      <div class="actions" style="margin-bottom:10px">
+        <button id="exportCSV" class="secondary">Export Interests CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table id="listings">
+          <thead>
+            <tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
+  <!-- App -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
@@ -94,55 +167,71 @@
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
 
-    const addForm = document.getElementById("addForm");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const listTable = document.querySelector("#listings tbody");
+    const addForm  = document.getElementById("addForm");
+    const logoutBtn= document.getElementById("logoutBtn");
+    const listBody = document.querySelector("#listings tbody");
 
-    onAuthStateChanged(auth, user=>{
-      if(!user) window.location.href="index.html";
-    });
-    logoutBtn.addEventListener("click", ()=>signOut(auth));
+    // Gate: if not signed in, bounce to public site
+    onAuthStateChanged(auth, user => { if (!user) location.href = "index.html"; });
 
-    addForm.addEventListener("submit", async e=>{
+    // Log out (button placed safely under the circle)
+    logoutBtn.addEventListener("click", ()=> signOut(auth));
+
+    // Create listing
+    addForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
       const fd = new FormData(addForm);
       const type = fd.get("type");
       try{
         await addDoc(collection(db, type), {
-          title: fd.get("title"),
-          description: fd.get("description"),
+          title: (fd.get("title")+"").trim(),
+          description: (fd.get("description")+"").trim(),
           date: fd.get("date"),
           cutoff: fd.get("cutoff"),
           price: Number(fd.get("price")||0),
           capacity: Number(fd.get("capacity")||0),
           minNeeded: Number(fd.get("minNeeded")||20),
-          paymentInfo: fd.get("paymentInfo"),
-          imageUrl: fd.get("imageUrl"),
+          paymentInfo: (fd.get("paymentInfo")+"").trim(),
           createdAt: serverTimestamp()
         });
         addForm.reset();
         loadListings();
-      }catch(err){console.error(err);}
+      }catch(err){
+        console.error(err);
+        alert("Could not save. Check your connection and try again.");
+      }
     });
 
+    // Load listings
     async function loadListings(){
-      listTable.innerHTML="";
-      for(const col of ["tours","events"]){
+      listBody.innerHTML = "";
+      for (const col of ["tours","events"]){
         const snap = await getDocs(query(collection(db,col), orderBy("date","asc")));
         snap.forEach(doc=>{
-          const d=doc.data();
-          const tr=document.createElement("tr");
-          tr.innerHTML=`<td>${d.title}</td><td>${d.date}</td><td>${col}</td><td>${d.cutoff && new Date(d.cutoff)<new Date()?"Closed":"Open"}</td>`;
-          listTable.appendChild(tr);
+          const d = doc.data();
+          const tr = document.createElement("tr");
+          const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
+          tr.innerHTML = `<td>${escapeHtml(d.title||"")}</td>
+                          <td>${d.date||""}</td>
+                          <td>${col}</td>
+                          <td>${closed? "Closed":"Open"}</td>`;
+          listBody.appendChild(tr);
         });
+      }
+      if (!listBody.children.length){
+        const tr=document.createElement("tr");
+        tr.innerHTML=`<td colspan="4" style="color:#a8b0bb">No listings yet.</td>`;
+        listBody.appendChild(tr);
       }
     }
     loadListings();
 
+    // Export Interests CSV
     document.getElementById("exportCSV").addEventListener("click", async ()=>{
       let rows=[["Type","ListingID","Name","Email","Phone","Seats","Method","Created"]];
       for(const col of ["tours","events"]){
@@ -151,15 +240,19 @@
           const subs = await getDocs(collection(db,col,doc.id,"interests"));
           subs.forEach(s=>{
             const x=s.data();
-            rows.push([col,doc.id,x.name,x.email,x.phone,x.seats,x.method,x.createdAt?.toDate().toISOString()||""]);
+            rows.push([col,doc.id,x.name||"",x.email||"",x.phone||"",x.seats||"",x.method||"",x.createdAt?.toDate().toISOString()||""]);
           });
         }
       }
-      let csv = rows.map(r=>r.map(v=>`"${(v||"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
-      let blob=new Blob([csv],{type:"text/csv"});
-      let a=document.createElement("a");
-      a.href=URL.createObjectURL(blob); a.download="interests.csv"; a.click();
+      const csv = rows.map(r=>r.map(v=>`"${(v||"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv],{type:"text/csv"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "interests.csv";
+      a.click();
     });
+
+    function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
   </script>
 </body>
 </html>
