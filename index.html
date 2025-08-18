@@ -18,12 +18,19 @@
       --neon:#55f0ff; --neon2:#00d2ff; --line:#273341;
       --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
       --logo:188px;
+      --card:#0f141b;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    html,body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      line-height:1.55
+    }
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--neon);text-decoration:none}
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
+    }
 
     /* Banners */
     .banner{position:relative;overflow:hidden;color:var(--ink)}
@@ -34,15 +41,20 @@
 
     /* HERO */
     header.banner{padding:80px 16px 64px}
-    .hero{position:relative;z-index:2;max-width:1100px;margin:0 auto;
-      display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center}
-    .stamp{justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
+    .hero{
+      position:relative;z-index:2;max-width:1100px;margin:0 auto;
+      display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center
+    }
+    .stamp{
+      justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
       border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
-                 repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
+      background:
+        radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
       border:4px solid rgba(134,246,255,.85);
       box-shadow:0 0 0 6px rgba(134,246,255,.12), inset 0 12px 26px rgba(0,0,0,.45);
-      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase}
+      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase
+    }
     .hero-copy h1{margin:0 0 10px;font-size:clamp(30px,7vw,46px);text-wrap:balance}
     .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.8vw,18px)}
     @media(min-width:1200px){
@@ -52,50 +64,69 @@
     }
 
     /* NAV */
-    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+    nav{
+      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
       background:linear-gradient(180deg,#0d1218,#0a0e13);
-      border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;padding:12px}
-    nav a{color:#d7e3ee;padding:10px 14px;border-radius:10px;font-weight:600}
+      border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;padding:12px
+    }
+    nav a{
+      color:#d7e3ee;padding:10px 14px;border-radius:10px;font-weight:600
+    }
     nav a:hover{background:#121822;color:#f2fbff}
 
     /* Sections */
     main{max-width:1100px;margin:30px auto;padding:0 14px}
-    .section{margin:20px 0}
-    .section h2{margin:0;color:#eaf4fb;display:inline-block;padding-bottom:10px;position:relative}
-    .section h2::after{content:"";display:block;height:3px;margin-top:6px;width:clamp(90px,14vw,180px);
-      background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:2px}
+    .section{margin:22px 0}
+    .section h2{
+      margin:0;color:#eaf4fb;display:inline-block;padding-bottom:8px;position:relative
+    }
+    .section h2::after{
+      content:"";display:block;height:3px;margin-top:6px;width:clamp(90px,14vw,180px);
+      background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:2px
+    }
     .muted{color:var(--muted)}
 
     /* Cards */
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
     @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-    .event{background:#0f141b;border:1px solid #1f2a36;border-radius:14px;overflow:hidden}
+    .event{
+      background:var(--card);border:1px solid #1f2a36;border-radius:14px;overflow:hidden;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease
+    }
     .event:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.35);border-color:#2a3a4a}
     .imgwrap{width:100%;aspect-ratio:16/9;background:#0b1016}
     .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
     .pad{padding:14px;color:#d6e2ed}
-    .event h3{margin:0 0 6px;color:#eaf4fb}
+    .event h3{margin:0 0 8px;color:#eaf4fb}
     .meta{font-size:14px;color:#9eb0c4;margin:2px 0 10px}
     .closed{opacity:.62}
-    .btn{display:inline-block;border:0;border-radius:10px;padding:10px 16px;background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a;font-weight:800;cursor:pointer}
+    .btn{
+      display:inline-block;border:0;border-radius:10px;padding:10px 16px;
+      background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a;font-weight:800;cursor:pointer
+    }
+    .btn:focus-visible{outline:2px solid rgba(134,246,255,.5)}
     .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
     .pill.ok{background:rgba(85,240,255,.16);color:#86f6ff;border:1px solid rgba(134,246,255,.35)}
     .pill.closed{background:#2a1a1a;color:#ffb4a6;border:1px solid #7a3a3a}
-    .empty{display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b}
+    .empty{
+      display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b
+    }
 
     /* Details drawer */
     details{border-top:1px solid #1f2a36}
     details[open] summary .chev{transform:rotate(180deg)}
-    summary{list-style:none;cursor:pointer;padding:10px 14px;color:#bcd0e3;display:flex;align-items:center;gap:8px}
+    summary{
+      list-style:none;cursor:pointer;padding:10px 14px;color:#bcd0e3;display:flex;align-items:center;gap:8px
+    }
     summary::-webkit-details-marker{display:none}
     .chev{transition:transform .2s}
     .drawer{padding:6px 14px 14px}
     .bar{height:8px;background:#0b1016;border-radius:999px;overflow:hidden;border:1px solid #2a3948;margin:6px 0 10px}
     .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));width:0%}
     .flow p{margin:8px 0}
-    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;background:#0b1016;border:1px solid #253243;border-radius:6px;padding:2px 6px}
+    .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1016;border:1px solid #253243;border-radius:6px;padding:2px 6px}
 
-    /* Interest form */
+    /* Interest form – neat, fixed heights */
     .interest{margin-top:10px;padding:10px;border:1px solid #223042;border-radius:12px;background:#0e141a}
     .interest label{display:block;font-weight:600;margin:8px 0 6px}
     .interest input, .interest select{
@@ -103,8 +134,18 @@
     }
     .row2{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:600px){.row2{grid-template-columns:1fr 1fr}}
+    /* number inputs tidy */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
     .okmsg{color:#9af5ff;margin-top:8px}
     .errmsg{color:#ffb4a6;margin-top:8px}
+
+    /* Footer */
+    footer.banner .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#cfe6ee;padding:36px 16px}
+    #signinDot{background:none;border:none;color:#bfefff;cursor:pointer;opacity:.55;font-size:16px;line-height:1;padding:2px 6px;border-radius:999px}
+    #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
+    #authMsg{display:block;min-height:16px}
   </style>
 </head>
 <body>
@@ -152,16 +193,16 @@
   <!-- FOOTER -->
   <footer class="banner">
     <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
-    <div class="inner" style="position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#cfe6ee">
+    <div class="inner">
       © <span id="yr"></span> Tour The Lakes
-      <button id="signinDot" title=" " aria-label="Staff" style="background:none;border:none;color:#bfefff;cursor:pointer;opacity:.45;font-size:16px;padding:2px 6px">•</button>
+      <button id="signinDot" title=" " aria-label="Staff">•</button>
       <small id="authMsg" aria-live="polite"></small>
     </div>
   </footer>
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- APP -->
+  <!-- APP (unchanged logic) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import {
@@ -191,12 +232,14 @@
     const $ = id => document.getElementById(id);
     const authMsg = $("authMsg");
 
-    // ----- Helpers -----
+    // helpers
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
     const isClosed = (d,c)=>{const n=new Date();return n>new Date(c)||n>new Date(d);};
     const daysUntil = s => { if(!s) return null; const n=new Date();n.setHours(0,0,0,0); const d=new Date(s);d.setHours(0,0,0,0); return Math.round((d-n)/86400000); };
 
-    // ----- Render a card with Details + Interest form -----
+    function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
+
+    // card
     function card(col, id, data){
       const closed = isClosed(data.date, data.cutoff) || !!data.closed;
       const el = document.createElement("div");
@@ -265,7 +308,7 @@
         </div>
       `;
 
-      // lazy-load bookings progress when opened
+      // lazy progress load
       const details = el.querySelector("details");
       const progHost = el.querySelector(`#prog-${col}-${id}`);
       details.addEventListener("toggle", async ()=>{
@@ -283,15 +326,15 @@
             <div class="bar"><span style="width:${pct}%"></span></div>
           `;
         }catch(err){ console.error(err); progHost.innerHTML = ``; }
-      }, { once:false });
+      });
 
-      // interest form submit
+      // interest submit
       const form = el.querySelector(`#form-${col}-${id}`);
       const ok   = el.querySelector(`#ok-${col}-${id}`);
       const er   = el.querySelector(`#er-${col}-${id}`);
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
-        ok.style.display = "none"; er.style.display="none";
+        ok.style.display="none"; er.style.display="none";
         const fd = new FormData(form);
         const email = (fd.get("email")+"").trim();
         if (!email){ er.style.display="block"; return; }
@@ -300,27 +343,21 @@
             name:(fd.get("name")+"").trim(),
             email,
             phone:(fd.get("phone")+"").trim(),
-            seats: Number(fd.get("seats")||1),
-            method: fd.get("method")+"",
+            seats:Number(fd.get("seats")||1),
+            method:fd.get("method")+"",
             createdAt: serverTimestamp()
           });
           form.reset();
-          ok.style.display = "block";
+          ok.style.display="block";
         }catch(err){
           console.error(err);
-          er.style.display = "block";
+          er.style.display="block";
         }
       });
-
       return el;
     }
 
-    // escape helper
-    function escapeHtml(s){
-      return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-    }
-
-    // ----- Fetch and render lists (include doc IDs) -----
+    // lists
     async function renderList(col, mountId){
       const mount = $(mountId);
       mount.innerHTML = `<span class="empty">Loading…</span>`;
@@ -339,20 +376,20 @@
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // ----- Discreet admin sign-in (manual only) -----
+    // Admin sign-in (unchanged)
     async function openIfAllowed(user){
       const email = user?.email ?? "";
-      if (ALLOWED.includes(email)){ window.open("admin.html","_blank","noopener"); }
+      if (["info@tourthelakes.com"].includes(email)){ window.open("admin.html","_blank","noopener"); }
       else if (user){ authMsg.textContent="Not authorised"; setTimeout(()=>authMsg.textContent="",3000); await signOut(auth); }
     }
     async function doSignIn(){
       if (auth.currentUser) return openIfAllowed(auth.currentUser);
       try{
-        const res = await signInWithPopup(auth, provider);
+        const res = await signInWithPopup(auth, new GoogleAuthProvider());
         await openIfAllowed(res.user);
       }catch(err){
         if (err?.code==='auth/operation-not-supported-in-this-environment' || err?.code==='auth/popup-blocked'){
-          await signInWithRedirect(auth, provider);
+          await signInWithRedirect(auth, new GoogleAuthProvider());
         }else{
           console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
         }
@@ -361,5 +398,6 @@
     document.getElementById("signinDot").addEventListener("click", doSignIn);
     getRedirectResult(auth).then(res=>{ if(res) openIfAllowed(res.user); }).catch(err=>console.error(err));
   </script>
+  <script>document.getElementById('yr')?.textContent = new Date().getFullYear();</script>
 </body>
 </html>
