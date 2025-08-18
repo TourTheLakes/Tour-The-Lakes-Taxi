@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin · Tour The Lakes</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* match site theme */
+      --bg:#0e1116; --smoke:#12171e; --smoke2:#0b0d10;
+      --ink:#e8f1f8; --muted:#a8b0bb;
+      --neon:#55f0ff; --neon2:#00d2ff;
+      --line:#273341; --shadow:0 18px 50px rgba(0,0,0,.35);
+      --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
+    a{color:var(--neon);text-decoration:none}
+
+    /* banner */
+    header{position:relative;overflow:hidden;padding:28px 14px 26px}
+    header .layer{position:absolute;inset:-25% -10% auto -10%;height:125%;background:var(--grad)}
+    .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55}
+    .g1{width:420px;height:420px;left:-140px;top:-160px;background:radial-gradient(closest-side, rgba(85,240,255,.28), rgba(85,240,255,0))}
+    .g2{width:320px;height:320px;right:-100px;bottom:-140px;background:radial-gradient(closest-side, rgba(0,210,255,.22), rgba(0,210,255,0))}
+    header .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto}
+    header h1{margin:0 0 6px;font-size:28px}
+    header p{margin:0;color:var(--muted)}
+
+    main{max-width:1100px;margin:18px auto 40px;padding:0 14px}
+
+    /* panel */
+    .panel{
+      position:relative; padding:18px; border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(19,24,32,.85), rgba(19,24,32,.74));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+      margin:16px 0;
+    }
+    .panel h2{
+      margin:0 0 12px; position:relative; display:inline-block; padding-bottom:10px;
+    }
+    .panel h2::after{
+      content:""; display:block; height:3px; margin-top:6px;
+      width: clamp(90px, 14vw, 180px);
+      background: linear-gradient(90deg, var(--neon), var(--neon2));
+      border-radius:2px;
+    }
+
+    .muted{color:var(--muted)}
+    label{display:block;font-weight:600;margin:10px 0 6px}
+    input, select, textarea{
+      width:100%; padding:12px 12px; border-radius:12px;
+      border:1px solid #2a3948; background:#0f141b; color:#dfeaf3
+    }
+    textarea{min-height:120px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:760px){ .row.two{grid-template-columns:1fr 1fr} .row.three{grid-template-columns:1fr 1fr 1fr} }
+
+    .btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+    .primary{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a}
+    .ghost{background:transparent;border:1px solid #2a3948;color:#dfeaf3}
+    .danger{background:#6c1d1d;color:#ffd8d2}
+    .tiny{padding:6px 10px;border-radius:10px;font-size:12px}
+    .bar{height:8px;background:#0b1016;border-radius:999px;overflow:hidden;border:1px solid #2a3948}
+    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));width:0%}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:840px){ .grid.two{grid-template-columns:1fr 1fr} }
+
+    .item{border:1px solid #1f2a36;border-radius:14px;background:#0f141b}
+    .item .head{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 12px}
+    .item .title{font-weight:700}
+    .badges{display:flex;gap:6px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font-size:12px;border:1px solid #2a3948;color:#9eb0c4}
+    .pill.ok{background:rgba(85,240,255,.12);color:#86f6ff;border-color:rgba(134,246,255,.35)}
+    .pill.closed{background:#2a1a1a;color:#ffb4a6;border-color:#7a3a3a}
+    .item .body{padding:12px;border-top:1px solid #1f2a36}
+    details > summary{list-style:none;cursor:pointer}
+    details > summary::-webkit-details-marker{display:none}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    .list{max-height:280px;overflow:auto;border:1px solid #1f2a36;border-radius:12px}
+    .rowline{display:grid;grid-template-columns:1.2fr 1fr 1fr 0.6fr 0.8fr;gap:8px;padding:8px 10px;border-bottom:1px solid #1a2531}
+    .rowline:nth-child(odd){background:#0e141a}
+    .rowline b{font-weight:700}
+    .rowline small{color:#a0acbb}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
+    <div class="inner">
+      <h1>Admin</h1>
+      <p class="muted">Create and manage tours & events. <span id="who"></span></p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Create / Edit -->
+    <section class="panel">
+      <h2>Create / Edit</h2>
+      <form id="form">
+        <input type="hidden" id="editingId" value="">
+        <input type="hidden" id="editingCol" value="">
+        <div class="row two">
+          <div>
+            <label for="type">Type</label>
+            <select id="type" required>
+              <option value="tours">Tour</option>
+              <option value="events">Event</option>
+            </select>
+          </div>
+          <div>
+            <label for="title">Title</label>
+            <input id="title" type="text" maxlength="120" required placeholder="Windermere & Ambleside Day"/>
+          </div>
+        </div>
+        <div class="row three">
+          <div>
+            <label for="date">Event date</label>
+            <input id="date" type="date" required/>
+          </div>
+          <div>
+            <label for="cutoff">Payment cut-off</label>
+            <input id="cutoff" type="date" required/>
+          </div>
+          <div>
+            <label for="price">Price per person (£)</label>
+            <input id="price" type="number" min="0" step="1" required placeholder="130"/>
+          </div>
+        </div>
+        <div class="row three">
+          <div>
+            <label for="minNeeded">Min to run (default 20)</label>
+            <input id="minNeeded" type="number" min="0" step="1" value="20"/>
+          </div>
+          <div>
+            <label for="capacity">Capacity (bus seats etc.)</label>
+            <input id="capacity" type="number" min="0" step="1" placeholder="30"/>
+          </div>
+          <div>
+            <label for="cardFee">Card surcharge % (e.g. 10)</label>
+            <input id="cardFee" type="number" min="0" step="1" value="10"/>
+          </div>
+        </div>
+        <div class="row two">
+          <div>
+            <label for="moreLink">More info URL (optional)</label>
+            <input id="moreLink" type="url" placeholder="https://… (public details page)"/>
+          </div>
+          <div>
+            <label for="image">Feature image (optional)</label>
+            <input id="image" type="file" accept="image/*"/>
+            <div class="bar" id="progWrap" style="margin-top:6px;display:none"><span id="progBar"></span></div>
+          </div>
+        </div>
+        <div>
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Route, highlights, timings…" required></textarea>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button type="submit" class="btn primary" id="saveBtn">Save</button>
+          <button type="button" class="btn ghost" id="cancelBtn" style="display:none">Cancel edit</button>
+        </div>
+        <p id="msg" class="muted" style="margin-top:8px"></p>
+      </form>
+    </section>
+
+    <!-- Listings -->
+    <section class="panel">
+      <h2>Listings</h2>
+      <div class="grid two" id="lists">
+        <div>
+          <h3 style="margin:0 0 10px">Tours</h3>
+          <div id="toursList"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 10px">Events</h3>
+          <div id="eventsList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { 
+      getAuth, onAuthStateChanged, signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { 
+      getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
+      serverTimestamp, doc, query, orderBy, getCountFromServer
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytesResumable, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
+
+    // ---------- Firebase config (same project) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+    const storage = getStorage(app);
+
+    const ALLOWED = ["info@tourthelakes.com"]; // admin allow list
+
+    const $ = id => document.getElementById(id);
+    const who = $("who");
+    const msg = $("msg");
+    const form = $("form");
+    const saveBtn = $("saveBtn");
+    const cancelBtn = $("cancelBtn");
+    const progWrap = $("progWrap");
+    const progBar = $("progBar");
+    const editingIdEl = $("editingId");
+    const editingColEl = $("editingCol");
+
+    function toast(s){ msg.textContent = s; setTimeout(()=>msg.textContent="", 2500); }
+
+    // ---------- Auth gate ----------
+    onAuthStateChanged(auth, user=>{
+      if (!user || !ALLOWED.includes(user.email ?? "")){
+        // bounce out politely
+        alert("Not authorised.");
+        try{ signOut(auth); }catch(e){}
+        window.location.href = "/";
+        return;
+      }
+      who.textContent = `Signed in as ${user.email}`;
+      loadLists();
+    });
+
+    // ---------- Helpers ----------
+    const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
+    const daysUntil = s => {
+      if(!s) return null; 
+      const now = new Date(); now.setHours(0,0,0,0);
+      const d = new Date(s); d.setHours(0,0,0,0);
+      return Math.round((d-now)/86400000);
+    };
+    function isClosed(dateStr, cutoffStr){
+      const n=new Date(); const d=new Date(dateStr); const c=new Date(cutoffStr);
+      return n>c || n>d;
+    }
+
+    function payloadFromForm(){
+      return {
+        title: $("title").value.trim(),
+        date: $("date").value,
+        cutoff: $("cutoff").value,
+        price: Number($("price").value || 0),
+        minNeeded: Number($("minNeeded").value || 20),
+        capacity: Number($("capacity").value || 0),
+        cardSurchargePercent: Number($("cardFee").value || 0),
+        description: $("description").value.trim(),
+        moreLink: $("moreLink").value.trim() || null,
+        createdAt: serverTimestamp(),
+        closed: false
+      };
+    }
+
+    async function uploadImageIfAny(colName){
+      const f = $("image").files[0];
+      if (!f) return null;
+      if (f.size > 7 * 1024 * 1024){ alert("Image too large (max 7MB)."); throw new Error("img-too-big"); }
+      const safe = f.name.replace(/[^\w.\-]+/g,"_");
+      const path = `images/${colName}/${Date.now()}_${safe}`;
+      const storageRef = ref(storage, path);
+      progWrap.style.display = "block";
+      const task = uploadBytesResumable(storageRef, f);
+      await new Promise((res,rej)=>{
+        task.on("state_changed", s=>{
+          progBar.style.width = `${(s.bytesTransferred/s.totalBytes)*100}%`;
+        }, rej, res);
+      });
+      const url = await getDownloadURL(storageRef);
+      progBar.style.width = "100%";
+      setTimeout(()=>{ progWrap.style.display="none"; progBar.style.width="0%"; }, 500);
+      return url;
+    }
+
+    // ---------- Create / Update ----------
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const col = editingColEl.value || $("type").value;
+      const data = payloadFromForm();
+      if (!data.title || !data.date || !data.cutoff){ alert("Please fill the required fields."); return; }
+
+      try{
+        const imageUrl = await uploadImageIfAny(col);
+        if (imageUrl) data.imageUrl = imageUrl;
+
+        const editingId = editingIdEl.value;
+        if (editingId){
+          await updateDoc(doc(db, col, editingId), data);
+          toast("Updated.");
+        }else{
+          await addDoc(collection(db, col), data);
+          toast("Created.");
+        }
+        form.reset();
+        editingIdEl.value = "";
+        editingColEl.value = "";
+        saveBtn.textContent = "Save";
+        cancelBtn.style.display = "none";
+        loadLists();
+      }catch(err){
+        console.error(err); toast("Save failed.");
+      }
+    });
+
+    cancelBtn.addEventListener("click", ()=>{
+      form.reset();
+      editingIdEl.value = "";
+      editingColEl.value = "";
+      saveBtn.textContent = "Save";
+      cancelBtn.style.display = "none";
+      msg.textContent = "";
+    });
+
+    function beginEdit(col, id, d){
+      editingIdEl.value = id;
+      editingColEl.value = col;
+      $("type").value = col;
+      $("title").value = d.title ?? "";
+      $("date").value = d.date ?? "";
+      $("cutoff").value = d.cutoff ?? "";
+      $("price").value = d.price ?? 0;
+      $("minNeeded").value = d.minNeeded ?? 20;
+      $("capacity").value = d.capacity ?? 0;
+      $("cardFee").value = d.cardSurchargePercent ?? 0;
+      $("moreLink").value = d.moreLink ?? "";
+      $("description").value = d.description ?? "";
+      saveBtn.textContent = "Update";
+      cancelBtn.style.display = "inline-block";
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    // ---------- Render lists ----------
+    async function loadList(col, mountId){
+      const mount = $(mountId);
+      mount.innerHTML = `<p class="muted">Loading…</p>`;
+      try{
+        const qy = query(collection(db, col), orderBy("date","asc"));
+        const snap = await getDocs(qy);
+        const arr = [];
+        snap.forEach(d=> arr.push({id:d.id, data:d.data()}));
+        if (!arr.length){ mount.innerHTML = `<p class="muted">No ${col} yet.</p>`; return; }
+        mount.innerHTML = "";
+        for (const item of arr){
+          mount.appendChild(await itemCard(col, item.id, item.data));
+        }
+      }catch(err){
+        console.error(err); mount.innerHTML = `<p class="muted">Could not load ${col}.</p>`;
+      }
+    }
+
+    async function countBookings(col, id){
+      const cnt = await getCountFromServer(collection(db, col, id, "bookings"));
+      return cnt.data().count || 0;
+    }
+
+    function statusPill(d, booked){
+      const closed = d.closed || isClosed(d.date, d.cutoff);
+      if (closed) return `<span class="pill closed">Closed</span>`;
+      if (booked >= (d.minNeeded ?? 20)) return `<span class="pill ok">Likely to run</span>`;
+      return `<span class="pill">Open</span>`;
+    }
+
+    async function itemCard(col, id, d){
+      const wrap = document.createElement("div");
+      wrap.className = "item";
+      const booked = await countBookings(col, id);
+      const cap = d.capacity || 0;
+      const days = daysUntil(d.cutoff);
+      wrap.innerHTML = `
+        <div class="head">
+          <div>
+            <div class="title">${d.title ?? "(untitled)"} <span class="muted">· ${fmtUK(d.date)} (cutoff ${fmtUK(d.cutoff)})</span></div>
+            <div class="badges">
+              ${statusPill(d, booked)}
+              <span class="pill">Booked: ${booked}${cap?`/${cap}`:""}</span>
+              <span class="pill">Min: ${d.minNeeded ?? 20}</span>
+              <span class="pill">£${Number(d.price||0).toFixed(0)}</span>
+              <span class="pill">${days!=null ? (days>=0? days+" days to cutoff":"past cutoff") : ""}</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn tiny ghost" data-edit>Edit</button>
+            <button class="btn tiny ghost" data-close>${d.closed ? "Reopen" : "Close"}</button>
+            <button class="btn tiny danger" data-del>Delete</button>
+          </div>
+        </div>
+        <div class="body">
+          <details>
+            <summary class="muted">Manage bookings & quick actions</summary>
+            <div style="margin-top:12px"></div>
+            <div class="row two">
+              <div>
+                <h4 style="margin:6px 0">Add booking</h4>
+                <form data-add>
+                  <label>Name</label><input required name="name" placeholder="Full name"/>
+                  <label>Email</label><input required type="email" name="email" placeholder="name@example.com"/>
+                  <label>Phone</label><input name="phone" placeholder="+44…"/>
+                  <label>Payment method</label>
+                  <select name="method">
+                    <option value="BACS">BACS (preferred)</option>
+                    <option value="Card">Card (+${Number(d.cardSurchargePercent ?? 0)}%)</option>
+                  </select>
+                  <label>Notes</label><input name="notes" placeholder="Optional notes"/>
+                  <div class="actions" style="margin-top:10px">
+                    <button class="btn primary">Add booking</button>
+                  </div>
+                </form>
+              </div>
+              <div>
+                <h4 style="margin:6px 0">Stats & quick adjust</h4>
+                <div class="muted" style="margin-bottom:8px">Booked <b>${booked}</b>${cap?` of <b>${cap}</b>`:""} · Min <b>${d.minNeeded ?? 20}</b></div>
+                <div class="bar" title="Bookings progress"><span style="width:${cap? Math.min(100, (booked/cap)*100): 0}%"></span></div>
+                <div class="actions" style="margin-top:10px">
+                  <button class="btn tiny ghost" data-plus>+1 (walk-in/manual)</button>
+                  <button class="btn tiny ghost" data-minus>-1</button>
+                </div>
+                ${d.moreLink ? `<p style="margin-top:10px"><a href="${d.moreLink}" target="_blank" rel="noopener">Public details link ↗</a></p>`:""}
+              </div>
+            </div>
+
+            <h4 style="margin:14px 0 8px">Recent attendees</h4>
+            <div class="list" data-list></div>
+          </details>
+        </div>
+      `;
+
+      // wire buttons
+      wrap.querySelector("[data-edit]").onclick = ()=>beginEdit(col, id, d);
+      wrap.querySelector("[data-del]").onclick = async ()=>{
+        if (!confirm("Delete this listing?")) return;
+        try{ await deleteDoc(doc(db, col, id)); loadLists(); }catch(e){ alert("Delete failed"); }
+      };
+      wrap.querySelector("[data-close]").onclick = async ()=>{
+        try{ await updateDoc(doc(db, col, id), { closed: !d.closed }); loadLists(); }
+        catch(e){ alert("Update failed"); }
+      };
+
+      // add booking
+      wrap.querySelector("form[data-add]").onsubmit = async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const booking = {
+          name: (fd.get("name")+"").trim(),
+          email: (fd.get("email")+"").trim(),
+          phone: (fd.get("phone")+"").trim(),
+          method: fd.get("method")+"",
+          notes: (fd.get("notes")+"").trim(),
+          createdAt: serverTimestamp(),
+          paid: false   // you can tick paid later if you want; for now informational
+        };
+        if (!booking.name || !booking.email){ alert("Name and email required."); return; }
+        try{
+          await addDoc(collection(db, col, id, "bookings"), booking);
+          // cheap +/- feedback without reloading everything
+          loadLists();
+        }catch(err){ console.error(err); alert("Add booking failed"); }
+      };
+
+      // +1/-1 booking quick adjust (creates a lightweight "manual" booking or removes the last one)
+      wrap.querySelector("[data-plus]").onclick = async ()=>{
+        try{
+          await addDoc(collection(db, col, id, "bookings"), {
+            name:"Manual count", email:"-", phone:"-", method:"BACS", notes:"Manual +1", createdAt: serverTimestamp(), paid:false
+          });
+          loadLists();
+        }catch(e){ console.error(e); }
+      };
+      wrap.querySelector("[data-minus]").onclick = async ()=>{
+        try{
+          // remove the most recent non-essential booking
+          const qy = query(collection(db, col, id, "bookings"), orderBy("createdAt","desc"));
+          const snap = await getDocs(qy);
+          const first = snap.docs[0];
+          if (!first){ alert("No bookings to remove."); return; }
+          await deleteDoc(doc(db, col, id, "bookings", first.id));
+          loadLists();
+        }catch(e){ console.error(e); }
+      };
+
+      // load recent attendees list (latest 10)
+      const list = wrap.querySelector("[data-list]");
+      try{
+        const qy = query(collection(db, col, id, "bookings"), orderBy("createdAt","desc"));
+        const snap = await getDocs(qy);
+        const docs = snap.docs.slice(0,10);
+        if (!docs.length){ list.innerHTML = `<div class="rowline"><small>No bookings yet.</small></div>`; }
+        else{
+          list.innerHTML = "";
+          docs.forEach(b=>{
+            const v = b.data();
+            const line = document.createElement("div");
+            line.className = "rowline";
+            line.innerHTML = `<b>${v.name||""}</b>
+              <span>${v.email||""}</span>
+              <span>${v.phone||""}</span>
+              <span>${v.method||""}</span>
+              <small>${v.paid ? "paid" : "unpaid"}</small>`;
+            list.appendChild(line);
+          });
+        }
+      }catch(e){ list.innerHTML = `<div class="rowline"><small>Could not load attendees.</small></div>`; }
+
+      return wrap;
+    }
+
+    async function loadLists(){
+      await Promise.all([
+        loadList("tours","toursList"),
+        loadList("events","eventsList")
+      ]);
+    }
+  </script>
+</body>
+</html>
