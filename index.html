@@ -1,157 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <head>
   <meta charset="UTF-8">
-  <title>MainLanding</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <title>Tour The Lakes</title>
   <style>
-    :root {
-      --bg-dark: #0e0f10;
-      --section-light: #1c1e21;
-      --text-main: #f1f1f1;
-      --text-sub: #aaaaaa;
-      --accent: #f1f1f1;
-      --accent-hover: #e0e0e0;
-      --button-text: #111;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Quicksand', sans-serif;
-    }
-
-    html, body {
-      background: var(--bg-dark);
-      color: var(--text-main);
-      height: 100%;
-    }
-
     body {
-      background-color: var(--bg-dark);
-      background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-      background-repeat: repeat;
-      background-size: auto;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 20px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
     }
-
     header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem;
       text-align: center;
-      margin-bottom: 40px;
-      animation: fadeInTop 1s ease;
     }
-
-    header h1 {
-      font-size: 38px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    header p {
-      font-size: 18px;
-      color: var(--text-sub);
-    }
-
-    .actions {
+    nav {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
-      width: 100%;
-      max-width: 500px;
-      animation: fadeIn 1.2s ease;
+      justify-content: center;
+      background: #34495e;
     }
-
-    .action-button {
-      background: var(--section-light);
-      padding: 24px;
-      border-radius: 16px;
-      text-align: center;
+    nav a {
+      padding: 1rem;
+      color: white;
+      text-decoration: none;
+    }
+    nav a:hover {
+      background: #1abc9c;
+    }
+    section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      border-bottom: 2px solid #1abc9c;
+      padding-bottom: 0.5rem;
+    }
+    .event {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 5px;
+    }
+    .event.closed {
+      opacity: 0.5;
+    }
+    .event h3 {
+      margin: 0;
+    }
+    .event button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 3px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-      border: 1px solid transparent;
     }
-
-    .action-button:hover {
-      background: #232528;
-      transform: translateY(-2px);
-      border-color: #333;
-    }
-
-    .action-button span {
-      display: block;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--accent);
-    }
-
-    .action-button small {
-      display: block;
-      font-size: 14px;
-      color: var(--text-sub);
-      margin-top: 6px;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 60px;
-      font-size: 12px;
-      color: #555;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInTop {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 500px) {
-      header h1 {
-        font-size: 30px;
-      }
-      .action-button span {
-        font-size: 18px;
-      }
+    .event button:hover {
+      background: #16a085;
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1>Tour The Lakes</h1>
-    <p>Trusted Taxis. Seamless Service.</p>
+    <p>Guided tours and events in the Lake District</p>
   </header>
 
-  <div class="actions">
+  <nav>
+    <a href="#about">About</a>
+    <a href="#tours">Tours</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Contact</a>
+  </nav>
 
-    <div class="action-button" onclick="location.href='ReturningCustomer.html'">
-      <span>Returning Customer</span>
-      <small>View, Amend or Cancel a Booking</small>
-    </div>
+  <section id="about">
+    <h2>About</h2>
+    <p>Welcome to Tour The Lakes. We offer guided tours and events in the Lake District, with commentary, stops, and unique experiences. Each tour runs only when we reach 20 confirmed participants.</p>
+  </section>
 
-    <div class="action-button" onclick="location.href='TaxiService.html'">
-      <span>Taxi Service</span>
-      <small>Based in Windermere</small>
-    </div>
+  <section id="tours">
+    <h2>Upcoming Tours</h2>
+    <div id="tours-list">Loading tours...</div>
+  </section>
 
-  </div>
+  <section id="events">
+    <h2>Special Events</h2>
+    <div id="events-list">Loading events...</div>
+  </section>
 
-  <footer>
-    Independent. Local. Professional.
-  </footer>
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>For enquiries, email us at <a href="mailto:info@tourthelakes.co.uk">info@tourthelakes.co.uk</a></p>
+  </section>
 
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    // Firebase config (yours)
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Utility: check if event is expired
+    function isExpired(dateStr, cutoffStr) {
+      const today = new Date();
+      const eventDate = new Date(dateStr);
+      const cutoffDate = new Date(cutoffStr);
+      return today > cutoffDate || today > eventDate;
+    }
+
+    // Render events
+    async function renderEvents(collectionName, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      const snapshot = await getDocs(collection(db, collectionName));
+      if (snapshot.empty) {
+        container.innerHTML = "<p>No events listed yet.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const closed = isExpired(data.date, data.cutoff);
+        const div = document.createElement("div");
+        div.className = "event" + (closed ? " closed" : "");
+        div.innerHTML = `
+          <h3>${data.title}</h3>
+          <p><strong>Date:</strong> ${data.date}</p>
+          <p>${data.description}</p>
+          <p><strong>Price:</strong> £${data.price}</p>
+          ${closed 
+            ? "<p><em>This tour is closed.</em></p>" 
+            : `<button onclick="window.open('${data.paymentLink}', '_blank')">Book Now</button>`}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Load tours & events
+    renderEvents("tours", "tours-list");
+    renderEvents("events", "events-list");
+  </script>
 </body>
 </html>
