@@ -5,72 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
   <meta name="description" content="Guided tours and special events across the Lake District, with commentary, scenic stops and time to explore."/>
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <!-- Tiny inline favicon to stop 404s -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+  <!-- Tiny inline favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%231b3f66'/%3E%3Cpath d='M10 42c10-6 16-10 22-10s12 4 22 10' stroke='%23fff' stroke-width='6' fill='none'/%3E%3Ccircle cx='26' cy='24' r='5' fill='%230fa3b1'/%3E%3C/svg%3E">
-  <!-- OG -->
-  <meta property="og:title" content="Tour The Lakes">
-  <meta property="og:description" content="Full-day guided tours and special events across the Lake District.">
-  <meta property="og:type" content="website">
-
   <style>
     :root{
-      --ink:#0f2f4f;
-      --ink2:#1b3f66;
-      --accent:#0fa3b1;
-      --bg:#f3f5f7;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --danger:#b91c1c;
+      --ink:#0f2f4f; --ink2:#1b3f66; --accent:#0fa3b1;
+      --bg:#f3f5f7; --card:#fff; --muted:#6b7280;
+      --radius:18px; --shadow:0 20px 50px rgba(15,47,79,.10);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--ink2);text-decoration:none}
-    header{background:linear-gradient(180deg,var(--ink) 0%, var(--ink2) 100%);color:#fff;padding:28px 16px 22px;text-align:center}
-    header h1{margin:0;font-size:28px;letter-spacing:.2px}
-    header p{margin:6px 0 0;color:#e5e7eb}
-    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:8px}
-    nav a{color:#e5e7eb;padding:10px 14px;border-radius:8px;font-weight:600}
+
+    /* Shared hero/foot visuals */
+    .banner{
+      position:relative; overflow:hidden; color:#fff; text-align:center;
+      padding:56px 16px 40px;
+    }
+    .layer{
+      position:absolute; inset:-20% -10% auto -10%; height:120%;
+      background: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%);
+      filter:saturate(1.05);
+    }
+    .blob{position:absolute; border-radius:50%;
+      background: radial-gradient(closest-side, rgba(15,163,177,.35), rgba(15,163,177,0));
+      animation: float 12s ease-in-out infinite alternate}
+    .b1{width:40vw; height:40vw; top:-8vw; left:-10vw}
+    .b2{width:32vw; height:32vw; bottom:-6vw; right:-8vw; animation-duration:14s}
+    @keyframes float{to{transform:translateY(-12px) translateX(8px) scale(1.03)}}
+
+    .banner-inner{
+      position:relative; z-index:2; max-width:1100px; margin:0 auto;
+      display:grid; align-items:center; gap:26px; grid-template-columns:160px 1fr;
+    }
+    .stamp-svg{filter:drop-shadow(0 14px 32px rgba(0,0,0,.28))}
+    .stamp-svg svg{transform:rotate(-5deg); transition:transform .6s ease}
+    .banner:hover .stamp-svg svg{transform:rotate(-3deg) scale(1.015)}
+    .banner-copy h1{margin:6px 0 8px; font-size:42px; color:#fff}
+    .banner-copy p{margin:0; color:#e5e7eb}
+    @media (max-width:720px){
+      .banner-inner{grid-template-columns:1fr; text-align:center}
+      .stamp-svg{margin:0 auto}
+      .banner-copy h1{font-size:32px}
+    }
+
+    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:10px}
+    nav a{color:#e5e7eb;padding:10px 14px;border-radius:10px;font-weight:600}
     nav a:hover{background:#0e223a}
-    main{max-width:980px;margin:22px auto;padding:0 12px}
-    section{background:var(--card);border-radius:14px;margin:14px 0;padding:18px;box-shadow:0 6px 18px rgba(15,47,79,.08)}
+
+    main{max-width:1100px;margin:22px auto;padding:0 14px}
+    section{background:var(--card);border-radius:var(--radius);margin:18px 0;padding:20px;box-shadow:var(--shadow)}
     h2{margin:0 0 12px;padding-bottom:8px;border-bottom:3px solid #e8eef5;color:var(--ink)}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px}
-    @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-    .event{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff;position:relative}
-    .event .imgwrap{width:100%;aspect-ratio:16/9;background:#eef3f8;display:block}
-    .event img{width:100%;height:100%;object-fit:cover;display:block}
-    .pad{padding:12px}
-    .event h3{margin:0 0 4px;color:#0f2f4f}
-    .meta{font-size:14px;color:var(--muted);margin:4px 0 10px}
-    .event.closed{opacity:.62}
-    .btn{display:inline-block;border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
+    .event{border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s ease, box-shadow .15s ease}
+    .event:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,47,79,.12)}
+    .imgwrap{width:100%;aspect-ratio:16/9;background:#eef3f8}
+    .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .pad{padding:14px}
+    .event h3{margin:0 0 6px;color:var(--ink)}
+    .meta{font-size:14px;color:var(--muted);margin:2px 0 10px}
+    .closed{opacity:.62}
+    .btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
     .btn:hover{filter:brightness(.94)}
-    .btn.secondary{background:#e5e7eb;color:#111827}
-    .btn.danger{background:var(--danger);color:#fff}
-    .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;margin-left:6px}
+    .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
     .pill.ok{background:#e6fffb;color:#064e4e}
     .pill.closed{background:#fff1e6;color:#9a3412}
-    .muted{color:var(--muted)}
-    #adminPanel{display:none}
-    .admin-bar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px}
-    .admin-bar small{color:var(--muted)}
-    form .row{display:grid;gap:10px;grid-template-columns:1fr}
-    @media(min-width:760px){form .row{grid-template-columns:1fr 1fr}}
-    label{font-size:14px;font-weight:600;color:#374151}
-    input, textarea, select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
-    textarea{min-height:90px}
-    .hr{height:1px;background:#e5e7eb;margin:14px 0}
-    .progress{height:8px;background:#e5e7eb;border-radius:6px;overflow:hidden}
-    .progress > div{height:100%;width:0;background:var(--accent)}
-    .admin-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px}
-    footer{color:#94a3b8;text-align:center;padding:28px 12px}
+
+    /* Footer mirrors header, plus small login row */
+    footer{margin-top:24px}
+    .footer-inner{align-items:center}
+    .foot-controls{display:flex;gap:12px;justify-content:flex-end;align-items:center}
+    .foot-controls small{color:#d1e3f7}
+    .signin{background:#0fa3b1}
   </style>
 </head>
 <body>
-  <header>
-    <h1>Tour The Lakes</h1>
-    <p>Guided tours and special events across the Lake District</p>
+  <!-- HEADER (left aligned) -->
+  <header class="banner">
+    <div class="layer"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="banner-inner">
+      <!-- stamp -->
+      <div class="stamp-svg" aria-hidden="true">
+        <svg viewBox="0 0 200 200" width="160" height="160" role="img">
+          <defs>
+            <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#224b7a"/><stop offset="100%" stop-color="#193a60"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough)"/>
+          <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough)"/>
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".85" filter="url(#rough)"/>
+          <g fill="#0fa3b1" transform="rotate(-6 100 100)">
+            <polygon points="100,26 104,38 117,38 106,45 110,57 100,49 90,57 94,45 83,38 96,38"/>
+            <polygon points="174,100 178,112 191,112 180,119 184,131 174,123 164,131 168,119 157,112 170,112"/>
+            <polygon points="100,174 104,186 117,186 106,193 110,205 100,197 90,205 94,193 83,186 96,186"/>
+            <polygon points="26,100 30,112 43,112 32,119 36,131 26,123 16,131 20,119 9,112 22,112"/>
+          </g>
+          <g filter="url(#rough)" transform="rotate(-6 100 100)">
+            <rect x="20" y="80" rx="14" ry="14" width="160" height="40" fill="url(#bandGrad)" stroke="#173a61" stroke-width="3"/>
+            <rect x="22" y="90" rx="10" ry="10" width="156" height="22" fill="none" stroke="#0fa3b1" stroke-width="2" opacity=".9"/>
+            <text x="100" y="100" dominant-baseline="middle" text-anchor="middle"
+                  fill="#ffffff" stroke="#0fa3b1" stroke-width="0.8" paint-order="stroke fill"
+                  font-family="Outfit, Inter, sans-serif" font-weight="900" font-size="22" letter-spacing="2.4">
+              TOUR THE LAKES
+            </text>
+          </g>
+        </svg>
+      </div>
+      <div class="banner-copy">
+        <h1>Guided days in the Lake District</h1>
+        <p>Stories, stops, and scenery — without the parking stress</p>
+      </div>
+    </div>
   </header>
 
   <nav>
@@ -78,7 +137,6 @@
     <a href="#tours">Tours</a>
     <a href="#events">Events</a>
     <a href="#contact">Contact</a>
-    <a href="#admin">Admin</a>
   </nav>
 
   <main>
@@ -101,94 +159,62 @@
       <h2>Contact</h2>
       <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
     </section>
-
-    <section id="admin">
-      <h2>Admin</h2>
-      <div id="authBox" class="admin-bar">
-        <div>
-          <button id="signInBtn" class="btn">Sign in with Google</button>
-          <button id="signOutBtn" class="btn secondary" style="display:none">Sign out</button>
-        </div>
-        <small id="authStatus">Not signed in</small>
-      </div>
-
-      <div id="adminPanel">
-        <div class="hr"></div>
-        <form id="createForm">
-          <input type="hidden" id="editingId" value="">
-          <input type="hidden" id="editingCol" value="">
-          <div class="row">
-            <div>
-              <label for="type">Type</label>
-              <select id="type" required>
-                <option value="tours">Tour</option>
-                <option value="events">Event</option>
-              </select>
-            </div>
-            <div>
-              <label for="title">Title</label>
-              <input id="title" type="text" maxlength="120" required placeholder="Windermere and Ambleside Full Day"/>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="date">Event date</label>
-              <input id="date" type="date" required/>
-            </div>
-            <div>
-              <label for="cutoff">Payment cut off</label>
-              <input id="cutoff" type="date" required/>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="price">Price per person (£)</label>
-              <input id="price" type="number" min="0" step="1" required placeholder="130"/>
-            </div>
-            <div>
-              <label for="paymentLink">SumUp payment link</label>
-              <input id="paymentLink" type="url" required placeholder="https://me.sumup.com/pay/..."/>
-            </div>
-          </div>
-
-          <div>
-            <label for="image">Feature image (optional)</label>
-            <input id="image" type="file" accept="image/*"/>
-            <div class="progress" style="margin-top:8px;display:none" id="progWrap"><div id="progBar"></div></div>
-          </div>
-
-          <div style="margin-top:10px">
-            <label for="description">Description</label>
-            <textarea id="description" placeholder="Route, highlights, timings…" required></textarea>
-          </div>
-
-          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
-            <button class="btn" type="submit" id="saveBtn">Save</button>
-            <button class="btn secondary" type="button" id="cancelEditBtn" style="display:none">Cancel edit</button>
-          </div>
-        </form>
-        <p id="saveMsg" class="muted" style="margin-top:10px"></p>
-      </div>
-    </section>
   </main>
 
-  <footer>© <span id="yr"></span> Tour The Lakes</footer>
+  <!-- FOOTER: visually mirrors header, includes Sign in -->
+  <footer class="banner" style="padding:32px 16px 36px">
+    <div class="layer"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="banner-inner footer-inner">
+      <!-- same stamp for symmetry -->
+      <div class="stamp-svg" aria-hidden="true">
+        <!-- reuse the exact same SVG for consistency -->
+        <svg viewBox="0 0 200 200" width="100" height="100" role="img" aria-hidden="true">
+          <defs>
+            <filter id="rough2" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <linearGradient id="bandGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#224b7a"/><stop offset="100%" stop-color="#193a60"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough2)"/>
+          <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough2)"/>
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".85" filter="url(#rough2)"/>
+          <g filter="url(#rough2)" transform="rotate(-6 100 100)">
+            <rect x="35" y="92" rx="10" ry="10" width="130" height="26" fill="url(#bandGrad2)" stroke="#173a61" stroke-width="2"/>
+            <text x="100" y="105" dominant-baseline="middle" text-anchor="middle"
+                  fill="#ffffff" stroke="#0fa3b1" stroke-width="0.6" paint-order="stroke fill"
+                  font-family="Outfit, Inter, sans-serif" font-weight="900" font-size="16" letter-spacing="1.8">
+              TOUR THE LAKES
+            </text>
+          </g>
+        </svg>
+      </div>
 
+      <div class="foot-controls" style="justify-content:space-between; width:100%">
+        <small>© <span id="yr"></span> Tour The Lakes</small>
+        <div>
+          <button id="signInBtn" class="btn signin">Sign in with Google</button>
+          <small id="authStatus"></small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DATA + AUTH (reads only here; auth just launches admin.html) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { 
       getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut 
     } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { 
-      getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, doc, updateDoc, deleteDoc 
+      getFirestore, collection, getDocs, query, orderBy 
     } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-    import { 
-      getStorage, ref, uploadBytesResumable, getDownloadURL 
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
-    // Firebase config for tourthelakes-1e165
+    // Firebase config (unchanged)
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -199,74 +225,27 @@
       measurementId: "G-W6JY1LZXTP"
     };
 
-    // Init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    // Admin allow-list
+    // Only these accounts can open admin.html
     const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"];
 
-    // Helpers
     const $ = (id)=>document.getElementById(id);
     $("yr").textContent = new Date().getFullYear();
-
     const signInBtn = $("signInBtn");
-    const signOutBtn = $("signOutBtn");
     const authStatus = $("authStatus");
-    const adminPanel = $("adminPanel");
 
-    signInBtn.onclick = async ()=>{
-      try{
-        await signInWithPopup(auth, provider);
-      }catch(err){
-        console.error("Auth error:", err.code, err.message);
-        if (
-          err.code === 'auth/operation-not-supported-in-this-environment' ||
-          err.code === 'auth/popup-blocked' ||
-          err.code === 'auth/popup-closed-by-user'
-        ){
-          await signInWithRedirect(auth, provider);
-        }else{
-          alert('Sign in failed: ' + err.code);
-        }
-      }
-    };
-    signOutBtn.onclick = ()=>signOut(auth);
-
-    onAuthStateChanged(auth, user=>{
-      if (!user){
-        authStatus.textContent = "Not signed in";
-        signInBtn.style.display = "inline-block";
-        signOutBtn.style.display = "none";
-        adminPanel.style.display = "none";
-        return;
-      }
-      authStatus.textContent = user.email;
-      signInBtn.style.display = "none";
-      signOutBtn.style.display = "inline-block";
-      const allowed = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
-      adminPanel.style.display = allowed ? "block" : "none";
-      if (!allowed) authStatus.textContent += " (not authorised)";
-    });
-
-    function isClosed(dateStr, cutoffStr){
-      const now = new Date();
-      const d = new Date(dateStr);
-      const c = new Date(cutoffStr);
+    // --- PUBLIC LISTS ---
+    const isClosed = (dateStr, cutoffStr)=>{
+      const now = new Date(), d = new Date(dateStr), c = new Date(cutoffStr);
       return now > c || now > d;
-    }
-    const fmtUK = s => {
-      // expects yyyy-mm-dd
-      if (!s) return "";
-      const [y,m,d] = s.split("-");
-      return `${d}/${m}/${y}`;
     };
+    const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
 
-    // Render a card. If admin is signed-in, show Edit/Delete.
-    function card(colName, id, data, isAdmin){
+    function card(data){
       const closed = isClosed(data.date, data.cutoff);
       const div = document.createElement("div");
       div.className = "event" + (closed ? " closed" : "");
@@ -274,11 +253,6 @@
       const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
       div.innerHTML = `
         ${img}
-        ${isAdmin ? `
-          <div class="admin-actions">
-            <button class="btn secondary" data-edit>Edit</button>
-            <button class="btn danger" data-del>Delete</button>
-          </div>` : ``}
         <div class="pad">
           <h3>${data.title} ${pill}</h3>
           <div class="meta">
@@ -291,155 +265,71 @@
             `<button class="btn" onclick="window.open('${data.paymentLink}','_blank')">Book now</button>`}
         </div>
       `;
-
-      if (isAdmin){
-        div.querySelector("[data-edit]").onclick = ()=>beginEdit(colName, id, data);
-        div.querySelector("[data-del]").onclick = async ()=>{
-          if (!confirm("Delete this item?")) return;
-          try{
-            await deleteDoc(doc(db, colName, id));
-            refreshLists();
-          }catch(e){ alert("Delete failed"); console.error(e); }
-        };
-      }
       return div;
-    }
-
-    async function fetchAll(colName){
-      const q = query(collection(db, colName), orderBy("date","asc"));
-      const snap = await getDocs(q);
-      const items = [];
-      snap.forEach(d=> items.push({id:d.id, data:d.data()}));
-      // open first, closed later
-      const open = items.filter(x=>!isClosed(x.data.date, x.data.cutoff));
-      const closed = items.filter(x=>isClosed(x.data.date, x.data.cutoff));
-      return [...open, ...closed];
     }
 
     async function renderList(colName, mountId){
       const mount = $(mountId);
       mount.innerHTML = `<p class="muted">Loading…</p>`;
       try{
-        const items = await fetchAll(colName);
+        const q = query(collection(db, colName), orderBy("date","asc"));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(d=> items.push(d.data()));
+        const open = items.filter(x=>!isClosed(x.date,x.cutoff));
+        const closed = items.filter(x=>isClosed(x.date,x.cutoff));
         mount.innerHTML = "";
-        const isAdmin = auth.currentUser && ALLOWED_ADMIN_EMAILS.includes(auth.currentUser.email ?? "");
-        if (items.length === 0){ mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`; return; }
-        items.forEach(({id,data})=> mount.appendChild(card(colName, id, data, isAdmin)));
+        [...open,...closed].forEach(data=> mount.appendChild(card(data)));
+        if (items.length===0) mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`;
       }catch(err){
-        console.error(err);
-        mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
+        console.error(err); mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
       }
     }
+    renderList("tours","toursList");
+    renderList("events","eventsList");
 
-    function refreshLists(){
-      renderList("tours","toursList");
-      renderList("events","eventsList");
-    }
-    refreshLists();
-
-    // Admin create/update with optional image upload
-    const form = $("createForm");
-    const saveMsg = $("saveMsg");
-    const progWrap = $("progWrap");
-    const progBar = $("progBar");
-    const cancelEditBtn = $("cancelEditBtn");
-    const editingIdEl = $("editingId");
-    const editingColEl = $("editingCol");
-
-    function formToPayload(){
-      return {
-        title: $("title").value.trim(),
-        date: $("date").value,
-        cutoff: $("cutoff").value,
-        price: Number($("price").value),
-        paymentLink: $("paymentLink").value.trim(),
-        description: $("description").value.trim(),
-        createdAt: serverTimestamp()
-      };
-    }
-
-    async function uploadImageIfAny(colName){
-      const file = $("image").files[0];
-      if (!file) return null;
-      if (file.size > 5 * 1024 * 1024) { alert("Image too large. Keep under 5MB."); throw new Error("large"); }
-      const safeName = file.name.replace(/[^\w.\-]+/g,"_");
-      const path = `images/${colName}/${Date.now()}_${safeName}`;
-      const storageRef = ref(storage, path);
-      progWrap.style.display = "block";
-      const task = uploadBytesResumable(storageRef, file);
-      await new Promise((resolve, reject)=>{
-        task.on("state_changed", snap=>{
-          const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
-          progBar.style.width = `${pct}%`;
-        }, reject, resolve);
-      });
-      const url = await getDownloadURL(storageRef);
-      progBar.style.width = "100%";
-      return url;
-    }
-
-    form.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      saveMsg.textContent = "";
-
-      const user = auth.currentUser;
-      const allowed = user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
-      if (!allowed){ alert("Not authorised"); return; }
-
-      const colName = editingColEl.value || $("type").value;
-      const payload = formToPayload();
-      if (!payload.title || !payload.date || !payload.cutoff || !payload.paymentLink){
-        alert("Please fill all required fields");
-        return;
-      }
-
+    // --- FOOTER SIGN-IN -> open admin.html in a new tab if allowed ---
+    signInBtn.onclick = async ()=>{
       try{
-        const url = await uploadImageIfAny(colName);
-        if (url) payload.imageUrl = url;
-
-        const editingId = editingIdEl.value;
-        if (editingId){
-          await updateDoc(doc(db, colName, editingId), payload);
-          saveMsg.textContent = "Updated.";
-        }else{
-          await addDoc(collection(db, colName), payload);
-          saveMsg.textContent = "Saved.";
+        const res = await signInWithPopup(auth, provider);
+        const email = res.user?.email ?? "";
+        if (ALLOWED_ADMIN_EMAILS.includes(email)){
+          authStatus.textContent = email;
+          window.open("admin.html","_blank","noopener");
+        } else {
+          authStatus.textContent = "Not authorised";
+          alert("That account isn't authorised for admin.");
+          await signOut(auth);
         }
-        form.reset();
-        progWrap.style.display = "none";
-        progBar.style.width = "0";
-        editingIdEl.value = "";
-        editingColEl.value = "";
-        $("saveBtn").textContent = "Save";
-        cancelEditBtn.style.display = "none";
-        refreshLists();
       }catch(err){
-        console.error(err);
-        saveMsg.textContent = "Save failed";
+        // Fallback to redirect if popup blocked
+        if (err?.code === 'auth/operation-not-supported-in-this-environment' ||
+            err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user'){
+          await signInWithRedirect(auth, provider);
+        }else{
+          console.error("Auth error:", err?.code, err?.message);
+          alert("Sign in failed.");
+        }
+      }
+    };
+
+    // If returning from redirect, auto-open admin for allowed users
+    onAuthStateChanged(auth, user=>{
+      if (!user) return;
+      const email = user.email ?? "";
+      authStatus.textContent = email;
+      if (ALLOWED_ADMIN_EMAILS.includes(email)){
+        // Only open if we're on the public page (defensive)
+        if (!/admin\.html$/i.test(location.pathname)){
+          window.open("admin.html","_blank","noopener");
+        }
+      } else {
+        authStatus.textContent = "Not authorised";
+        signOut(auth);
       }
     });
-
-    function beginEdit(colName, id, data){
-      editingIdEl.value = id;
-      editingColEl.value = colName;
-      $("type").value = colName;
-      $("title").value = data.title ?? "";
-      $("date").value = data.date ?? "";
-      $("cutoff").value = data.cutoff ?? "";
-      $("price").value = data.price ?? 0;
-      $("paymentLink").value = data.paymentLink ?? "";
-      $("description").value = data.description ?? "";
-      $("saveBtn").textContent = "Update";
-      cancelEditBtn.style.display = "inline-block";
-      window.location.hash = "#admin";
-    }
-    cancelEditBtn.onclick = ()=>{
-      form.reset();
-      editingIdEl.value = "";
-      editingColEl.value = "";
-      $("saveBtn").textContent = "Save";
-      cancelEditBtn.style.display = "none";
-    };
   </script>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
