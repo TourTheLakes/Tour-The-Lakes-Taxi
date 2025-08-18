@@ -27,7 +27,7 @@
       --radius:20px;
       --shadow:0 18px 50px rgba(0,0,0,.35);
       --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
-      --logo: 188px;           /* desktop circle size & side column width (kept in sync) */
+      --logo: 188px;           /* desktop circle size & side column width */
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
@@ -76,9 +76,7 @@
     .hero-copy p{
       margin:0; color:var(--muted); font-size: clamp(15px, 2.8vw, 18px);
     }
-    /* Desktop (≥1200px): circle left, headline truly centered.
-       We bind the left/right columns to the SAME width (--logo),
-       and we ALSO size the circle with --logo, so centreline stays exact. */
+    /* Desktop (≥1200px): circle left, headline truly centered using symmetric columns */
     @media (min-width:1200px){
       :root{ --logo: 188px; }
       .hero{
@@ -106,7 +104,7 @@
     }
     nav a:hover{background:#121822;color:#f2fbff}
 
-    /* ===== Sections: glass/smoke with neon details ===== */
+    /* ===== Sections: panels stay, but no “box on the word” headings ===== */
     main{max-width:1100px;margin:30px auto;padding:0 14px}
     .section{margin:20px 0}
     .panel{
@@ -116,13 +114,18 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(6px);
     }
+    /* NEW heading style: simple neon underline, not a box touching the text */
     .panel h2{
-      margin:0 0 12px; color:#eaf4fb; display:inline-block; padding-bottom:8px;
-      border-bottom: 3px solid transparent;
-      background:
-        linear-gradient(#0000,#0000) padding-box,
-        linear-gradient(90deg, var(--neon), var(--neon2)) border-box;
+      margin:0; color:#eaf4fb; position:relative; display:inline-block;
+      padding-bottom:10px;
     }
+    .panel h2::after{
+      content:""; display:block; height:3px; margin-top:6px;
+      width: clamp(90px, 14vw, 180px);
+      background: linear-gradient(90deg, var(--neon), var(--neon2));
+      border-radius:2px;
+    }
+
     .muted{color:var(--muted)}
 
     /* Tour/Event item cards */
