@@ -9,104 +9,168 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
+  <!-- Favicon = the circle badge -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='46' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ETour%3C/text%3E%3Ctext x='60' y='68' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3EThe%3C/text%3E%3Ctext x='60' y='90' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ELakes%3C/text%3E%3C/svg%3E"/>
 
   <style>
     :root{
-      --bg:#0e1116;
-      --smoke:#12171e;
-      --smoke2:#0b0d10;
-      --ink:#e8f1f8;
-      --muted:#a8b0bb;
-      --neon:#55f0ff;
-      --neon2:#00d2ff;
-      --line:#273341;
+      /* Leather / smoke / neon */
+      --bg:#0e1116;            /* page background */
+      --smoke:#12171e;         /* banner base */
+      --smoke2:#0b0d10;        /* deeper shade */
+      --surface:#131820;       /* panels */
+      --ink:#e8f1f8;           /* primary text on dark */
+      --muted:#a8b0bb;         /* muted text */
+      --neon:#55f0ff;          /* cyan neon */
+      --neon2:#00d2ff;         /* accent gradient end */
+      --line:#273341;          /* subtle borders */
+      --radius:20px;
       --shadow:0 18px 50px rgba(0,0,0,.35);
       --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
-      --logo: 188px;
+      --logo: 188px;           /* desktop circle size & side column width (kept in sync) */
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--neon);text-decoration:none}
+    @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 
-    /* BANNERS */
+    /* ===== BANNERS (header & footer share this) ===== */
     .banner{position:relative;overflow:hidden;color:var(--ink)}
-    .banner .layer{position:absolute;inset:-25% -10% auto -10%;height:125%;background:var(--grad);}
+    .banner .layer{
+      position:absolute;inset:-25% -10% auto -10%;height:125%;
+      background:var(--grad);
+    }
+    /* soft “neon smoke” glows */
     .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55}
     .g1{width:540px;height:540px;left:-180px;top:-180px;background:radial-gradient(closest-side, rgba(85,240,255,.35), rgba(85,240,255,0))}
     .g2{width:420px;height:420px;right:-140px;bottom:-160px;background:radial-gradient(closest-side, rgba(0,210,255,.25), rgba(0,210,255,0))}
 
-    /* HERO */
-    header.banner{padding:80px 16px 64px}
-    .hero{position:relative;z-index:2;max-width:1100px;margin:0 auto;
-      display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center;}
-    .stamp{
-      justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
-      border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
-                 repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
-      border:4px solid rgba(134,246,255,.85);
-      box-shadow:0 0 0 6px rgba(134,246,255,.12), inset 0 12px 26px rgba(0,0,0,.45);
-      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase;
+    /* ===== HERO ===== */
+    header.banner{padding:80px 16px 64px;color:var(--ink)}
+    /* Mobile-first: stack (logo row, then text) */
+    .hero{
+      position:relative;z-index:2;max-width:1100px;margin:0 auto;
+      display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center;
     }
-    .hero-copy h1{margin:0 0 10px;font-size:clamp(30px,7vw,46px);text-wrap:balance}
-    .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.8vw,18px)}
-    @media(min-width:1200px){
-      .hero{grid-template-columns:var(--logo) 1fr var(--logo);gap:28px;padding-inline:0;text-align:center;}
-      .stamp{justify-self:start;width:var(--logo);height:var(--logo);border-width:5px}
+    .stamp{
+      justify-self:center;
+      width: clamp(124px, 36vw, 150px);
+      height: clamp(124px, 36vw, 150px);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      background:
+        radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
+      border:4px solid rgba(134,246,255,.85);
+      box-shadow: 0 0 0 6px rgba(134,246,255,.12), inset 0 12px 26px rgba(0,0,0,.45);
+      color:#eaf6ff;
+      text-transform:uppercase;
+      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;letter-spacing:.6px;
+    }
+    .hero-copy h1{
+      margin:0 0 10px; text-wrap: balance;
+      font-size: clamp(30px, 7vw, 46px);
+    }
+    .hero-copy p{
+      margin:0; color:var(--muted); font-size: clamp(15px, 2.8vw, 18px);
+    }
+    /* Desktop (≥1200px): circle left, headline truly centered.
+       We bind the left/right columns to the SAME width (--logo),
+       and we ALSO size the circle with --logo, so centreline stays exact. */
+    @media (min-width:1200px){
+      :root{ --logo: 188px; }
+      .hero{
+        grid-template-columns: var(--logo) 1fr var(--logo);
+        gap:28px;padding-inline:0;text-align:center;
+      }
+      .stamp{
+        justify-self:start;
+        width: var(--logo); height: var(--logo);
+        border-width:5px;
+      }
       .hero-copy{grid-column:2}
     }
 
-    /* NAV */
-    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
-      background:linear-gradient(180deg,#0d1218,#0a0e13);
-      border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;padding:12px}
-    nav a{color:#d7e3ee;padding:10px 14px;border-radius:10px;font-weight:600}
+    /* ===== NAV ===== */
+    nav{
+      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+      background:linear-gradient(180deg, #0d1218, #0a0e13);
+      border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;
+      padding:12px
+    }
+    nav a{
+      color:#d7e3ee; padding:10px 14px; border-radius:10px; font-weight:600;
+      background:transparent; transition:background .15s ease, color .15s ease
+    }
     nav a:hover{background:#121822;color:#f2fbff}
 
-    /* SECTIONS */
+    /* ===== Sections: glass/smoke with neon details ===== */
     main{max-width:1100px;margin:30px auto;padding:0 14px}
-    .section{margin:36px 0}
-    .section h2{
-      margin:0 0 12px; color:#eaf4fb;
-      display:inline-block; padding-bottom:8px;
-      border-bottom:3px solid transparent;
-      background:linear-gradient(#0000,#0000) padding-box,
-                 linear-gradient(90deg,var(--neon),var(--neon2)) border-box;
+    .section{margin:20px 0}
+    .panel{
+      position:relative; padding:22px; border-radius:18px;
+      background: linear-gradient(180deg, rgba(19,24,32,.85), rgba(19,24,32,.74));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .panel h2{
+      margin:0 0 12px; color:#eaf4fb; display:inline-block; padding-bottom:8px;
+      border-bottom: 3px solid transparent;
+      background:
+        linear-gradient(#0000,#0000) padding-box,
+        linear-gradient(90deg, var(--neon), var(--neon2)) border-box;
     }
     .muted{color:var(--muted)}
 
-    /* CARDS */
+    /* Tour/Event item cards */
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
     @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-    .event{background:#0f141b;border:1px solid #1f2a36;border-radius:14px;overflow:hidden}
-    .event:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.35);border-color:#2a3a4a}
+    .event{
+      background:#0f141b;border:1px solid #1f2a36;border-radius:14px;overflow:hidden;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease
+    }
+    .event:hover{transform:translateY(-2px); box-shadow:0 14px 36px rgba(0,0,0,.35); border-color:#2a3a4a}
     .imgwrap{width:100%;aspect-ratio:16/9;background:#0b1016}
     .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
     .pad{padding:14px;color:#d6e2ed}
     .event h3{margin:0 0 6px;color:#eaf4fb}
     .meta{font-size:14px;color:#9eb0c4;margin:2px 0 10px}
     .closed{opacity:.62}
-    .btn{display:inline-block;border:0;border-radius:10px;padding:10px 16px;
-      background:linear-gradient(90deg,var(--neon),var(--neon2));
-      color:#00242a;font-weight:800;cursor:pointer}
+    .btn{
+      display:inline-block;border:0;border-radius:10px;padding:10px 16px;
+      background: linear-gradient(90deg, var(--neon), var(--neon2));
+      color:#00242a;font-weight:800;cursor:pointer
+    }
+    .btn:hover{filter:brightness(.95)}
     .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
     .pill.ok{background:rgba(85,240,255,.16);color:#86f6ff;border:1px solid rgba(134,246,255,.35)}
     .pill.closed{background:#2a1a1a;color:#ffb4a6;border:1px solid #7a3a3a}
-    .empty{display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b}
 
-    /* FOOTER */
+    /* Empty state */
+    .empty{
+      display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b
+    }
+
+    /* ===== FOOTER (same banner palette) ===== */
     footer.banner{padding:36px 16px;color:#cfe6ee}
     footer .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center}
-    #signinDot{background:none;border:none;color:#bfefff;cursor:pointer;opacity:.45;font-size:16px;padding:2px 6px}
+    #signinDot{
+      background:none;border:none;color:#bfefff;cursor:pointer;opacity:.45;
+      font-size:16px;line-height:1;padding:2px 6px;border-radius:999px
+    }
+    #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
     #authMsg{color:#bfefff;font-size:12px;min-height:16px;display:block}
   </style>
 </head>
 <body>
+  <!-- ===== HEADER ===== -->
   <header class="banner">
-    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
+    <div class="layer"></div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
     <div class="hero">
       <div class="stamp">Tour<br>The<br>Lakes</div>
       <div class="hero-copy">
@@ -117,34 +181,49 @@
   </header>
 
   <nav>
-    <a href="#about">About</a><a href="#tours">Tours</a><a href="#events">Events</a><a href="#contact">Contact</a>
+    <a href="#about">About</a>
+    <a href="#tours">Tours</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Contact</a>
   </nav>
 
   <main>
     <section id="about" class="section">
-      <h2>About</h2>
-      <p class="muted">Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
+      <div class="panel">
+        <h2>About</h2>
+        <p class="muted">Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
+      </div>
     </section>
 
     <section id="tours" class="section">
-      <h2>Upcoming Tours</h2>
-      <div id="toursList" class="grid"><span class="empty">Loading tours…</span></div>
+      <div class="panel">
+        <h2>Upcoming Tours</h2>
+        <div id="toursList" class="grid"><span class="empty">Loading tours…</span></div>
+      </div>
     </section>
 
     <section id="events" class="section">
-      <h2>Special Events</h2>
-      <div id="eventsList" class="grid"><span class="empty">Loading events…</span></div>
+      <div class="panel">
+        <h2>Special Events</h2>
+        <div id="eventsList" class="grid"><span class="empty">Loading events…</span></div>
+      </div>
     </section>
 
     <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p class="muted">Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
+      <div class="panel">
+        <h2>Contact</h2>
+        <p class="muted">Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
+      </div>
     </section>
   </main>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="banner">
-    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
-    <div class="inner">© <span id="yr"></span> Tour The Lakes
+    <div class="layer"></div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="inner">
+      © <span id="yr"></span> Tour The Lakes
       <button id="signinDot" title=" " aria-label="Staff">•</button>
       <small id="authMsg" aria-live="polite"></small>
     </div>
@@ -152,32 +231,99 @@
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- FIREBASE (unchanged from last working build) -->
+  <!-- ===== PUBLIC DATA + DISCREET AUTH (manual only) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+      getRedirectResult, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey:"AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",authDomain:"tourthelakes-1e165.firebaseapp.com",projectId:"tourthelakes-1e165",storageBucket:"tourthelakes-1e165.firebasestorage.app",messagingSenderId:"470758171431",appId:"1:470758171431:web:f06dd39b0f15b63b2bff02",measurementId:"G-W6JY1LZXTP" };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db   = getFirestore(app);
     const provider = new GoogleAuthProvider();
     const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"];
 
-    const $=(id)=>document.getElementById(id);
-    const authMsg=$("authMsg");
+    const $ = (id)=>document.getElementById(id);
+    const authMsg = $("authMsg");
 
-    const isClosed=(d,c)=>{const n=new Date();return n>new Date(c)||n>new Date(d);}
-    const fmtUK=s=>s?s.split("-").reverse().join("/"):"";
-    function card(d){const closed=isClosed(d.date,d.cutoff);const el=document.createElement("div");el.className="event"+(closed?" closed":"");const pill=closed?`<span class="pill closed">Closed</span>`:`<span class="pill ok">Open</span>`;const img=d.imageUrl?`<div class="imgwrap"><img src="${d.imageUrl}" alt=""></div>`:`<div class="imgwrap"></div>`;el.innerHTML=`${img}<div class="pad"><h3>${d.title} ${pill}</h3><div class="meta"><strong>Date:</strong> ${fmtUK(d.date)} • <strong>Cut off:</strong> ${fmtUK(d.cutoff)} • <strong>Price:</strong> £${Number(d.price).toFixed(0)}</div><p>${d.description}</p>${closed?`<p class="muted"><em>This listing is now closed.</em></p>`:`<button class="btn" onclick="window.open('${d.paymentLink}','_blank')">Book now</button>`}</div>`;return el;}
-    async function renderList(col,id){const mount=$(id);mount.innerHTML=`<span class="empty">Loading…</span>`;try{const q=query(collection(db,col),orderBy("date","asc"));const snap=await getDocs(q);const arr=[];snap.forEach(x=>arr.push(x.data()));const open=arr.filter(x=>!isClosed(x.date,x.cutoff));const closed=arr.filter(x=>isClosed(x.date,x.cutoff));mount.innerHTML="";[...open,...closed].forEach(d=>mount.appendChild(card(d)));if(!arr.length)mount.innerHTML=`<span class="empty">No ${col} yet.</span>`;}catch(e){console.error(e);mount.innerHTML=`<span class="empty">Could not load ${col}.</span>`;}}
-    renderList("tours","toursList");renderList("events","eventsList");
+    // Render public lists
+    const isClosed = (dateStr, cutoffStr)=>{const n=new Date(),d=new Date(dateStr),c=new Date(cutoffStr);return n>c||n>d;};
+    const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
+    function card(d){
+      const closed = isClosed(d.date,d.cutoff);
+      const el = document.createElement("div");
+      el.className = "event" + (closed ? " closed" : "");
+      const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
+      const img = d.imageUrl ? `<div class="imgwrap"><img src="${d.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
+      el.innerHTML = `${img}
+        <div class="pad">
+          <h3>${d.title} ${pill}</h3>
+          <div class="meta"><strong>Date:</strong> ${fmtUK(d.date)} &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(d.cutoff)} &nbsp; • &nbsp; <strong>Price:</strong> £${Number(d.price).toFixed(0)}</div>
+          <p>${d.description}</p>
+          ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` : `<button class="btn" onclick="window.open('${d.paymentLink}','_blank')">Book now</button>`}
+        </div>`;
+      return el;
+    }
+    async function renderList(col, mountId){
+      const mount = $(mountId);
+      mount.innerHTML = `<span class="empty">Loading…</span>`;
+      try{
+        const q = query(collection(db, col), orderBy("date","asc"));
+        const snap = await getDocs(q);
+        const arr = []; snap.forEach(x=>arr.push(x.data()));
+        const open   = arr.filter(x=>!isClosed(x.date,x.cutoff));
+        const closed = arr.filter(x=> isClosed(x.date,x.cutoff));
+        mount.innerHTML = "";
+        [...open,...closed].forEach(d=> mount.appendChild(card(d)));
+        if (!arr.length) mount.innerHTML = `<span class="empty">No ${col} yet.</span>`;
+      }catch(e){ console.error(e); mount.innerHTML = `<span class="empty">Could not load ${col}.</span>`; }
+    }
+    renderList("tours","toursList");
+    renderList("events","eventsList");
 
-    async function openIfAllowed(user){if(ALLOWED_ADMIN_EMAILS.includes(user?.email)){window.open("admin.html","_blank","noopener");}else if(user){authMsg.textContent="Not authorised";setTimeout(()=>authMsg.textContent="",3000);await signOut(auth);}}
-    async function doSignIn(){if(auth.currentUser)return openIfAllowed(auth.currentUser);try{const res=await signInWithPopup(auth,provider);await openIfAllowed(res.user);}catch(err){if(err?.code==='auth/operation-not-supported-in-this-environment'||err?.code==='auth/popup-blocked'){await signInWithRedirect(auth,provider);}else{console.error(err);authMsg.textContent="Sign in failed";setTimeout(()=>authMsg.textContent="",3000);}}}
-    document.getElementById("signinDot").addEventListener("click",doSignIn);
-    getRedirectResult(auth).then(res=>{if(res)openIfAllowed(res.user);}).catch(err=>{console.error(err);});
+    // Manual sign-in only (no auto-open)
+    async function openIfAllowed(user){
+      const email = user?.email ?? "";
+      if (ALLOWED_ADMIN_EMAILS.includes(email)){
+        window.open("admin.html","_blank","noopener");
+      } else if (user) {
+        authMsg.textContent = "Not authorised";
+        setTimeout(()=>authMsg.textContent="", 3000);
+        await signOut(auth);
+      }
+    }
+    async function doSignIn(){
+      if (auth.currentUser) return openIfAllowed(auth.currentUser);
+      try{
+        const res = await signInWithPopup(auth, provider);
+        await openIfAllowed(res.user);
+      }catch(err){
+        if (err?.code === 'auth/operation-not-supported-in-this-environment' || err?.code === 'auth/popup-blocked'){
+          await signInWithRedirect(auth, provider);
+        }else{
+          console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
+        }
+      }
+    }
+    document.getElementById("signinDot").addEventListener("click", doSignIn);
+    document.addEventListener("keydown", e=>{ if (e.shiftKey && (e.key==='A'||e.key==='a')) doSignIn(); });
+    getRedirectResult(auth).then(res => { if (res) openIfAllowed(res.user); })
+      .catch(err => { console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000); });
   </script>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
