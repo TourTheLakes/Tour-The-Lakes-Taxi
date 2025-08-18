@@ -15,18 +15,18 @@
   <style>
     :root{
       --ink:#0f2f4f; --ink2:#1b3f66; --accent:#0fa3b1;
-      --bg:#f3f5f7; --card:#ffffffee; --muted:#6b7280;
-      --radius:22px; --shadow:0 20px 50px rgba(15,47,79,.10);
+      --bg:#f3f5f7; --muted:#6b7280; --card:#fff;
+      --radius:20px; --shadow:0 20px 50px rgba(15,47,79,.10);
       --grad: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;
+    html,body{margin:0;padding:0;background:var(--bg);color:#0f172a;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
     a{color:var(--ink2);text-decoration:none}
     @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 
-    /* ===== Floaty banner (header & footer colour) ===== */
+    /* ===== Shared floaty banner (header + footer colour) ===== */
     .banner{position:relative;overflow:hidden;color:#fff}
     .banner .layer{position:absolute;inset:-20% -10% auto -10%;height:120%;background:var(--grad)}
     .blob{position:absolute;border-radius:50%;
@@ -38,43 +38,48 @@
 
     /* ===== HERO ===== */
     header.banner{padding:78px 16px 60px}
-    /* Desktop: circle left, text centred by symmetric grid */
+    /* Mobile-first: stack by default (logo on its own row) */
     .hero{
       position:relative;z-index:2;max-width:1100px;margin:0 auto;
-      display:grid;align-items:center;gap:26px;
-      grid-template-columns: clamp(140px, 16vw, 190px) 1fr clamp(140px, 16vw, 190px);
+      display:grid;gap:18px; grid-template-columns:1fr; padding-inline:6px;
+      text-align:center;
     }
     .stamp{
-      grid-column:1; justify-self:start;
+      justify-self:center;
       display:flex;align-items:center;justify-content:center;
-      width: clamp(150px, 18vw, 190px);
-      height: clamp(150px, 18vw, 190px);
+      width: clamp(120px, 36vw, 150px);
+      height: clamp(120px, 36vw, 150px);
       border-radius:50%;
       box-shadow: inset 0 8px 20px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.25);
       background:
         radial-gradient(circle at 30% 30%, #1c4776, #173a61 60%),
         repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.15) 0 2px, rgba(0,0,0,0) 2px 4px);
-      border:7px solid rgba(255,255,255,.7);
-      text-align:center;
+      border:6px solid rgba(255,255,255,.7);
     }
     .stamp span{
       font-family:Outfit; font-weight:800; color:#fff; text-transform:uppercase;
       letter-spacing:.6px; line-height:1.15; font-size: clamp(16px, 2vw, 20px);
     }
-    .hero-copy{grid-column:2; text-align:center}
     .hero-copy h1{
-      margin:0 0 8px;
-      font-size: clamp(32px, 4.2vw, 44px);
-      text-wrap: balance;
+      margin:0 0 8px; text-wrap: balance;
+      font-size: clamp(30px, 7vw, 44px);
     }
     .hero-copy p{
-      margin:0; color:#e5e7eb; font-size: clamp(15px, 2vw, 18px);
+      margin:0; color:#e5e7eb; font-size: clamp(15px, 2.8vw, 18px);
     }
-    /* Phones/tablets: logo on its OWN row, then headline below (no side-by-side) */
-    @media (max-width:1200px){
-      .hero{grid-template-columns:1fr; gap:18px; padding-inline:6px}
-      .stamp{justify-self:center; width: clamp(120px, 36vw, 150px); height: clamp(120px, 36vw, 150px); border-width:6px}
-      .hero-copy{text-align:center}
+    /* Wide screens: circle left, headline truly centered using symmetric grid */
+    @media (min-width:1200px){
+      .hero{
+        grid-template-columns: clamp(140px,16vw,190px) 1fr clamp(140px,16vw,190px);
+        gap:26px; text-align:center; padding-inline:0;
+      }
+      .stamp{
+        justify-self:start;
+        width: clamp(150px, 18vw, 190px);
+        height: clamp(150px, 18vw, 190px);
+        border-width:7px;
+      }
+      .hero-copy{grid-column:2}
     }
 
     /* ===== Nav ===== */
@@ -82,22 +87,34 @@
     nav a{color:#e5e7eb;padding:10px 14px;border-radius:10px;font-weight:600}
     nav a:hover{background:#0e223a}
 
-    /* ===== Modern cards for body ===== */
-    main{max-width:1100px;margin:26px auto;padding:0 14px}
-    section.card{
-      position:relative;margin:18px 0;border-radius:var(--radius);padding:22px;background:var(--card);
-      box-shadow:var(--shadow);
-      border:1px solid transparent;
+    /* ===== “Card-less” modern sections ===== */
+    main{max-width:1100px;margin:28px auto;padding:0 14px}
+    .section{
+      position:relative; padding:28px 8px 22px; margin:8px 0 26px;
+    }
+    /* Slim accent rail on the left that fades */
+    .section::before{
+      content:""; position:absolute; left:0; top:0; bottom:0; width:6px;
+      background:linear-gradient(180deg, rgba(15,163,177,.4), rgba(27,63,102,.4));
+      border-radius:6px; opacity:.6;
+    }
+    .section-inner{
+      margin-left:18px; padding:18px 18px 8px; border-radius:16px;
+      background:linear-gradient(180deg, #ffffff, #fbfdff);
+      box-shadow:0 6px 30px rgba(15,47,79,.08);
+      border:1px solid #e8eef5;
+    }
+    .section h2{
+      margin:0 0 12px; color:var(--ink);
+      display:inline-block; padding-bottom:8px;
       background:
-        linear-gradient(#fff,#fff) padding-box,
-        linear-gradient(135deg, rgba(27,63,102,.25), rgba(15,163,177,.25)) border-box;
+        linear-gradient(#0000,#0000) padding-box,
+        linear-gradient(90deg, rgba(15,163,177,.5), rgba(27,63,102,.5)) border-box;
+      border-bottom:3px solid transparent;
     }
-    h2.section-title{
-      display:flex;align-items:center;gap:10px;margin:0 0 12px;
-      padding-bottom:10px;border-bottom:3px solid #e8eef5;color:var(--ink)
-    }
-    .title-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(15,163,177,.18)}
     .muted{color:var(--muted)}
+
+    /* Event/Tour items still use cards */
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
     @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
     .event{border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s ease, box-shadow .15s ease}
@@ -114,7 +131,12 @@
     .pill.ok{background:#e6fffb;color:#064e4e}
     .pill.closed{background:#fff1e6;color:#9a3412}
 
-    /* ===== Footer (same gradient as header, only copyright + •) ===== */
+    /* Nicer empty state */
+    .empty{
+      display:inline-block;border:2px dashed #cdd8e6;border-radius:999px;padding:10px 14px;color:#51607a;background:#f7fbff;
+    }
+
+    /* ===== Footer (same gradient + tiny dot) ===== */
     footer.banner{padding:34px 16px}
     footer .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#d1e3f7}
     #signinDot{
@@ -137,7 +159,6 @@
         <h1>Guided days in the Lake District</h1>
         <p>Stories, stops, and scenery — without the parking stress</p>
       </div>
-      <div aria-hidden="true"></div>
     </div>
   </header>
 
@@ -149,24 +170,32 @@
   </nav>
 
   <main>
-    <section id="about" class="card">
-      <h2 class="section-title"><span class="title-dot"></span>About</h2>
-      <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
+    <section id="about" class="section">
+      <div class="section-inner">
+        <h2>About</h2>
+        <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
+      </div>
     </section>
 
-    <section id="tours" class="card">
-      <h2 class="section-title"><span class="title-dot"></span>Upcoming Tours</h2>
-      <div id="toursList" class="grid"><p class="muted">Loading tours…</p></div>
+    <section id="tours" class="section">
+      <div class="section-inner">
+        <h2>Upcoming Tours</h2>
+        <div id="toursList" class="grid"><span class="empty">Loading tours…</span></div>
+      </div>
     </section>
 
-    <section id="events" class="card">
-      <h2 class="section-title"><span class="title-dot"></span>Special Events</h2>
-      <div id="eventsList" class="grid"><p class="muted">Loading events…</p></div>
+    <section id="events" class="section">
+      <div class="section-inner">
+        <h2>Special Events</h2>
+        <div id="eventsList" class="grid"><span class="empty">Loading events…</span></div>
+      </div>
     </section>
 
-    <section id="contact" class="card">
-      <h2 class="section-title"><span class="title-dot"></span>Contact</h2>
-      <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
+    <section id="contact" class="section">
+      <div class="section-inner">
+        <h2>Contact</h2>
+        <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
+      </div>
     </section>
   </main>
 
@@ -184,10 +213,10 @@
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- ===== PUBLIC DATA + DISCREET AUTH (no auto-open on refresh) ===== -->
+  <!-- ===== PUBLIC DATA + DISCREET AUTH (no auto-open) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { 
+    import {
       getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
       getRedirectResult, signOut
     } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
@@ -212,7 +241,7 @@
     const $ = (id)=>document.getElementById(id);
     const authMsg = $("authMsg");
 
-    // ===== Render public lists =====
+    // Public lists
     const isClosed = (dateStr, cutoffStr)=>{const n=new Date(),d=new Date(dateStr),c=new Date(cutoffStr);return n>c||n>d;};
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
     function card(d){
@@ -232,7 +261,7 @@
     }
     async function renderList(col, mountId){
       const mount = $(mountId);
-      mount.innerHTML = `<p class="muted">Loading…</p>`;
+      mount.innerHTML = `<span class="empty">Loading…</span>`;
       try{
         const q = query(collection(db, col), orderBy("date","asc"));
         const snap = await getDocs(q);
@@ -241,13 +270,13 @@
         const closed = arr.filter(x=> isClosed(x.date,x.cutoff));
         mount.innerHTML = "";
         [...open,...closed].forEach(d=> mount.appendChild(card(d)));
-        if (!arr.length) mount.innerHTML = `<p class="muted">No ${col} yet.</p>`;
-      }catch(e){ console.error(e); mount.innerHTML = `<p class="muted">Could not load ${col}.</p>`; }
+        if (!arr.length) mount.innerHTML = `<span class="empty">No ${col} yet.</span>`;
+      }catch(e){ console.error(e); mount.innerHTML = `<span class="empty">Could not load ${col}.</span>`; }
     }
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // ===== Sign-in flow (no auto-open on refresh) =====
+    // Auth — manual only
     async function openIfAllowed(user){
       const email = user?.email ?? "";
       if (ALLOWED_ADMIN_EMAILS.includes(email)){
@@ -258,34 +287,25 @@
         await signOut(auth);
       }
     }
-
     async function doSignIn(){
-      // If already signed in, respect the click and open immediately if allowed
-      if (auth.currentUser) { return openIfAllowed(auth.currentUser); }
+      if (auth.currentUser) return openIfAllowed(auth.currentUser);
       try{
         const res = await signInWithPopup(auth, provider);
         await openIfAllowed(res.user);
       }catch(err){
         if (err?.code === 'auth/operation-not-supported-in-this-environment' || err?.code === 'auth/popup-blocked'){
-          // Use redirect only when needed – handle the result once when we return
           await signInWithRedirect(auth, provider);
         }else{
           console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
         }
       }
     }
-
-    // Handle redirect result ONCE (only when we actually did a redirect)
-    getRedirectResult(auth).then(async (res)=>{
-      if (!res) return;                // Plain refresh will skip this
-      await openIfAllowed(res.user);
-    }).catch(err=>{
-      console.error("Redirect error:", err);
-      authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
-    });
-
     document.getElementById("signinDot").addEventListener("click", doSignIn);
     document.addEventListener("keydown", e=>{ if (e.shiftKey && (e.key==='A'||e.key==='a')) doSignIn(); });
+
+    // Only handle redirect result when present; a plain refresh won’t open admin
+    getRedirectResult(auth).then(res => { if (res) openIfAllowed(res.user); })
+      .catch(err => { console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000); });
   </script>
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
