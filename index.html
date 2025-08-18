@@ -8,7 +8,7 @@
   <style>
     :root{
       --ink:#0f2f4f;
-      --ink-2:#1b3f66;
+      --ink2:#1b3f66;
       --accent:#0fa3b1;
       --bg:#f3f5f7;
       --card:#ffffff;
@@ -16,9 +16,9 @@
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    a{color:var(--ink-2);text-decoration:none}
-    header{background:linear-gradient(180deg,var(--ink) 0%, var(--ink-2) 100%);color:#fff;padding:28px 16px 22px;text-align:center}
-    header h1{margin:0;font-size:28px;letter-spacing:.5px}
+    a{color:var(--ink2);text-decoration:none}
+    header{background:linear-gradient(180deg,var(--ink) 0%, var(--ink2) 100%);color:#fff;padding:28px 16px 22px;text-align:center}
+    header h1{margin:0;font-size:28px}
     header p{margin:6px 0 0;color:#e5e7eb}
     nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:8px}
     nav a{color:#e5e7eb;padding:10px 14px;border-radius:8px;font-weight:600}
@@ -28,7 +28,10 @@
     h2{margin:0 0 12px;padding-bottom:8px;border-bottom:3px solid #e8eef5;color:var(--ink)}
     .grid{display:grid;grid-template-columns:1fr;gap:14px}
     @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-    .event{border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .event{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff}
+    .event .imgwrap{width:100%;aspect-ratio:16/9;background:#eef3f8;display:block}
+    .event img{width:100%;height:100%;object-fit:cover;display:block}
+    .pad{padding:12px}
     .event h3{margin:0 0 4px;color:#0f2f4f}
     .meta{font-size:14px;color:var(--muted);margin:4px 0 10px}
     .event.closed{opacity:.62}
@@ -48,6 +51,8 @@
     input, textarea, select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
     textarea{min-height:90px}
     .hr{height:1px;background:#e5e7eb;margin:14px 0}
+    .progress{height:8px;background:#e5e7eb;border-radius:6px;overflow:hidden}
+    .progress > div{height:100%;width:0;background:var(--accent)}
     footer{color:#94a3b8;text-align:center;padding:28px 12px}
   </style>
 </head>
@@ -68,10 +73,7 @@
   <main>
     <section id="about">
       <h2>About</h2>
-      <p>
-        Full day tours with live and recorded commentary, scenic stops, and time to explore.
-        A tour only runs once 20 fully paid participants are confirmed before the cut-off. No pay on the day.
-      </p>
+      <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut-off. No pay on the day.</p>
     </section>
 
     <section id="tours">
@@ -134,13 +136,19 @@
             </div>
             <div>
               <label for="paymentLink">SumUp payment link</label>
-              <input id="paymentLink" type="url" required placeholder="https://me.sumup.com/pay/…"/>
+              <input id="paymentLink" type="url" required placeholder="https://me.sumup.com/pay/..."/>
             </div>
           </div>
 
           <div>
+            <label for="image">Feature image (optional)</label>
+            <input id="image" type="file" accept="image/*"/>
+            <div class="progress" style="margin-top:8px;display:none" id="progWrap"><div id="progBar"></div></div>
+          </div>
+
+          <div style="margin-top:10px">
             <label for="description">Description</label>
-            <textarea id="description" placeholder="Route, highlights, lunch stop, timings…" required></textarea>
+            <textarea id="description" placeholder="Route, highlights, timings…" required></textarea>
           </div>
 
           <div style="margin-top:12px">
@@ -158,6 +166,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -172,9 +181,10 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // change if needed
+    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // your admin account
 
     const $ = (id)=>document.getElementById(id);
     $("yr").textContent = new Date().getFullYear();
@@ -186,21 +196,25 @@
       return now > c || now > d;
     }
 
-    function eventCard(data){
+    function card(data){
       const closed = isClosed(data.date, data.cutoff);
       const div = document.createElement("div");
       div.className = "event" + (closed ? " closed" : "");
       const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
+      const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
       div.innerHTML = `
-        <h3>${data.title} ${pill}</h3>
-        <div class="meta">
-          <strong>Date:</strong> ${data.date}
-          &nbsp; • &nbsp; <strong>Cut-off:</strong> ${data.cutoff}
-          &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price).toFixed(0)}
+        ${img}
+        <div class="pad">
+          <h3>${data.title} ${pill}</h3>
+          <div class="meta">
+            <strong>Date:</strong> ${data.date}
+            &nbsp; • &nbsp; <strong>Cut-off:</strong> ${data.cutoff}
+            &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price).toFixed(0)}
+          </div>
+          <p>${data.description}</p>
+          ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` :
+            `<button class="btn" onclick="window.open('${data.paymentLink}','_blank')">Book now</button>`}
         </div>
-        <p>${data.description}</p>
-        ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` :
-          `<button class="btn" onclick="window.open('${data.paymentLink}','_blank')">Book now</button>`}
       `;
       return div;
     }
@@ -213,22 +227,22 @@
         const snap = await getDocs(q);
         mount.innerHTML = "";
         if (snap.empty){ mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`; return; }
-        snap.forEach(doc=> mount.appendChild(eventCard(doc.data())) );
+        snap.forEach(doc=> mount.appendChild(card(doc.data())));
       }catch(err){
-        mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
-        console.error(err);
+        console.error(err); mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
       }
     }
 
     renderList("tours","toursList");
     renderList("events","eventsList");
 
+    // Auth UI
     const signInBtn = $("signInBtn");
     const signOutBtn = $("signOutBtn");
     const authStatus = $("authStatus");
     const adminPanel = $("adminPanel");
 
-    signInBtn.onclick = async ()=>{ try{ await signInWithPopup(auth, provider); } catch(e){ alert("Sign in failed"); } };
+    signInBtn.onclick = async ()=>{ try{ await signInWithPopup(auth, provider); }catch(e){ alert("Sign in failed"); } };
     signOutBtn.onclick = ()=>signOut(auth);
 
     onAuthStateChanged(auth, user=>{
@@ -239,23 +253,32 @@
         adminPanel.style.display = "none";
         return;
       }
-      authStatus.textContent = `${user.email}`;
+      authStatus.textContent = user.email;
       signInBtn.style.display = "none";
       signOutBtn.style.display = "inline-block";
-      adminPanel.style.display = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "") ? "block" : "none";
-      if (!ALLOWED_ADMIN_EMAILS.includes(user.email ?? "")){ authStatus.textContent += " (not authorised)"; }
+      const allowed = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
+      adminPanel.style.display = allowed ? "block" : "none";
+      if (!allowed) authStatus.textContent += " (not authorised)";
     });
 
-    const createForm = $("createForm");
+    // Admin create with image upload
+    const form = $("createForm");
     const saveMsg = $("saveMsg");
+    const progWrap = $("progWrap");
+    const progBar = $("progBar");
 
-    createForm.addEventListener("submit", async (e)=>{
+    form.addEventListener("submit", async (e)=>{
       e.preventDefault();
       saveMsg.textContent = "";
 
       const user = auth.currentUser;
-      if (!(user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? ""))){ alert("Not authorised"); return; }
+      const allowed = user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
+      if (!allowed){ alert("Not authorised"); return; }
 
+      const file = $("image").files[0];
+      const colName = $("type").value;
+
+      // build payload
       const payload = {
         title: $("title").value.trim(),
         date: $("date").value,
@@ -265,14 +288,44 @@
         description: $("description").value.trim(),
         createdAt: serverTimestamp()
       };
-      const colName = $("type").value;
+
+      if (!payload.title || !payload.date || !payload.cutoff || !payload.paymentLink){
+        alert("Please fill all required fields");
+        return;
+      }
 
       try{
+        // optional image upload
+        if (file){
+          if (file.size > 5 * 1024 * 1024) { // 5MB cap
+            alert("Image too large. Please keep under 5MB.");
+            return;
+          }
+          const safeName = file.name.replace(/[^\w.\-]+/g,"_");
+          const path = `images/${colName}/${Date.now()}_${safeName}`;
+          const storageRef = ref(storage, path);
+          progWrap.style.display = "block";
+          const task = uploadBytesResumable(storageRef, file);
+          await new Promise((resolve, reject)=>{
+            task.on("state_changed", snap=>{
+              const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
+              progBar.style.width = `${pct}%`;
+            }, reject, resolve);
+          });
+          const url = await getDownloadURL(storageRef);
+          payload.imageUrl = url;
+          progBar.style.width = "100%";
+        }
+
         await addDoc(collection(db, colName), payload);
         saveMsg.textContent = "Saved. Lists refreshed.";
+        form.reset();
+        progWrap.style.display = "none";
+        progBar.style.width = "0";
+
+        // refresh public lists
         renderList("tours","toursList");
         renderList("events","eventsList");
-        createForm.reset();
       }catch(err){
         console.error(err);
         saveMsg.textContent = "Save failed";
