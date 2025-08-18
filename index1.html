@@ -14,23 +14,26 @@
   <meta property="og:description" content="Full-day guided tours and special events across the Lake District.">
   <meta property="og:type" content="website">
   <style>
-    /* Left-aligned hero layout */
+
+    /* ===== Left-aligned hero layout + crisp stamp tweaks ===== */
 .hero--left { padding: 56px 16px 40px; }
 .hero-inner--left {
   position: relative; z-index: 2;
   max-width: 1100px; margin: 0 auto;
-  display: grid; align-items: center; gap: 22px;
-  grid-template-columns: 140px 1fr;
+  display: grid; align-items: center; gap: 26px;
+  grid-template-columns: 160px 1fr;   /* bigger stamp */
 }
-.stamp-svg { filter: drop-shadow(0 10px 26px rgba(0,0,0,.25)); }
-.hero-copy h1 { margin: 6px 0 8px; font-size: 40px; color: #ffffff; }
-.hero-copy p  { margin: 0; color: #e5e7eb; }
+.stamp-svg { filter: drop-shadow(0 14px 32px rgba(0,0,0,.28)); }
+.stamp-svg svg { transform: rotate(-5deg); transition: transform .6s ease; }
+.hero-copy h1 { margin: 6px 0 8px; font-size: 42px; color: #ffffff; }
+.hero-copy p  { margin: 0; color: #e5e7eb; font-size: 16px; }
+.hero:hover .stamp-svg svg { transform: rotate(-3deg) scale(1.015); }
 
-/* on narrow screens, stack */
+/* Stack on mobile */
 @media (max-width: 720px){
   .hero-inner--left { grid-template-columns: 1fr; text-align: center; }
   .stamp-svg { margin: 0 auto; }
-  .hero-copy h1 { font-size: 30px; }
+  .hero-copy h1 { font-size: 32px; }
 }
 
 /* (optional) gentle entrance animation */
@@ -114,45 +117,54 @@
 </head>
 <body>
 
-  <header class="hero hero--left">
+<!-- ===== HERO (LEFT) + CRISP STAMP ===== -->
+<header class="hero hero--left">
   <div class="hero-layer"></div>
   <div class="blob b1"></div>
   <div class="blob b2"></div>
 
   <div class="hero-inner hero-inner--left">
-    <!-- Wax / rubber stamp (SVG) -->
+    <!-- Wax / rubber stamp (SVG) — CRISPER TEXT -->
     <div class="stamp-svg" aria-hidden="true">
-      <svg viewBox="0 0 200 200" width="140" height="140" role="img">
+      <svg viewBox="0 0 200 200" width="160" height="160" role="img">
         <defs>
-          <!-- roughen edges to get stamp/grunge feel -->
+          <!-- Gentler roughness so edges look stamped but text stays sharp -->
           <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="noise"/>
+            <!-- ↓ scale reduced from ~2.2 to 1.0 for clarity -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
           </filter>
+          <!-- Subtle bevel/gloss -->
+          <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#224b7a"/>
+            <stop offset="100%" stop-color="#193a60"/>
+          </linearGradient>
         </defs>
 
-        <!-- base circle -->
+        <!-- Rings -->
         <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough)"/>
         <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough)"/>
-        <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".8" filter="url(#rough)"/>
+        <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".85" filter="url(#rough)"/>
 
-        <!-- stars -->
-        <g fill="#0fa3b1" transform="rotate(-8 100 100)">
-          <polygon points="100,28 104,40 117,40 106,47 110,59 100,51 90,59 94,47 83,40 96,40"/>
-          <polygon points="172,100 176,112 189,112 178,119 182,131 172,123 162,131 166,119 155,112 168,112"/>
-          <polygon points="100,172 104,184 117,184 106,191 110,203 100,195 90,203 94,191 83,184 96,184"/>
-          <polygon points="28,100 32,112 45,112 34,119 38,131 28,123 18,131 22,119 11,112 24,112"/>
+        <!-- Stars (teal) -->
+        <g fill="#0fa3b1" transform="rotate(-6 100 100)">
+          <polygon points="100,26 104,38 117,38 106,45 110,57 100,49 90,57 94,45 83,38 96,38"/>
+          <polygon points="174,100 178,112 191,112 180,119 184,131 174,123 164,131 168,119 157,112 170,112"/>
+          <polygon points="100,174 104,186 117,186 106,193 110,205 100,197 90,205 94,193 83,186 96,186"/>
+          <polygon points="26,100 30,112 43,112 32,119 36,131 26,123 16,131 20,119 9,112 22,112"/>
         </g>
 
-        <!-- banner -->
-        <g filter="url(#rough)" transform="rotate(-8 100 100)">
-          <rect x="26" y="82" rx="12" ry="12" width="148" height="36"
-                fill="#1b3f66" stroke="#1b3f66" stroke-width="3"/>
-          <rect x="26" y="88" rx="10" ry="10" width="148" height="24"
-                fill="none" stroke="#0fa3b1" stroke-width="2" opacity=".85"/>
-          <text x="100" y="101" dominant-baseline="middle" text-anchor="middle"
-                fill="#ffffff" font-family="Outfit, Inter, sans-serif" font-weight="800" font-size="14"
-                letter-spacing="2">TOUR THE LAKES</text>
+        <!-- Banner with big, high-contrast text -->
+        <g filter="url(#rough)" transform="rotate(-6 100 100)">
+          <rect x="20" y="80" rx="14" ry="14" width="160" height="40"
+                fill="url(#bandGrad)" stroke="#173a61" stroke-width="3"/>
+          <rect x="22" y="90" rx="10" ry="10" width="156" height="22"
+                fill="none" stroke="#0fa3b1" stroke-width="2" opacity=".9"/>
+          <!-- >>> Bigger/heavier letters + outline for legibility <<< -->
+          <text x="100" y="100" dominant-baseline="middle" text-anchor="middle"
+                fill="#ffffff" stroke="#0fa3b1" stroke-width="0.8" paint-order="stroke fill"
+                font-family="Outfit, Inter, sans-serif" font-weight="900" font-size="22"
+                letter-spacing="2.4">TOUR THE LAKES</text>
         </g>
       </svg>
     </div>
@@ -163,6 +175,8 @@
     </div>
   </div>
 </header>
+
+  
   <nav>
     <a href="#about">About</a>
     <a href="#tours">Tours</a>
