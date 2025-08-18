@@ -125,6 +125,10 @@
           <textarea id="payInfo" name="paymentInfo" placeholder="BACS preferred. Card +10%..."></textarea>
         </label>
 
+        <label>Image URL
+          <input type="text" name="imageUrl" placeholder="https://...">
+        </label>
+
         <label>Type
           <select name="type">
             <option value="tours">Tour</option>
@@ -183,7 +187,7 @@
     logoutBtn.addEventListener("click", ()=> signOut(auth));
 
     // Create listing
-    addForm.addEventListener("submit", async (e)=>{
+       addForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
       const fd = new FormData(addForm);
       const type = fd.get("type");
@@ -197,8 +201,10 @@
           capacity: Number(fd.get("capacity")||0),
           minNeeded: Number(fd.get("minNeeded")||20),
           paymentInfo: (fd.get("paymentInfo")+"").trim(),
+          imageUrl: (fd.get("imageUrl")+"").trim(), 
           createdAt: serverTimestamp()
         });
+
         addForm.reset();
         loadListings();
       }catch(err){
