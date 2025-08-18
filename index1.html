@@ -14,6 +14,30 @@
   <meta property="og:description" content="Full-day guided tours and special events across the Lake District.">
   <meta property="og:type" content="website">
   <style>
+    /* Left-aligned hero layout */
+.hero--left { padding: 56px 16px 40px; }
+.hero-inner--left {
+  position: relative; z-index: 2;
+  max-width: 1100px; margin: 0 auto;
+  display: grid; align-items: center; gap: 22px;
+  grid-template-columns: 140px 1fr;
+}
+.stamp-svg { filter: drop-shadow(0 10px 26px rgba(0,0,0,.25)); }
+.hero-copy h1 { margin: 6px 0 8px; font-size: 40px; color: #ffffff; }
+.hero-copy p  { margin: 0; color: #e5e7eb; }
+
+/* on narrow screens, stack */
+@media (max-width: 720px){
+  .hero-inner--left { grid-template-columns: 1fr; text-align: center; }
+  .stamp-svg { margin: 0 auto; }
+  .hero-copy h1 { font-size: 30px; }
+}
+
+/* (optional) gentle entrance animation */
+.stamp-svg svg { transform: rotate(-6deg) scale(1); transition: transform .8s ease; }
+.hero-copy      { transform: translateY(6px); opacity: .98; transition: transform .6s ease, opacity .6s ease; }
+.hero:hover .stamp-svg svg { transform: rotate(-4deg) scale(1.02); }
+.hero:hover .hero-copy { transform: translateY(0); opacity: 1; }
     :root{
       --ink:#0f2f4f; --ink2:#1b3f66; --accent:#0fa3b1;
       --bg:#f3f5f7; --card:#fff; --muted:#6b7280; --danger:#b91c1c;
@@ -89,18 +113,56 @@
   </style>
 </head>
 <body>
-  <!-- Floaty Hero -->
-  <header>
-    <div class="hero-layer"></div>
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="hero-inner">
-      <div class="stamp"><span>Tour<br>The<br>Lakes</span></div>
+
+  <header class="hero hero--left">
+  <div class="hero-layer"></div>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+
+  <div class="hero-inner hero-inner--left">
+    <!-- Wax / rubber stamp (SVG) -->
+    <div class="stamp-svg" aria-hidden="true">
+      <svg viewBox="0 0 200 200" width="140" height="140" role="img">
+        <defs>
+          <!-- roughen edges to get stamp/grunge feel -->
+          <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+
+        <!-- base circle -->
+        <circle cx="100" cy="100" r="92" fill="none" stroke="#1b3f66" stroke-width="10" filter="url(#rough)"/>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#1b3f66" stroke-width="6" filter="url(#rough)"/>
+        <circle cx="100" cy="100" r="62" fill="none" stroke="#1b3f66" stroke-width="3" opacity=".8" filter="url(#rough)"/>
+
+        <!-- stars -->
+        <g fill="#0fa3b1" transform="rotate(-8 100 100)">
+          <polygon points="100,28 104,40 117,40 106,47 110,59 100,51 90,59 94,47 83,40 96,40"/>
+          <polygon points="172,100 176,112 189,112 178,119 182,131 172,123 162,131 166,119 155,112 168,112"/>
+          <polygon points="100,172 104,184 117,184 106,191 110,203 100,195 90,203 94,191 83,184 96,184"/>
+          <polygon points="28,100 32,112 45,112 34,119 38,131 28,123 18,131 22,119 11,112 24,112"/>
+        </g>
+
+        <!-- banner -->
+        <g filter="url(#rough)" transform="rotate(-8 100 100)">
+          <rect x="26" y="82" rx="12" ry="12" width="148" height="36"
+                fill="#1b3f66" stroke="#1b3f66" stroke-width="3"/>
+          <rect x="26" y="88" rx="10" ry="10" width="148" height="24"
+                fill="none" stroke="#0fa3b1" stroke-width="2" opacity=".85"/>
+          <text x="100" y="101" dominant-baseline="middle" text-anchor="middle"
+                fill="#ffffff" font-family="Outfit, Inter, sans-serif" font-weight="800" font-size="14"
+                letter-spacing="2">TOUR THE LAKES</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-copy">
       <h1>Guided days in the Lake District</h1>
       <p>Stories, stops, and scenery — without the parking stress</p>
     </div>
-  </header>
-
+  </div>
+</header>
   <nav>
     <a href="#about">About</a>
     <a href="#tours">Tours</a>
