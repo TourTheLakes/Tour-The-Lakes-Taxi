@@ -1,77 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tour The Lakes</title>
+  <meta name="description" content="Guided tours and special events across the Lake District." />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #333;
+    :root{
+      --ink:#0f2f4f;          /* deep blue */
+      --ink-2:#1b3f66;        /* mid blue */
+      --accent:#0fa3b1;       /* teal pop for CTAs */
+      --bg:#f3f5f7;           /* light grey page bg */
+      --card:#ffffff;         /* cards */
+      --muted:#6b7280;        /* grey text */
+      --ok:#0fa3b1;
+      --warn:#c2410c;
     }
-    header {
-      background: #2c3e50;
-      color: white;
-      padding: 1rem;
-      text-align: center;
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:#1f2937;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:var(--ink-2);text-decoration:none}
+    header{
+      background:linear-gradient(180deg,var(--ink) 0%, var(--ink-2) 100%);
+      color:#fff;
+      padding:28px 16px 22px;
+      text-align:center
     }
-    nav {
-      display: flex;
-      justify-content: center;
-      background: #34495e;
+    header h1{margin:0;font-size:28px;letter-spacing:.5px}
+    header p{margin:6px 0 0;color:#e5e7eb}
+    nav{
+      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+      background:#152a44;padding:8px
     }
-    nav a {
-      padding: 1rem;
-      color: white;
-      text-decoration: none;
+    nav a{
+      color:#e5e7eb;padding:10px 14px;border-radius:8px;font-weight:600
     }
-    nav a:hover {
-      background: #1abc9c;
+    nav a:hover{background:#0e223a}
+    main{max-width:980px;margin:22px auto;padding:0 12px}
+    section{
+      background:var(--card);border-radius:14px;margin:14px 0;padding:18px;
+      box-shadow:0 6px 18px rgba(15,47,79,.08)
     }
-    section {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    h2{margin:0 0 12px;padding-bottom:8px;border-bottom:3px solid #e8eef5;color:var(--ink)}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+    .event{
+      border:1px solid #e5e7eb;border-radius:12px;padding:12px
     }
-    h2 {
-      border-bottom: 2px solid #1abc9c;
-      padding-bottom: 0.5rem;
+    .event h3{margin:0 0 4px;color:#0f2f4f}
+    .meta{font-size:14px;color:var(--muted);margin:4px 0 10px}
+    .event.closed{opacity:.62}
+    .btn{
+      display:inline-block;border:0;border-radius:10px;padding:10px 14px;
+      background:var(--accent);color:#fff;font-weight:700;cursor:pointer
     }
-    .event {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      margin: 1rem 0;
-      border-radius: 5px;
+    .btn:hover{filter:brightness(.94)}
+    .btn.secondary{background:#e5e7eb;color:#111827}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;margin-left:6px}
+    .pill.ok{background:#e6fffb;color:#064e4e}
+    .pill.closed{background:#fff1e6;color:#9a3412}
+    .muted{color:var(--muted)}
+    /* Admin */
+    #adminPanel{display:none}
+    .admin-bar{
+      display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px
     }
-    .event.closed {
-      opacity: 0.5;
+    .admin-bar small{color:var(--muted)}
+    form .row{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width:760px){form .row{grid-template-columns:1fr 1fr}}
+    label{font-size:14px;font-weight:600;color:#374151}
+    input, textarea, select{
+      width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff
     }
-    .event h3 {
-      margin: 0;
-    }
-    .event button {
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #1abc9c;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-    .event button:hover {
-      background: #16a085;
-    }
+    textarea{min-height:90px}
+    .hr{height:1px;background:#e5e7eb;margin:14px 0}
+    footer{color:#94a3b8;text-align:center;padding:28px 12px}
   </style>
 </head>
 <body>
   <header>
     <h1>Tour The Lakes</h1>
-    <p>Guided tours and events in the Lake District</p>
+    <p>Guided tours and special events across the Lake District</p>
   </header>
 
   <nav>
@@ -79,35 +87,105 @@
     <a href="#tours">Tours</a>
     <a href="#events">Events</a>
     <a href="#contact">Contact</a>
+    <a href="#admin">Admin</a>
   </nav>
 
-  <section id="about">
-    <h2>About</h2>
-    <p>Welcome to Tour The Lakes. We offer guided tours and events in the Lake District, with commentary, stops, and unique experiences. Each tour runs only when we reach 20 confirmed participants.</p>
-  </section>
+  <main>
+    <section id="about">
+      <h2>About</h2>
+      <p>
+        Full day tours with live and recorded commentary, scenic stops, and time to explore.
+        A tour only runs once 20 fully paid participants are confirmed before the cut-off. No pay on the day.
+      </p>
+    </section>
 
-  <section id="tours">
-    <h2>Upcoming Tours</h2>
-    <div id="tours-list">Loading tours...</div>
-  </section>
+    <section id="tours">
+      <h2>Upcoming Tours</h2>
+      <div id="toursList" class="grid"><p class="muted">Loading tours…</p></div>
+    </section>
 
-  <section id="events">
-    <h2>Special Events</h2>
-    <div id="events-list">Loading events...</div>
-  </section>
+    <section id="events">
+      <h2>Special Events</h2>
+      <div id="eventsList" class="grid"><p class="muted">Loading events…</p></div>
+    </section>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>For enquiries, email us at <a href="mailto:info@tourthelakes.co.uk">info@tourthelakes.co.uk</a></p>
-  </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Email <a href="mailto:info@tourthelakes.co.uk">info@tourthelakes.co.uk</a> for questions or group bookings.</p>
+    </section>
 
-  <!-- Firebase SDKs -->
+    <section id="admin">
+      <h2>Admin</h2>
+      <div id="authBox" class="admin-bar">
+        <div>
+          <button id="signInBtn" class="btn">Sign in with Google</button>
+          <button id="signOutBtn" class="btn secondary" style="display:none">Sign out</button>
+        </div>
+        <small id="authStatus">Not signed in</small>
+      </div>
+
+      <div id="adminPanel">
+        <div class="hr"></div>
+        <form id="createForm">
+          <div class="row">
+            <div>
+              <label for="type">Type</label>
+              <select id="type" required>
+                <option value="tours">Tour</option>
+                <option value="events">Event</option>
+              </select>
+            </div>
+            <div>
+              <label for="title">Title</label>
+              <input id="title" type="text" maxlength="120" required placeholder="Windermere and Ambleside Full Day"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="date">Event date</label>
+              <input id="date" type="date" required/>
+            </div>
+            <div>
+              <label for="cutoff">Payment cut-off</label>
+              <input id="cutoff" type="date" required/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="price">Price per person (£)</label>
+              <input id="price" type="number" min="0" step="1" required placeholder="130"/>
+            </div>
+            <div>
+              <label for="paymentLink">SumUp payment link</label>
+              <input id="paymentLink" type="url" required placeholder="https://me.sumup.com/pay/…"/>
+            </div>
+          </div>
+
+          <div>
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Route, highlights, lunch stop, timings…" required></textarea>
+          </div>
+
+          <div style="margin-top:12px">
+            <button class="btn" type="submit">Save to Firebase</button>
+          </div>
+        </form>
+        <p id="saveMsg" class="muted" style="margin-top:10px"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© <span id="yr"></span> Tour The Lakes</footer>
+
+  <!-- Firebase (ESM) -->
   <script type="module">
-    // Firebase imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // Firebase config (yours)
+    // 1) Firebase config (yours)
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -118,50 +196,144 @@
       measurementId: "G-W6JY1LZXTP"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-    // Utility: check if event is expired
-    function isExpired(dateStr, cutoffStr) {
-      const today = new Date();
-      const eventDate = new Date(dateStr);
-      const cutoffDate = new Date(cutoffStr);
-      return today > cutoffDate || today > eventDate;
+    // 2) Admin allowlist
+    // Set this to the Google account you want to use for admin.
+    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // edit if needed
+
+    // 3) Helpers
+    const $ = (id)=>document.getElementById(id);
+    const yrEl = $("yr"); yrEl.textContent = new Date().getFullYear();
+
+    function isClosed(dateStr, cutoffStr){
+      const now = new Date();
+      const d = new Date(dateStr);
+      const c = new Date(cutoffStr);
+      return now > c || now > d;
     }
 
-    // Render events
-    async function renderEvents(collectionName, containerId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
+    function eventCard(data){
+      const closed = isClosed(data.date, data.cutoff);
+      const div = document.createElement("div");
+      div.className = "event" + (closed ? " closed" : "");
+      const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
+      div.innerHTML = `
+        <h3>${data.title} ${pill}</h3>
+        <div class="meta">
+          <strong>Date:</strong> ${data.date}
+          &nbsp; • &nbsp; <strong>Cut-off:</strong> ${data.cutoff}
+          &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price).toFixed(0)}
+        </div>
+        <p>${data.description}</p>
+        ${closed ? `<p class="muted"><em>This listing is now closed.</em></p>` :
+          `<button class="btn" onclick="window.open('${data.paymentLink}','_blank')">Book now</button>`}
+      `;
+      return div;
+    }
 
-      const snapshot = await getDocs(collection(db, collectionName));
-      if (snapshot.empty) {
-        container.innerHTML = "<p>No events listed yet.</p>";
+    async function renderList(colName, mountId){
+      const mount = $(mountId);
+      mount.innerHTML = `<p class="muted">Loading…</p>`;
+      try{
+        const q = query(collection(db, colName), orderBy("date","asc"));
+        const snap = await getDocs(q);
+        mount.innerHTML = "";
+        if (snap.empty){ mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`; return; }
+        snap.forEach(doc=>{
+          const data = doc.data();
+          mount.appendChild(eventCard(data));
+        });
+      }catch(err){
+        mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
+        console.error(err);
+      }
+    }
+
+    // Initial public loads
+    renderList("tours","toursList");
+    renderList("events","eventsList");
+
+    // 4) Auth UI
+    const signInBtn = $("signInBtn");
+    const signOutBtn = $("signOutBtn");
+    const authStatus = $("authStatus");
+    const adminPanel = $("adminPanel");
+
+    signInBtn.onclick = async ()=>{
+      try { await signInWithPopup(auth, provider); }
+      catch(e){ console.error(e); alert("Sign in failed"); }
+    };
+    signOutBtn.onclick = ()=>signOut(auth);
+
+    onAuthStateChanged(auth, user=>{
+      if (!user){
+        authStatus.textContent = "Not signed in";
+        signInBtn.style.display = "inline-block";
+        signOutBtn.style.display = "none";
+        adminPanel.style.display = "none";
         return;
       }
+      authStatus.textContent = `${user.email}`;
+      signInBtn.style.display = "none";
+      signOutBtn.style.display = "inline-block";
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const closed = isExpired(data.date, data.cutoff);
-        const div = document.createElement("div");
-        div.className = "event" + (closed ? " closed" : "");
-        div.innerHTML = `
-          <h3>${data.title}</h3>
-          <p><strong>Date:</strong> ${data.date}</p>
-          <p>${data.description}</p>
-          <p><strong>Price:</strong> £${data.price}</p>
-          ${closed 
-            ? "<p><em>This tour is closed.</em></p>" 
-            : `<button onclick="window.open('${data.paymentLink}', '_blank')">Book Now</button>`}
-        `;
-        container.appendChild(div);
-      });
-    }
+      // show admin only if allowlisted
+      const allowed = ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
+      adminPanel.style.display = allowed ? "block" : "none";
+      if (!allowed){
+        authStatus.textContent += " (not authorised)";
+      }
+    });
 
-    // Load tours & events
-    renderEvents("tours", "tours-list");
-    renderEvents("events", "events-list");
+    // 5) Admin create form
+    const createForm = $("createForm");
+    const saveMsg = $("saveMsg");
+
+    createForm.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      saveMsg.textContent = "";
+
+      // quick front-end guard
+      const user = auth.currentUser;
+      const allowed = user && ALLOWED_ADMIN_EMAILS.includes(user.email ?? "");
+      if (!allowed){ alert("Not authorised"); return; }
+
+      const payload = {
+        title: $("title").value.trim(),
+        date: $("date").value,
+        cutoff: $("cutoff").value,
+        price: Number($("price").value),
+        paymentLink: $("paymentLink").value.trim(),
+        description: $("description").value.trim(),
+        createdAt: serverTimestamp()
+      };
+      const colName = $("type").value;
+
+      // simple validation
+      if (!payload.title || !payload.date || !payload.cutoff || !payload.paymentLink){
+        alert("Please fill all required fields");
+        return;
+      }
+      if (new Date(payload.cutoff) > new Date(payload.date)){
+        // allowed, but warn if cutoff after event date
+      }
+
+      try{
+        await addDoc(collection(db, colName), payload);
+        saveMsg.textContent = "Saved. Lists refreshed.";
+        // refresh public lists so you see it immediately
+        renderList("tours","toursList");
+        renderList("events","eventsList");
+        createForm.reset();
+      }catch(err){
+        console.error(err);
+        saveMsg.textContent = "Save failed";
+      }
+    });
   </script>
 </body>
 </html>
