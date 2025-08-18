@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
-  <meta name="description" content="Guided tours and special events across the Lake District." />
+  <meta name="description" content="Guided tours and special events across the Lake District."/>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <style>
     :root{
       --ink:#0f2f4f;
@@ -73,7 +74,7 @@
   <main>
     <section id="about">
       <h2>About</h2>
-      <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut-off. No pay on the day.</p>
+      <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
     </section>
 
     <section id="tours">
@@ -88,7 +89,7 @@
 
     <section id="contact">
       <h2>Contact</h2>
-      <p>Email <a href="mailto:info@tourthelakes.co.uk">info@tourthelakes.co.uk</a> for questions or group bookings.</p>
+      <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
     </section>
 
     <section id="admin">
@@ -124,7 +125,7 @@
               <input id="date" type="date" required/>
             </div>
             <div>
-              <label for="cutoff">Payment cut-off</label>
+              <label for="cutoff">Payment cut off</label>
               <input id="cutoff" type="date" required/>
             </div>
           </div>
@@ -162,12 +163,20 @@
 
   <footer>© <span id="yr"></span> Tour The Lakes</footer>
 
+  <!-- App -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
+    import { 
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { 
+      getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy 
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { 
+      getStorage, ref, uploadBytesResumable, getDownloadURL 
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
+    // Firebase config for tourthelakes-1e165
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -178,14 +187,17 @@
       measurementId: "G-W6JY1LZXTP"
     };
 
+    // Init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"]; // your admin account
+    // Only allow this Google account to see Admin UI and write
+    const ALLOWED_ADMIN_EMAILS = ["info@tourthelakes.com"];
 
+    // Helpers
     const $ = (id)=>document.getElementById(id);
     $("yr").textContent = new Date().getFullYear();
 
@@ -208,7 +220,7 @@
           <h3>${data.title} ${pill}</h3>
           <div class="meta">
             <strong>Date:</strong> ${data.date}
-            &nbsp; • &nbsp; <strong>Cut-off:</strong> ${data.cutoff}
+            &nbsp; • &nbsp; <strong>Cut off:</strong> ${data.cutoff}
             &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price).toFixed(0)}
           </div>
           <p>${data.description}</p>
@@ -229,7 +241,8 @@
         if (snap.empty){ mount.innerHTML = `<p class="muted">No ${colName} yet.</p>`; return; }
         snap.forEach(doc=> mount.appendChild(card(doc.data())));
       }catch(err){
-        console.error(err); mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
+        console.error(err); 
+        mount.innerHTML = `<p class="muted">Could not load ${colName}.</p>`;
       }
     }
 
@@ -242,7 +255,22 @@
     const authStatus = $("authStatus");
     const adminPanel = $("adminPanel");
 
-    signInBtn.onclick = async ()=>{ try{ await signInWithPopup(auth, provider); }catch(e){ alert("Sign in failed"); } };
+    signInBtn.onclick = async ()=>{
+      try{
+        await signInWithPopup(auth, provider);
+      }catch(err){
+        console.error("Auth error:", err.code, err.message);
+        if (
+          err.code === 'auth/operation-not-supported-in-this-environment' ||
+          err.code === 'auth/popup-blocked' ||
+          err.code === 'auth/popup-closed-by-user'
+        ){
+          await signInWithRedirect(auth, provider);
+        }else{
+          alert('Sign in failed: ' + err.code);
+        }
+      }
+    };
     signOutBtn.onclick = ()=>signOut(auth);
 
     onAuthStateChanged(auth, user=>{
@@ -278,7 +306,6 @@
       const file = $("image").files[0];
       const colName = $("type").value;
 
-      // build payload
       const payload = {
         title: $("title").value.trim(),
         date: $("date").value,
@@ -295,12 +322,8 @@
       }
 
       try{
-        // optional image upload
         if (file){
-          if (file.size > 5 * 1024 * 1024) { // 5MB cap
-            alert("Image too large. Please keep under 5MB.");
-            return;
-          }
+          if (file.size > 5 * 1024 * 1024){ alert("Image too large. Keep under 5MB."); return; }
           const safeName = file.name.replace(/[^\w.\-]+/g,"_");
           const path = `images/${colName}/${Date.now()}_${safeName}`;
           const storageRef = ref(storage, path);
@@ -322,8 +345,6 @@
         form.reset();
         progWrap.style.display = "none";
         progBar.style.width = "0";
-
-        // refresh public lists
         renderList("tours","toursList");
         renderList("events","eventsList");
       }catch(err){
