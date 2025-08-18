@@ -125,8 +125,8 @@
           <textarea id="payInfo" name="paymentInfo" placeholder="BACS preferred. Card +10%..."></textarea>
         </label>
 
-        <label>Image URL
-          <input type="text" name="imageUrl" placeholder="https://...">
+        <label>Feature image
+          <input id="imageFile" type="file" accept="image/*">
         </label>
 
         <label>Type
@@ -162,49 +162,71 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
       projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      storageBucket: "tourthelakes-1e165.appspot.com",
       messagingSenderId: "470758171431",
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
 
-    const addForm  = document.getElementById("addForm");
-    const logoutBtn= document.getElementById("logoutBtn");
-    const listBody = document.querySelector("#listings tbody");
+    const addForm   = document.getElementById("addForm");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const listBody  = document.querySelector("#listings tbody");
 
-    // Gate: if not signed in, bounce to public site
+    // If not signed in, bounce to public site
     onAuthStateChanged(auth, user => { if (!user) location.href = "index.html"; });
 
-    // Log out (button placed safely under the circle)
+    // Log out
     logoutBtn.addEventListener("click", ()=> signOut(auth));
 
     // Create listing
-       addForm.addEventListener("submit", async (e)=>{
+    addForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
       const fd = new FormData(addForm);
       const type = fd.get("type");
-      try{
-        await addDoc(collection(db, type), {
-          title: (fd.get("title")+"").trim(),
-          description: (fd.get("description")+"").trim(),
-          date: fd.get("date"),
-          cutoff: fd.get("cutoff"),
-          price: Number(fd.get("price")||0),
-          capacity: Number(fd.get("capacity")||0),
-          minNeeded: Number(fd.get("minNeeded")||20),
-          paymentInfo: (fd.get("paymentInfo")+"").trim(),
-          imageUrl: (fd.get("imageUrl")+"").trim(), 
-          createdAt: serverTimestamp()
-        });
 
+      // Base payload
+      const payload = {
+        title: (fd.get("title")+"").trim(),
+        description: (fd.get("description")+"").trim(),
+        date: fd.get("date"),
+        cutoff: fd.get("cutoff"),
+        price: Number(fd.get("price")||0),
+        capacity: Number(fd.get("capacity")||0),
+        minNeeded: Number(fd.get("minNeeded")||20),
+        paymentInfo: (fd.get("paymentInfo")+"").trim(),
+        createdAt: serverTimestamp()
+      };
+
+      // Handle image upload if chosen
+      const fileInput = document.getElementById("imageFile");
+      const file = fileInput?.files?.[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Image too large. Max 5MB.");
+          return;
+        }
+        const safeName = file.name.replace(/[^\w.\-]+/g,"_");
+        const path = `images/${type}/${Date.now()}_${safeName}`;
+        const storageRef = ref(storage, path);
+        await new Promise((resolve, reject)=>{
+          const task = uploadBytesResumable(storageRef, file);
+          task.on("state_changed", ()=>{}, reject, resolve);
+        });
+        payload.imageUrl = await getDownloadURL(storageRef);
+      }
+
+      try{
+        await addDoc(collection(db, type), payload);
         addForm.reset();
         loadListings();
       }catch(err){
@@ -258,7 +280,10 @@
       a.click();
     });
 
-    function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
+    function escapeHtml(s){
+      return (s||"").replace(/[&<>"']/g,
+        c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
   </script>
 </body>
 </html>
