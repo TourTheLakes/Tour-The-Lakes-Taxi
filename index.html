@@ -10,151 +10,169 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Favicon = the circle badge -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%231b3f66' stroke='white' stroke-width='6'/%3E%3Ctext x='60' y='46' text-anchor='middle' fill='white' font-family='Outfit' font-size='18' font-weight='800'%3ETour%3C/text%3E%3Ctext x='60' y='68' text-anchor='middle' fill='white' font-family='Outfit' font-size='18' font-weight='800'%3EThe%3C/text%3E%3Ctext x='60' y='90' text-anchor='middle' fill='white' font-family='Outfit' font-size='18' font-weight='800'%3ELakes%3C/text%3E%3C/svg%3E"/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='46' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ETour%3C/text%3E%3Ctext x='60' y='68' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3EThe%3C/text%3E%3Ctext x='60' y='90' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ELakes%3C/text%3E%3C/svg%3E"/>
 
   <style>
     :root{
-      --ink:#0f2f4f; --ink2:#1b3f66; --accent:#0fa3b1;
-      --bg:#f3f5f7; --muted:#6b7280; --card:#fff;
-      --radius:20px; --shadow:0 20px 50px rgba(15,47,79,.10);
-      --grad: radial-gradient(55% 60% at 60% 40%, #1b3f66 0%, #0f2f4f 60%, #0b2740 100%);
+      /* Leather / smoke / neon */
+      --bg:#0e1116;            /* page background */
+      --smoke:#12171e;         /* banner base */
+      --smoke2:#0b0d10;        /* deeper shade */
+      --surface:#131820;       /* panels */
+      --ink:#e8f1f8;           /* primary text on dark */
+      --muted:#a8b0bb;         /* muted text */
+      --neon:#55f0ff;          /* cyan neon */
+      --neon2:#00d2ff;         /* accent gradient end */
+      --line:#273341;          /* subtle borders */
+      --radius:20px;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
+      --logo: 188px;           /* desktop circle size & side column width (kept in sync) */
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:#0f172a;
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     h1,h2,h3{font-family:Outfit,Inter,system-ui; letter-spacing:.2px}
-    a{color:var(--ink2);text-decoration:none}
+    a{color:var(--neon);text-decoration:none}
     @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 
-    /* ===== Shared floaty banner (header + footer colour) ===== */
-    .banner{position:relative;overflow:hidden;color:#fff}
-    .banner .layer{position:absolute;inset:-20% -10% auto -10%;height:120%;background:var(--grad)}
-    .blob{position:absolute;border-radius:50%;
-      background: radial-gradient(closest-side, rgba(15,163,177,.35), rgba(15,163,177,0));
-      animation:float 12s ease-in-out infinite alternate}
-    .b1{width:40vw;height:40vw;top:-8vw;left:-10vw}
-    .b2{width:32vw;height:32vw;bottom:-6vw;right:-8vw;animation-duration:14s}
-    @keyframes float{to{transform:translateY(-12px) translateX(8px) scale(1.03)}}
+    /* ===== BANNERS (header & footer share this) ===== */
+    .banner{position:relative;overflow:hidden;color:var(--ink)}
+    .banner .layer{
+      position:absolute;inset:-25% -10% auto -10%;height:125%;
+      background:var(--grad);
+    }
+    /* soft “neon smoke” glows */
+    .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55}
+    .g1{width:540px;height:540px;left:-180px;top:-180px;background:radial-gradient(closest-side, rgba(85,240,255,.35), rgba(85,240,255,0))}
+    .g2{width:420px;height:420px;right:-140px;bottom:-160px;background:radial-gradient(closest-side, rgba(0,210,255,.25), rgba(0,210,255,0))}
 
     /* ===== HERO ===== */
-    header.banner{padding:78px 16px 60px}
-    /* Mobile-first: stack by default (logo on its own row) */
+    header.banner{padding:80px 16px 64px;color:var(--ink)}
+    /* Mobile-first: stack (logo row, then text) */
     .hero{
       position:relative;z-index:2;max-width:1100px;margin:0 auto;
-      display:grid;gap:18px; grid-template-columns:1fr; padding-inline:6px;
-      text-align:center;
+      display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center;
     }
     .stamp{
       justify-self:center;
-      display:flex;align-items:center;justify-content:center;
-      width: clamp(120px, 36vw, 150px);
-      height: clamp(120px, 36vw, 150px);
+      width: clamp(124px, 36vw, 150px);
+      height: clamp(124px, 36vw, 150px);
       border-radius:50%;
-      box-shadow: inset 0 8px 20px rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.25);
+      display:flex;align-items:center;justify-content:center;
       background:
-        radial-gradient(circle at 30% 30%, #1c4776, #173a61 60%),
-        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.15) 0 2px, rgba(0,0,0,0) 2px 4px);
-      border:6px solid rgba(255,255,255,.7);
-    }
-    .stamp span{
-      font-family:Outfit; font-weight:800; color:#fff; text-transform:uppercase;
-      letter-spacing:.6px; line-height:1.15; font-size: clamp(16px, 2vw, 20px);
+        radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
+      border:4px solid rgba(134,246,255,.85);
+      box-shadow: 0 0 0 6px rgba(134,246,255,.12), inset 0 12px 26px rgba(0,0,0,.45);
+      color:#eaf6ff;
+      text-transform:uppercase;
+      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;letter-spacing:.6px;
     }
     .hero-copy h1{
-      margin:0 0 8px; text-wrap: balance;
-      font-size: clamp(30px, 7vw, 44px);
+      margin:0 0 10px; text-wrap: balance;
+      font-size: clamp(30px, 7vw, 46px);
     }
     .hero-copy p{
-      margin:0; color:#e5e7eb; font-size: clamp(15px, 2.8vw, 18px);
+      margin:0; color:var(--muted); font-size: clamp(15px, 2.8vw, 18px);
     }
-    /* Wide screens: circle left, headline truly centered using symmetric grid */
+    /* Desktop (≥1200px): circle left, headline truly centered.
+       We bind the left/right columns to the SAME width (--logo),
+       and we ALSO size the circle with --logo, so centreline stays exact. */
     @media (min-width:1200px){
+      :root{ --logo: 188px; }
       .hero{
-        grid-template-columns: clamp(140px,16vw,190px) 1fr clamp(140px,16vw,190px);
-        gap:26px; text-align:center; padding-inline:0;
+        grid-template-columns: var(--logo) 1fr var(--logo);
+        gap:28px;padding-inline:0;text-align:center;
       }
       .stamp{
         justify-self:start;
-        width: clamp(150px, 18vw, 190px);
-        height: clamp(150px, 18vw, 190px);
-        border-width:7px;
+        width: var(--logo); height: var(--logo);
+        border-width:5px;
       }
       .hero-copy{grid-column:2}
     }
 
-    /* ===== Nav ===== */
-    nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;background:#152a44;padding:12px}
-    nav a{color:#e5e7eb;padding:10px 14px;border-radius:10px;font-weight:600}
-    nav a:hover{background:#0e223a}
+    /* ===== NAV ===== */
+    nav{
+      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+      background:linear-gradient(180deg, #0d1218, #0a0e13);
+      border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;
+      padding:12px
+    }
+    nav a{
+      color:#d7e3ee; padding:10px 14px; border-radius:10px; font-weight:600;
+      background:transparent; transition:background .15s ease, color .15s ease
+    }
+    nav a:hover{background:#121822;color:#f2fbff}
 
-    /* ===== “Card-less” modern sections ===== */
-    main{max-width:1100px;margin:28px auto;padding:0 14px}
-    .section{
-      position:relative; padding:28px 8px 22px; margin:8px 0 26px;
+    /* ===== Sections: glass/smoke with neon details ===== */
+    main{max-width:1100px;margin:30px auto;padding:0 14px}
+    .section{margin:20px 0}
+    .panel{
+      position:relative; padding:22px; border-radius:18px;
+      background: linear-gradient(180deg, rgba(19,24,32,.85), rgba(19,24,32,.74));
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
     }
-    /* Slim accent rail on the left that fades */
-    .section::before{
-      content:""; position:absolute; left:0; top:0; bottom:0; width:6px;
-      background:linear-gradient(180deg, rgba(15,163,177,.4), rgba(27,63,102,.4));
-      border-radius:6px; opacity:.6;
-    }
-    .section-inner{
-      margin-left:18px; padding:18px 18px 8px; border-radius:16px;
-      background:linear-gradient(180deg, #ffffff, #fbfdff);
-      box-shadow:0 6px 30px rgba(15,47,79,.08);
-      border:1px solid #e8eef5;
-    }
-    .section h2{
-      margin:0 0 12px; color:var(--ink);
-      display:inline-block; padding-bottom:8px;
+    .panel h2{
+      margin:0 0 12px; color:#eaf4fb; display:inline-block; padding-bottom:8px;
+      border-bottom: 3px solid transparent;
       background:
         linear-gradient(#0000,#0000) padding-box,
-        linear-gradient(90deg, rgba(15,163,177,.5), rgba(27,63,102,.5)) border-box;
-      border-bottom:3px solid transparent;
+        linear-gradient(90deg, var(--neon), var(--neon2)) border-box;
     }
     .muted{color:var(--muted)}
 
-    /* Event/Tour items still use cards */
+    /* Tour/Event item cards */
     .grid{display:grid;grid-template-columns:1fr;gap:16px}
     @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-    .event{border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s ease, box-shadow .15s ease}
-    .event:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,47,79,.12)}
-    .imgwrap{width:100%;aspect-ratio:16/9;background:#eef3f8}
+    .event{
+      background:#0f141b;border:1px solid #1f2a36;border-radius:14px;overflow:hidden;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease
+    }
+    .event:hover{transform:translateY(-2px); box-shadow:0 14px 36px rgba(0,0,0,.35); border-color:#2a3a4a}
+    .imgwrap{width:100%;aspect-ratio:16/9;background:#0b1016}
     .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
-    .pad{padding:14px}
-    .event h3{margin:0 0 6px;color:var(--ink)}
-    .meta{font-size:14px;color:var(--muted);margin:2px 0 10px}
+    .pad{padding:14px;color:#d6e2ed}
+    .event h3{margin:0 0 6px;color:#eaf4fb}
+    .meta{font-size:14px;color:#9eb0c4;margin:2px 0 10px}
     .closed{opacity:.62}
-    .btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn:hover{filter:brightness(.94)}
+    .btn{
+      display:inline-block;border:0;border-radius:10px;padding:10px 16px;
+      background: linear-gradient(90deg, var(--neon), var(--neon2));
+      color:#00242a;font-weight:800;cursor:pointer
+    }
+    .btn:hover{filter:brightness(.95)}
     .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
-    .pill.ok{background:#e6fffb;color:#064e4e}
-    .pill.closed{background:#fff1e6;color:#9a3412}
+    .pill.ok{background:rgba(85,240,255,.16);color:#86f6ff;border:1px solid rgba(134,246,255,.35)}
+    .pill.closed{background:#2a1a1a;color:#ffb4a6;border:1px solid #7a3a3a}
 
-    /* Nicer empty state */
+    /* Empty state */
     .empty{
-      display:inline-block;border:2px dashed #cdd8e6;border-radius:999px;padding:10px 14px;color:#51607a;background:#f7fbff;
+      display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b
     }
 
-    /* ===== Footer (same gradient + tiny dot) ===== */
-    footer.banner{padding:34px 16px}
-    footer .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#d1e3f7}
+    /* ===== FOOTER (same banner palette) ===== */
+    footer.banner{padding:36px 16px;color:#cfe6ee}
+    footer .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center}
     #signinDot{
-      background:none;border:none;color:#d1e3f7;cursor:pointer;opacity:.45;
+      background:none;border:none;color:#bfefff;cursor:pointer;opacity:.45;
       font-size:16px;line-height:1;padding:2px 6px;border-radius:999px
     }
-    #signinDot:focus-visible{outline:2px solid rgba(255,255,255,.5)}
-    #authMsg{color:#d1e3f7;font-size:12px;min-height:16px;display:block}
+    #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
+    #authMsg{color:#bfefff;font-size:12px;min-height:16px;display:block}
   </style>
 </head>
 <body>
   <!-- ===== HEADER ===== -->
   <header class="banner">
     <div class="layer"></div>
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
     <div class="hero">
-      <div class="stamp"><span>Tour<br>The<br>Lakes</span></div>
+      <div class="stamp">Tour<br>The<br>Lakes</div>
       <div class="hero-copy">
         <h1>Guided days in the Lake District</h1>
         <p>Stories, stops, and scenery — without the parking stress</p>
@@ -171,30 +189,30 @@
 
   <main>
     <section id="about" class="section">
-      <div class="section-inner">
+      <div class="panel">
         <h2>About</h2>
-        <p>Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
+        <p class="muted">Full day tours with commentary, scenic stops and time to explore. A tour runs only once 20 fully paid participants are confirmed before the cut off. No pay on the day.</p>
       </div>
     </section>
 
     <section id="tours" class="section">
-      <div class="section-inner">
+      <div class="panel">
         <h2>Upcoming Tours</h2>
         <div id="toursList" class="grid"><span class="empty">Loading tours…</span></div>
       </div>
     </section>
 
     <section id="events" class="section">
-      <div class="section-inner">
+      <div class="panel">
         <h2>Special Events</h2>
         <div id="eventsList" class="grid"><span class="empty">Loading events…</span></div>
       </div>
     </section>
 
     <section id="contact" class="section">
-      <div class="section-inner">
+      <div class="panel">
         <h2>Contact</h2>
-        <p>Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
+        <p class="muted">Email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for questions or group bookings.</p>
       </div>
     </section>
   </main>
@@ -202,8 +220,8 @@
   <!-- ===== FOOTER ===== -->
   <footer class="banner">
     <div class="layer"></div>
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
     <div class="inner">
       © <span id="yr"></span> Tour The Lakes
       <button id="signinDot" title=" " aria-label="Staff">•</button>
@@ -213,7 +231,7 @@
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
-  <!-- ===== PUBLIC DATA + DISCREET AUTH (no auto-open) ===== -->
+  <!-- ===== PUBLIC DATA + DISCREET AUTH (manual only) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import {
@@ -241,7 +259,7 @@
     const $ = (id)=>document.getElementById(id);
     const authMsg = $("authMsg");
 
-    // Public lists
+    // Render public lists
     const isClosed = (dateStr, cutoffStr)=>{const n=new Date(),d=new Date(dateStr),c=new Date(cutoffStr);return n>c||n>d;};
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
     function card(d){
@@ -276,7 +294,7 @@
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // Auth — manual only
+    // Manual sign-in only (no auto-open)
     async function openIfAllowed(user){
       const email = user?.email ?? "";
       if (ALLOWED_ADMIN_EMAILS.includes(email)){
@@ -302,8 +320,6 @@
     }
     document.getElementById("signinDot").addEventListener("click", doSignIn);
     document.addEventListener("keydown", e=>{ if (e.shiftKey && (e.key==='A'||e.key==='a')) doSignIn(); });
-
-    // Only handle redirect result when present; a plain refresh won’t open admin
     getRedirectResult(auth).then(res => { if (res) openIfAllowed(res.user); })
       .catch(err => { console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000); });
   </script>
