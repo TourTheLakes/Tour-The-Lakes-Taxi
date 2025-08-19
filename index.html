@@ -142,7 +142,22 @@
     .errmsg{color:#ffb4a6;margin-top:8px}
 
     /* Footer */
-    footer.banner .inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#cfe6ee;padding:36px 16px}
+footer.banner {
+  position: relative;
+  overflow: hidden;
+  color: var(--ink);
+  padding: 36px 16px;
+  background: var(--grad);
+}
+
+footer.banner .inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  color: #cfe6ee;
+}
     #signinDot{background:none;border:none;color:#bfefff;cursor:pointer;opacity:.55;font-size:16px;line-height:1;padding:2px 6px;border-radius:999px}
     #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
     #authMsg{display:block;min-height:16px}
