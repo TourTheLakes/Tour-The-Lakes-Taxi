@@ -232,14 +232,8 @@
   <!-- APP (unchanged logic) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import {
-      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-      getRedirectResult, signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import {
-      getFirestore, collection, getDocs, addDoc, serverTimestamp,
-      query, orderBy, doc, getCountFromServer
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import {getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,getRedirectResult, signOut} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import {getFirestore, collection, getDocs, addDoc, serverTimestamp,query, orderBy,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -269,116 +263,110 @@ const firebaseConfig = {
     function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
 
     // card
-    function card(col, id, data){
-      const closed = isClosed(data.date, data.cutoff) || !!data.closed;
-      const el = document.createElement("div");
-      el.className = "event" + (closed ? " closed" : "");
-      const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
-      const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
-      const dayMsg = (()=>{ const d=daysUntil(data.cutoff); if(d==null) return ""; if(d<0) return "past cutoff"; if(d===0) return "cutoff today"; return `${d} day${d===1?"":"s"} to cutoff`; })();
+function card(col, id, data){
+  const closed = isClosed(data.date, data.cutoff) || !!data.closed;
+  const el = document.createElement("div");
+  el.className = "event" + (closed ? " closed" : "");
+  const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
+  const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
+  const dayMsg = (()=>{ const d=daysUntil(data.cutoff); if(d==null) return ""; if(d<0) return "past cutoff"; if(d===0) return "cutoff today"; return `${d} day${d===1?"":"s"} to cutoff`; })();
 
-          el.innerHTML = `
-        ${img}
-        <div class="pad">
-          <h3>${data.title} ${pill}</h3>
-          <div class="meta">
-            <strong>Date:</strong> ${fmtUK(data.date)}
-            &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
-            &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price||0).toFixed(0)}
-            ${dayMsg ? ` &nbsp; • &nbsp; <span class="muted">${dayMsg}</span>` : ``}
+  el.innerHTML = `
+    ${img}
+    <div class="pad">
+      <h3>${data.title} ${pill}</h3>
+      <div class="meta">
+        <strong>Date:</strong> ${fmtUK(data.date)}
+        &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
+        &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price||0).toFixed(0)}
+        ${dayMsg ? ` &nbsp; • &nbsp; <span class="muted">${dayMsg}</span>` : ``}
+      </div>
+      <details>
+        <summary><span class="chev">▾</span> Details</summary>
+        <div class="drawer">
+          <div class="flow">
+            <p><strong>About this ${col.slice(0,-1)}:</strong></p>
+            <p>${escapeHtml(data.description || "")}</p>
           </div>
-          <details>
-            <summary><span class="chev">▾</span> Details</summary>
-            <div class="drawer">
-              <div class="flow">
-                <p><strong>About this ${col.slice(0,-1)}:</strong></p>
-                <p>${escapeHtml(data.description || "")}</p>
-                ${data.paymentInfo ? `<p><strong>How to book / pay:</strong></p><p>${escapeHtml(data.paymentInfo)}</p>` : ``}
+          <div id="prog-${col}-${id}" style="margin-top:10px"></div>
+
+          <form class="interest" id="form-${col}-${id}">
+            <p style="margin:0 0 6px"><strong>Register interest</strong></p>
+            <div class="row2">
+              <div>
+                <label for="n-${id}">Name</label>
+                <input id="n-${id}" name="name" placeholder="Full name"/>
               </div>
-              <div id="prog-${col}-${id}" style="margin-top:10px"></div>
-
-              <form class="interest" id="form-${col}-${id}">
-                <p style="margin:0 0 6px"><strong>Register interest</strong></p>
-                <div class="row2">
-                  <div>
-                    <label for="n-${id}">Name</label>
-                    <input id="n-${id}" name="name" placeholder="Full name"/>
-                  </div>
-                  <div>
-                    <label for="e-${id}">Email *</label>
-                    <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"/>
-                  </div>
-                </div>
-                <div class="row2">
-                  <div>
-                    <label for="p-${id}">Phone</label>
-                    <input id="p-${id}" name="phone" placeholder="+44…"/>
-                  </div>
-                  <div>
-                    <label for="s-${id}">Places</label>
-                    <input id="s-${id}" name="seats" type="number" min="1" value="1"/>
-                  </div>
-                </div>
-                <div style="margin-top:10px">
-                  <button class="btn" ${closed ? "disabled" : ""}>Send</button>
-                </div>
-                <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
-                <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
-              </form>
+              <div>
+                <label for="e-${id}">Email *</label>
+                <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"/>
+              </div>
             </div>
-          </details>
+            <div class="row2">
+              <div>
+                <label for="p-${id}">Phone</label>
+                <input id="p-${id}" name="phone" placeholder="+44…"/>
+              </div>
+              <div>
+                <label for="s-${id}">Places</label>
+                <input id="s-${id}" name="seats" type="number" min="1" value="1"/>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <button class="btn" ${closed ? "disabled" : ""}>Send</button>
+            </div>
+            <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
+            <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
+          </form>
         </div>
-      `; // ← CLOSE the template string here
+      </details>
+    </div>
+  `;
 
-      // lazy progress load
-      const details = el.querySelector("details");
-      const progHost = el.querySelector(`#prog-${col}-${id}`);
-      details.addEventListener("toggle", async ()=>{
-        if (!details.open) return;
-        if (!data.capacity) { progHost.innerHTML = ""; return; }
-        try{
-          const cnt = await getCountFromServer(collection(db, col, id, "bookings"));
-          const booked = cnt.data().count || 0;
-          const min = Number(data.minNeeded ?? 20);
-          const cap = Number(data.capacity || 0);
-          const likely = booked >= min && !closed;
-          const pct = cap ? Math.min(100, (booked/cap)*100) : 0;
-          progHost.innerHTML = `
-            <div class="meta"><strong>Places filled:</strong> ${booked}${cap?` / ${cap}`:""} · Min to run: ${min} ${likely ? `<span class="pill ok" style="margin-left:8px">Likely to run</span>`:""}</div>
-            <div class="bar"><span style="width:${pct}%"></span></div>
-          `;
-        }catch(err){ console.error(err); progHost.innerHTML = ``; }
+  // lazy progress load (no Firestore query on public page)
+  const details = el.querySelector("details");
+  const progHost = el.querySelector(`#prog-${col}-${id}`);
+  details.addEventListener("toggle", ()=>{
+    if (!details.open) return;
+    if (!data.capacity) { progHost.innerHTML = ""; return; }
+    const cap = Number(data.capacity || 0);
+    const min = Number(data.minNeeded ?? 20);
+    progHost.innerHTML = `
+      <div class="meta"><strong>Capacity:</strong> ${cap} · Min to run: ${min}</div>
+      <div class="bar"><span style="width:0%"></span></div>
+    `;
+  });
+
+  // interest submit
+  const form = el.querySelector(`#form-${col}-${id}`);
+  const ok   = el.querySelector(`#ok-${col}-${id}`);
+  const er   = el.querySelector(`#er-${col}-${id}`);
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    ok.style.display="none"; er.style.display="none";
+    const fd = new FormData(form);
+    const email = (fd.get("email")+"").trim();
+    if (!email){ er.style.display="block"; return; }
+    try{
+      await addDoc(collection(db, col, id, "interests"), {
+        name:(fd.get("name")+"").trim(),
+        email,
+        phone:(fd.get("phone")+"").trim(),
+        seats:Number(fd.get("seats")||1),
+        createdAt: serverTimestamp()
       });
-
-      // interest submit
-      const form = el.querySelector(`#form-${col}-${id}`);
-      const ok   = el.querySelector(`#ok-${col}-${id}`);
-      const er   = el.querySelector(`#er-${col}-${id}`);
-      form.addEventListener("submit", async (e)=>{
-        e.preventDefault();
-        ok.style.display="none"; er.style.display="none";
-        const fd = new FormData(form);
-        const email = (fd.get("email")+"").trim();
-        if (!email){ er.style.display="block"; return; }
-        try{
-          await addDoc(collection(db, col, id, "interests"), {
-            name:(fd.get("name")+"").trim(),
-            email,
-            phone:(fd.get("phone")+"").trim(),
-            seats:Number(fd.get("seats")||1),
-            createdAt: serverTimestamp()
-          });
-          form.reset();
-          ok.style.display="block";
-        }catch(err){
-          console.error(err);
-          er.style.display="block";
-        }
-      });
-
-      return el;
+      form.reset();
+      ok.style.display="block";
+    }catch(err){
+      console.error(err);
+      er.style.display="block";
     }
+  });
 
+  return el;
+}
+
+    
     // lists
     async function renderList(col, mountId){
       const mount = $(mountId);
