@@ -38,7 +38,7 @@
   .banner{position:relative;overflow:hidden;color:var(--ink)}
   .banner .layer{
     position:absolute;
-    inset:-25% -10% auto -10%;     /* default = anchored to top (for header) */
+    inset:-25% -10% auto -10%;     /* anchored to top for header use */
     height:125%;
     background:var(--grad)
   }
@@ -153,16 +153,19 @@
   .okmsg{color:#9af5ff;margin-top:8px}
   .errmsg{color:#ffb4a6;margin-top:8px}
 
-  /* ===== FOOTER (full-bleed gradient + glows) ===== */
+  /* ===== FOOTER (full-bleed gradient like header) ===== */
   footer.banner{
     position:relative;overflow:hidden;color:var(--ink);padding:36px 16px
   }
-  /* Anchor the gradient canvas to the bottom for the footer */
-  footer.banner .layer{
-    inset:auto -10% -25% -10%;   /* top:auto; right:-10%; bottom:-25%; left:-10% */
-    height:125%;background:var(--grad)
+  /* use a full-bleed pseudo-element for the gradient */
+  footer.banner::before{
+    content:"";position:absolute;inset:0;background:var(--grad);z-index:0
   }
-  /* Swap glow positions for a balanced bottom composition */
+  /* hide the header-style layer inside the footer so we don't double-stack */
+  footer.banner .layer{display:none}
+  /* keep the glow orbs above the gradient */
+  footer.banner .g1, footer.banner .g2{z-index:1}
+  /* optional: swap orb positions for nicer bottom composition */
   footer.banner .g1{right:-180px;bottom:-180px;left:auto;top:auto}
   footer.banner .g2{left:-140px;top:-160px;right:auto;bottom:auto}
 
@@ -178,6 +181,7 @@
   #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
   #authMsg{display:block;min-height:16px}
 </style>
+
 
 </head>
 <body>
