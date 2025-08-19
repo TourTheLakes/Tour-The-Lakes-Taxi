@@ -398,52 +398,50 @@
         </details>
       `;
 
-      // lazy capacity bar
-      const details  = el.querySelector("details");
+      // lazy capacity bar (confirmed seats only)
+      const details = el.querySelector("details");
       const progHost = el.querySelector(`#prog-${col}-${id}`);
-      let progLoaded = false;
-
       details.addEventListener("toggle", async ()=>{
-        if (!details.open || progLoaded) return;
-        progLoaded = true;
+        if (!details.open) return;
+        if (!data.capacity) { progHost.innerHTML = ""; return; }
 
         const cap = Number(data.capacity || 0);
         const min = Number(data.minNeeded ?? 20);
 
-        if (!cap) { progHost.innerHTML = ""; return; }
-
-        // Sum booked seats from interests subcollection
-        let booked = 0;
+        // fetch interests for this listing
+        let booked = 0;      // confirmed seats only
+        let interested = 0;  // all seats (pending + confirmed)
         try{
-          const subs = await getDocs(collection(db, col, id, "interests"));
-          subs.forEach(s=>{
-            const n = Number(s.data()?.seats ?? 1);
-            if (Number.isFinite(n)) booked += n;
+          const snap = await getDocs(collection(db, col, id, "interests"));
+          snap.forEach(s=>{
+            const x = s.data();
+            const seats = Number(x.seats || 0);
+            interested += seats;
+            // treat missing status as "pending" (backward-compat)
+            if ((x.status || "pending") === "confirmed") booked += seats;
           });
-        }catch(err){
-          console.error("Progress load failed:", err);
+        }catch(e){
+          console.error(e);
         }
 
-        const pct    = Math.max(0, Math.min(100, Math.round((booked / cap) * 100)));
-        const minPct = Math.max(0, Math.min(100, Math.round((min    / cap) * 100)));
+        const pct = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
+        const minPct = cap ? Math.min(100, Math.round((min / cap) * 100)) : 0;
 
         progHost.innerHTML = `
           <div class="meta">
             <strong>Capacity:</strong> ${cap}
-            &nbsp;·&nbsp;<strong>Min to run:</strong> ${min}
-            &nbsp;·&nbsp;<strong>Booked:</strong> ${booked}
+            &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
+            &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
+            &nbsp; · &nbsp; <span class="muted">Interested:</span> ${interested}
           </div>
           <div class="bar" style="position:relative">
             <span style="width:${pct}%"></span>
             <i style="
               position:absolute;left:${minPct}%;
-              top:-2px;bottom:-2px;width:2px;
-              background:#20323a;opacity:.5
-            "></i>
+              top:-12px;transform:translateX(-50%);
+              font-style:normal;color:#2e3c42;">▲</i>
           </div>
-          <div class="meta" style="font-size:12px;color:#59666d">
-            Fill ${pct}% &nbsp;•&nbsp; ▲ = minimum
-          </div>
+          <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
         `;
       });
 
@@ -467,7 +465,6 @@ seats.addEventListener("blur", () => {
   const n = parseInt(seats.value, 10);
   seats.value = isNaN(n) ? "1" : String(Math.max(1, Math.min(99, n)));
 });
-
       
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
@@ -481,6 +478,7 @@ seats.addEventListener("blur", () => {
             email,
             phone:(fd.get("phone")+"").trim(),
             seats:Number(fd.get("seats")||1),
+            status: "pending",
             createdAt: serverTimestamp()
           });
           form.reset();
