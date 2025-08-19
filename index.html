@@ -400,16 +400,51 @@
       `;
 
       // lazy capacity bar
-      const details = el.querySelector("details");
+      const details  = el.querySelector("details");
       const progHost = el.querySelector(`#prog-${col}-${id}`);
-      details.addEventListener("toggle", ()=>{
-        if (!details.open) return;
-        if (!data.capacity) { progHost.innerHTML = ""; return; }
+      let progLoaded = false;
+
+      details.addEventListener("toggle", async ()=>{
+        if (!details.open || progLoaded) return;
+        progLoaded = true;
+
         const cap = Number(data.capacity || 0);
         const min = Number(data.minNeeded ?? 20);
+
+        if (!cap) { progHost.innerHTML = ""; return; }
+
+        // Sum booked seats from interests subcollection
+        let booked = 0;
+        try{
+          const subs = await getDocs(collection(db, col, id, "interests"));
+          subs.forEach(s=>{
+            const n = Number(s.data()?.seats ?? 1);
+            if (Number.isFinite(n)) booked += n;
+          });
+        }catch(err){
+          console.error("Progress load failed:", err);
+        }
+
+        const pct    = Math.max(0, Math.min(100, Math.round((booked / cap) * 100)));
+        const minPct = Math.max(0, Math.min(100, Math.round((min    / cap) * 100)));
+
         progHost.innerHTML = `
-          <div class="meta"><strong>Capacity:</strong> ${cap} · Min to run: ${min}</div>
-          <div class="bar"><span style="width:0%"></span></div>
+          <div class="meta">
+            <strong>Capacity:</strong> ${cap}
+            &nbsp;·&nbsp;<strong>Min to run:</strong> ${min}
+            &nbsp;·&nbsp;<strong>Booked:</strong> ${booked}
+          </div>
+          <div class="bar" style="position:relative">
+            <span style="width:${pct}%"></span>
+            <i style="
+              position:absolute;left:${minPct}%;
+              top:-2px;bottom:-2px;width:2px;
+              background:#20323a;opacity:.5
+            "></i>
+          </div>
+          <div class="meta" style="font-size:12px;color:#59666d">
+            Fill ${pct}% &nbsp;•&nbsp; ▲ = minimum
+          </div>
         `;
       });
 
