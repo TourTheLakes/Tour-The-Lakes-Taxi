@@ -73,11 +73,13 @@
       text-wrap:balance
     }
     .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.6vw,18px)}
-    @media(min-width:1200px){
-      .hero{grid-template-columns:200px 1fr 200px;gap:30px;padding-inline:0;text-align:left}
-      .mark{justify-self:start}
-      .hero-copy{grid-column:2}
-    }
+    
+@media(min-width:1200px){
+  .hero{grid-template-columns:200px 1fr 200px;gap:30px;padding-inline:0;text-align:center}
+  .mark{justify-self:center}
+  .hero-copy{grid-column:2}
+}
+
 
     /* ===== nav (plain text, no tabs) ===== */
     nav{
