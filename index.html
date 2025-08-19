@@ -332,24 +332,60 @@
 
             <form class="interest" id="form-${col}-${id}">
               <div class="row2">
-                <div>
-                  <label for="n-${id}">Name</label>
-                  <input id="n-${id}" name="name" placeholder="Full name"/>
-                </div>
-                <div>
-                  <label for="e-${id}">Email *</label>
-                  <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"/>
-                </div>
-              </div>
+<div>
+  <label for="n-${id}">Name</label>
+  <input 
+    id="n-${id}" 
+    name="name" 
+    type="text" 
+    required 
+    placeholder="Full name"
+    pattern="[A-Za-zÀ-ž\s'’\-]{2,100}" 
+    title="Please enter a valid name (letters, spaces, apostrophes or dashes only)"
+  />
+</div>
+<div>
+  <label for="e-${id}">Email *</label>
+  <input 
+    id="e-${id}" 
+    name="email" 
+    type="email" 
+    required 
+    placeholder="name@example.com"
+    pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+    title="Please enter a valid email address (e.g. name@example.com)"
+  />
+</div>
+
               <div class="row2">
-                <div>
-                  <label for="p-${id}">Phone</label>
-                  <input id="p-${id}" name="phone" placeholder="+44…"/>
-                </div>
-                <div>
-                  <label for="s-${id}">Places</label>
-                  <input id="s-${id}" name="seats" type="number" min="1" value="1"/>
-                </div>
+<div>
+  <label for="p-${id}">Phone</label>
+  <input 
+    id="p-${id}" 
+    name="phone" 
+    type="tel" 
+    placeholder="+44 1234 567890"
+    pattern="^\+?[0-9\s\-]{7,20}$"
+    inputmode="tel"
+  />
+</div>
+
+<div>
+  <label for="s-${id}">Places</label>
+  <input
+    id="s-${id}"
+    name="seats"
+    type="number"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    min="1"
+    max="99"
+    step="1"
+    required
+    value="1"
+  />
+</div>
+
               </div>
 
               <!-- visually a link, technically a button -->
@@ -382,6 +418,24 @@
       const form = el.querySelector(`#form-${col}-${id}`);
       const ok   = el.querySelector(`#ok-${col}-${id}`);
       const er   = el.querySelector(`#er-${col}-${id}`);
+      const seats = el.querySelector(`#s-${id}`);
+        seats.addEventListener("input", () => {
+  let v = seats.value.replace(/\D/g, "");
+  if (v === "") v = "";
+  else {
+    let n = Math.max(1, Math.min(99, parseInt(v, 10)));
+    v = String(n);
+  }
+  seats.value = v;
+});
+
+seats.addEventListener("blur", () => {
+  // default to 1 if empty or invalid
+  const n = parseInt(seats.value, 10);
+  seats.value = isNaN(n) ? "1" : String(Math.max(1, Math.min(99, n)));
+});
+
+      
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
         ok.style.display="none"; er.style.display="none";
