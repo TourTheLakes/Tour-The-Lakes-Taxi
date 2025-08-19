@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -9,194 +9,223 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Favicon = the circle badge -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='46' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ETour%3C/text%3E%3Ctext x='60' y='68' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3EThe%3C/text%3E%3Ctext x='60' y='90' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='18' font-weight='800'%3ELakes%3C/text%3E%3C/svg%3E"/>
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%23C7C6C1' stroke='%2300E5FF' stroke-width='4'/%3E%3Ctext x='60' y='66' text-anchor='middle' fill='%2313191f' font-family='Outfit' font-size='22' font-weight='800'%3ETTL%3C/text%3E%3C/svg%3E"/>
 
-<style>
-  :root{
-    --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
-    --neon:#55f0ff; --neon2:#00d2ff; --line:#273341;
-    --grad: radial-gradient(70% 80% at 65% 30%, #15212c 0%, #0e141b 55%, #0b0e13 100%);
-    --logo:188px;
-    --card:#0f141b;
-  }
+  <style>
+    :root{
+      /* Light base + building palette */
+      --bg:#D9DDDC;          /* light stone */
+      --bg-2:#EEEFEF;        /* panel tint */
+      --ink:#13191f;         /* near-black for text */
+      --muted:#4e565c;       /* soft grey text */
 
-  *{box-sizing:border-box}
-  html,body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
-    line-height:1.55
-  }
-  h1,h2,h3{font-family:Outfit,Inter,system-ui;letter-spacing:.2px;margin-top:0}
-  a{color:var(--neon);text-decoration:none}
-  a:hover{opacity:.92}
-  @media (prefers-reduced-motion:reduce){
-    *{animation:none!important;transition:none!important}
-  }
+      /* Neon accents (festival) */
+      --neonB:#00E5FF;       /* electric blue */
+      --neonG:#9DFF00;       /* lime */
+      --neonY:#FFD347;       /* amber */
 
-  /* ===== BANNERS (shared) ===== */
-  .banner{position:relative;overflow:hidden;color:var(--ink)}
-  .banner .layer{
-    position:absolute;
-    inset:-25% -10% auto -10%;     /* anchored to top for header use */
-    height:125%;
-    background:var(--grad)
-  }
-  .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55;pointer-events:none}
-  .g1{
-    width:540px;height:540px;left:-180px;top:-180px;
-    background:radial-gradient(closest-side, rgba(85,240,255,.35), rgba(85,240,255,0))
-  }
-  .g2{
-    width:420px;height:420px;right:-140px;bottom:-160px;
-    background:radial-gradient(closest-side, rgba(0,210,255,.25), rgba(0,210,255,0))
-  }
+      /* Card + lines */
+      --card:#F5F6F6;
+      --line:#D0D4D4;
 
-  /* ===== HERO ===== */
-  header.banner{padding:80px 16px 64px}
-  .hero{
-    position:relative;z-index:2;max-width:1100px;margin:0 auto;
-    display:grid;gap:20px;grid-template-columns:1fr;padding-inline:6px;text-align:center
-  }
-  .stamp{
-    justify-self:center;width:clamp(124px,36vw,150px);height:clamp(124px,36vw,150px);
-    border-radius:50%;display:flex;align-items:center;justify-content:center;
-    background:
-      radial-gradient(circle at 30% 30%, #1a2633, #121a22 60%),
-      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 4px);
-    border:4px solid rgba(134,246,255,.85);
-    box-shadow:0 0 0 6px rgba(134,246,255,.12), inset 0 12px 26px rgba(0,0,0,.45);
-    font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase
-  }
-  .hero-copy h1{margin:0 0 10px;font-size:clamp(30px,7vw,46px);text-wrap:balance}
-  .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.8vw,18px)}
-  @media(min-width:1200px){
-    .hero{grid-template-columns:var(--logo) 1fr var(--logo);gap:28px;padding-inline:0}
-    .stamp{justify-self:start;width:var(--logo);height:var(--logo);border-width:5px}
-    .hero-copy{grid-column:2}
-  }
+      /* Smoky gradient “canvas” */
+      --smoke: radial-gradient(80% 90% at 20% 20%, rgba(0,229,255,.18), rgba(0,229,255,0) 60%),
+               radial-gradient(80% 90% at 80% 30%, rgba(157,255,0,.20), rgba(157,255,0,0) 60%),
+               radial-gradient(90% 100% at 60% 80%, rgba(255,211,71,.18), rgba(255,211,71,0) 60%);
+    }
 
-  /* ===== NAV ===== */
-  nav{
-    display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
-    background:linear-gradient(180deg,#0d1218,#0a0e13);
-    border-top:1px solid #0c1117;border-bottom:1px solid #0c1117;padding:12px
-  }
-  nav a{
-    color:#d7e3ee;padding:10px 14px;border-radius:10px;font-weight:600
-  }
-  nav a:hover{background:#121822;color:#f2fbff}
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
+      line-height:1.55
+    }
+    h1,h2,h3{font-family:Outfit,Inter,system-ui;letter-spacing:.2px;margin:0 0 .4rem}
+    a{color:#005a63;text-decoration:none}
+    a:hover{color:#003e44}
 
-  /* ===== SECTIONS ===== */
-  main{max-width:1100px;margin:30px auto;padding:0 14px}
-  .section{margin:22px 0}
-  .section h2{
-    margin:0;color:#eaf4fb;display:inline-block;padding-bottom:8px;position:relative
-  }
-  .section h2::after{
-    content:"";display:block;height:3px;margin-top:6px;width:clamp(90px,14vw,180px);
-    background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:2px
-  }
-  .muted{color:var(--muted)}
+    /* Motion respect */
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
+    }
 
-  /* ===== CARDS ===== */
-  .grid{display:grid;grid-template-columns:1fr;gap:16px}
-  @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
-  .event{
-    background:var(--card);border:1px solid #1f2a36;border-radius:14px;overflow:hidden;
-    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease
-  }
-  .event:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.35);border-color:#2a3a4a}
-  .imgwrap{width:100%;aspect-ratio:16/9;background:#0b1016}
-  .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
-  .pad{padding:14px;color:#d6e2ed}
-  .event h3{margin:0 0 8px;color:#eaf4fb}
-  .meta{font-size:14px;color:#9eb0c4;margin:2px 0 10px}
-  .closed{opacity:.62}
-  .btn{
-    display:inline-block;border:0;border-radius:10px;padding:10px 16px;
-    background:linear-gradient(90deg,var(--neon),var(--neon2));color:#00242a;font-weight:800;cursor:pointer
-  }
-  .btn:focus-visible{outline:2px solid rgba(134,246,255,.5)}
-  .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px}
-  .pill.ok{background:rgba(85,240,255,.16);color:#86f6ff;border:1px solid rgba(134,246,255,.35)}
-  .pill.closed{background:#2a1a1a;color:#ffb4a6;border:1px solid #7a3a3a}
-  .empty{
-    display:inline-block;border:1px dashed #3a4756;border-radius:999px;padding:10px 14px;color:#aeb8c6;background:#0f141b
-  }
+    /* =================== BANNERS (HERO & FOOTER) =================== */
+    .banner{
+      position:relative;overflow:hidden;color:var(--ink);
+      isolation:isolate; /* keep inner neon shadows tidy */
+    }
+    .banner .smoke{
+      position:absolute;inset:-15% -8%;background:var(--smoke);opacity:.9;z-index:0;
+      filter:blur(8px);
+    }
+    .banner .vignette{
+      position:absolute;inset:0;
+      background:radial-gradient(120% 100% at 50% -10%, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 55%),
+                  radial-gradient(120% 100% at 50% 110%, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 55%);
+      z-index:0;mix-blend-mode:screen;pointer-events:none
+    }
 
-  /* ===== DETAILS / DRAWER ===== */
-  details{border-top:1px solid #1f2a36}
-  details[open] summary .chev{transform:rotate(180deg)}
-  summary{
-    list-style:none;cursor:pointer;padding:10px 14px;color:#bcd0e3;display:flex;align-items:center;gap:8px
-  }
-  summary::-webkit-details-marker{display:none}
-  .chev{transition:transform .2s}
-  .drawer{padding:6px 14px 14px}
-  .bar{height:8px;background:#0b1016;border-radius:999px;overflow:hidden;border:1px solid #2a3948;margin:6px 0 10px}
-  .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));width:0%}
-  .flow p{margin:8px 0}
-  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1016;border:1px solid #253243;border-radius:6px;padding:2px 6px}
+    /* HERO */
+    header.banner{
+      padding:72px 16px 56px;
+      background:linear-gradient(180deg,#EDEEEE 0%, #E6E9E9 100%);
+      border-bottom:1px solid var(--line);
+    }
+    .hero{
+      position:relative;z-index:1;max-width:1100px;margin:0 auto;
+      display:grid;gap:24px;grid-template-columns:1fr;padding-inline:6px;text-align:center
+    }
+    .stamp{
+      justify-self:center;width:clamp(120px,36vw,160px);height:clamp(120px,36vw,160px);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 30% 30%, #ffffff, #f1f3f3 60%);
+      border:5px solid rgba(0,229,255,.85);
+      box-shadow:0 0 0 8px rgba(0,229,255,.12), 0 16px 30px rgba(0,0,0,.08), inset 0 12px 26px rgba(0,0,0,.05);
+      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase;color:#0f1417
+    }
+    .hero-copy h1{
+      font-size:clamp(32px,6.8vw,54px);
+      letter-spacing:.3px;
+      text-wrap:balance
+    }
+    .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.6vw,18px)}
 
-  /* ===== INTEREST FORM ===== */
-  .interest{margin-top:10px;padding:10px;border:1px solid #223042;border-radius:12px;background:#0e141a}
-  .interest label{display:block;font-weight:600;margin:8px 0 6px}
-  .interest input, .interest select{
-    width:100%;padding:10px;border-radius:10px;border:1px solid #2a3948;background:#0f141b;color:#dfeaf3
-  }
-  .row2{display:grid;grid-template-columns:1fr;gap:10px}
-  @media(min-width:600px){.row2{grid-template-columns:1fr 1fr}}
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-  input[type=number]{-moz-appearance:textfield}
-  .okmsg{color:#9af5ff;margin-top:8px}
-  .errmsg{color:#ffb4a6;margin-top:8px}
+    /* Neon underline accent */
+    .spark{
+      display:inline-block;position:relative;
+    }
+    .spark::after{
+      content:"";display:block;height:6px;margin:.5rem auto 0;max-width:240px;border-radius:999px;
+      background:linear-gradient(90deg,var(--neonB),var(--neonG),var(--neonY));
+      filter:drop-shadow(0 0 10px rgba(0,229,255,.45));
+    }
 
-  /* ===== FOOTER (full-bleed gradient like header) ===== */
-  footer.banner{
-    position:relative;overflow:hidden;color:var(--ink);padding:36px 16px
-  }
-  /* use a full-bleed pseudo-element for the gradient */
-  footer.banner::before{
-    content:"";position:absolute;inset:0;background:var(--grad);z-index:0
-  }
-  /* hide the header-style layer inside the footer so we don't double-stack */
-  footer.banner .layer{display:none}
-  /* keep the glow orbs above the gradient */
-  footer.banner .g1, footer.banner .g2{z-index:1}
-  /* optional: swap orb positions for nicer bottom composition */
-  footer.banner .g1{right:-180px;bottom:-180px;left:auto;top:auto}
-  footer.banner .g2{left:-140px;top:-160px;right:auto;bottom:auto}
+    @media(min-width:1200px){
+      .hero{grid-template-columns:200px 1fr 200px;gap:30px;padding-inline:0;text-align:left}
+      .stamp{justify-self:start}
+      .hero-copy{grid-column:2}
+      .spark::after{margin-left:0;margin-right:0}
+    }
 
-  footer.banner .inner{
-    position:relative;z-index:2;max-width:1100px;margin:0 auto;text-align:center;color:#cfe6ee
-  }
+    /* =================== NAV =================== */
+    nav{
+      position:sticky;top:0;z-index:10;
+      display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+      background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(8px);
+      border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px
+    }
+    nav a{
+      color:#0f272b;background:#fff;border:1px solid #E5E8E8;
+      padding:9px 14px;border-radius:12px;font-weight:600
+    }
+    nav a:hover{
+      border-color:#cfe8ea;box-shadow:0 0 0 3px rgba(0,229,255,.15)
+    }
 
-  /* Staff dot + live region */
-  #signinDot{
-    background:none;border:none;color:#bfefff;cursor:pointer;opacity:.55;font-size:16px;
-    line-height:1;padding:2px 6px;border-radius:999px
-  }
-  #signinDot:focus-visible{outline:2px solid rgba(134,246,255,.5)}
-  #authMsg{display:block;min-height:16px}
-</style>
+    /* =================== SECTIONS =================== */
+    main{max-width:1100px;margin:26px auto;padding:0 14px}
+    .section{margin:22px 0}
+    .section h2{
+      display:inline-block;margin:0 0 4px;color:#0e181c
+    }
+    .section .accent{
+      height:4px;width:clamp(100px,16vw,220px);border-radius:999px;
+      background:linear-gradient(90deg,var(--neonB),var(--neonG));
+      box-shadow:0 0 0 4px rgba(0,229,255,.08) inset, 0 0 12px rgba(0,229,255,.35);
+    }
+    .muted{color:var(--muted)}
 
+    /* =================== CARDS =================== */
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:780px){.grid{grid-template-columns:1fr 1fr}}
+    .event{
+      background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+      box-shadow:0 18px 40px rgba(0,0,0,.06);
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease
+    }
+    .event:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(0,0,0,.10);border-color:#cbd6d6}
+    .imgwrap{width:100%;aspect-ratio:16/9;background:#e9eded}
+    .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .pad{padding:14px;color:#1a2328}
+    .event h3{margin:0 0 8px}
+    .meta{font-size:14px;color:#5b6a72;margin:2px 0 10px}
+    .closed{opacity:.6}
 
+    /* Pills */
+    .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;margin-left:6px;border:1px solid #e2e7e7}
+    .pill.ok{background:rgba(157,255,0,.16);color:#2a4c00;border-color:rgba(157,255,0,.35)}
+    .pill.closed{background:#fff3f0;color:#9a2c16;border-color:#f1c2b8}
+
+    .btn{
+      display:inline-block;border:0;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer;
+      color:#001c1f;background:linear-gradient(90deg,var(--neonB),var(--neonG));
+      box-shadow:0 6px 18px rgba(0,229,255,.25)
+    }
+    .btn:focus-visible{outline:3px solid rgba(0,229,255,.35);outline-offset:2px}
+    .empty{
+      display:inline-block;border:1px dashed #cfd7d7;border-radius:999px;padding:10px 14px;color:#727c81;background:#f7f9f9
+    }
+
+    /* Details drawer */
+    details{border-top:1px solid var(--line);background:#fff}
+    summary{
+      list-style:none;cursor:pointer;padding:12px 14px;color:#304049;display:flex;align-items:center;gap:8px;font-weight:600
+    }
+    summary::-webkit-details-marker{display:none}
+    .chev{transition:transform .2s}
+    details[open] summary .chev{transform:rotate(180deg)}
+    .drawer{padding:6px 14px 14px;background:#fff}
+    .bar{height:10px;background:#eef3f4;border-radius:999px;overflow:hidden;border:1px solid #dfe6e7;margin:6px 0 10px}
+    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neonB),var(--neonG));width:0%}
+    .flow p{margin:8px 0}
+    .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#eef3f4;border:1px solid #d5e0e2;border-radius:6px;padding:2px 6px}
+
+    /* Interest form */
+    .interest{margin-top:10px;padding:10px;border:1px solid #dfe6e7;border-radius:12px;background:#f9fbfb}
+    .interest label{display:block;font-weight:600;margin:8px 0 6px}
+    .interest input, .interest select{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #cfd9db;background:#fff;color:#1c2428
+    }
+    .row2{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:600px){.row2{grid-template-columns:1fr 1fr}}
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
+    .okmsg{color:#215e00;margin-top:8px}
+    .errmsg{color:#9a2c16;margin-top:8px}
+
+    /* =================== FOOTER (edge-to-edge) =================== */
+    footer.banner{
+      padding:36px 16px;border-top:1px solid var(--line);
+      background:linear-gradient(180deg,#EDEEEE 0%, #E6E9E9 100%);
+    }
+    footer.banner .smoke{inset:-20% -8%}
+    footer.banner .inner{
+      position:relative;z-index:1;max-width:1100px;margin:0 auto;text-align:center;color:#2e3c42
+    }
+
+    /* Staff dot + live region */
+    #signinDot{
+      background:none;border:1px solid #cfe8ea;color:#003e44;cursor:pointer;font-size:16px;
+      line-height:1;padding:2px 8px;border-radius:999px;margin-left:6px
+    }
+    #signinDot:focus-visible{outline:3px solid rgba(0,229,255,.35);outline-offset:2px}
+    #authMsg{display:block;min-height:16px;color:#2e3c42}
+  </style>
 </head>
 <body>
   <!-- HEADER -->
   <header class="banner">
-    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
+    <div class="smoke"></div><div class="vignette"></div>
     <div class="hero">
       <div class="stamp">Tour<br>The<br>Lakes</div>
       <div class="hero-copy">
-        <h1>It’s time spent together – Let’s go</h1>
-        <p>Stories&nbsp;|&nbsp;Friends&nbsp;|&nbsp;Scenery</p>
+        <h1 class="spark">It’s time spent together — let’s go</h1>
+        <p>Stories · Friends · Scenery</p>
       </div>
     </div>
   </header>
-
 
   <nav>
     <a href="#about">About</a>
@@ -208,79 +237,70 @@
   <main>
     <section id="about" class="section">
       <h2>About</h2>
+      <div class="accent"></div>
       <p class="muted">
-        Tour The Lakes is about bringing people together. In the last few years a lot of us have felt more distant, and it can be harder to step out and connect. A day in the Lakes helps with that. It gives people a shared experience, a chance to meet new faces, and time with friends old and new.
+        Tour The Lakes brings people together for shared days out in the Lakes: small groups, big views, easy company.
+        Pick the day that suits you — quiet garden wanders or a little adventure — and leave feeling lighter.
       </p>
       <p class="muted">
-        This isn’t about putting on a show. It’s me doing what I love and opening the door for others to enjoy it too. Some days it’s a small group in a minibus, other days it’s a larger coach, and sometimes the route itself calls for something smaller. Whatever the size, the feeling stays the same — safe, relaxed and welcoming.
-      </p>
-      <p class="muted">
-        Not every trip is for everyone and that’s part of the charm. Some people prefer a quiet garden walk, others want a bit of adventure. What matters is that you choose the day that suits you and leave feeling lighter, rested and ready to come back.
-      </p>
-      <p class="muted">
-        The Lakes don’t promise perfect weather, but they do promise character. Even when the rain turns up, the stories, the company and the scenery make it worth it. That’s what Tour The Lakes is here for — time shared, moments remembered and reasons to return.
+        We can’t guarantee sunshine, but we can promise character: stories, scenery and time well spent.
       </p>
     </section>
 
     <section id="tours" class="section">
       <h2>Upcoming Tours</h2>
+      <div class="accent"></div>
       <div id="toursList" class="grid"><span class="empty">Loading tours…</span></div>
     </section>
 
     <section id="events" class="section">
       <h2>Special Events</h2>
+      <div class="accent"></div>
       <div id="eventsList" class="grid"><span class="empty">Loading events…</span></div>
     </section>
 
     <section id="contact" class="section">
       <h2>Contact</h2>
+      <div class="accent"></div>
       <p class="muted">
-        The best way to reach us is by email at
-        <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>.
-        We’re a small team out on the road a lot, so we don’t run a live phone line.
-        Email is monitored throughout the day and we aim to reply within a couple of hours.
+        Best way to reach us: <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>.
+        We’re often on the road, so email gets the fastest response.
       </p>
       <p class="muted">
-        If an event has limited spaces, don’t worry — your place in the queue is based on the
-        <strong>timestamp of your email</strong>. That way it’s fair and there’s no need to panic.
+        When spaces are limited, your place in the queue is based on the <strong>timestamp of your email</strong>.
       </p>
       <p class="muted">
-        A valid email address is essential because confirmations, payment links and any paperwork are sent by email.
-        We also ask for a phone number as a backup, but we’ll only use it if we can’t reach you by email.
-      </p>
-      <p class="muted">
-        Ask anything — dates, accessibility, what to bring — and we’ll help you pick the day that suits you.
+        We send confirmations and payment links by email. A phone number helps as backup if we can’t reach you.
       </p>
     </section>
-    
+  </main>
+
   <!-- FOOTER -->
   <footer class="banner">
-    <div class="layer"></div><div class="glow g1"></div><div class="glow g2"></div>
+    <div class="smoke"></div><div class="vignette"></div>
     <div class="inner">
       © <span id="yr"></span> Tour The Lakes
-      <button id="signinDot" title=" " aria-label="Staff">•</button>
+      <button id="signinDot" title="Staff" aria-label="Staff sign-in">•</button>
       <small id="authMsg" aria-live="polite"></small>
     </div>
   </footer>
 
-  <!-- APP (unchanged logic) -->
+  <!-- APP (logic unchanged) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-  authDomain: "tourthelakes-1e165.firebaseapp.com",
-  projectId: "tourthelakes-1e165",
-storageBucket: "tourthelakes-1e165.firebasestorage.app",
-  messagingSenderId: "470758171431",
-  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
-  measurementId: "G-W6JY1LZXTP"
-};
-
-    
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db   = getFirestore(app);
@@ -294,127 +314,123 @@ storageBucket: "tourthelakes-1e165.firebasestorage.app",
     const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
     const isClosed = (d,c)=>{const n=new Date();return n>new Date(c)||n>new Date(d);};
     const daysUntil = s => { if(!s) return null; const n=new Date();n.setHours(0,0,0,0); const d=new Date(s);d.setHours(0,0,0,0); return Math.round((d-n)/86400000); };
-
     function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
 
     // card
-function card(col, id, data){
-  const closed = isClosed(data.date, data.cutoff) || !!data.closed;
-  const el = document.createElement("div");
-  el.className = "event" + (closed ? " closed" : "");
-  const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
-  const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
-  const dayMsg = (()=>{ const d=daysUntil(data.cutoff); if(d==null) return ""; if(d<0) return "past cutoff"; if(d===0) return "cutoff today"; return `${d} day${d===1?"":"s"} to cutoff`; })();
+    function card(col, id, data){
+      const closed = isClosed(data.date, data.cutoff) || !!data.closed;
+      const el = document.createElement("div");
+      el.className = "event" + (closed ? " closed" : "");
+      const pill = closed ? `<span class="pill closed">Closed</span>` : `<span class="pill ok">Open</span>`;
+      const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
+      const dayMsg = (()=>{ const d=daysUntil(data.cutoff); if(d==null) return ""; if(d<0) return "past cutoff"; if(d===0) return "cutoff today"; return `${d} day${d===1?"":"s"} to cutoff`; })();
+      const cutoffHtml = dayMsg ? ' &nbsp; • &nbsp; <span class="muted">' + dayMsg + '</span>' : '';
 
-  const cutoffHtml = dayMsg
-    ? ' &nbsp; • &nbsp; <span class="muted">' + dayMsg + '</span>'
-    : '';
-
-  el.innerHTML = `
-    ${img}
-    <div class="pad">
-      <h3>${data.title} ${pill}</h3>
-      <div class="meta">
-        <strong>Date:</strong> ${fmtUK(data.date)}
-        &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
-        &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price||0).toFixed(0)}
-        ${cutoffHtml}
-      </div>
-      <details>
-        <summary><span class="chev">▾</span> Details</summary>
-        <div class="drawer">
-          <div class="flow">
-            <p><strong>About this ${col.slice(0,-1)}:</strong></p>
-            <p>${escapeHtml(data.description || "")}</p>
+      el.innerHTML = `
+        ${img}
+        <div class="pad">
+          <h3>${data.title} ${pill}</h3>
+          <div class="meta">
+            <strong>Date:</strong> ${fmtUK(data.date)}
+            &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
+            &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price||0).toFixed(0)}
+            ${cutoffHtml}
           </div>
-          <div id="prog-${col}-${id}" style="margin-top:10px"></div>
+          <details>
+            <summary><span class="chev">▾</span> Details</summary>
+            <div class="drawer">
+              <div class="flow">
+                <p><strong>About this ${col.slice(0,-1)}:</strong></p>
+                <p>${escapeHtml(data.description || "")}</p>
+              </div>
+              <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
-          <form class="interest" id="form-${col}-${id}">
-            <p style="margin:0 0 6px"><strong>Register interest</strong></p>
-            <div class="row2">
-              <div>
-                <label for="n-${id}">Name</label>
-                <input id="n-${id}" name="name" placeholder="Full name"/>
-              </div>
-              <div>
-                <label for="e-${id}">Email *</label>
-                <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"/>
-              </div>
+              <form class="interest" id="form-${col}-${id}">
+                <p style="margin:0 0 6px"><strong>Register interest</strong></p>
+                <div class="row2">
+                  <div>
+                    <label for="n-${id}">Name</label>
+                    <input id="n-${id}" name="name" placeholder="Full name"/>
+                  </div>
+                  <div>
+                    <label for="e-${id}">Email *</label>
+                    <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"/>
+                  </div>
+                </div>
+                <div class="row2">
+                  <div>
+                    <label for="p-${id}">Phone</label>
+                    <input id="p-${id}" name="phone" placeholder="+44…"/>
+                  </div>
+                  <div>
+                    <label for="s-${id}">Places</label>
+                    <input id="s-${id}" name="seats" type="number" min="1" value="1"/>
+                  </div>
+                </div>
+                <div style="margin-top:10px">
+                  <button class="btn" ${closed ? "disabled" : ""}>Send</button>
+                </div>
+                <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
+                <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
+              </form>
             </div>
-            <div class="row2">
-              <div>
-                <label for="p-${id}">Phone</label>
-                <input id="p-${id}" name="phone" placeholder="+44…"/>
-              </div>
-              <div>
-                <label for="s-${id}">Places</label>
-                <input id="s-${id}" name="seats" type="number" min="1" value="1"/>
-              </div>
-            </div>
-            <div style="margin-top:10px">
-              <button class="btn" ${closed ? "disabled" : ""}>Send</button>
-            </div>
-            <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
-            <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
-          </form>
+          </details>
         </div>
-      </details>
-    </div>
-  `;
+      `;
 
-  // lazy progress load (no Firestore query on public page)
-  const details = el.querySelector("details");
-  const progHost = el.querySelector(`#prog-${col}-${id}`);
-  details.addEventListener("toggle", ()=>{
-    if (!details.open) return;
-    if (!data.capacity) { progHost.innerHTML = ""; return; }
-    const cap = Number(data.capacity || 0);
-    const min = Number(data.minNeeded ?? 20);
-    progHost.innerHTML = `
-      <div class="meta"><strong>Capacity:</strong> ${cap} · Min to run: ${min}</div>
-      <div class="bar"><span style="width:0%"></span></div>
-    `;
-  });
-
-  // interest submit
-  const form = el.querySelector(`#form-${col}-${id}`);
-  const ok   = el.querySelector(`#ok-${col}-${id}`);
-  const er   = el.querySelector(`#er-${col}-${id}`);
-  form.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    ok.style.display="none"; er.style.display="none";
-    const fd = new FormData(form);
-    const email = (fd.get("email")+"").trim();
-    if (!email){ er.style.display="block"; return; }
-    try{
-      await addDoc(collection(db, col, id, "interests"), {
-        name:(fd.get("name")+"").trim(),
-        email,
-        phone:(fd.get("phone")+"").trim(),
-        seats:Number(fd.get("seats")||1),
-        createdAt: serverTimestamp()
+      // lazy capacity bar
+      const details = el.querySelector("details");
+      const progHost = el.querySelector(`#prog-${col}-${id}`);
+      details.addEventListener("toggle", ()=>{
+        if (!details.open) return;
+        if (!data.capacity) { progHost.innerHTML = ""; return; }
+        const cap = Number(data.capacity || 0);
+        const min = Number(data.minNeeded ?? 20);
+        progHost.innerHTML = `
+          <div class="meta"><strong>Capacity:</strong> ${cap} · Min to run: ${min}</div>
+          <div class="bar"><span style="width:0%"></span></div>
+        `;
       });
-      form.reset();
-      ok.style.display="block";
-    }catch(err){
-      console.error(err);
-      er.style.display="block";
-    }
-  });
 
-  return el;
-}
+      // interest submit
+      const form = el.querySelector(`#form-${col}-${id}`);
+      const ok   = el.querySelector(`#ok-${col}-${id}`);
+      const er   = el.querySelector(`#er-${col}-${id}`);
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        ok.style.display="none"; er.style.display="none";
+        const fd = new FormData(form);
+        const email = (fd.get("email")+"").trim();
+        if (!email){ er.style.display="block"; return; }
+        try{
+          await addDoc(collection(db, col, id, "interests"), {
+            name:(fd.get("name")+"").trim(),
+            email,
+            phone:(fd.get("phone")+"").trim(),
+            seats:Number(fd.get("seats")||1),
+            createdAt: serverTimestamp()
+          });
+          form.reset();
+          ok.style.display="block";
+        }catch(err){
+          console.error(err);
+          er.style.display="block";
+        }
+      });
+
+      return el;
+    }
 
     // lists
     async function renderList(col, mountId){
-      const mount = $(mountId);
+      const mount = document.getElementById(mountId);
       mount.innerHTML = `<span class="empty">Loading…</span>`;
       try{
         const qy = query(collection(db, col), orderBy("date","asc"));
         const snap = await getDocs(qy);
         const items = [];
         snap.forEach(d=> items.push({ id:d.id, data:d.data() }));
-        
+
         const open = items.filter(x=>!isClosed(x.data.date, x.data.cutoff) && !x.data.closed);
         const closed = items.filter(x=> isClosed(x.data.date, x.data.cutoff) || x.data.closed);
         mount.innerHTML = "";
@@ -425,10 +441,10 @@ function card(col, id, data){
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-        // Admin gate (MISSING BEFORE)
+    // Admin gate
     async function openIfAllowed(user){
-      const email = user?.email ?? "";
-      if (ALLOWED.includes(email)){
+      const email = (user && user.email) ? user.email : "";
+      if (["info@tourthelakes.com"].includes(email)){
         window.open("admin.html","_blank","noopener");
       } else if (user){
         authMsg.textContent = "Not authorised";
@@ -436,7 +452,7 @@ function card(col, id, data){
         await signOut(auth);
       }
     }
-    
+
     // Admin sign-in
     async function doSignIn(){
       if (auth.currentUser) return openIfAllowed(auth.currentUser);
@@ -444,7 +460,7 @@ function card(col, id, data){
         const res = await signInWithPopup(auth, provider);
         await openIfAllowed(res.user);
       }catch(err){
-        if (err?.code==='auth/operation-not-supported-in-this-environment' || err?.code==='auth/popup-blocked'){
+        if (err && (err.code==='auth/operation-not-supported-in-this-environment' || err.code==='auth/popup-blocked')){
           await signInWithRedirect(auth, provider);
         }else{
           console.error(err);
@@ -456,15 +472,14 @@ function card(col, id, data){
 
     document.getElementById("signinDot").addEventListener("click", doSignIn);
 
-    // handle return from signInWithRedirect (MISSING BEFORE)
     getRedirectResult(auth)
-      .then(res => { if (res?.user) return openIfAllowed(res.user); })
+      .then(res => { if (res && res.user) return openIfAllowed(res.user); })
       .catch(err => console.error(err));
   </script>
 
-<script>
-  const yr = document.getElementById('yr');
-  if (yr) yr.textContent = new Date().getFullYear();
-</script>
+  <script>
+    var yr = document.getElementById('yr');
+    if (yr) { yr.textContent = new Date().getFullYear(); }
+  </script>
 </body>
 </html>
