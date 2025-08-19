@@ -270,6 +270,10 @@ function card(col, id, data){
   const img = data.imageUrl ? `<div class="imgwrap"><img src="${data.imageUrl}" alt=""></div>` : `<div class="imgwrap"></div>`;
   const dayMsg = (()=>{ const d=daysUntil(data.cutoff); if(d==null) return ""; if(d<0) return "past cutoff"; if(d===0) return "cutoff today"; return `${d} day${d===1?"":"s"} to cutoff`; })();
 
+  const cutoffHtml = dayMsg
+    ? ' &nbsp; • &nbsp; <span class="muted">' + dayMsg + '</span>'
+    : '';
+
   el.innerHTML = `
     ${img}
     <div class="pad">
@@ -278,7 +282,7 @@ function card(col, id, data){
         <strong>Date:</strong> ${fmtUK(data.date)}
         &nbsp; • &nbsp; <strong>Cut off:</strong> ${fmtUK(data.cutoff)}
         &nbsp; • &nbsp; <strong>Price:</strong> £${Number(data.price||0).toFixed(0)}
-        ${dayMsg ? ` &nbsp; • &nbsp; <span class="muted">${dayMsg}</span>` : ``}
+        ${cutoffHtml}
       </div>
       <details>
         <summary><span class="chev">▾</span> Details</summary>
