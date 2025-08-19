@@ -243,6 +243,8 @@ if (file) {
 
   // Store the Firebase signed URL
   payload.imageUrl = await getDownloadURL(storageRef);
+  console.log("Uploaded image URL:", payload.imageUrl);
+
 
 } else if (editingId && currentImg) {
   // Preserve image if editing and no new one uploaded
