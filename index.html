@@ -410,7 +410,7 @@
         </details>
       `;
 
-// lazy capacity bar (confirmed seats only)
+// === Progress bar (confirmed seats only) ===
 const details  = el.querySelector("details");
 const progHost = el.querySelector(`#prog-${col}-${id}`);
 
@@ -422,50 +422,59 @@ async function updateProgress(){
 
   let booked = 0;      // confirmed only
   let interested = 0;  // all (pending + confirmed)
+
   try{
     const snap = await getDocs(collection(db, col, id, "interests"));
     snap.forEach(s=>{
       const x = s.data();
-      const seats = Number(x.seats || 0);
+
+      // fallback to 1 seat for legacy docs without "seats" (or invalid values)
+      let seats = parseInt(x.seats, 10);
+      if (isNaN(seats) || seats <= 0) seats = 1;
+
       interested += seats;
-      if ((x.status || "pending") === "confirmed") booked += seats;
+
+      // treat missing/varied-case status as pending; count confirmed only
+      const status = (x.status || "pending").toLowerCase();
+      if (status === "confirmed") booked += seats;
     });
-  }catch(e){ console.error(e); }
+  }catch(e){
+    console.error(e);
+  }
 
   const pct    = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
   const minPct = cap ? Math.min(100, Math.round((min    / cap) * 100)) : 0;
 
-progHost.innerHTML = `
-  <div class="meta">
-    <strong>Capacity:</strong> ${cap}
-    &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
-    &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
-    &nbsp; · &nbsp; <strong>Interested:</strong> ${interested}
-  </div>
-  <div class="bar">
-    <span style="width:${pct}%"></span>
-<!-- min threshold marker (triangle only) -->
-<div style="
-  position:absolute;
-  left:${minPct}%;
-  top:50%;
-  transform:translate(-50%, -50%);
-  width:0;
-  height:0;
-  border-left:6px solid transparent;
-  border-right:6px solid transparent;
-  border-bottom:8px solid #2e3c42;
-">
- </div>
+  progHost.innerHTML = `
+    <div class="meta">
+      <strong>Capacity:</strong> ${cap}
+      &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
+      &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
+      &nbsp; · &nbsp; <strong>Interested:</strong> ${interested}
     </div>
-  <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
-`;
+    <div class="bar">
+      <span style="width:${pct}%"></span>
+
+      <!-- minimum threshold marker (triangle only, centered on the bar) -->
+      <div style="
+        position:absolute;
+        left:${minPct}%;
+        top:50%;
+        transform:translate(-50%, -50%);
+        width:0;height:0;
+        border-left:6px solid transparent;
+        border-right:6px solid transparent;
+        border-bottom:8px solid #2e3c42;
+      "></div>
+    </div>
+    <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
+  `;
 }
 
 details.addEventListener("toggle", ()=>{
   if (details.open) updateProgress();
 });
-      
+   
       // interest submit
       const form = el.querySelector(`#form-${col}-${id}`);
       const ok   = el.querySelector(`#ok-${col}-${id}`);
