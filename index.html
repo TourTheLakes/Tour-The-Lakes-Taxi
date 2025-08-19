@@ -398,53 +398,50 @@
         </details>
       `;
 
-      // lazy capacity bar (confirmed seats only)
-      const details = el.querySelector("details");
-      const progHost = el.querySelector(`#prog-${col}-${id}`);
-      details.addEventListener("toggle", async ()=>{
-        if (!details.open) return;
-        if (!data.capacity) { progHost.innerHTML = ""; return; }
+// lazy capacity bar (confirmed seats only)
+const details  = el.querySelector("details");
+const progHost = el.querySelector(`#prog-${col}-${id}`);
 
-        const cap = Number(data.capacity || 0);
-        const min = Number(data.minNeeded ?? 20);
+const cap = Number(data.capacity || 0);
+const min = Number(data.minNeeded ?? 20);
 
-        // fetch interests for this listing
-        let booked = 0;      // confirmed seats only
-        let interested = 0;  // all seats (pending + confirmed)
-        try{
-          const snap = await getDocs(collection(db, col, id, "interests"));
-          snap.forEach(s=>{
-            const x = s.data();
-            const seats = Number(x.seats || 0);
-            interested += seats;
-            // treat missing status as "pending" (backward-compat)
-            if ((x.status || "pending") === "confirmed") booked += seats;
-          });
-        }catch(e){
-          console.error(e);
-        }
+async function updateProgress(){
+  if (!cap) { progHost.innerHTML = ""; return; }
 
-        const pct = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
-        const minPct = cap ? Math.min(100, Math.round((min / cap) * 100)) : 0;
+  let booked = 0;      // confirmed only
+  let interested = 0;  // all (pending + confirmed)
+  try{
+    const snap = await getDocs(collection(db, col, id, "interests"));
+    snap.forEach(s=>{
+      const x = s.data();
+      const seats = Number(x.seats || 0);
+      interested += seats;
+      if ((x.status || "pending") === "confirmed") booked += seats;
+    });
+  }catch(e){ console.error(e); }
 
-        progHost.innerHTML = `
-          <div class="meta">
-            <strong>Capacity:</strong> ${cap}
-            &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
-            &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
-            &nbsp; · &nbsp; <span class="muted">Interested:</span> ${interested}
-          </div>
-          <div class="bar" style="position:relative">
-            <span style="width:${pct}%"></span>
-            <i style="
-              position:absolute;left:${minPct}%;
-              top:-12px;transform:translateX(-50%);
-              font-style:normal;color:#2e3c42;">▲</i>
-          </div>
-          <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
-        `;
-      });
+  const pct    = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
+  const minPct = cap ? Math.min(100, Math.round((min    / cap) * 100)) : 0;
 
+  progHost.innerHTML = `
+    <div class="meta">
+      <strong>Capacity:</strong> ${cap}
+      &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
+      &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
+      &nbsp; · &nbsp; <span class="muted">Interested:</span> ${interested}
+    </div>
+    <div class="bar" style="position:relative">
+      <span style="width:${pct}%"></span>
+      <i style="position:absolute;left:${minPct}%;top:-12px;transform:translateX(-50%);font-style:normal;color:#2e3c42;">▲</i>
+    </div>
+    <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
+  `;
+}
+
+details.addEventListener("toggle", ()=>{
+  if (details.open) updateProgress();
+});
+      
       // interest submit
       const form = el.querySelector(`#form-${col}-${id}`);
       const ok   = el.querySelector(`#ok-${col}-${id}`);
@@ -483,6 +480,7 @@ seats.addEventListener("blur", () => {
           });
           form.reset();
           ok.style.display="block";
+          if (details.open) updateProgress();
         }catch(err){
           console.error(err);
           er.style.display="block";
