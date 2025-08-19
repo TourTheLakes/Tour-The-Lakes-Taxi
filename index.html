@@ -385,6 +385,18 @@ function card(col, id, data){
     renderList("tours","toursList");
     renderList("events","eventsList");
 
+        // Admin gate (MISSING BEFORE)
+    async function openIfAllowed(user){
+      const email = user?.email ?? "";
+      if (ALLOWED.includes(email)){
+        window.open("admin.html","_blank","noopener");
+      } else if (user){
+        authMsg.textContent = "Not authorised";
+        setTimeout(()=>authMsg.textContent="", 3000);
+        await signOut(auth);
+      }
+    }
+    
     // Admin sign-in
     async function doSignIn(){
       if (auth.currentUser) return openIfAllowed(auth.currentUser);
