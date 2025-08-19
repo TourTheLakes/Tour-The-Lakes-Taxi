@@ -230,7 +230,7 @@
   <!-- APP (unchanged logic) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import {getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,getRedirectResult, signOut} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
 
@@ -386,18 +386,6 @@ function card(col, id, data){
     renderList("events","eventsList");
 
     // Admin sign-in
-    async function openIfAllowed(user){
-      const email = user?.email ?? "";
-      if (ALLOWED.includes(email)){
-        window.open("admin.html","_blank","noopener");
-      }
-      else if (user){
-        authMsg.textContent = "Not authorised";
-        setTimeout(()=>authMsg.textContent="",3000);
-        await signOut(auth);
-      }
-    }
-
     async function doSignIn(){
       if (auth.currentUser) return openIfAllowed(auth.currentUser);
       try{
@@ -415,11 +403,13 @@ function card(col, id, data){
     }
 
     document.getElementById("signinDot").addEventListener("click", doSignIn);
-    // handle return from signInWithRedirect
-getRedirectResult(auth)
-  .then(res => { if (res?.user) return openIfAllowed(res.user); })
-  .catch(err => console.error(err));
+
+    // handle return from signInWithRedirect (MISSING BEFORE)
+    getRedirectResult(auth)
+      .then(res => { if (res?.user) return openIfAllowed(res.user); })
+      .catch(err => console.error(err));
   </script>
+
   <script>document.getElementById('yr')?.textContent = new Date().getFullYear();</script>
 </body>
 </html>
