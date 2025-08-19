@@ -323,7 +323,8 @@
         </div>
 
         <details>
-          <summary><span class="chev">▾</span> Details</summary>
+          <summary>
+            <span class="chev">▾</span> Details</summary>
           <div class="drawer">
             <p><strong>About this ${col.slice(0,-1)}:</strong></p>
             <p>${escapeHtml(data.description || "")}</p>
@@ -356,6 +357,7 @@
     title="Please enter a valid email address (e.g. name@example.com)"
   />
 </div>
+ </div>
 
               <div class="row2">
 <div>
@@ -368,8 +370,7 @@
     pattern="^\+?[0-9\s\-]{7,20}$"
     inputmode="tel"
   />
-</div>
-
+  </div>
 <div>
   <label for="s-${id}">Places</label>
   <input
@@ -385,9 +386,7 @@
     value="1"
   />
 </div>
-
-              </div>
-
+   </div>
               <!-- visually a link, technically a button -->
               <button class="send" ${closed ? "disabled" : ""}>
                 Send <span class="arrow">→</span>
