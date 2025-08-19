@@ -426,6 +426,9 @@ function card(col, id, data){
       .catch(err => console.error(err));
   </script>
 
-  <script>document.getElementById('yr')?.textContent = new Date().getFullYear();</script>
+<script>
+  const yr = document.getElementById('yr');
+  if (yr) yr.textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
