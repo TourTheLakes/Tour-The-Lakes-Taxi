@@ -223,19 +223,27 @@ storageBucket: "tourthelakes-1e165.appspot.com",
           alert("Image too large. Max 5MB.");
           return;
         }
-        const safeName = file.name.replace(/[^\w.\-]+/g,"_");
-        const path = `images/${type}/${Date.now()}_${safeName}`;
-        const storageRef = ref(storage, path);
-        await new Promise((resolve, reject)=>{
-          const task = uploadBytesResumable(storageRef, file);
-          task.on("state_changed", ()=>{}, reject, resolve);
-        });
-        payload.imageUrl = await getDownloadURL(storageRef);
-      } else if (editingId && currentImg) {
-        // preserve image if we didn't upload a new one
-        payload.imageUrl = currentImg;
-      }
+        
+if (file) {
+  // Clean up the filename to avoid invalid characters
+  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
 
+  // Create a unique storage path (by timestamp)
+  const path = `images/${type}/${Date.now()}_${safeName}`;
+  const storageRef = ref(storage, path);
+
+  // Upload the file with resumable upload
+  await new Promise((resolve, reject) => {
+    const task = uploadBytesResumable(storageRef, file);
+    task.on("state_changed", () => {}, reject, resolve);
+  });
+  
+  payload.imageUrl = await getDownloadURL(storageRef);
+} else if (editingId && currentImg) {
+  payload.imageUrl = currentImg;
+} else {
+  payload.imageUrl = "";
+}
       try{
         if (editingId){
           await updateDoc(doc(db, editingCol, editingId), payload);
