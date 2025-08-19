@@ -131,7 +131,7 @@
     .chev{transition:transform .2s}
     details[open] summary .chev{transform:rotate(180deg)}
     .drawer{padding:2px 0 6px}
-    .bar{height:10px;background:#eef3f4;border-radius:999px;overflow:hidden;border:1px solid #dfe6e7;margin:8px 0 10px}
+    .bar{height:10px;background:#eef3f4;border-radius:999px;overflow: visible ;border:1px solid #dfe6e7;margin:8px 0 10px;position: relitive;}
     .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neonB),var(--neonG));width:0%}
 
     /* inputs (no boxes; soft fields) */
@@ -426,19 +426,38 @@ async function updateProgress(){
   const pct    = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
   const minPct = cap ? Math.min(100, Math.round((min    / cap) * 100)) : 0;
 
-  progHost.innerHTML = `
-    <div class="meta">
-      <strong>Capacity:</strong> ${cap}
-      &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
-      &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
-      &nbsp; · &nbsp; <span class="muted">Interested:</span> ${interested}
+progHost.innerHTML = `
+  <div class="meta">
+    <strong>Capacity:</strong> ${cap}
+    &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
+    &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
+    &nbsp; · &nbsp; <span class="muted">Interested:</span> ${interested}
+  </div>
+  <div class="bar">
+    <span style="width:${pct}%"></span>
+
+    <!-- min threshold marker (line + triangle) -->
+    <div style="
+      position:absolute;
+      left:${minPct}%;
+      top:-16px;
+      transform:translateX(-50%);
+      color:#2e3c42;
+      text-align:center;
+      font:inherit;
+    ">
+      ▲
+      <span style="
+        display:block;
+        width:1px;
+        height:14px;
+        margin:0 auto;
+        background:#2e3c42;
+      "></span>
     </div>
-    <div class="bar" style="position:relative">
-      <span style="width:${pct}%"></span>
-      <i style="position:absolute;left:${minPct}%;top:-12px;transform:translateX(-50%);font-style:normal;color:#2e3c42;">▲</i>
-    </div>
-    <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
-  `;
+  </div>
+  <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
+`;
 }
 
 details.addEventListener("toggle", ()=>{
