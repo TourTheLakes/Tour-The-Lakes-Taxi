@@ -130,9 +130,18 @@
     summary::-webkit-details-marker{display:none}
     .chev{transition:transform .2s}
     details[open] summary .chev{transform:rotate(180deg)}
-    .drawer{padding:2px 0 6px}
-    .bar{height:10px;background:#eef3f4;border-radius:999px;overflow: visible ;border:1px solid #dfe6e7;margin:8px 0 10px;position: relitive;}
-    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neonB),var(--neonG));width:0%}
+.drawer{padding:2px 0 6px}
+.bar{
+  height:10px;
+  background:#eef3f4;
+  border-radius:999px;
+  overflow:visible;
+  border:1px solid #dfe6e7;
+  margin:8px 0 10px;
+  position:relative;
+}
+.bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--neonB),var(--neonG));width:0%}
+
 
     /* inputs (no boxes; soft fields) */
     .interest{margin-top:10px}
