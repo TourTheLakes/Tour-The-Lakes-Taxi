@@ -241,15 +241,17 @@
       query, orderBy, doc, getCountFromServer
     } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-      authDomain: "tourthelakes-1e165.firebaseapp.com",
-      projectId: "tourthelakes-1e165",
-      storageBucket: "tourthelakes-1e165.firebasestorage.app",
-      messagingSenderId: "470758171431",
-      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
-      measurementId: "G-W6JY1LZXTP"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+  measurementId: "G-W6JY1LZXTP"
+};
+
+    
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db   = getFirestore(app);
