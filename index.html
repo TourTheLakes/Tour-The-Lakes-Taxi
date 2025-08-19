@@ -418,28 +418,36 @@ const cap = Number(data.capacity || 0);
 const min = Number(data.minNeeded ?? 20);
 
 async function updateProgress(){
-  if (!cap) { progHost.innerHTML = ""; return; }
+  if (!cap) { 
+    progHost.innerHTML = ""; 
+    console.log(`[progress] ${col}/${id}: no capacity set; skipping UI`);
+    return; 
+  }
 
   let booked = 0;      // confirmed only
   let interested = 0;  // all (pending + confirmed)
 
   try{
-    const snap = await getDocs(collection(db, col, id, "interests"));
+    const pathDesc = `${col}/${id}/interests`;
+    const qRef = collection(db, col, id, "interests");
+    const snap = await getDocs(qRef);
+
+    console.log(`[progress] reading ${pathDesc} — docs:`, snap.size);
+
     snap.forEach(s=>{
       const x = s.data();
-
-      // fallback to 1 seat for legacy docs without "seats" (or invalid values)
+      // fallback to 1 seat for legacy docs without seats/invalid seats
       let seats = parseInt(x.seats, 10);
       if (isNaN(seats) || seats <= 0) seats = 1;
 
-      interested += seats;
-
-      // treat missing/varied-case status as pending; count confirmed only
       const status = (x.status || "pending").toLowerCase();
+      interested += seats;
       if (status === "confirmed") booked += seats;
+
+      console.log(`[progress]   doc ${s.id}: seats=${seats}, status=${status}`);
     });
   }catch(e){
-    console.error(e);
+    console.error("[progress] failed to read interests:", e);
   }
 
   const pct    = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
@@ -454,7 +462,6 @@ async function updateProgress(){
     </div>
     <div class="bar">
       <span style="width:${pct}%"></span>
-
       <!-- minimum threshold marker (triangle only, centered on the bar) -->
       <div style="
         position:absolute;
@@ -471,9 +478,14 @@ async function updateProgress(){
   `;
 }
 
+// Update when opening the drawer
 details.addEventListener("toggle", ()=>{
   if (details.open) updateProgress();
 });
+
+// Also run once immediately (so you see counts without toggling)
+updateProgress();
+
    
       // interest submit
       const form = el.querySelector(`#form-${col}-${id}`);
