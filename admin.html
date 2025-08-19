@@ -172,7 +172,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
   authDomain: "tourthelakes-1e165.firebaseapp.com",
   projectId: "tourthelakes-1e165",
-  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+storageBucket: "tourthelakes-1e165.appspot.com",
   messagingSenderId: "470758171431",
   appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
 };
@@ -238,7 +238,7 @@ if (file) {
 
   // Upload the file with resumable upload
   await new Promise((resolve, reject) => {
-    const task = uploadBytesResumable(storageRef, file);
+    const task = uploadBytesResumable(storageRef, file, { contentType: file.type });
     task.on("state_changed", () => {}, reject, resolve);
   });
 
