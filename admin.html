@@ -83,6 +83,8 @@
     }
   </style>
 </head>
+
+  
 <body>
   <div class="wrap">
     <div class="stamp">Admin</div>
@@ -139,7 +141,7 @@
         <button id="saveBtn" class="btn">Add</button>
         <button id="cancelEdit" type="button" class="secondary" style="display:none;margin-top:10px">Cancel edit</button>
       </form>
-
+    </section>
 
 
     <!-- Listings + Export -->
@@ -157,6 +159,7 @@
           <tbody></tbody>
         </table>
       </div>
+    </section> 
 
   <!-- App -->
   <script type="module">
@@ -215,16 +218,16 @@ storageBucket: "tourthelakes-1e165.appspot.com",
         paymentInfo: (fd.get("paymentInfo")+"").trim()
       };
 
-      // Handle image upload if chosen
-      const fileInput = document.getElementById("imageFile");
-      const file = fileInput?.files?.[0];
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          alert("Image too large. Max 5MB.");
-          return;
-        }
-        
+// Handle image upload if chosen
+const fileInput = document.getElementById("imageFile");
+const file = fileInput?.files?.[0];
+
 if (file) {
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Image too large. Max 5MB.");
+    return;
+  }
+
   // Clean up the filename to avoid invalid characters
   const safeName = file.name.replace(/[^\w.\-]+/g, "_");
 
@@ -237,13 +240,18 @@ if (file) {
     const task = uploadBytesResumable(storageRef, file);
     task.on("state_changed", () => {}, reject, resolve);
   });
-  
+
+  // Store the Firebase signed URL
   payload.imageUrl = await getDownloadURL(storageRef);
+
 } else if (editingId && currentImg) {
+  // Preserve image if editing and no new one uploaded
   payload.imageUrl = currentImg;
 } else {
+  // No file at all (new listing with no image)
   payload.imageUrl = "";
 }
+
       try{
         if (editingId){
           await updateDoc(doc(db, editingCol, editingId), payload);
@@ -266,93 +274,92 @@ if (file) {
     });
 
 
-    // Load listings
-    async function loadListings(){
-      listBody.innerHTML = "";
-      for (const col of ["tours","events"]){
-        const snap = await getDocs(query(collection(db,col), orderBy("date","asc")));
-        snap.forEach(doc=>{
-          const d = doc.data();
-          const tr = document.createElement("tr");
-          const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
-          tr.innerHTML = `
-            <td>${escapeHtml(d.title||"")}</td>
-            <td>${d.date||""}</td>
-            <td>${col}</td>
-            <td>${closed? "Closed":"Open"}</td>
-            <td style="text-align:right;white-space:nowrap">
-              <button class="secondary" data-edit="${doc.id}" data-col="${col}">Edit</button>
-              <button class="secondary" data-del="${doc.id}" data-col="${col}" style="border-color:#7a3a3a">Delete</button>
-            </td>`;
-          
-          listBody.appendChild(tr);
-      // attach button handlers
-      listBody.querySelectorAll("[data-edit]").forEach(btn=>{
-        btn.addEventListener("click", ()=> beginEdit(btn.getAttribute("data-col"), btn.getAttribute("data-edit")));
-      });
-      listBody.querySelectorAll("[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=> doDelete(btn.getAttribute("data-col"), btn.getAttribute("data-del")));
-      });
+// Load listings (no per-row listeners here)
+async function loadListings(){
+  listBody.innerHTML = "";
+  for (const col of ["tours","events"]){
+    const snap = await getDocs(query(collection(db, col), orderBy("date","asc")));
+    snap.forEach(row=>{
+      const d = row.data();
+      const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(d.title || "")}</td>
+        <td>${d.date || ""}</td>
+        <td>${col}</td>
+        <td>${closed ? "Closed" : "Open"}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <button class="secondary" data-edit="${row.id}" data-col="${col}">Edit</button>
+          <button class="secondary" data-del="${row.id}" data-col="${col}" style="border-color:#7a3a3a">Delete</button>
+        </td>`;
+      listBody.appendChild(tr);
+    });
+  }
+  if (!listBody.children.length){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="5" style="color:#a8b0bb">No listings yet.</td>`;
+    listBody.appendChild(tr);
+  }
+}
+loadListings();
 
-        });
-      }
-      if (!listBody.children.length){
-        const tr=document.createElement("tr");
-        tr.innerHTML=`<td colspan="4" style="color:#a8b0bb">No listings yet.</td>`;
-        listBody.appendChild(tr);
-      }
-    }
-    loadListings();
-        async function beginEdit(col, id){
-      // find the doc data we already loaded in the table
-      // simplest: re-query this single doc to ensure fresh data
-      try{
-        // You already have getDocs for lists; for a single doc use Firestore "doc" + "getDocs" alternative:
-        // Since we didn't import getDoc, we'll reuse the list snapshot pattern — but simplest is to pass data in rows.
-        // To keep it surgical, do a quick fetch of all then filter:
-        const snap = await getDocs(query(collection(db, col), orderBy("date","asc")));
-        let data = null;
-        snap.forEach(x=>{ if (x.id===id) data = x.data(); });
+// One delegated click handler for Edit/Delete (prevents duplicate bindings)
+listBody.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button[data-edit], button[data-del]");
+  if (!btn) return;
+  const col = btn.getAttribute("data-col");
+  if (btn.hasAttribute("data-edit")){
+    beginEdit(col, btn.getAttribute("data-edit"));
+  } else if (btn.hasAttribute("data-del")){
+    doDelete(col, btn.getAttribute("data-del"));
+  }
+});
 
-        if (!data){ alert("Could not load item."); return; }
+// Begin edit — fetch just this doc
+async function beginEdit(col, id){
+  try{
+    const snap = await getDoc(doc(db, col, id));
+    if (!snap.exists()) { alert("Could not load item."); return; }
+    const data = snap.data();
 
-        // populate form
-        addForm.elements["title"].value       = data.title || "";
-        addForm.elements["description"].value = data.description || "";
-        addForm.elements["date"].value        = data.date || "";
-        addForm.elements["cutoff"].value      = data.cutoff || "";
-        addForm.elements["price"].value       = data.price || 0;
-        addForm.elements["capacity"].value    = data.capacity || 0;
-        addForm.elements["minNeeded"].value   = data.minNeeded || 20;
-        addForm.elements["paymentInfo"].value = data.paymentInfo || "";
-        addForm.elements["type"].value        = col;
+    // populate form
+    addForm.elements["title"].value       = data.title || "";
+    addForm.elements["description"].value = data.description || "";
+    addForm.elements["date"].value        = data.date || "";
+    addForm.elements["cutoff"].value      = data.cutoff || "";
+    addForm.elements["price"].value       = data.price || 0;
+    addForm.elements["capacity"].value    = data.capacity || 0;
+    addForm.elements["minNeeded"].value   = data.minNeeded || 20;
+    addForm.elements["paymentInfo"].value = data.paymentInfo || "";
+    addForm.elements["type"].value        = col;
 
-        // set state
-        editingId  = id;
-        editingCol = col;
-        currentImg = data.imageUrl || null;
+    // set state
+    editingId  = id;
+    editingCol = col;
+    currentImg = data.imageUrl || null;
 
-        // UI
-        saveBtn.textContent = "Update";
-        cancelBtn.style.display = "inline-block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }catch(err){
-        console.error(err);
-        alert("Could not start edit.");
-      }
-    }
+    // UI
+    saveBtn.textContent = "Update";
+    cancelBtn.style.display = "inline-block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }catch(err){
+    console.error(err);
+    alert("Could not start edit.");
+  }
+}
 
-    async function doDelete(col, id){
-      if (!confirm("Delete this listing?")) return;
-      try{
-        await deleteDoc(doc(db, col, id));
-        // if you want to also delete its image from Storage later, we can store the path and remove it here.
-        await loadListings();
-      }catch(err){
-        console.error(err);
-        alert("Delete failed.");
-      }
-    }
+// Delete listing
+async function doDelete(col, id){
+  if (!confirm("Delete this listing?")) return;
+  try{
+    await deleteDoc(doc(db, col, id));
+    await loadListings();
+  }catch(err){
+    console.error(err);
+    alert("Delete failed.");
+  }
+}
+
 
     // cancel edit
     cancelBtn.addEventListener("click", ()=>{
