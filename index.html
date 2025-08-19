@@ -316,7 +316,7 @@
       el.innerHTML = `
         ${img}
         <div class="row">
-          <div class="title">${data.title} ${status}</div>
+          <div class="title">${escapeHtml(data.title || "")} ${status}</div>
           <div class="meta">
             <strong>Date:</strong> ${fmtUK(data.date)} ·
             <strong>Cut off:</strong> ${fmtUK(data.cutoff)} ·
