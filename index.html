@@ -231,7 +231,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import {getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,getRedirectResult, signOut} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import {getFirestore, collection, getDocs, addDoc, serverTimestamp,query, orderBy,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -414,6 +415,10 @@ function card(col, id, data){
     }
 
     document.getElementById("signinDot").addEventListener("click", doSignIn);
+    // handle return from signInWithRedirect
+getRedirectResult(auth)
+  .then(res => { if (res?.user) return openIfAllowed(res.user); })
+  .catch(err => console.error(err));
   </script>
   <script>document.getElementById('yr')?.textContent = new Date().getFullYear();</script>
 </body>
