@@ -227,8 +227,6 @@
     </div>
   </footer>
 
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
-
   <!-- APP (unchanged logic) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
@@ -366,7 +364,6 @@ function card(col, id, data){
   return el;
 }
 
-    
     // lists
     async function renderList(col, mountId){
       const mount = $(mountId);
@@ -376,6 +373,7 @@ function card(col, id, data){
         const snap = await getDocs(qy);
         const items = [];
         snap.forEach(d=> items.push({ id:d.id, data:d.data() }));
+        
         const open = items.filter(x=>!isClosed(x.data.date, x.data.cutoff) && !x.data.closed);
         const closed = items.filter(x=> isClosed(x.data.date, x.data.cutoff) || x.data.closed);
         mount.innerHTML = "";
@@ -386,27 +384,36 @@ function card(col, id, data){
     renderList("tours","toursList");
     renderList("events","eventsList");
 
-    // Admin sign-in (unchanged)
+    // Admin sign-in
     async function openIfAllowed(user){
       const email = user?.email ?? "";
-      if (["info@tourthelakes.com"].includes(email)){ window.open("admin.html","_blank","noopener"); }
-      else if (user){ authMsg.textContent="Not authorised"; setTimeout(()=>authMsg.textContent="",3000); await signOut(auth); }
+      if (ALLOWED.includes(email)){
+        window.open("admin.html","_blank","noopener");
+      }
+      else if (user){
+        authMsg.textContent = "Not authorised";
+        setTimeout(()=>authMsg.textContent="",3000);
+        await signOut(auth);
+      }
     }
+
     async function doSignIn(){
       if (auth.currentUser) return openIfAllowed(auth.currentUser);
       try{
-        const res = await signInWithPopup(auth, new GoogleAuthProvider());
+        const res = await signInWithPopup(auth, provider);
         await openIfAllowed(res.user);
       }catch(err){
         if (err?.code==='auth/operation-not-supported-in-this-environment' || err?.code==='auth/popup-blocked'){
-          await signInWithRedirect(auth, new GoogleAuthProvider());
+          await signInWithRedirect(auth, provider);
         }else{
-          console.error(err); authMsg.textContent = "Sign in failed"; setTimeout(()=>authMsg.textContent="", 3000);
+          console.error(err);
+          authMsg.textContent = "Sign in failed";
+          setTimeout(()=>authMsg.textContent="", 3000);
         }
       }
     }
+
     document.getElementById("signinDot").addEventListener("click", doSignIn);
-    getRedirectResult(auth).then(res=>{ if(res) openIfAllowed(res.user); }).catch(err=>console.error(err));
   </script>
   <script>document.getElementById('yr')?.textContent = new Date().getFullYear();</script>
 </body>
