@@ -444,27 +444,20 @@ progHost.innerHTML = `
   </div>
   <div class="bar">
     <span style="width:${pct}%"></span>
-
-    <!-- min threshold marker (line + triangle) -->
-    <div style="
-      position:absolute;
-      left:${minPct}%;
-      top:-16px;
-      transform:translateX(-50%);
-      color:#2e3c42;
-      text-align:center;
-      font:inherit;
-    ">
-      ▲
-      <span style="
-        display:block;
-        width:1px;
-        height:14px;
-        margin:0 auto;
-        background:#2e3c42;
-      "></span>
+<!-- min threshold marker (triangle only) -->
+<div style="
+  position:absolute;
+  left:${minPct}%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  width:0;
+  height:0;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-bottom:8px solid #2e3c42;
+">
+ </div>
     </div>
-  </div>
   <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
 `;
 }
