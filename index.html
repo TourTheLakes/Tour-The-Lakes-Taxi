@@ -480,23 +480,23 @@ function item(col, id, data){
   const el = document.createElement("div");
   el.className = "item";
 
+  // days remaining (for open status only)
+  const d = daysUntil(data.cutoff);
+  const extra = (!closed && d != null && d > 0)
+    ? ` · ${d} day${d === 1 ? "" : "s"} to cutoff`
+    : "";
+
+  // status pill (now includes the countdown when open)
   const status = closed
     ? `<span class="status closed">Closed</span>`
-    : `<span class="status">Open</span>`;
+    : `<span class="status">Open${extra}</span>`;
 
+  // optional image
   const img = data.imageUrl
     ? `<div class="thumb"><img src="${data.imageUrl}" alt=""></div>`
     : ``;
 
-  // human message for cutoff proximity
-  const dayMsg = (()=>{ 
-    const d = daysUntil(data.cutoff); 
-    if(d == null) return ""; 
-    if(d < 0)     return "past cutoff"; 
-    if(d === 0)   return "cutoff today"; 
-    return `${d} day${d===1?"":"s"} to cutoff`; 
-  })();
-
+  // build card
   el.innerHTML = `
     ${img}
     <div class="row">
@@ -505,9 +505,10 @@ function item(col, id, data){
       <!-- FLEX meta chips (wrap nicely on small screens) -->
       <div class="meta">
         <span><strong>Date:</strong>&nbsp;${fmtUK(data.date)}</span>
+        &nbsp; &middot; &nbsp;
         <span><strong>Cutoff:</strong>&nbsp;${fmtUK(data.cutoff)}</span>
+        &nbsp; &middot; &nbsp;
         <span><strong>Price:</strong>&nbsp;£${Number(data.price||0).toFixed(0)}</span>
-        ${dayMsg ? `<span>${dayMsg}</span>` : ``}
       </div>
     </div>
 
@@ -517,7 +518,7 @@ function item(col, id, data){
         <p><strong>About this ${col.slice(0,-1)}:</strong></p>
         ${renderDescription(data.description || "")}
 
-        <!-- Progress host -->
+        <!-- progress bar host -->
         <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
         <!-- Interest form -->
@@ -525,68 +526,34 @@ function item(col, id, data){
           <div class="row2">
             <div>
               <label for="n-${id}">Name</label>
-              <input
-                id="n-${id}"
-                name="name"
-                type="text"
-                required
-                placeholder="Full name"
+              <input id="n-${id}" name="name" type="text" required placeholder="Full name"
                 pattern="[A-Za-zÀ-ž\\s'’-]{2,100}"
-                title="Please enter a valid name (letters, spaces, apostrophes or dashes only)"
-              />
+                title="Please enter a valid name (letters, spaces, apostrophes or dashes only)"/>
             </div>
             <div>
               <label for="e-${id}">Email *</label>
-              <input
-                id="e-${id}"
-                name="email"
-                type="email"
-                required
-                placeholder="name@example.com"
-                title="Please enter a valid email address (e.g. name@example.com)"
-              />
+              <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"
+                title="Please enter a valid email address (e.g. name@example.com)"/>
             </div>
           </div>
 
           <div class="row2">
             <div>
               <label for="p-${id}">Phone</label>
-              <input
-                id="p-${id}"
-                name="phone"
-                type="tel"
-                placeholder="+44 1234 567890"
-                pattern="^\\+?[0-9\\s\\-]{7,20}$"
-                inputmode="tel"
-              />
+              <input id="p-${id}" name="phone" type="tel" placeholder="+44 1234 567890"
+                pattern="^\\+?[0-9\\s\\-]{7,20}$" inputmode="tel"/>
             </div>
             <div>
               <label for="s-${id}">Places</label>
-              <input
-                id="s-${id}"
-                name="seats"
-                type="number"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                min="1"
-                max="99"
-                step="1"
-                required
-                value="1"
-              />
+              <input id="s-${id}" name="seats" type="number" inputmode="numeric" pattern="[0-9]*"
+                min="1" max="99" step="1" required value="1"/>
             </div>
           </div>
 
-          <button class="send" ${closed ? "disabled" : ""}>
-            Send <span class="arrow">→</span>
-          </button>
+          <button class="send" ${closed ? "disabled" : ""}>Send <span class="arrow">→</span></button>
 
-          <div class="okmsg" id="ok-${col}-${id}" style="display:none">
-            Thanks — we’ve got your interest. We’ll be in touch.
-          </div>
-          <div class="errmsg" id="er-${col}-${id}" style="display:none">
-            Could not send. Please try again.
-          </div>
+          <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
+          <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
         </form>
       </div>
     </details>
@@ -616,13 +583,12 @@ function item(col, id, data){
 
       snap.forEach(s=>{
         const x = s.data();
-        // fallback to 1 seat for legacy docs without seats/invalid seats
         let seats = parseInt(x.seats, 10);
         if (isNaN(seats) || seats <= 0) seats = 1;
 
-        const st = (x.status || "pending").toLowerCase();
+        const status = (x.status || "pending").toLowerCase();
         interested += seats;
-        if (st === "confirmed") booked += seats;
+        if (status === "confirmed") booked += seats;
       });
     }catch(e){
       console.error("[progress] failed to read interests:", e);
@@ -631,13 +597,12 @@ function item(col, id, data){
     const pct    = cap ? Math.min(100, Math.round((booked / cap) * 100)) : 0;
     const minPct = cap ? Math.min(100, Math.round((min    / cap) * 100)) : 0;
 
-    // Use meta chips here too (no awkward wrapping)
     progHost.innerHTML = `
       <div class="meta">
-        <span><strong>Capacity:</strong>&nbsp;${cap}</span>
-        <span><strong>Min&nbsp;to&nbsp;run:</strong>&nbsp;${min}</span>
-        <span><strong>Booked:</strong>&nbsp;${booked}</span>
-        <span><strong>Interested:</strong>&nbsp;${interested}</span>
+        <strong>Capacity:</strong> ${cap}
+        &nbsp; · &nbsp; <strong>Min to run:</strong> ${min}
+        &nbsp; · &nbsp; <strong>Booked:</strong> ${booked}
+        &nbsp; · &nbsp; <strong>Interested:</strong> ${interested}
       </div>
       <div class="bar">
         <span style="width:${pct}%"></span>
@@ -653,10 +618,7 @@ function item(col, id, data){
           border-bottom:8px solid #2e3c42;
         "></div>
       </div>
-      <div class="meta meta--prog">
-        <span>Fill&nbsp;${pct}%</span>
-        <span class="muted">▲&nbsp;=&nbsp;minimum</span>
-      </div>
+      <div class="meta">Fill ${pct}% &nbsp; • &nbsp; <span class="muted">▲ = minimum</span></div>
     `;
   }
 
