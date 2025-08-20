@@ -256,9 +256,12 @@
   </style>
 </head>
 
-
-<body>
-  <!-- Header (no site nav) -->
+  <body>
+  <!-- =========================
+       HEADER
+       - No public nav
+       - Title + tagline
+  ========================== -->
   <header class="banner">
     <div class="wash"></div>
     <div class="hero">
@@ -271,21 +274,32 @@
   </header>
 
   <div class="wrap">
+
+    <!-- =========================
+         ADMIN TOP BAR
+         - Log out button
+    ========================== -->
     <div class="admin-top">
       <button id="logoutBtn" class="logout">Log out</button>
     </div>
 
-    <!-- Create / Manage -->
+    <!-- =========================
+         CREATE / MANAGE FORM
+         - Add or edit a tour/event
+         - Mobile-friendly fields
+    ========================== -->
     <section class="panel">
       <h1>Create / Manage</h1>
       <p class="subtle">Add or edit a tour or event. Fields are simple and mobile friendly.</p>
+
       <form id="addForm" novalidate>
         <label>Title
           <input type="text" name="title" required placeholder="Windermere & Ambleside Full Day">
         </label>
 
         <label>Description
-          <textarea id="desc" name="description" placeholder="Write in plain text. Blank lines create new paragraphs."></textarea>
+          <textarea id="desc" name="description"
+            placeholder="Write in plain text. Blank lines create new paragraphs."></textarea>
         </label>
 
         <label>Date
@@ -324,11 +338,16 @@
         </label>
 
         <button id="saveBtn" class="btn">Add</button>
-        <button id="cancelEdit" type="button" class="secondary" style="display:none;margin-top:10px">Cancel edit</button>
+        <button id="cancelEdit" type="button" class="secondary"
+          style="display:none;margin-top:10px">Cancel edit</button>
       </form>
     </section>
 
-    <!-- Listings + Export -->
+    <!-- =========================
+         CURRENT LISTINGS
+         - Display tours & events
+         - Export CSV
+    ========================== -->
     <section class="panel">
       <h2>Current Listings</h2>
       <div class="actions" style="margin-bottom:10px">
@@ -338,7 +357,13 @@
       <div class="table-wrap">
         <table id="listings">
           <thead>
-            <tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -346,7 +371,11 @@
     </section>
   </div>
 
-  <!-- Interests Modal -->
+  <!-- =========================
+       INTERESTS MODAL
+       - Opens on "Interests"
+       - Shows bookings for listing
+  ========================== -->
   <div id="intModal" aria-modal="true" role="dialog">
     <div class="backdrop" data-close-int></div>
     <div class="sheet">
@@ -359,7 +388,8 @@
         <table style="width:100%">
           <thead>
             <tr>
-              <th>Name</th><th>Email</th><th>Phone</th><th>Seats</th><th>Status</th><th>Updated</th><th>Actions</th>
+              <th>Name</th><th>Email</th><th>Phone</th>
+              <th>Seats</th><th>Status</th><th>Updated</th><th>Actions</th>
             </tr>
           </thead>
           <tbody id="intTbody">
@@ -370,8 +400,14 @@
     </div>
   </div>
 
-  <!-- App -->
+  <!-- =========================
+       APP SCRIPT
+       - Firebase config
+       - Auth / CRUD / Uploads
+       - Listings + Interests logic
+  ========================== -->
   <script type="module">
+    /* ---------- Firebase imports ---------- */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
     import {
@@ -380,6 +416,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
+    /* ---------- Firebase config ---------- */
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
       authDomain: "tourthelakes-1e165.firebaseapp.com",
@@ -389,29 +426,31 @@
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
     };
 
+    /* ---------- Init services ---------- */
     const app     = initializeApp(firebaseConfig);
     const auth    = getAuth(app);
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
+    /* ---------- DOM refs ---------- */
     const addForm   = document.getElementById("addForm");
     const logoutBtn = document.getElementById("logoutBtn");
     const listBody  = document.querySelector("#listings tbody");
     const saveBtn   = document.getElementById("saveBtn");
     const cancelBtn = document.getElementById("cancelEdit");
 
-    // edit state
+    /* ---------- Edit state ---------- */
     let editingId   = null;   // Firestore doc id
     let editingCol  = null;   // "tours" | "events"
     let currentImg  = null;   // preserve imageUrl when not re-uploading
 
-    // Guard: if not signed in, bounce to public site
+    /* ---------- Auth guard ---------- */
     onAuthStateChanged(auth, user => { if (!user) location.href = "index.html"; });
 
-    // Log out
+    /* ---------- Log out ---------- */
     logoutBtn.addEventListener("click", ()=> signOut(auth));
 
-    // Create / Update listing
+    /* ---------- Create / Update listing ---------- */
     addForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
       const fd = new FormData(addForm);
@@ -428,7 +467,7 @@
         paymentInfo: (fd.get("paymentInfo")+"").trim()
       };
 
-      // Image upload (optional)
+      // ----- Image upload (optional) -----
       const fileInput = document.getElementById("imageFile");
       const file = fileInput?.files?.[0];
 
@@ -472,14 +511,15 @@
       }
     });
 
-    // Load listings
+    /* ---------- Load listings ---------- */
     async function loadListings(){
       listBody.innerHTML = "";
       for (const col of ["tours","events"]){
         const snap = await getDocs(query(collection(db, col), orderBy("date","asc")));
         snap.forEach(row=>{
           const d = row.data();
-          const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
+          const closed = (d.cutoff && new Date(d.cutoff) < new Date()) ||
+                         (d.date && new Date(d.date) < new Date());
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${escapeHtml(d.title || "")}</td>
@@ -502,7 +542,7 @@
     }
     loadListings();
 
-    // Delegated handler for Edit/Delete/Interests
+    /* ---------- Delegated handler for Edit/Delete/Interests ---------- */
     listBody.addEventListener("click", (e)=>{
       const btn = e.target.closest("button[data-edit], button[data-del], button[data-int]");
       if (!btn) return;
@@ -516,7 +556,7 @@
       }
     });
 
-    // Begin edit — fetch just this doc
+    /* ---------- Begin edit ---------- */
     async function beginEdit(col, id){
       try{
         const snap = await getDoc(doc(db, col, id));
@@ -547,7 +587,7 @@
       }
     }
 
-    // Delete listing
+    /* ---------- Delete listing ---------- */
     async function doDelete(col, id){
       if (!confirm("Delete this listing?")) return;
       try{
@@ -559,7 +599,7 @@
       }
     }
 
-    // cancel edit
+    /* ---------- Cancel edit ---------- */
     cancelBtn.addEventListener("click", ()=>{
       addForm.reset();
       editingId = editingCol = currentImg = null;
@@ -567,7 +607,7 @@
       cancelBtn.style.display = "none";
     });
 
-    // ===== Interests Modal logic =====
+    /* ---------- Interests modal ---------- */
     const intModal = document.getElementById("intModal");
     const intClose = document.getElementById("intClose");
     const intTbody = document.getElementById("intTbody");
@@ -620,7 +660,7 @@
       }
     }
 
-    // click inside modal (mark status)
+    // update interest status
     intTbody.addEventListener("click", async (e)=>{
       const btn = e.target.closest("button[data-mark]");
       if (!btn) return;
@@ -644,7 +684,7 @@
       if (e.target.hasAttribute("data-close-int")) hideIntModal();
     });
 
-    // Export Interests CSV (now includes Status)
+    /* ---------- Export Interests CSV ---------- */
     document.getElementById("exportCSV").addEventListener("click", async ()=>{
       let rows=[["Type","ListingID","Name","Email","Phone","Seats","Status","Method","Created","Updated"]];
       for(const col of ["tours","events"]){
@@ -669,15 +709,18 @@
         }
       }
       const csv = rows.map(r=>r.map(v=>`"${(v??"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
-      const blob = new Blob([csv],{type:"text/csv"});
+      const blob = new Blob([csv], { type:"text/csv" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "interests.csv";
       a.click();
     });
 
+    /* ---------- Escape HTML utility ---------- */
     function escapeHtml(s){
-      return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+      return (s || "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      }[c]));
     }
   </script>
 </body>
