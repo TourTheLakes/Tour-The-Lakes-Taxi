@@ -1,134 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- =========================
+       META / TITLE
+  ========================== -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Admin – Tour The Lakes</title>
 
-  <!-- Favicon (Admin) -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
+  <!-- =========================
+       FAVICON
+       - SVG circle + Admin text
+       - Scoped to Admin page
+  ========================== -->
+  <link rel="icon" 
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+  <!-- =========================
+       FONTS
+       - Inter (400/600)
+       - Outfit (700/800)
+  ========================== -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" 
+        rel="stylesheet">
 
+  <!-- =========================
+       CORE STYLES
+       - Variables
+       - Reset
+       - Typography
+  ========================== -->
   <style>
-    :root{
-      --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
-      --neon:#55f0ff; --line:#273341; --panel:#151b22; --panelBorder:#222c3a;
+    :root {
+      --bg:#0e1116; 
+      --ink:#e8f1f8; 
+      --muted:#a8b0bb;
+      --neon:#55f0ff; 
+      --line:#273341; 
+      --panel:#151b22; 
+      --panelBorder:#222c3a;
       --shadow:0 18px 40px rgba(0,0,0,.40);
     }
-    *{box-sizing:border-box}
-    html,body{
-      margin:0; background:var(--bg); color:var(--ink);
+
+    * { box-sizing:border-box }
+
+    html, body {
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
       font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
       line-height:1.55;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-    /* Normalise h1 to avoid browser default quirks/console noise */
-    h1{
+
+    /* Headings */
+    h1 {
       font-family:Outfit,Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
-      font-weight:800; font-size:clamp(28px, 6vw, 48px); line-height:1.2;
+      font-weight:800;
+      font-size:clamp(28px, 6vw, 48px);
+      line-height:1.2;
       margin:0 0 .4rem;
     }
 
-    /* Header (no public nav) */
-    header.banner{
-      position:relative;overflow:hidden;isolation:isolate;
-      padding:54px 16px 30px;border-bottom:1px solid var(--line)
+    /* =========================
+         HEADER
+         - Banner with circular mark
+         - Hero text
+    ========================== */
+    header.banner {
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      padding:54px 16px 30px;
+      border-bottom:1px solid var(--line);
     }
-    header .wash{
-      position:absolute;inset:0;background:linear-gradient(180deg,#ffffff0f 0%, #ffffff00 100%);
-      opacity:.08;z-index:-1
+    header .wash {
+      position:absolute; inset:0;
+      background:linear-gradient(180deg,#ffffff0f 0%, #ffffff00 100%);
+      opacity:.08;
+      z-index:-1;
     }
-    .hero{
-      position:relative;z-index:1;max-width:960px;margin:0 auto;
-      display:grid;gap:18px;grid-template-columns:1fr;padding-inline:6px;text-align:center
+    .hero {
+      position:relative;
+      z-index:1;
+      max-width:960px;
+      margin:0 auto;
+      display:grid;
+      gap:18px;
+      grid-template-columns:1fr;
+      padding-inline:6px;
+      text-align:center;
     }
-    .mark{
-      justify-self:center;width:160px;height:160px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;
+    .mark {
+      justify-self:center;
+      width:160px; height:160px;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
       background:radial-gradient(circle at 30% 30%, #1b2530, #0f141b 60%);
       border:5px solid rgba(134,246,255,.95);
-      box-shadow:0 0 0 10px rgba(134,246,255,.10), 0 16px 30px rgba(0,0,0,.28), inset 0 12px 26px rgba(0,0,0,.35);
-      font-family:Outfit;font-weight:800;font-size:18px;line-height:1.15;text-transform:uppercase;color:#e8f1f8
+      box-shadow:
+        0 0 0 10px rgba(134,246,255,.10),
+        0 16px 30px rgba(0,0,0,.28),
+        inset 0 12px 26px rgba(0,0,0,.35);
+      font-family:Outfit;
+      font-weight:800;
+      font-size:18px;
+      line-height:1.15;
+      text-transform:uppercase;
+      color:#e8f1f8;
     }
-    .hero-copy h1{
-      font-family:Outfit,Inter,system-ui;margin:10px 0 6px;
-      font-size:clamp(28px,6.4vw,48px);letter-spacing:.3px;
+    .hero-copy h1 {
+      font-family:Outfit,Inter,system-ui;
+      margin:10px 0 6px;
+      font-size:clamp(28px,6.4vw,48px);
+      letter-spacing:.3px;
     }
-    .hero-copy p{margin:0;color:var(--muted);font-size:clamp(14px,2.6vw,18px)}
-
-    .wrap{max-width:960px;margin:0 auto;padding:24px 16px}
-
-    /* Panels */
-    .panel{
-      background:var(--panel); border:1px solid var(--panelBorder);
-      border-radius:14px; padding:22px; box-shadow:var(--shadow); margin-bottom:28px;
+    .hero-copy p {
+      margin:0;
+      color:var(--muted);
+      font-size:clamp(14px,2.6vw,18px);
     }
-    .panel h1, .panel h2{font-family:Outfit;margin:0 0 12px}
-    .subtle{color:var(--muted);margin-top:-6px;margin-bottom:16px}
 
-    /* Form layout */
-    form label{display:block;margin:12px 0 6px;font-weight:600}
-    input[type="text"], input[type="date"], input[type="number"], select, textarea{
-      width:100%; padding:12px; border-radius:10px; border:1px solid #2a3948;
-      background:#0f141b; color:#e8f1f8; font-size:15px; outline:none;
+    .wrap {
+      max-width:960px;
+      margin:0 auto;
+      padding:24px 16px;
+    }
+
+    /* =========================
+         PANELS
+         - Main content sections
+    ========================== */
+    .panel {
+      background:var(--panel);
+      border:1px solid var(--panelBorder);
+      border-radius:14px;
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin-bottom:28px;
+    }
+    .panel h1, .panel h2 {
+      font-family:Outfit;
+      margin:0 0 12px;
+    }
+    .subtle {
+      color:var(--muted);
+      margin-top:-6px;
+      margin-bottom:16px;
+    }
+
+    /* =========================
+         FORM ELEMENTS
+    ========================== */
+    form label { display:block; margin:12px 0 6px; font-weight:600; }
+    input[type="text"], input[type="date"], input[type="number"], 
+    select, textarea {
+      width:100%; padding:12px;
+      border-radius:10px; border:1px solid #2a3948;
+      background:#0f141b; color:#e8f1f8; font-size:15px;
+      outline:none;
       transition:border-color .2s ease, box-shadow .2s ease;
     }
-    input:focus, select:focus, textarea:focus{border-color:#3a94a1; box-shadow:0 0 0 4px rgba(85,240,255,.10)}
-    textarea{resize:none}
-    #desc{height:120px}
-    #payInfo{height:90px}
+    input:focus, select:focus, textarea:focus {
+      border-color:#3a94a1;
+      box-shadow:0 0 0 4px rgba(85,240,255,.10);
+    }
+    textarea { resize:none; }
+    #desc { height:120px; }
+    #payInfo { height:90px; }
 
-    /* number inputs – hide spinners */
+    /* Hide number spinners */
     input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
-    input[type=number]{ -moz-appearance: textfield; }
-
-    .btn{
-      display:block; width:100%; margin-top:16px; padding:14px 18px;
-      background:linear-gradient(90deg,var(--neon),#00d2ff); color:#00242a;
-      font-weight:800; border:0; border-radius:12px; cursor:pointer;
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance:none; margin:0;
     }
-    .btn:hover{filter:brightness(1.04)}
-    .secondary{
-      padding:10px 14px; border-radius:10px; border:1px solid #2a3948;
-      background:#111820; color:#e8f1f8; cursor:pointer;
+    input[type=number]{ -moz-appearance:textfield; }
+
+    /* =========================
+         BUTTONS
+    ========================== */
+    .btn {
+      display:block; width:100%;
+      margin-top:16px; padding:14px 18px;
+      background:linear-gradient(90deg,var(--neon),#00d2ff);
+      color:#00242a; font-weight:800;
+      border:0; border-radius:12px;
+      cursor:pointer;
     }
-    .secondary:hover{background:#14212c}
+    .btn:hover { filter:brightness(1.04); }
 
-    /* Table */
-    .table-wrap{overflow:auto}
-    table{width:100%; border-collapse:collapse; background:#0f141b; border-radius:12px; overflow:hidden}
-    th,td{padding:12px 14px; border-bottom:1px solid #2a3948}
-    th{background:#131a22; text-align:left; color:#bfe9ff}
-    tr:hover td{background:#151d27}
-    .actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+    .secondary {
+      padding:10px 14px;
+      border-radius:10px; border:1px solid #2a3948;
+      background:#111820; color:#e8f1f8;
+      cursor:pointer;
+    }
+    .secondary:hover { background:#14212c; }
 
-    /* Top logout */
-    .admin-top{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
-    .logout{
+    /* =========================
+         TABLES
+    ========================== */
+    .table-wrap { overflow:auto; }
+    table {
+      width:100%; border-collapse:collapse;
+      background:#0f141b; border-radius:12px;
+      overflow:hidden;
+    }
+    th, td { padding:12px 14px; border-bottom:1px solid #2a3948; }
+    th { background:#131a22; text-align:left; color:#bfe9ff; }
+    tr:hover td { background:#151d27; }
+    .actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+
+    /* =========================
+         ADMIN HEADER / LOGOUT
+    ========================== */
+    .admin-top {
+      display:flex; flex-direction:column; align-items:center;
+      margin-bottom:18px;
+    }
+    .logout {
       display:block; margin:10px auto 0; padding:10px 18px;
-      background:#1a1f27; color:var(--ink); border:1px solid var(--line);
+      background:#1a1f27; color:var(--ink);
+      border:1px solid var(--line);
       border-radius:10px; cursor:pointer;
     }
 
-    /* Interests modal */
-    #intModal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999}
-    #intModal .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-    #intModal .sheet{
-      position:relative;max-width:760px;width:92%;
-      background:#0f141b;border:1px solid #2a3948;border-radius:14px;
-      box-shadow:0 18px 40px rgba(0,0,0,.6);padding:18px 18px 8px
+    /* =========================
+         INTERESTS MODAL
+    ========================== */
+    #intModal {
+      position:fixed; inset:0;
+      display:none; align-items:center; justify-content:center;
+      z-index:9999;
     }
-    #intModal .sheet h2{margin:0 0 10px;font-family:Outfit}
+    #intModal .backdrop {
+      position:absolute; inset:0;
+      background:rgba(0,0,0,.45);
+    }
+    #intModal .sheet {
+      position:relative; max-width:760px; width:92%;
+      background:#0f141b; border:1px solid #2a3948;
+      border-radius:14px; box-shadow:0 18px 40px rgba(0,0,0,.6);
+      padding:18px 18px 8px;
+    }
+    #intModal .sheet h2 {
+      margin:0 0 10px; font-family:Outfit;
+    }
     #intModal th, #intModal td { padding:10px 12px; }
 
+    /* Responsive tweak */
     @media (max-width:520px){
-      .mark{width:140px;height:140px}
+      .mark { width:140px; height:140px; }
     }
   </style>
 </head>
+
 
 <body>
   <!-- Header (no site nav) -->
