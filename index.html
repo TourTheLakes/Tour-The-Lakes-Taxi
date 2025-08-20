@@ -486,7 +486,7 @@ function item(col, id, data){
     ? ` · ${d} day${d === 1 ? "" : "s"} to cutoff`
     : "";
 
-  // status pill (now includes the countdown when open)
+  // status pill
   const status = closed
     ? `<span class="status closed">Closed</span>`
     : `<span class="status">Open${extra}</span>`;
@@ -522,19 +522,20 @@ function item(col, id, data){
         <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
         <!-- Interest form -->
-        <form class="interest" id="form-${col}-${id}">
+        <form class="interest" id="form-${col}-${id}" novalidate>
           <div class="row2">
             <div>
               <label for="n-${id}">Name</label>
-               <input id="n-${id}" name="name" type="text" required placeholder="Full name"
-                pattern="[A-Za-zÀ-ž\\s'\\-]{2,100}" maxlength="100" autocomplete="name"
-                 title="2–100 letters; spaces, apostrophes or dashes allowed"/>
-
+              <!-- NOTE: removed pattern; keep required + maxlength -->
+              <input id="n-${id}" name="name" type="text" required maxlength="100" autocomplete="name"
+                     placeholder="Full name"
+                     title="Please enter your full name"/>
             </div>
             <div>
               <label for="e-${id}">Email *</label>
               <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"
-                title="Please enter a valid email address (e.g. name@example.com)"/>
+                     autocomplete="email"
+                     title="Please enter a valid email address (e.g. name@example.com)"/>
             </div>
           </div>
 
@@ -542,16 +543,18 @@ function item(col, id, data){
             <div>
               <label for="p-${id}">Phone</label>
               <input id="p-${id}" name="phone" type="tel" placeholder="+44 1234 567890"
-                pattern="^\\+?[0-9\\s\\-]{7,20}$" inputmode="tel"/>
+                     pattern="^\\+?[0-9\\s\\-]{7,20}$" inputmode="tel" autocomplete="tel"/>
             </div>
             <div>
               <label for="s-${id}">Places</label>
               <input id="s-${id}" name="seats" type="number" inputmode="numeric" pattern="[0-9]*"
-                min="1" max="99" step="1" required value="1"/>
+                     min="1" max="99" step="1" required value="1"/>
             </div>
           </div>
 
-          <button class="send" ${closed ? "disabled" : ""}>Send <span class="arrow">→</span></button>
+          <button type="submit" class="send" ${closed ? "disabled" : ""}>
+            Send <span class="arrow">→</span>
+          </button>
 
           <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
           <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
@@ -568,10 +571,10 @@ function item(col, id, data){
   const min = Number(data.minNeeded ?? 20);
 
   async function updateProgress(){
-    if (!cap) { 
-      progHost.innerHTML = ""; 
+    if (!cap) {
+      progHost.innerHTML = "";
       console.log(`[progress] ${col}/${id}: no capacity set; skipping UI`);
-      return; 
+      return;
     }
 
     let booked = 0;      // confirmed only
@@ -607,7 +610,6 @@ function item(col, id, data){
       </div>
       <div class="bar">
         <span style="width:${pct}%"></span>
-        <!-- minimum threshold marker -->
         <div style="
           position:absolute;
           left:${minPct}%;
@@ -623,23 +625,14 @@ function item(col, id, data){
     `;
   }
 
-  // refresh progress when opening the drawer
-  details.addEventListener("toggle", ()=>{
-    if (details.open) updateProgress();
-  });
-  // run once initially so counts are visible without toggling
+  details.addEventListener("toggle", ()=>{ if (details.open) updateProgress(); });
   updateProgress();
 
   // === Seats input sanitiser ===
   const seats = el.querySelector(`#s-${id}`);
   seats.addEventListener("input", () => {
     let v = seats.value.replace(/\D/g, "");
-    if (v === "") v = "";
-    else {
-      let n = Math.max(1, Math.min(99, parseInt(v, 10)));
-      v = String(n);
-    }
-    seats.value = v;
+    seats.value = v === "" ? "" : String(Math.max(1, Math.min(99, parseInt(v, 10))));
   });
   seats.addEventListener("blur", () => {
     const n = parseInt(seats.value, 10);
@@ -647,21 +640,36 @@ function item(col, id, data){
   });
 
   // === Interest submit ===
-  const form = el.querySelector(`#form-${col}-${id}`);
-  const ok   = el.querySelector(`#ok-${col}-${id}`);
-  const er   = el.querySelector(`#er-${col}-${id}`);
+  const form   = el.querySelector(`#form-${col}-${id}`);
+  const ok     = el.querySelector(`#ok-${col}-${id}`);
+  const er     = el.querySelector(`#er-${col}-${id}`);
+  const sendBtn= form.querySelector(".send");
+
+  // If any field is invalid, show native tooltip immediately
+  form.addEventListener("invalid", () => form.reportValidity(), true);
+
+  // Clicking the button always checks validity (and prevents silent no-op)
+  sendBtn.addEventListener("click", (ev)=>{
+    if (!form.reportValidity()) {
+      ev.preventDefault();
+      return;
+    }
+    // let the normal submit proceed
+  });
 
   form.addEventListener("submit", async (e)=>{
     e.preventDefault();
+    console.log("[interest] submit fired", { col, id });
     ok.style.display="none"; er.style.display="none";
 
     const fd = new FormData(form);
     const email = (fd.get("email")+"").trim();
-    if (!email){ er.style.display="block"; return; }
+    const name  = (fd.get("name")+"").trim();
+    if (!email || !name){ er.style.display="block"; return; }
 
     try{
       await addDoc(collection(db, col, id, "interests"), {
-        name:(fd.get("name")+"").trim(),
+        name,
         email,
         phone:(fd.get("phone")+"").trim(),
         seats:Number(fd.get("seats")||1),
@@ -679,6 +687,7 @@ function item(col, id, data){
 
   return el;
 }
+
 
   // ----------------------------
   // Render lists
