@@ -473,7 +473,7 @@
   }
 
 // ----------------------------
-// Item renderer
+// Item renderer  (DROP-IN REPLACEMENT)
 // ----------------------------
 function item(col, id, data){
   const closed = isClosed(data.date, data.cutoff) || !!data.closed;
@@ -522,19 +522,20 @@ function item(col, id, data){
         <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
         <!-- Interest form -->
-        <form class="interest" id="form-${col}-${id}" novalidate>
+        <!-- NOTE: no 'novalidate' — let the browser run native validation -->
+        <form class="interest" id="form-${col}-${id}">
           <div class="row2">
             <div>
               <label for="n-${id}">Name</label>
-              <!-- NOTE: removed pattern; keep required + maxlength -->
-              <input id="n-${id}" name="name" type="text" required maxlength="100" autocomplete="name"
-                     placeholder="Full name"
+              <!-- keep it simple: required + maxlength; no complex pattern -->
+              <input id="n-${id}" name="name" type="text" required maxlength="100"
+                     autocomplete="name" placeholder="Full name"
                      title="Please enter your full name"/>
             </div>
             <div>
               <label for="e-${id}">Email *</label>
-              <input id="e-${id}" name="email" type="email" required placeholder="name@example.com"
-                     autocomplete="email"
+              <input id="e-${id}" name="email" type="email" required
+                     autocomplete="email" placeholder="name@example.com"
                      title="Please enter a valid email address (e.g. name@example.com)"/>
             </div>
           </div>
@@ -556,8 +557,12 @@ function item(col, id, data){
             Send <span class="arrow">→</span>
           </button>
 
-          <div class="okmsg" id="ok-${col}-${id}" style="display:none">Thanks — we’ve got your interest. We’ll be in touch.</div>
-          <div class="errmsg" id="er-${col}-${id}" style="display:none">Could not send. Please try again.</div>
+          <div class="okmsg" id="ok-${col}-${id}" style="display:none">
+            Thanks — we’ve got your interest. We’ll be in touch.
+          </div>
+          <div class="errmsg" id="er-${col}-${id}" style="display:none">
+            Could not send. Please try again.
+          </div>
         </form>
       </div>
     </details>
@@ -639,33 +644,26 @@ function item(col, id, data){
     seats.value = isNaN(n) ? "1" : String(Math.max(1, Math.min(99, n)));
   });
 
-  // === Interest submit ===
-  const form   = el.querySelector(`#form-${col}-${id}`);
-  const ok     = el.querySelector(`#ok-${col}-${id}`);
-  const er     = el.querySelector(`#er-${col}-${id}`);
-  const sendBtn= form.querySelector(".send");
-
-  // If any field is invalid, show native tooltip immediately
-  form.addEventListener("invalid", () => form.reportValidity(), true);
-
-  // Clicking the button always checks validity (and prevents silent no-op)
-  sendBtn.addEventListener("click", (ev)=>{
-    if (!form.reportValidity()) {
-      ev.preventDefault();
-      return;
-    }
-    // let the normal submit proceed
-  });
+  // === Interest submit (native validation first) ===
+  const form = el.querySelector(`#form-${col}-${id}`);
+  const ok   = el.querySelector(`#ok-${col}-${id}`);
+  const er   = el.querySelector(`#er-${col}-${id}`);
 
   form.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    console.log("[interest] submit fired", { col, id });
-    ok.style.display="none"; er.style.display="none";
+    // Let the browser show built-in validation messages if invalid
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      e.preventDefault();
+      return;
+    }
 
-    const fd = new FormData(form);
+    e.preventDefault(); // valid → we take over
+    ok.style.display="none";
+    er.style.display="none";
+
+    const fd    = new FormData(form);
     const email = (fd.get("email")+"").trim();
     const name  = (fd.get("name")+"").trim();
-    if (!email || !name){ er.style.display="block"; return; }
 
     try{
       await addDoc(collection(db, col, id, "interests"), {
@@ -673,7 +671,7 @@ function item(col, id, data){
         email,
         phone:(fd.get("phone")+"").trim(),
         seats:Number(fd.get("seats")||1),
-        status: "pending",
+        status:"pending",
         createdAt: serverTimestamp()
       });
       form.reset();
@@ -687,7 +685,6 @@ function item(col, id, data){
 
   return el;
 }
-
 
   // ----------------------------
   // Render lists
