@@ -300,11 +300,28 @@
     const $ = id => document.getElementById(id);
     const authMsg = $("authMsg");
 
-    // helpers
-    const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
-    const isClosed = (d,c)=>{const n=new Date();return n>new Date(c)||n>new Date(d);};
-    const daysUntil = s => { if(!s) return null; const n=new Date();n.setHours(0,0,0,0); const d=new Date(s);d.setHours(0,0,0,0); return Math.round((d-n)/86400000); };
-    function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));}
+// helpers
+const fmtUK = s => s ? s.split("-").reverse().join("/") : "";
+const isClosed = (d,c)=>{const n=new Date();return n>new Date(c)||n>new Date(d);};
+const daysUntil = s => {
+  if(!s) return null;
+  const n=new Date(); n.setHours(0,0,0,0);
+  const d=new Date(s); d.setHours(0,0,0,0);
+  return Math.round((d-n)/86400000);
+};
+function escapeHtml(s){
+  return (s||"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function renderDescription(s=""){
+  const safe = escapeHtml(s.trim());
+  if (!safe) return "<p></p>";
+  return safe
+    .split(/\n{2,}/) 
+    .map(p => `<p>${p.replace(/\n/g,"<br>")}</p>`)
+    .join("");
+}
 
     // item renderer (no boxes)
     function item(col, id, data){
@@ -339,7 +356,7 @@
             <span class="chev">▾</span> Details</summary>
           <div class="drawer">
             <p><strong>About this ${col.slice(0,-1)}:</strong></p>
-            <p>${escapeHtml(data.description || "")}</p>
+${renderDescription(data.description || "")}
 
             <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
