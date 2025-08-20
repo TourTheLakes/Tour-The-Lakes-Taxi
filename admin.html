@@ -333,13 +333,17 @@
           await addDoc(collection(db, type), payload);
         }
 
-        addForm.reset();
-        document.getElementById("imageFile").value = "";
-        editingId = editingCol = currentImg = null;
-        saveBtn.textContent = "Add";
-        cancelBtn.style.display = "none";
+addForm.reset();
+{
+  const fileEl = document.getElementById("imageFile");
+  if (fileEl) fileEl.value = "";
+}
+editingId = editingCol = currentImg = null;
+saveBtn.textContent = "Add";
+cancelBtn.style.display = "none";
 
-        await loadListings();
+await loadListings();
+        
       }catch(err){
         console.error(err);
         alert("Could not save. Check your connection and try again.");
