@@ -518,16 +518,23 @@ function item(col, id, data){
         <p><strong>About this ${col.slice(0,-1)}:</strong></p>
         ${renderDescription(data.description || "")}
 
+        ${
+          (data.paymentInfo && data.paymentInfo.trim())
+            ? `
+              <p><strong>Payment info:</strong></p>
+              ${renderDescription(data.paymentInfo)}
+            `
+            : ``
+        }
+
         <!-- progress bar host -->
         <div id="prog-${col}-${id}" style="margin-top:10px"></div>
 
         <!-- Interest form -->
-        <!-- NOTE: no 'novalidate' — let the browser run native validation -->
         <form class="interest" id="form-${col}-${id}">
           <div class="row2">
             <div>
               <label for="n-${id}">Name</label>
-              <!-- keep it simple: required + maxlength; no complex pattern -->
               <input id="n-${id}" name="name" type="text" required maxlength="100"
                      autocomplete="name" placeholder="Full name"
                      title="Please enter your full name"/>
@@ -650,14 +657,13 @@ function item(col, id, data){
   const er   = el.querySelector(`#er-${col}-${id}`);
 
   form.addEventListener("submit", async (e)=>{
-    // Let the browser show built-in validation messages if invalid
     if (!form.checkValidity()) {
       form.reportValidity();
       e.preventDefault();
       return;
     }
 
-    e.preventDefault(); // valid → we take over
+    e.preventDefault();
     ok.style.display="none";
     er.style.display="none";
 
@@ -685,6 +691,7 @@ function item(col, id, data){
 
   return el;
 }
+
 
   // ----------------------------
   // Render lists
