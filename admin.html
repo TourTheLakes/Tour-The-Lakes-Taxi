@@ -391,35 +391,42 @@ await loadListings();
       }
     });
 
-    // begin edit – fetch one doc
-    async function beginEdit(col, id){
-      try{
-        const snap = await getDoc(doc(db, col, id));
-        if (!snap.exists()) { alert("Could not load item."); return; }
-        const data = snap.data();
+// Begin edit — fetch just this doc
+async function beginEdit(col, id){
+  try{
+    const snap = await getDoc(doc(db, col, id));
+    if (!snap.exists()) { alert("Could not load item."); return; }
+    const data = snap.data();
 
-        addForm.elements["title"].value       = data.title || "";
-        addForm.elements["description"].value = data.description || "";
-        addForm.elements["date"].value        = data.date || "";
-        addForm.elements["cutoff"].value      = data.cutoff || "";
-        addForm.elements["price"].value       = data.price || 0;
-        addForm.elements["capacity"].value    = data.capacity || 0;
-        addForm.elements["minNeeded"].value   = data.minNeeded || 20;
-        addForm.elements["paymentInfo"].value = data.paymentInfo || "";
-        addForm.elements["type"].value        = col;
+    // populate form
+    addForm.elements["title"].value        = data.title || "";
+    addForm.elements["description"].value  = data.description || "";
+    addForm.elements["date"].value         = data.date || "";
+    addForm.elements["cutoff"].value       = data.cutoff || "";
+    addForm.elements["price"].value        = data.price || 0;
+    addForm.elements["capacity"].value     = data.capacity || 0;
+    addForm.elements["minNeeded"].value    = data.minNeeded || 20;
+    addForm.elements["paymentInfo"].value  = data.paymentInfo || "";
+    addForm.elements["type"].value         = col;
 
-        editingId  = id;
-        editingCol = col;
-        currentImg = data.imageUrl || null;
+    // set state
+    editingId  = id;
+    editingCol = col;
+    currentImg = data.imageUrl || null;
 
-        saveBtn.textContent = "Update";
-        cancelBtn.style.display = "inline-block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }catch(err){
-        console.error(err);
-        alert("Could not start edit.");
-      }
-    }
+    // UI
+    saveBtn.textContent = "Update";
+    cancelBtn.style.display = "inline-block";
+
+    // ↓ Avoid forced layout / FOUC while CSS is still settling
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }catch(err){
+    console.error(err);
+    alert("Could not start edit.");
+  }
+}
 
     // delete listing
     async function doDelete(col, id){
