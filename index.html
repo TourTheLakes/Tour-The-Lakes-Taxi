@@ -505,7 +505,7 @@ function item(col, id, data){
       <!-- FLEX meta chips (wrap nicely on small screens) -->
       <div class="meta">
         <span><strong>Date:</strong>&nbsp;${fmtUK(data.date)}</span>
-        <span><strong>Cut&nbsp;off:</strong>&nbsp;${fmtUK(data.cutoff)}</span>
+        <span><strong>Cutoff:</strong>&nbsp;${fmtUK(data.cutoff)}</span>
         <span><strong>Price:</strong>&nbsp;£${Number(data.price||0).toFixed(0)}</span>
         ${dayMsg ? `<span>${dayMsg}</span>` : ``}
       </div>
