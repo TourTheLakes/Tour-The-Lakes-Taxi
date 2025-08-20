@@ -1,165 +1,253 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Admin – Tour The Lakes</title>
-
-  <!-- Favicon = Admin circle (cyan, same family as index) -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%2313161c' stroke='%2386f6ff' stroke-width='4'/%3E%3Ctext x='60' y='65' text-anchor='middle' fill='%23e8f1f8' font-family='Outfit' font-size='20' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
-
+  <meta name="description" content="Admin tools for managing tours, events and enquiries."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Favicon (same family as index) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%23C7C6C1' stroke='%2300E5FF' stroke-width='4'/%3E%3Ctext x='60' y='66' text-anchor='middle' fill='%2313191f' font-family='Outfit' font-size='22' font-weight='800'%3EAdmin%3C/text%3E%3C/svg%3E"/>
 
   <style>
     :root{
-      --bg:#0e1116; --ink:#e8f1f8; --muted:#a8b0bb;
-      --neon:#55f0ff; --line:#273341; --panel:#151b22; --panelBorder:#222c3a;
-      --shadow:0 18px 40px rgba(0,0,0,.40);
+      /* Light base + building palette — copied from index.html */
+      --bg:#D9DDDC;
+      --ink:#13191f;
+      --muted:#4e565c;
+
+      /* Festival neons */
+      --neonB:#00E5FF;
+      --neonG:#9DFF00;
+      --neonY:#FFD347;
+
+      /* lines */
+      --line:#cfd6d6;
+
+      /* smoke field */
+      --smoke: radial-gradient(80% 90% at 20% 20%, rgba(0,229,255,.18), rgba(0,229,255,0) 60%),
+               radial-gradient(80% 90% at 80% 30%, rgba(157,255,0,.20), rgba(157,255,0,0) 60%),
+               radial-gradient(90% 100% at 60% 80%, rgba(255,211,71,.18), rgba(255,211,71,0) 60%);
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui;line-height:1.55}
-
-    .wrap{max-width:960px;margin:0 auto;padding:24px 16px}
-    .stamp{
-      margin:36px auto 12px; width:160px; height:160px; border-radius:50%;
-      background:#1a2633; border:4px solid var(--neon);
-      display:flex; align-items:center; justify-content:center;
-      font-family:Outfit; font-weight:800; font-size:22px; text-align:center;
-      box-shadow: inset 0 12px 26px rgba(0,0,0,.45);
+    html,body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
+      line-height:1.55
     }
-    .logout{
-      display:block; margin:8px auto 36px; padding:10px 18px;
-      background:#1a1f27; color:var(--ink); border:1px solid var(--line);
-      border-radius:10px; cursor:pointer;
+    h1,h2,h3{font-family:Outfit,Inter,system-ui;letter-spacing:.2px;margin:0 0 .4rem}
+    a{color:#0f3d42;text-decoration:none;transition:opacity .25s ease, color .25s ease}
+    a:hover{opacity:.85}
+
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
     }
 
-    .panel{
-      background:var(--panel); border:1px solid var(--panelBorder);
-      border-radius:14px; padding:22px; box-shadow:var(--shadow); margin-bottom:28px;
-    }
-    .panel h1, .panel h2{
-      font-family:Outfit; text-align:center; margin:0 0 12px;
-    }
-    .subtle{color:var(--muted); text-align:center; margin-top:-6px; margin-bottom:16px}
+    /* ===== banners (hero + footer) ===== */
+    .banner{position:relative;overflow:hidden;color:var(--ink);isolation:isolate}
+    .banner .smoke{position:absolute;inset:-15% -8%;background:var(--smoke);opacity:.9;z-index:0;filter:blur(8px)}
+    .banner .wash{position:absolute;inset:0;background:linear-gradient(180deg,#EDEEEE 0%, #E6E9E9 100%);z-index:-1}
 
-    /* Form layout */
-    form label{display:block; margin:12px 0 6px; font-weight:600}
-    input[type="text"], input[type="date"], input[type="number"], select, textarea{
-      width:100%; padding:12px; border-radius:10px; border:1px solid #2a3948;
-      background:#0f141b; color:#e8f1f8; font-size:15px;
-      outline:none;
+    /* hero */
+    header.banner{padding:80px 16px 56px;border-bottom:1px solid var(--line)}
+    .hero{
+      position:relative;z-index:1;max-width:1100px;margin:0 auto;
+      display:grid;gap:24px;grid-template-columns:1fr;padding-inline:6px;text-align:center
     }
-    textarea{resize:none}
-    #desc{height:120px}
-    #payInfo{height:90px}
+    .mark{
+      justify-self:center;width:clamp(120px,36vw,160px);height:clamp(120px,36vw,160px);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 30% 30%, #ffffff, #f1f3f3 60%);
+      border:5px solid rgba(0,229,255,.85);
+      box-shadow:0 0 0 8px rgba(0,229,255,.12), 0 16px 30px rgba(0,0,0,.08), inset 0 12px 26px rgba(0,0,0,.05);
+      font-family:Outfit;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.15;text-transform:uppercase;color:#0f1417
+    }
+    .hero-copy h1{font-size:clamp(32px,6.8vw,54px);letter-spacing:.3px;text-wrap:balance}
+    .hero-copy p{margin:0;color:var(--muted);font-size:clamp(15px,2.6vw,18px)}
 
-    /* number inputs – keep simple, hide spinners */
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
-    input[type=number]{ -moz-appearance: textfield; }
+    @media(min-width:1200px){
+      .hero{grid-template-columns:200px 1fr 200px;gap:30px;padding-inline:0;text-align:center}
+      .mark{justify-self:center}
+      .hero-copy{grid-column:2}
+    }
 
+    /* nav */
+    nav{
+      position:sticky;top:0;z-index:10;
+      display:flex;gap:18px;justify-content:center;flex-wrap:wrap;
+      background:rgba(255,255,255,.55);backdrop-filter:saturate(180%) blur(8px);
+      border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 14px
+    }
+    nav a{font-weight:600;color:#0f3d42}
+    nav a:hover{color:#062b2f}
+
+    /* sections */
+    main{max-width:1100px;margin:28px auto;padding:0 14px}
+    .section{margin:28px 0}
+    .lead{color:var(--muted)}
+
+    /* Admin “cards” to match index look */
+    .card{
+      background:#ffffff; border:1px solid #dfe6e7; border-radius:14px;
+      box-shadow:0 16px 24px rgba(0,0,0,.04);
+      padding:18px;
+    }
+
+    /* Use the same input styling as public site */
+    .interest label{display:block;font-weight:600;margin:10px 0 6px}
+    .interest input, .interest select, .interest textarea{
+      width:100%;padding:12px 12px;border-radius:12px;border:1px solid #dfe6e7;background:#ffffff;outline:none;
+      transition:box-shadow .25s ease, border-color .25s ease;color:#182329;font-size:15px
+    }
+    .interest input:focus, .interest select:focus, .interest textarea:focus{
+      border-color:#cfe8ea;box-shadow:0 0 0 6px rgba(0,229,255,.12)
+    }
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:600px){.row2{grid-template-columns:1fr}}
+
+    /* number inputs – hide spinners like index */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield;-webkit-appearance:none;appearance:textfield}
+
+    /* Buttons (match index’s “linkish” and add primary/secondary) */
     .btn{
-      display:block; width:100%; margin-top:16px; padding:14px 18px;
-      background:linear-gradient(90deg,var(--neon),#00d2ff); color:#00242a;
-      font-weight:800; border:0; border-radius:12px; cursor:pointer;
+      display:inline-block;background:linear-gradient(90deg,var(--neonB),var(--neonG));
+      color:#0c2a2f;border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer
+    }
+    .secondary{
+      background:#ffffff;border:1px solid #dfe6e7;color:#0f3d42;border-radius:10px;padding:10px 14px;cursor:pointer
     }
 
     /* Table */
-    table{width:100%; border-collapse:collapse; background:#0f141b; border-radius:12px; overflow:hidden}
-    th,td{padding:12px 14px; border-bottom:1px solid #2a3948}
-    th{background:#131a22; text-align:left; color:#bfe9ff}
-    tr:hover td{background:#151d27}
     .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;background:#ffffff;border:1px solid #dfe6e7;border-radius:12px;overflow:hidden}
+    thead th{background:#f3f6f7;color:#20323a;font-weight:600}
+    th,td{padding:12px 14px;border-bottom:1px solid #e7eeef}
+    tr:hover td{background:#f9fcfd}
 
-    .actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
-    .secondary{
-      padding:10px 14px; border-radius:10px; border:1px solid #2a3948;
-      background:#111820; color:#e8f1f8; cursor:pointer;
-    }
-
-    @media (max-width:520px){
-      .wrap{padding-inline:14px}
-      .stamp{width:140px;height:140px}
-    }
+    /* Footer */
+    footer.banner{padding:40px 16px;border-top:1px solid var(--line)}
+    footer.banner .smoke{inset:-20% -8%}
+    footer .inner{max-width:1100px;margin:0 auto;text-align:center;color:#2e3c42;position:relative;z-index:1}
+    #authMsg{display:block;min-height:16px;color:#2e3c42;text-align:center;margin-top:6px}
   </style>
 </head>
 
-  
 <body>
-  <div class="wrap">
-    <div class="stamp">Admin</div>
-    <button id="logoutBtn" class="logout">Log out</button>
+  <!-- HERO -->
+  <header class="banner">
+    <div class="wash"></div><div class="smoke"></div>
+    <div class="hero">
+      <div class="mark">Tour<br>The<br>Lakes</div>
+      <div class="hero-copy">
+        <h1>Admin</h1>
+        <p>Manage tours, events and enquiries</p>
+      </div>
+    </div>
+  </header>
 
+  <nav>
+    <a href="index.html#about">About</a>
+    <a href="index.html#tours">Tours</a>
+    <a href="index.html#events">Events</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <main>
     <!-- Create / Manage -->
-    <section class="panel">
-      <h1>Create / Manage</h1>
-      <p class="subtle">Add a tour or event. All fields are simple, stacked and mobile-friendly.</p>
-      <form id="addForm" novalidate>
+    <section class="section card">
+      <h2 style="margin-bottom:8px">Create / Manage</h2>
+      <p class="lead" style="margin-top:0">Add or edit a tour or event. Fields are simple and mobile friendly.</p>
+
+      <form id="addForm" class="interest" novalidate>
         <label>Title
           <input type="text" name="title" required placeholder="Windermere & Ambleside Full Day">
         </label>
 
         <label>Description
-          <textarea id="desc" name="description" placeholder="Route, highlights, timings..."></textarea>
+          <textarea id="desc" name="description" placeholder="Write in plain text. Blank lines create new paragraphs." rows="6"></textarea>
         </label>
 
-        <label>Date
-          <input type="date" name="date" required>
-        </label>
+        <div class="row2">
+          <label>Date
+            <input type="date" name="date" required>
+          </label>
 
-        <label>Cut off
-          <input type="date" name="cutoff">
-        </label>
+          <label>Cut off
+            <input type="date" name="cutoff">
+          </label>
+        </div>
 
-        <label>Price (£)
-          <input type="number" name="price" step="1" inputmode="numeric" placeholder="130">
-        </label>
+        <div class="row2">
+          <label>Price (£)
+            <input type="number" name="price" step="1" inputmode="numeric" placeholder="130">
+          </label>
 
-        <label>Capacity
-          <input type="number" name="capacity" step="1" inputmode="numeric" placeholder="e.g. 30">
-        </label>
+          <label>Capacity
+            <input type="number" name="capacity" step="1" inputmode="numeric" placeholder="e.g. 30">
+          </label>
+        </div>
 
-        <label>Min to run
-          <input type="number" name="minNeeded" step="1" inputmode="numeric" placeholder="default 20">
-        </label>
+        <div class="row2">
+          <label>Min to run
+            <input type="number" name="minNeeded" step="1" inputmode="numeric" placeholder="default 20">
+          </label>
+
+          <label>Type
+            <select name="type">
+              <option value="tours">Tour</option>
+              <option value="events">Event</option>
+            </select>
+          </label>
+        </div>
 
         <label>Payment Info
-          <textarea id="payInfo" name="paymentInfo" placeholder="BACS preferred. Card +10%..."></textarea>
+          <textarea id="payInfo" name="paymentInfo" placeholder="BACS preferred. Card +10%..." rows="4"></textarea>
         </label>
 
         <label>Feature image
           <input id="imageFile" type="file" accept="image/*">
         </label>
-        
-        <label>Type
-          <select name="type">
-            <option value="tours">Tour</option>
-            <option value="events">Event</option>
-          </select>
-        </label>
 
-        <button id="saveBtn" class="btn">Add</button>
-        <button id="cancelEdit" type="button" class="secondary" style="display:none;margin-top:10px">Cancel edit</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+          <button id="saveBtn" class="btn">Add</button>
+          <button id="cancelEdit" type="button" class="secondary" style="display:none">Cancel edit</button>
+          <button id="logoutBtn" type="button" class="secondary" style="margin-left:auto">Log out</button>
+        </div>
       </form>
     </section>
 
-
     <!-- Listings + Export -->
-    <section class="panel">
-      <h2>Current Listings</h2>
-      <div class="actions" style="margin-bottom:10px">
+    <section class="section card">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-bottom:8px">
+        <h2 style="margin:0">Current Listings</h2>
         <button id="exportCSV" class="secondary">Export Interests CSV</button>
       </div>
-      
+
       <div class="table-wrap">
         <table id="listings">
           <thead>
-            <tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Title</th><th>Date</th><th>Type</th><th>Status</th><th style="text-align:right">Actions</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
-    </section> 
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="banner">
+    <div class="wash"></div><div class="smoke"></div>
+    <div class="inner">
+      © <span id="yr"></span> Tour The Lakes
+      <small id="authMsg" aria-live="polite"></small>
+    </div>
+  </footer>
 
   <!-- App -->
   <script type="module">
@@ -168,15 +256,14 @@
     import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-  authDomain: "tourthelakes-1e165.firebaseapp.com",
-  projectId: "tourthelakes-1e165",
-storageBucket: "tourthelakes-1e165.firebasestorage.app",
-  messagingSenderId: "470758171431",
-  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
-};
-
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+    };
 
     const app     = initializeApp(firebaseConfig);
     const auth    = getAuth(app);
@@ -188,26 +275,25 @@ storageBucket: "tourthelakes-1e165.firebasestorage.app",
     const listBody  = document.querySelector("#listings tbody");
     const saveBtn   = document.getElementById("saveBtn");
     const cancelBtn = document.getElementById("cancelEdit");
+    const authMsg   = document.getElementById("authMsg");
 
-    // simple edit state
-    let editingId   = null;   // Firestore doc id
-    let editingCol  = null;   // "tours" | "events"
-    let currentImg  = null;   // preserve imageUrl when not re-uploading
+    // edit state
+    let editingId   = null;
+    let editingCol  = null;
+    let currentImg  = null;
 
-
-    // If not signed in, bounce to public site
+    // gate: if not signed in, bounce to public site
     onAuthStateChanged(auth, user => { if (!user) location.href = "index.html"; });
 
-    // Log out
+    // log out
     logoutBtn.addEventListener("click", ()=> signOut(auth));
 
-    // Create / Update listing
+    // create / update listing
     addForm.addEventListener("submit", async (e)=>{
       e.preventDefault();
       const fd = new FormData(addForm);
       const type = fd.get("type");
 
-      // Base payload
       const payload = {
         title: (fd.get("title")+"").trim(),
         description: (fd.get("description")+"").trim(),
@@ -219,41 +305,25 @@ storageBucket: "tourthelakes-1e165.firebasestorage.app",
         paymentInfo: (fd.get("paymentInfo")+"").trim()
       };
 
-// Handle image upload if chosen
-const fileInput = document.getElementById("imageFile");
-const file = fileInput?.files?.[0];
+      // image upload (optional)
+      const fileInput = document.getElementById("imageFile");
+      const file = fileInput?.files?.[0];
 
-if (file) {
-  if (file.size > 5 * 1024 * 1024) {
-    alert("Image too large. Max 5MB.");
-    return;
-  }
-
-  // Clean up the filename to avoid invalid characters
-  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
-
-  // Create a unique storage path (by timestamp)
-  const path = `images/${type}/${Date.now()}_${safeName}`;
-  const storageRef = ref(storage, path);
-
-  // Upload the file with resumable upload
-  await new Promise((resolve, reject) => {
-    const task = uploadBytesResumable(storageRef, file, { contentType: file.type });
-    task.on("state_changed", () => {}, reject, resolve);
-  });
-
-  // Store the Firebase signed URL
-  payload.imageUrl = await getDownloadURL(storageRef);
-  console.log("Uploaded image URL:", payload.imageUrl);
-
-
-} else if (editingId && currentImg) {
-  // Preserve image if editing and no new one uploaded
-  payload.imageUrl = currentImg;
-} else {
-  // No file at all (new listing with no image)
-  payload.imageUrl = "";
-}
+      if (file){
+        if (file.size > 5 * 1024 * 1024){ alert("Image too large. Max 5MB."); return; }
+        const safeName = file.name.replace(/[^\w.\-]+/g,"_");
+        const path = `images/${type}/${Date.now()}_${safeName}`;
+        const storageRef = ref(storage, path);
+        await new Promise((resolve,reject)=>{
+          const task = uploadBytesResumable(storageRef, file, { contentType:file.type });
+          task.on("state_changed", ()=>{}, reject, resolve);
+        });
+        payload.imageUrl = await getDownloadURL(storageRef);
+      }else if (editingId && currentImg){
+        payload.imageUrl = currentImg;
+      }else{
+        payload.imageUrl = "";
+      }
 
       try{
         if (editingId){
@@ -264,7 +334,7 @@ if (file) {
         }
 
         addForm.reset();
-        document.getElementById("imageFile").value = "";
+        document.getElementById("imageFile")..value = "";
         editingId = editingCol = currentImg = null;
         saveBtn.textContent = "Add";
         cancelBtn.style.display = "none";
@@ -276,93 +346,88 @@ if (file) {
       }
     });
 
+    // load listings
+    async function loadListings(){
+      listBody.innerHTML = "";
+      for (const col of ["tours","events"]){
+        const snap = await getDocs(query(collection(db, col), orderBy("date","asc")));
+        snap.forEach(row=>{
+          const d = row.data();
+          const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(d.title || "")}</td>
+            <td>${d.date || ""}</td>
+            <td>${col}</td>
+            <td>${closed ? "Closed" : "Open"}</td>
+            <td style="text-align:right;white-space:nowrap">
+              <button class="secondary" data-edit="${row.id}" data-col="${col}">Edit</button>
+              <button class="secondary" data-del="${row.id}" data-col="${col}" style="border-color:#c9d2d5">Delete</button>
+            </td>`;
+          listBody.appendChild(tr);
+        });
+      }
+      if (!listBody.children.length){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="5" style="color:#5b6770">No listings yet.</td>`;
+        listBody.appendChild(tr);
+      }
+    }
+    loadListings();
 
-// Load listings (no per-row listeners here)
-async function loadListings(){
-  listBody.innerHTML = "";
-  for (const col of ["tours","events"]){
-    const snap = await getDocs(query(collection(db, col), orderBy("date","asc")));
-    snap.forEach(row=>{
-      const d = row.data();
-      const closed = (d.cutoff && new Date(d.cutoff) < new Date()) || (d.date && new Date(d.date) < new Date());
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${escapeHtml(d.title || "")}</td>
-        <td>${d.date || ""}</td>
-        <td>${col}</td>
-        <td>${closed ? "Closed" : "Open"}</td>
-        <td style="text-align:right;white-space:nowrap">
-          <button class="secondary" data-edit="${row.id}" data-col="${col}">Edit</button>
-          <button class="secondary" data-del="${row.id}" data-col="${col}" style="border-color:#7a3a3a">Delete</button>
-        </td>`;
-      listBody.appendChild(tr);
+    // delegated actions (edit/delete)
+    listBody.addEventListener("click", (e)=>{
+      const btn = e.target.closest("button[data-edit], button[data-del]");
+      if (!btn) return;
+      const col = btn.getAttribute("data-col");
+      if (btn.hasAttribute("data-edit")){
+        beginEdit(col, btn.getAttribute("data-edit"));
+      } else if (btn.hasAttribute("data-del")){
+        doDelete(col, btn.getAttribute("data-del"));
+      }
     });
-  }
-  if (!listBody.children.length){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="5" style="color:#a8b0bb">No listings yet.</td>`;
-    listBody.appendChild(tr);
-  }
-}
-loadListings();
 
-// One delegated click handler for Edit/Delete (prevents duplicate bindings)
-listBody.addEventListener("click", (e)=>{
-  const btn = e.target.closest("button[data-edit], button[data-del]");
-  if (!btn) return;
-  const col = btn.getAttribute("data-col");
-  if (btn.hasAttribute("data-edit")){
-    beginEdit(col, btn.getAttribute("data-edit"));
-  } else if (btn.hasAttribute("data-del")){
-    doDelete(col, btn.getAttribute("data-del"));
-  }
-});
+    // begin edit – fetch one doc
+    async function beginEdit(col, id){
+      try{
+        const snap = await getDoc(doc(db, col, id));
+        if (!snap.exists()) { alert("Could not load item."); return; }
+        const data = snap.data();
 
-// Begin edit — fetch just this doc
-async function beginEdit(col, id){
-  try{
-    const snap = await getDoc(doc(db, col, id));
-    if (!snap.exists()) { alert("Could not load item."); return; }
-    const data = snap.data();
+        addForm.elements["title"].value       = data.title || "";
+        addForm.elements["description"].value = data.description || "";
+        addForm.elements["date"].value        = data.date || "";
+        addForm.elements["cutoff"].value      = data.cutoff || "";
+        addForm.elements["price"].value       = data.price || 0;
+        addForm.elements["capacity"].value    = data.capacity || 0;
+        addForm.elements["minNeeded"].value   = data.minNeeded || 20;
+        addForm.elements["paymentInfo"].value = data.paymentInfo || "";
+        addForm.elements["type"].value        = col;
 
-    // populate form
-    addForm.elements["title"].value       = data.title || "";
-    addForm.elements["description"].value = data.description || "";
-    addForm.elements["date"].value        = data.date || "";
-    addForm.elements["cutoff"].value      = data.cutoff || "";
-    addForm.elements["price"].value       = data.price || 0;
-    addForm.elements["capacity"].value    = data.capacity || 0;
-    addForm.elements["minNeeded"].value   = data.minNeeded || 20;
-    addForm.elements["paymentInfo"].value = data.paymentInfo || "";
-    addForm.elements["type"].value        = col;
+        editingId  = id;
+        editingCol = col;
+        currentImg = data.imageUrl || null;
 
-    // set state
-    editingId  = id;
-    editingCol = col;
-    currentImg = data.imageUrl || null;
+        saveBtn.textContent = "Update";
+        cancelBtn.style.display = "inline-block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }catch(err){
+        console.error(err);
+        alert("Could not start edit.");
+      }
+    }
 
-    // UI
-    saveBtn.textContent = "Update";
-    cancelBtn.style.display = "inline-block";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }catch(err){
-    console.error(err);
-    alert("Could not start edit.");
-  }
-}
-
-// Delete listing
-async function doDelete(col, id){
-  if (!confirm("Delete this listing?")) return;
-  try{
-    await deleteDoc(doc(db, col, id));
-    await loadListings();
-  }catch(err){
-    console.error(err);
-    alert("Delete failed.");
-  }
-}
-
+    // delete listing
+    async function doDelete(col, id){
+      if (!confirm("Delete this listing?")) return;
+      try{
+        await deleteDoc(doc(db, col, id));
+        await loadListings();
+      }catch(err){
+        console.error(err);
+        alert("Delete failed.");
+      }
+    }
 
     // cancel edit
     cancelBtn.addEventListener("click", ()=>{
@@ -372,17 +437,16 @@ async function doDelete(col, id){
       cancelBtn.style.display = "none";
     });
 
-
     // Export Interests CSV
     document.getElementById("exportCSV").addEventListener("click", async ()=>{
       let rows=[["Type","ListingID","Name","Email","Phone","Seats","Method","Created"]];
       for(const col of ["tours","events"]){
         const snap = await getDocs(collection(db,col));
-        for(const doc of snap.docs){
-          const subs = await getDocs(collection(db,col,doc.id,"interests"));
+        for(const d of snap.docs){
+          const subs = await getDocs(collection(db,col,d.id,"interests"));
           subs.forEach(s=>{
             const x=s.data();
-            rows.push([col,doc.id,x.name||"",x.email||"",x.phone||"",x.seats||"",x.method||"",x.createdAt?.toDate().toISOString()||""]);
+            rows.push([col,d.id,x.name||"",x.email||"",x.phone||"",x.seats||"",x.method||"",x.createdAt?.toDate().toISOString()||""]);
           });
         }
       }
@@ -395,9 +459,12 @@ async function doDelete(col, id){
     });
 
     function escapeHtml(s){
-      return (s||"").replace(/[&<>"']/g,
-        c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+      return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
     }
+
+    // footer year
+    const yr = document.getElementById('yr');
+    if (yr) { yr.textContent = new Date().getFullYear(); }
   </script>
 </body>
 </html>
