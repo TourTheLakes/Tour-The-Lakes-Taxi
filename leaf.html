@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leaf – Tour The Lakes</title>
+  <meta name="description" content="Single ivy leaf rendered in pure SVG." />
+
+  <style>
+    :root{
+      /* gentle stone so the green pops */
+      --bg:#e6e1d4;
+      --stem:#2b4636;
+      --leaf-top:#2e7d32;  /* deep ivy */
+      --leaf-bottom:#72b56a; /* sunlit edge */
+      --leaf-edge1:#1f5a24; --leaf-edge2:#2d6a2b;
+      --vein:#e6f2e3;
+    }
+
+    html,body{ height:100%; margin:0 }
+    body{
+      display:grid; place-items:center;
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* size the artwork responsively */
+    .art{
+      width:min(76vw, 520px);
+      height:auto;
+      display:block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Single ivy leaf (pure SVG) -->
+  <svg class="art" viewBox="-60 -60 120 120" role="img" aria-label="Ivy leaf">
+    <defs>
+      <!-- soft shadow -->
+      <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+        <feOffset dx="0" dy="2" in="SourceAlpha" result="off"/>
+        <feGaussianBlur in="off" stdDeviation="2.2" result="blur"/>
+        <feColorMatrix in="blur" type="matrix"
+          values="0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 .28 0" result="shadow"/>
+        <feMerge>
+          <feMergeNode in="shadow"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <!-- leaf fill + edge -->
+      <linearGradient id="leafFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--leaf-top)"/>
+        <stop offset="1" stop-color="var(--leaf-bottom)"/>
+      </linearGradient>
+      <linearGradient id="leafEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="var(--leaf-edge1)"/>
+        <stop offset=".9" stop-color="var(--leaf-edge2)"/>
+      </linearGradient>
+    </defs>
+
+    <!-- ivy leaf (stylised 5-point) -->
+    <g filter="url(#shadow)">
+      <path
+        d="
+          M 0,-48
+          C -14,-24  -36,-18  -46,-6
+          C -30,-6   -20,6     0,48
+          C  20,6     30,-6    46,-6
+          C  36,-18   14,-24    0,-48 Z"
+        fill="url(#leafFill)"
+        stroke="url(#leafEdge)"
+        stroke-width="3"
+        />
+
+      <!-- midrib -->
+      <path d="M 0,46 L 0,-46"
+            stroke="var(--vein)" stroke-width="2" opacity=".75" />
+
+      <!-- secondary veins -->
+      <path d="M 0,10  -18,-2
+               M 0,4    19,-9
+               M 0,-6  -15,-16
+               M 0,-12  15,-22"
+            stroke="var(--vein)" stroke-width="1.6" opacity=".6" />
+
+      <!-- subtle gloss along top lobe -->
+      <path d="M -6,-30 C -2,-28 2,-28 6,-30"
+            stroke="white" stroke-width="1.2" opacity=".15" />
+    </g>
+  </svg>
+
+</body>
+</html>
