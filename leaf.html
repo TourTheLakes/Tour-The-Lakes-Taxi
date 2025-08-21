@@ -1,117 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leaf – Tour The Lakes</title>
-  <meta name="description" content="Single ivy leaf rendered in pure SVG with proper layering and clipping." />
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Vine Divider – Tour The Lakes</title>
+  <meta name="description" content="Full-width ivy vine divider in pure SVG."/>
   <style>
     :root{
-      /* Palette (tweak freely) */
-      --bg:          #e6e1d4;   /* stone */
-      --bg-vignette: #d9d3c5;
-      --fill-top:    #2d7a32;   /* leaf gradient start */
-      --fill-bot:    #76b86c;   /* leaf gradient end */
-      --rim-1:       #1e5122;   /* edge dark 1 */
-      --rim-2:       #2a6a2b;   /* edge dark 2 */
-      --vein:        #dff0da;   /* secondary veins */
-      --spine:       #cfe9c9;   /* midrib (lighter than veins so it doesn't shout) */
-      --border:      #21492a;   /* outer border (topmost priority) */
-      --highlight:   rgba(255,255,255,.18);
+      /* page backdrop just for preview */
+      --bg:#e6e1d4; --bg2:#d9d3c5;
+
+      /* vine colours (match site palette) */
+      --fill-top:#2d7a32;     /* leaf gradient start */
+      --fill-bot:#76b86c;     /* leaf gradient end   */
+      --rim-1:#1e5122;        /* leaf rim dark 1     */
+      --rim-2:#2a6a2b;        /* leaf rim dark 2     */
+      --vein:#dff0da;         /* leaf secondary vein */
+      --spine:#cfe9c9;        /* leaf midrib         */
+      --border:#21492a;       /* leaf outline        */
+
+      --stem:#2f4f3a;         /* main stem           */
+      --stem2:#395a43;        /* soft top highlight  */
     }
 
-    html,body{ height:100%; margin:0 }
+    html,body{height:100%;margin:0}
     body{
       display:grid; place-items:center;
-      background: radial-gradient(1100px 700px at 50% 40%, var(--bg) 0%, var(--bg) 55%, var(--bg-vignette) 100%);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      background: radial-gradient(1100px 700px at 50% 40%, var(--bg) 0%, var(--bg) 55%, var(--bg2) 100%);
     }
 
-    .art{ width:min(76vw, 520px); height:auto; display:block }
+    /* demo frame */
+    .frame{ width:min(1100px, 92vw); padding:32px 0 }
+
+    /* the divider */
+    .vine{
+      height:76px;            /* divider thickness */
+      width:100%;
+    }
+    .vine svg{ width:100%; height:100%; display:block }
   </style>
 </head>
 <body>
+  <div class="frame">
+    <div class="vine" aria-hidden="true">
+      <!-- ====== IVY VINE (scales to width) ====== -->
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" role="img" aria-label="Ivy vine divider">
+        <defs>
+          <!-- Leaf fills -->
+          <linearGradient id="leafFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--fill-top)"/>
+            <stop offset="1" stop-color="var(--fill-bot)"/>
+          </linearGradient>
+          <linearGradient id="leafEdge" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--rim-1)"/>
+            <stop offset=".9" stop-color="var(--rim-2)"/>
+          </linearGradient>
 
-  <!-- Natural ivy leaf with correct visual hierarchy -->
-  <svg class="art" viewBox="-60 -60 120 120" role="img" aria-label="Ivy leaf">
-    <defs>
-      <!-- soft drop shadow -->
-      <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
-        <feOffset dx="0" dy="2" in="SourceAlpha" result="o"/>
-        <feGaussianBlur in="o" stdDeviation="2.3" result="b"/>
-        <feColorMatrix in="b" type="matrix"
-          values="0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 .28 0" result="s"/>
-        <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
+          <!-- soft stem blur -->
+          <filter id="soft">
+            <feGaussianBlur stdDeviation="0.6"/>
+          </filter>
 
-      <!-- inner shadow/rim darken (subtle) -->
-      <filter id="inner" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
-        <feOffset dy="1.1" result="o"/>
-        <feComposite in="o" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="inner"/>
-        <feColorMatrix in="inner" type="matrix"
-          values="0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 .28 0"/>
-        <feBlend in="SourceGraphic" mode="multiply"/>
-      </filter>
+          <!-- leaf shape + clip (same as leaf.html, scaled to divider) -->
+          <path id="leaf-shape"
+                d="M 0,-18
+                   C -4,-10  -12,-8  -16,-3
+                   C -10,-3   -6,2    0,18
+                   C  6,2     10,-3   16,-3
+                   C 12,-8     4,-10   0,-18 Z" />
 
-      <!-- fills -->
-      <linearGradient id="leafFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="var(--fill-top)"/>
-        <stop offset="1" stop-color="var(--fill-bot)"/>
-      </linearGradient>
-      <linearGradient id="leafEdge" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="var(--rim-1)"/>
-        <stop offset=".9" stop-color="var(--rim-2)"/>
-      </linearGradient>
+          <clipPath id="leafClip">
+            <use href="#leaf-shape"/>
+          </clipPath>
 
-      <!-- Leaf silhouette path (reused for clip) -->
-      <path id="shape"
-        d="M 0,-48
-           C -12,-28  -34,-22  -46,-8
-           C -28,-10  -18,4     0,48
-           C  18,4     28,-10   46,-8
-           C  34,-22   12,-28    0,-48 Z" />
+          <!-- reusable leaf group with proper layering -->
+          <g id="leaf">
+            <!-- base fill -->
+            <use href="#leaf-shape" fill="url(#leafFill)"/>
+            <!-- details (clipped) -->
+            <g clip-path="url(#leafClip)">
+              <!-- secondary veins -->
+              <path d="M 0,5  C -3,3  -6,1  -8,0
+                       M 0,1  C  3,-1  6,-3   8,-4
+                       M 0,-3 C -2,-5 -5,-7  -6,-8
+                       M 0,-6 C  2,-8  5,-10  6,-11"
+                    stroke="var(--vein)" stroke-width="1.2" stroke-linecap="round" opacity=".7" fill="none"/>
+              <!-- spine -->
+              <path d="M 0,16 L 0,-16" stroke="var(--spine)" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>
+              <!-- gentle highlight -->
+              <path d="M -3,-11 C -1,-10 1,-10 3,-11" stroke="white" stroke-opacity=".18" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <!-- border on top -->
+            <use href="#leaf-shape" fill="none" stroke="var(--border)" stroke-width="2"/>
+          </g>
+        </defs>
 
-      <!-- Clip so veins/highlight never cross the border -->
-      <clipPath id="clipLeaf">
-        <use href="#shape"/>
-      </clipPath>
-    </defs>
+        <!-- twin stems for depth -->
+        <path d="M 0,70 C 160,20  320,120 480,70 S 800,20 960,70 S 1120,120 1200,70"
+              fill="none" stroke="var(--stem)" stroke-width="6" stroke-linecap="round" filter="url(#soft)"/>
+        <path d="M 0,64 C 160,14  320,114 480,64 S 800,14 960,64 S 1120,114 1200,64"
+              fill="none" stroke="var(--stem2)" stroke-width="3" stroke-linecap="round" opacity=".65" filter="url(#soft)"/>
 
-    <g filter="url(#shadow)">
-      <!-- 1) Fill (base substance) -->
-      <use href="#shape" fill="url(#leafFill)" filter="url(#inner)"/>
-
-      <!-- 2) Details INSIDE ONLY (clipped under border) -->
-      <g clip-path="url(#clipLeaf)">
-        <!-- Secondary veins (lower priority than substance) -->
-        <path d="M 0,12  C -6,8   -12,2  -18,-2
-                 M 0,5   C  7,0     13,-7  19,-10
-                 M 0,-6  C -6,-10  -12,-15 -15,-18
-                 M 0,-13 C  6,-17   12,-22  16,-24"
-              stroke="var(--vein)" stroke-width="1.5" stroke-linecap="round" opacity=".65" fill="none"/>
-
-        <!-- Midrib / Spine (visible but not dominant) -->
-        <path d="M 0,44 L 0,-44"
-              stroke="var(--spine)" stroke-width="2.1" stroke-linecap="round" opacity=".85"/>
-
-        <!-- Gentle top highlight (no dark artefacts) -->
-        <path d="M -7,-31 C -2,-29 2,-29 7,-31"
-              stroke="var(--highlight)" stroke-width="2.3" stroke-linecap="round" />
-      </g>
-
-      <!-- 3) Border on TOP (highest priority) -->
-      <use href="#shape" fill="none" stroke="var(--border)" stroke-width="3.2" />
-    </g>
-  </svg>
-
+        <!-- leaves sprinkled along the curve -->
+        <use href="#leaf" transform="translate(80,62)  rotate(-14) scale(1.15)"/>
+        <use href="#leaf" transform="translate(150,50) rotate(10)  scale(.95)"/>
+        <use href="#leaf" transform="translate(230,74) rotate(-6)  scale(1.1)"/>
+        <use href="#leaf" transform="translate(310,56) rotate(14)  scale(.98)"/>
+        <use href="#leaf" transform="translate(390,70) rotate(-16) scale(1.22)"/>
+        <use href="#leaf" transform="translate(470,52) rotate(12)  scale(.96)"/>
+        <use href="#leaf" transform="translate(550,75) rotate(-9)  scale(1.14)"/>
+        <use href="#leaf" transform="translate(630,57) rotate(9)   scale(.98)"/>
+        <use href="#leaf" transform="translate(710,72) rotate(-12) scale(1.18)"/>
+        <use href="#leaf" transform="translate(790,54) rotate(11)  scale(.98)"/>
+        <use href="#leaf" transform="translate(870,76) rotate(-8)  scale(1.12)"/>
+        <use href="#leaf" transform="translate(950,58) rotate(8)   scale(1.0)"/>
+        <use href="#leaf" transform="translate(1030,72) rotate(-10) scale(1.16)"/>
+        <use href="#leaf" transform="translate(1110,56) rotate(10)  scale(1.0)"/>
+      </svg>
+      <!-- ====== /IVY VINE ====== -->
+    </div>
+  </div>
 </body>
 </html>
