@@ -6,11 +6,12 @@
   <title>Tour The Lakes</title>
   <meta name="description" content="Tour The Lakes — a modern, light-autumn announcement. Scenic tours winding down; private scenic requests by email; taxi journeys by advance email booking; and a new experiences partnership with Neon Forge." />
 
-  <!-- TYPE: refined and varied (premium vibe) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+  <!-- TYPE: load Manrope + display fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Montserrat:wght@600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+
   <!-- FAVICON (SVG, no pinks) -->
-  <link rel="icon" 
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cdefs/%3E%3Ccircle cx='48' cy='48' r='44' fill='%23f4f1e8' stroke='%23a7642a' stroke-width='6'/%3E%3Cpath d='M20 54q14-11 28-11t28 11' fill='none' stroke='%23524b43' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M20 64q14-8 28-8t28 8' fill='none' stroke='%23a7642a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"/>
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='44' fill='%23f4f1e8' stroke='%23a7642a' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='%23524b43' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='%23a7642a' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='%23ce9756' stroke-width='3' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E"/>
 
   <style>
     /* =========================
@@ -18,69 +19,71 @@
        Light but with richer, modern tones
     ========================== */
     :root{
-      --bg:        #f4f1e8;  /* warm light parchment */
-      --surface:   #fbfaf6;  /* subtle panel tint (used rarely) */
-      --ink:       #222429;  /* deep graphite */
-      --muted:     #5d6167;  /* pewter */
-      --accent:    #a7642a;  /* copper/bronze */
-      --accent-2:  #ce9756;  /* amber-gold */
-      --hair:      #e5e0d6;  /* hairline separators */
-      --container: 880px;
+      --bg:#f4f1e8;      /* warm parchment */
+      --surface:#fbfaf6; /* subtle tint */
+      --ink:#222429;     /* deep graphite */
+      --muted:#5d6167;   /* pewter */
+      --accent:#a7642a;  /* copper/bronze */
+      --accent-2:#ce9756;/* amber-gold */
+      --hair:#e5e0d6;    /* hairline */
+      --container:880px;
 
-      /* tighter rhythm (≈30% less than last pass) */
-      --s1: 6px;
-      --s2: 10px;
-      --s3: 14px;
-      --s4: 18px;
-      --s5: 26px;
-      --s6: 38px;
-      --s7: 58px;
+      /* tighter rhythm (≈30% less) */
+      --s1:6px; --s2:10px; --s3:14px; --s4:18px;
+      --s5:26px; --s6:38px; --s7:58px;
     }
 
     /* Base */
     *,*::before,*::after{ box-sizing:border-box }
     html,body{ height:100% }
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family: Manrope, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
-  line-height:1.58; /* slightly tighter than 1.6 */
-}
-h1{
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:700;
-  font-size:clamp(32px, 5.2vw, 52px); /* touch tighter */
-}
-h2{
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:600;
-  font-size:clamp(22px, 2.6vw, 28px);
-}
-p{ margin:0 0 var(--s2) }           /* reduce paragraph gap */
-.section{ padding: var(--s5) 0 }    /* overall section padding down */
-.section--tight{ padding: var(--s5) 0 var(--s3) } /* bottom tightened */
-.rule{ height:1px; background:var(--hair); margin: var(--s2) 0 } /* ↓ ~70% */
-
-    /* Header: clean, crisp, darker (no pink) */
-header{
-  padding: var(--s6) 0 var(--s5);
-  border-bottom:1px solid var(--hair);
-  background: linear-gradient(180deg, #f3f0e7 0%, #efebdf 100%);
-}
-
-
-    /* "Designer" logo: SVG icon + wordmark */
-    .logo{
-      display:flex; align-items:center; justify-content:center; gap:var(--s3);
-      margin-bottom: var(--s4);
-      user-select:none;
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:Manrope, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+      line-height:1.58;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     }
-    .logo svg{
-      width:54px; height:54px; flex:0 0 54px;
+    img{ max-width:100%; height:auto; display:block }
+    a{ color:var(--accent); text-decoration:none }
+    a:hover{ text-decoration:underline }
+
+    /* Container (was missing) */
+    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--s3) }
+
+    /* Headings */
+    h1,h2{ margin:0 0 var(--s2); line-height:1.18 }
+    h1{
+      font-family:"Cormorant Garamond", Georgia, serif; font-weight:700;
+      font-size:clamp(32px, 5.2vw, 52px); letter-spacing:.2px;
     }
+    h2{
+      font-family:"Cormorant Garamond", Georgia, serif; font-weight:600;
+      font-size:clamp(22px, 2.6vw, 28px); letter-spacing:.2px;
+    }
+    p{ margin:0 0 var(--s2) }
+    .section{ padding: var(--s5) 0 }
+    .section--tight{ padding: var(--s5) 0 var(--s3) }
+    .rule{ height:1px; background:var(--hair); margin: var(--s2) 0 }
+
+    /* Eyebrow (was missing) */
+    .eyebrow{
+      display:block; margin-bottom:var(--s2);
+      font-family:Montserrat, Manrope, system-ui, sans-serif;
+      font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+      font-size:12px; color:var(--muted);
+    }
+
+    /* Header */
+    header{
+      padding: var(--s6) 0 var(--s5);
+      border-bottom:1px solid var(--hair);
+      background:linear-gradient(180deg, #f3f0e7 0%, #efebdf 100%);
+    }
+
+    /* Designer logo */
+    .logo{ display:flex; align-items:center; justify-content:center; gap:var(--s3); margin-bottom:var(--s4); user-select:none }
+    .logo svg{ width:54px; height:54px; flex:0 0 54px }
     .wordmark{
-      font-family: Montserrat, Inter, system-ui, sans-serif;
+      font-family:Montserrat, Manrope, system-ui, sans-serif;
       font-weight:700; letter-spacing:.14em; text-transform:uppercase;
       font-size:15px; color:var(--ink);
     }
@@ -88,51 +91,26 @@ header{
     .intro{ text-align:center; max-width:760px; margin:0 auto }
     .intro p{ color:var(--muted); font-size:clamp(15px, 2.2vw, 18px) }
 
-    /* Content (no boxes, just type + space) */
-    .lead{
-      font-size:clamp(18px, 2.4vw, 20px);
-      max-width:760px;
-    }
+    /* Content */
+    .lead{ font-size:clamp(18px, 2.4vw, 20px); max-width:760px }
 
-    /* Two-column split, crisp and even */
-    .split{
-      display:grid; gap: var(--s5);
-      grid-template-columns: 1fr;
-      align-items:start;
-    }
-    @media (min-width: 900px){
-      .split{ grid-template-columns: 1fr 1fr }
-    }
+    /* Split */
+    .split{ display:grid; gap:var(--s5); grid-template-columns:1fr; align-items:start }
+    @media (min-width:900px){ .split{ grid-template-columns:1fr 1fr } }
 
-    /* Inline “action” links (no buttons) */
-.action{
-  display:inline-flex; align-items:center; gap:8px;
-  font-weight:600; letter-spacing:.2px;
-  border-bottom:1px solid transparent;
-  white-space:nowrap;             /* keep on one line */
-}
-.action svg{ width:18px; height:18px; flex:0 0 18px }
-
-/* safety: if a device is extremely narrow, gently scale down the link */
-@media (max-width: 380px){
-  .action{ font-size: 15px }
-}
+    /* Inline actions */
+    .action{
+      display:inline-flex; align-items:center; gap:8px;
+      font-weight:600; letter-spacing:.2px;
+      border-bottom:1px solid transparent;
+      white-space:nowrap; /* keep single line on Fold 5 */
+    }
+    .action svg{ width:18px; height:18px; flex:0 0 18px }
     .action:hover{ text-decoration:none; border-bottom:1px solid var(--accent) }
 
     /* Footer */
-    footer{
-      border-top:1px solid var(--hair);
-      padding: var(--s5) 0 var(--s6);
-      background: linear-gradient(180deg, #f2efe7 0%, #eeebe4 100%);
-      text-align:center;
-    }
-    .farewell{
-      font-family:"Cormorant Garamond", serif;
-      font-weight:700;
-      font-size:clamp(32px, 5vw, 48px);
-      letter-spacing:.3px;
-      margin-bottom: var(--s2);
-    }
+    footer{ border-top:1px solid var(--hair); padding:var(--s5) 0 var(--s6); background:linear-gradient(180deg, #f2efe7 0%, #eeebe4 100%); text-align:center }
+    .farewell{ font-family:"Cormorant Garamond", serif; font-weight:700; font-size:clamp(32px, 5vw, 48px); letter-spacing:.3px; margin-bottom:var(--s2) }
     .small{ color:var(--muted); font-size:14px }
   </style>
 </head>
@@ -141,26 +119,18 @@ header{
   <!-- HEADER -->
   <header role="banner">
     <div class="wrap">
-
-      <!-- Designer logo (SVG icon built with code) -->
       <div class="logo" aria-label="Tour The Lakes">
-        <!-- Icon: bronze ring, fell + lake lines (no pinks) -->
         <svg viewBox="0 0 96 96" role="img" aria-label="Tour The Lakes roundel">
           <defs>
             <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#b77335"/>
-              <stop offset="1" stop-color="#925622"/>
+              <stop offset="0" stop-color="#b77335"/><stop offset="1" stop-color="#925622"/>
             </linearGradient>
           </defs>
           <circle cx="48" cy="48" r="44" fill="#f4f1e8" stroke="url(#ring)" stroke-width="6"/>
-          <!-- Fell silhouette -->
           <path d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke="#524b43" stroke-width="5" stroke-linecap="round"/>
-          <!-- Lake lines -->
           <path d="M16 64 Q48 54, 80 64" fill="none" stroke="#a7642a" stroke-width="4" stroke-linecap="round"/>
           <path d="M20 71 Q48 63, 76 71" fill="none" stroke="#ce9756" stroke-width="3" stroke-linecap="round" opacity=".85"/>
         </svg>
-
-        <!-- Wordmark (coded, no image) -->
         <div class="wordmark">TOUR THE LAKES</div>
       </div>
     </div>
@@ -183,7 +153,7 @@ header{
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
             </svg>
-            info@tourthelakes.com
+            <span>info@tourthelakes.com</span>
           </a>
         </p>
       </section>
@@ -193,7 +163,6 @@ header{
       <!-- SPLIT: NEON FORGE & TAXI -->
       <section class="section" aria-label="Updates">
         <div class="split">
-          <!-- Neon Forge note -->
           <div>
             <span class="eyebrow">Experiences</span>
             <h2>A new way to explore with Neon Forge</h2>
@@ -206,12 +175,11 @@ header{
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
                 </svg>
-                Visit Neon Forge
+                <span>Visit Neon Forge</span>
               </a>
             </p>
           </div>
 
-          <!-- Taxi note -->
           <div>
             <span class="eyebrow">Travel</span>
             <h2>For our taxi customers</h2>
@@ -220,11 +188,11 @@ header{
               Please get in touch at least seven days before you travel so we can plan your pick up and confirm the fare.
             </p>
             <p>
-             <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
+              <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
                 </svg>
-                 <span>Book or enquire:&nbsp;info@tourthelakes.com</span>
+                <span>Book or enquire:&nbsp;info@tourthelakes.com</span>
               </a>
             </p>
           </div>
@@ -243,7 +211,6 @@ header{
   </footer>
 
   <script>
-    // year stamp
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
