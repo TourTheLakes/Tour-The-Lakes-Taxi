@@ -3,145 +3,146 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Tour The Lakes — Thank you</title>
-  <meta name="description" content="Tour The Lakes — a warm thank you, a light autumn update, and a new chapter in partnership with Neon Forge. Private scenic requests considered by email. Taxi journeys by advance email booking only." />
+  <title>Tour The Lakes</title>
+  <meta name="description" content="Tour The Lakes — a light, modern announcement: scenic tours winding down, private requests by email, taxi journeys by advance email booking, and a new experiences partnership with Neon Forge." />
 
-  <!-- FONTS -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <!-- TYPE (modern + premium) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* =========================
+       DESIGN SYSTEM
+    ========================== */
     :root{
-      /* Light, autumnal palette */
-      --bg: #fffaf3;           /* soft cream */
-      --surface: #ffffff;      /* card */
-      --ink: #2e2a24;          /* deep brown */
-      --muted: #6e6258;        /* soft cocoa */
-      --accent: #c86b2d;       /* pumpkin */
-      --accent-2: #e6a24b;     /* golden */
-      --sage: #7a9a59;         /* sage green */
-      --border: #eadfd2;       /* light parchment */
-      --line: #efe6dc;         /* separators */
-      --shadow: 0 10px 30px rgba(117,84,34,.12);
+      /* Light autumn, premium */
+      --bg: #fffdf8;                  /* warm ivory */
+      --ink: #1f2328;                 /* deep graphite */
+      --muted: #6b6f75;               /* soft pewter */
+      --accent: #b86a2b;              /* copper (autumn) */
+      --accent-soft: #eecaa4;         /* pale copper */
+      --rule: #ebe6df;                /* hairline */
+      --container: 880px;
+
+      --space-1: 8px;
+      --space-2: 12px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 36px;
+      --space-6: 56px;
+      --space-7: 84px;
     }
 
-    *{box-sizing:border-box}
-    html,body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
-      line-height:1.6; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    /* Reset-ish */
+    *,*::before,*::after{ box-sizing: border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      text-rendering:optimizeLegibility;
     }
-
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    h1,h2{
-      font-family:"Playfair Display", Georgia, "Times New Roman", serif;
-      margin:0 0 .5rem; letter-spacing:.2px;
+    img{ max-width:100%; height:auto; display:block }
+    a{ color:var(--accent); text-decoration:none }
+    a:hover{ text-decoration:underline }
+    h1,h2{ margin:0 0 var(--space-2); line-height:1.2 }
+    h1{
+      font-family:"Cormorant Garamond", Georgia, serif;
+      font-weight:700;
+      font-size:clamp(32px, 6vw, 56px);
+      letter-spacing:.2px;
     }
-    h1{font-weight:700; font-size:clamp(28px,5.6vw,46px)}
-    h2{font-weight:600; font-size:clamp(20px,3.4vw,28px)}
+    h2{
+      font-family:"Cormorant Garamond", Georgia, serif;
+      font-weight:600;
+      font-size:clamp(22px, 3.2vw, 30px);
+      letter-spacing:.2px;
+    }
+    p{ margin:0 0 var(--space-3) }
+    .muted{ color:var(--muted) }
 
-    .wrap{max-width:960px; margin:0 auto; padding:28px 16px}
+    /* Layout */
+    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--space-3) }
+    .section{ padding: var(--space-6) 0 }
+    .section--tight{ padding: var(--space-5) 0 }
+    .rule{ height:1px; background:var(--rule); margin: var(--space-6) 0 }
 
-    /* HERO */
-    header.hero{
-      position:relative; overflow:hidden; isolation:isolate;
+    /* Header (clean, no shadows, crisp) */
+    header{
+      padding: var(--space-6) 0 var(--space-5);
+      border-bottom:1px solid var(--rule);
       background:
-        radial-gradient(900px 260px at 15% -10%, rgba(200,107,45,.15), transparent 60%),
-        radial-gradient(900px 260px at 85% -20%, rgba(122,154,89,.18), transparent 65%),
-        linear-gradient(180deg, #fffdf9 0%, #fff7ee 100%);
-      border-bottom:1px solid var(--line);
-    }
-    .brandbar{
-      display:flex; align-items:center; gap:14px; justify-content:center;
-      margin-bottom:10px;
+        radial-gradient(800px 280px at 15% -10%, rgba(184,106,43,.12), transparent 60%),
+        radial-gradient(800px 260px at 85% -20%, rgba(238,202,164,.20), transparent 65%),
+        linear-gradient(180deg, #fffefb 0%, #fffdf8 100%);
     }
     .brand{
-      height:52px; width:auto; object-fit:contain;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,.06));
+      display:flex; align-items:center; justify-content:center; gap:var(--space-2);
+      margin-bottom:var(--space-4);
     }
-    .brand-fallback{
-      font-family:"Playfair Display", serif; font-weight:700; font-size:22px;
-      letter-spacing:.4px; color:var(--ink);
+    .brand img{ height:48px; width:auto }
+    .brand .fallback{
+      font-family:"Cormorant Garamond", serif;
+      font-weight:700; font-size:22px; letter-spacing:.3px;
     }
-    .hero .intro{
-      text-align:center; max-width:820px; margin:0 auto 10px;
-    }
-    .hero p{margin:0; color:var(--muted); font-size:clamp(14px,2.6vw,18px)}
+    .intro{ text-align:center; max-width:760px; margin:0 auto }
+    .intro p{ color:var(--muted); font-size:clamp(15px, 2.4vw, 18px) }
 
-    /* CARDS & LAYOUT */
-    .grid{display:grid; gap:18px}
-    @media (min-width:860px){ .grid.two{grid-template-columns:1fr 1fr} }
-
-    .card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:14px; box-shadow:var(--shadow);
-      padding:22px 20px;
-    }
-    .subtle{color:var(--muted)}
-
-    .callout{
-      margin-top:10px; padding:14px 16px;
-      border:1px solid var(--line);
-      border-left:4px solid var(--accent-2);
-      background:linear-gradient(180deg, rgba(230,162,75,.12), transparent 80%);
-      border-radius:12px;
+    /* Content blocks (no cards, no boxes; just type and space) */
+    .lead{
+      font-size:clamp(18px, 2.6vw, 20px);
+      color:var(--ink);
+      max-width:760px;
     }
 
-    .btn{
-      display:inline-block; margin-top:12px; padding:12px 18px;
-      font-weight:700; border-radius:12px; border:0;
-      background:linear-gradient(90deg, var(--accent-2), var(--accent));
-      color:#2d1a0c; box-shadow:0 8px 18px rgba(200,107,45,.18);
+    /* Split area: equal columns on large, stacked on small */
+    .split{
+      display:grid; gap:var(--space-5);
+      grid-template-columns: 1fr;
+      align-items:start;
     }
-    .btn:hover{filter:brightness(1.04); text-decoration:none}
-
-    .btn-ghost{
-      display:inline-block; padding:10px 14px;
-      border-radius:10px; border:1px solid var(--border);
-      background:#fff; color:var(--ink);
-    }
-    .btn-ghost:hover{background:#fff7ee}
-
-    /* DIVIDERS */
-    .divider{
-      height:1px; background:var(--line); margin:22px 0;
+    @media (min-width: 900px){
+      .split{ grid-template-columns: 1fr 1fr }
     }
 
-    /* FOOTER */
+    /* Inline “action” links (no buttons) */
+    .action{
+      display:inline-flex; align-items:center; gap:8px;
+      font-weight:600; letter-spacing:.2px;
+      border-bottom:1px solid transparent;
+    }
+    .action svg{ width:18px; height:18px }
+    .action:hover{ text-decoration:none; border-bottom:1px solid var(--accent) }
+
+    /* Footer */
     footer{
-      border-top:1px solid var(--line);
-      background:linear-gradient(180deg, #fff7ee 0%, #fffaf5 100%);
-      margin-top:22px;
+      border-top:1px solid var(--rule);
+      padding: var(--space-5) 0 var(--space-6);
+      background:linear-gradient(180deg, #fffdf8 0%, #fffaf2 100%);
+      text-align:center;
     }
     .farewell{
-      text-align:center;
-      font-family:"Playfair Display", serif;
+      font-family:"Cormorant Garamond", serif;
       font-weight:700;
-      font-size:clamp(28px,6vw,48px);
+      font-size:clamp(30px, 5.6vw, 48px);
       letter-spacing:.3px;
-      padding:28px 12px 8px;
-      color:#3b2c1e;
+      margin-bottom:var(--space-2);
     }
-    .footer-mini{
-      text-align:center; color:var(--muted);
-      font-size:14px; padding:0 0 26px;
-    }
-
-    /* ACCESSIBILITY */
-    @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto} }
+    .small{ color:var(--muted); font-size:14px }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
-  <header class="hero" role="banner">
+  <!-- HEADER -->
+  <header role="banner">
     <div class="wrap">
-      <div class="brandbar" aria-label="Brand">
-        <!-- Replace the img below with your real logo file (svg/png). The span is a text fallback. -->
-        <img src="ttl-logo.svg" alt="Tour The Lakes" class="brand" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'"/>
-        <span class="brand-fallback" style="display:none">Tour The Lakes</span>
+      <div class="brand" aria-label="Tour The Lakes">
+        <!-- Replace with your real wordmark; fallback keeps layout tidy -->
+        <img src="ttl-wordmark.svg" alt="Tour The Lakes" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'">
+        <span class="fallback" style="display:none">Tour The Lakes</span>
       </div>
 
       <div class="intro">
@@ -155,40 +156,61 @@
     <div class="wrap">
 
       <!-- WHAT IS CHANGING -->
-      <section class="card" aria-labelledby="changing-title">
-        <h2 id="changing-title">What is changing</h2>
-        <p>
+      <section class="section section--tight" aria-labelledby="changing">
+        <h2 id="changing">What is changing</h2>
+        <p class="lead">
           Our regular scenic tours are no longer our daily focus. We will still consider private scenic bookings on request,
           especially for special occasions where a tailored day out makes all the difference. If that sounds right for you,
           send us an email with your ideas and dates and we will see what we can do.
         </p>
-        <div class="callout" role="note" aria-label="Private scenic enquiries">
-          <strong>Private scenic enquiries:</strong><br>
-          <a class="btn-ghost" href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
-        </div>
+        <p>
+          <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email Tour The Lakes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
+            </svg>
+            info@tourthelakes.com
+          </a>
+        </p>
       </section>
 
-      <!-- SPLIT: NEON FORGE & TAXI -->
-      <section class="grid two" aria-label="Updates">
-        <div class="card" aria-labelledby="neon-title">
-          <h2 id="neon-title">A new way to explore with Neon Forge</h2>
-          <p>
-            Neon Forge is our partner for the next chapter — experiences with a little more spark and a fresh way to see the Lakes,
-            while keeping the heart of the place we love.
-          </p>
-          <a class="btn" href="https://neonforge.co.uk" target="_blank" rel="noopener">Visit Neon Forge</a>
-        </div>
+      <div class="rule" role="separator" aria-hidden="true"></div>
 
-        <div class="card" aria-labelledby="taxi-title">
-          <h2 id="taxi-title">For our taxi customers</h2>
-          <p>
-            If you relied on Tour The Lakes Taxi, pre booked journeys are still very welcome. We now manage all bookings by email.
-            Please get in touch at least seven days before you travel so we can plan your pick up and confirm the fare.
-            The phone number has been retired. Email keeps everything clear and in writing for you and for us.
-          </p>
-          <div class="callout">
-            <strong>Book or enquire by email:</strong><br>
-            <a class="btn-ghost" href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+      <!-- SPLIT: NEON FORGE & TAXI -->
+      <section class="section" aria-label="Updates">
+        <div class="split">
+          <!-- Neon Forge note -->
+          <div>
+            <h2>A new way to explore with Neon Forge</h2>
+            <p class="muted">
+              Neon Forge is our partner for the next chapter. Think experiences with a little more spark and a fresh way to see the Lakes,
+              still rooted in the place we all love.
+            </p>
+            <p>
+              <a class="action" href="https://neonforge.co.uk" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+                </svg>
+                Visit Neon Forge
+              </a>
+            </p>
+          </div>
+
+          <!-- Taxi note -->
+          <div>
+            <h2>For our taxi customers</h2>
+            <p class="muted">
+              If you relied on Tour The Lakes Taxi, pre booked journeys are still very welcome. We now manage all bookings by email.
+              Please get in touch at least seven days before you travel so we can plan your pick up and confirm the fare.
+              The phone number has been retired. Email keeps everything clear and in writing for you and for us.
+            </p>
+            <p>
+              <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
+                </svg>
+                Book or enquire: info@tourthelakes.com
+              </a>
+            </p>
           </div>
         </div>
       </section>
@@ -200,9 +222,7 @@
   <footer role="contentinfo">
     <div class="wrap">
       <div class="farewell">It’s a goodbye, not a farewell</div>
-      <p class="footer-mini">
-        © <span id="year"></span> Tour The Lakes. All rights reserved.
-      </p>
+      <p class="small">© <span id="year"></span> Tour The Lakes. All rights reserved.</p>
     </div>
   </footer>
 
