@@ -5,132 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
   <meta name="description" content="Tour The Lakes — announcement: scenic tours winding down; private scenic requests by email; taxi journeys by advance email booking; and a new experiences partnership with Neon Forge." />
-  <meta name="theme-color" content="#dad6c9">
+  <!-- Android address bar tone -->
+  <meta name="theme-color" content="#ede8df">
 
-  <!-- TYPE: headers (Cormorant Garamond), utility (Montserrat), body (Spectral) -->
+  <!-- TYPE: headers (Cormorant Garamond), utility (Montserrat), body (Spectral - a little ‘fancier’) -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
-  <!-- FAVICON (SVG uses theme vars) -->
+  <!-- FAVICON (SVG) now matches variables -->
   <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cstyle%3E:root{--bg:%23dad6c9;--accent:%239a4b12;--accent2:%23dda428;--ink:%230f1213;--blue:%2328506a}%3C/style%3E%3Ccircle cx='48' cy='48' r='44' fill='var(--bg)' stroke='var(--accent)' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='var(--ink)' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='var(--blue)' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='var(--accent2)' stroke-width='3' stroke-linecap='round' opacity='.9'/%3E%3C/svg%3E"/>
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cstyle%3E:root{--bg:%23ede8df;--accent:%23b87333;--accent2:%23c99a2e;--ink:%231f1f1f}%3C/style%3E%3Ccircle cx='48' cy='48' r='44' fill='var(--bg)' stroke='var(--accent)' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='var(--ink)' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='var(--accent)' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='var(--accent2)' stroke-width='3' stroke-linecap='round' opacity='.9'/%3E%3C/svg%3E"/>
 
   <style>
     /* =========================
-       DESIGN SYSTEM — Autumn Lakes (punchier)
+       DESIGN SYSTEM — Autumn Lakes (from your photo)
     ========================== */
-    :root{
-      --bg:        #dad6c9;  /* darker Cumbrian stone */
-      --surface:   #e6e1d4;  /* light stone for gradients */
-      --ink:       #0f1213;  /* wet slate (near-black) */
-      --muted:     #3f4741;  /* mossy grey-green (darker) */
-      --accent:    #9a4b12;  /* copper leaf (richer) */
-      --accent-2:  #dda428;  /* sunlit gold */
-      --accent-3:  #28506a;  /* tarn blue (links/water) */
-      --hair:      #bfb7a8;  /* stone separator */
-      --container: 880px;
+:root{
+  /* Autumn Lakes — punchier mix */
+  --bg:        #d9d2c4;   /* deeper stone backdrop */
+  --surface:   #e6dfd1;   /* lighter stone for panels */
+  --ink:       #121212;   /* stronger slate ink */
+  --muted:     #3c463e;   /* darker moss green-grey */
+  --accent:    #9c4215;   /* copper leaf (richer, warmer) */
+  --accent-2:  #d18f1b;   /* strong golden leaf */
+  --accent-3:  #2f5e78;   /* tarn blue (water/links) */
+  --hair:      #b8ae9f;   /* darker separator */
+  --container: 880px;
 
-      --s1:6px; --s2:10px; --s3:14px; --s4:18px;
-      --s5:26px; --s6:38px; --s7:58px;
-    }
+  /* rhythm stays */
+  --s1:6px; --s2:10px; --s3:14px; --s4:18px;
+  --s5:26px; --s6:38px; --s7:58px;
+}
 
-    /* Base */
-    *,*::before,*::after{ box-sizing:border-box }
-    html,body{ height:100% }
-    body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font-family: Spectral, Georgia, "Times New Roman", serif;
-      font-size:16px; line-height:1.58;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      text-rendering:optimizeLegibility;
-    }
-    img{ max-width:100%; height:auto; display:block }
-    a{ color: var(--accent-3); text-decoration:none }
-    a:hover{ text-decoration:underline }
 
-    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--s3) }
+/* Base */
+*,*::before,*::after{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family: Spectral, Georgia, "Times New Roman", serif; /* fancier body */
+  font-size:16px; line-height:1.58;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+img{ max-width:100%; height:auto; display:block }
 
-    h1,h2{ margin:0 0 var(--s2); line-height:1.18 }
-    h1{
-      font-family:"Cormorant Garamond", Georgia, serif; font-weight:700;
-      font-size:clamp(32px, 5.2vw, 52px);
-    }
-    h2{
-      font-family:"Cormorant Garamond", Georgia, serif; font-weight:600;
-      font-size:clamp(22px, 2.6vw, 28px);
-    }
-    p{ margin:0 0 var(--s2) }
+/* LINKS now use tarn blue */
+a{ color:var(--accent-3); text-decoration:none }
+a:hover{ text-decoration:underline }
 
-    .section{ padding: var(--s5) 0 }
-    .section--tight{ padding: var(--s5) 0 var(--s3) }
+/* Container */
+.wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--s3) }
 
-    /* Straight rule (kept for fallback) */
-    .rule{ height:1px; background:var(--hair); opacity:.9; margin: var(--s2) 0 }
+/* Headings */
+h1,h2{ margin:0 0 var(--s2); line-height:1.18 }
+h1{
+  font-family:"Cormorant Garamond", Georgia, serif; font-weight:700;
+  font-size:clamp(32px, 5.2vw, 52px); letter-spacing:.2px;
+}
+h2{
+  font-family:"Cormorant Garamond", Georgia, serif; font-weight:600;
+  font-size:clamp(22px, 2.6vw, 28px); letter-spacing:.2px;
+}
+p{ margin:0 0 var(--s2) }
 
-    /* Vine divider (autumnal) */
-    .rule--vine{
-      height:28px; border:0; margin: var(--s5) 0;
-      background-repeat: repeat-x; background-position: center; background-size: 220px 28px;
-      background-image: url("data:image/svg+xml,%3Csvg width='220' height='28' viewBox='0 0 220 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%233f4741' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 18 C 35 2, 65 26, 110 12 S 185 2, 219 18'/%3E%3C/g%3E%3Cg fill='%233f4741'%3E%3Cpath d='M28 8 c6 0 10 6 8 10 c-6 0-10-6-8-10z'/%3E%3Cpath d='M86 21 c-6 0-10-6-8-10 c6 0 10 6 8 10z'/%3E%3Cpath d='M140 7 c6 0 10 6 8 10 c-6 0-10-6-8-10z'/%3E%3Cpath d='M198 20 c-6 0-10-6-8-10 c6 0 10 6 8 10z'/%3E%3C/g%3E%3C/svg%3E");
-      opacity:.85;
-    }
-    .rule--vine.copper{
-      background-image: url("data:image/svg+xml,%3Csvg width='220' height='28' viewBox='0 0 220 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%239a4b12' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 18 C 35 2, 65 26, 110 12 S 185 2, 219 18'/%3E%3C/g%3E%3Cg fill='%239a4b12'%3E%3Cpath d='M28 8 c6 0 10 6 8 10 c-6 0-10-6-8-10z'/%3E%3Cpath d='M86 21 c-6 0-10-6-8-10 c6 0 10 6 8 10z'/%3E%3Cpath d='M140 7 c6 0 10 6 8 10 c-6 0-10-6-8-10z'/%3E%3Cpath d='M198 20 c-6 0-10-6-8-10 c6 0 10 6 8 10z'/%3E%3C/g%3E%3C/svg%3E");
-    }
+.section{ padding: var(--s5) 0 }
+.section--tight{ padding: var(--s5) 0 var(--s3) }
+.rule{ height:1px; background:var(--hair); margin: var(--s2) 0 }
 
-    /* Header */
-    header{
-      padding: var(--s6) 0 var(--s5);
-      border-bottom:1px solid var(--hair);
-      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-    }
-    .logo{ display:flex; align-items:center; justify-content:center; gap:var(--s3); margin-bottom:var(--s4); user-select:none }
-    .logo svg{ width:54px; height:54px; flex:0 0 54px }
-    .wordmark{
-      font-family:Montserrat, system-ui, sans-serif;
-      font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-      font-size:15px; color:var(--ink);
-    }
-    /* logo parts from CSS */
-    .logo svg .disc { fill: var(--bg); }
-    .logo svg .ring { stroke: var(--accent); }
-    .logo svg .fell { stroke: color-mix(in srgb, var(--ink) 92%, transparent); }
-    .logo svg .lake1{ stroke: var(--accent-3); }
-    .logo svg .lake2{ stroke: var(--accent-2); }
+/* Eyebrow */
+.eyebrow{
+  display:block; margin-bottom:var(--s2);
+  font-family:Montserrat, system-ui, sans-serif;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  font-size:12px; color:var(--muted);
+}
 
-    .intro{ text-align:center; max-width:760px; margin:0 auto }
-    .intro p{ color:var(--muted); font-size:clamp(15px, 2.2vw, 18px) }
+/* Header — now uses variables */
+header{
+  padding: var(--s6) 0 var(--s5);
+  border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+}
 
-    .lead{ font-size:clamp(18px, 2.4vw, 20px); max-width:760px }
+/* Designer logo */
+.logo{ display:flex; align-items:center; justify-content:center; gap:var(--s3); margin-bottom:var(--s4); user-select:none }
+.logo svg{ width:54px; height:54px; flex:0 0 54px }
+.wordmark{
+  font-family:Montserrat, system-ui, sans-serif;
+  font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  font-size:15px; color:var(--ink);
+}
 
-    .split{ display:grid; gap:var(--s5); grid-template-columns:1fr; align-items:start }
-    @media (min-width:900px){ .split{ grid-template-columns:1fr 1fr } }
+.intro{ text-align:center; max-width:760px; margin:0 auto }
+.intro p{ color:var(--muted); font-size:clamp(15px, 2.2vw, 18px) }
 
-    .eyebrow{
-      display:block; margin-bottom:var(--s2);
-      font-family:Montserrat, system-ui, sans-serif;
-      font-weight:700; letter-spacing:.12em; text-transform:uppercase;
-      font-size:12px; color:var(--muted);
-    }
+/* Content */
+.lead{ font-size:clamp(18px, 2.4vw, 20px); max-width:760px }
 
-    .action{
-      display:inline-flex; align-items:center; gap:8px;
-      font-weight:600; letter-spacing:.2px; border-bottom:1px solid transparent;
-    }
-    .action svg{ width:18px; height:18px; flex:0 0 18px }
-    .no-break{ white-space:nowrap }
-    .action:hover{ text-decoration:none; border-bottom:1px solid var(--accent-3) }
+/* Split */
+.split{ display:grid; gap:var(--s5); grid-template-columns:1fr; align-items:start }
+@media (min-width:900px){ .split{ grid-template-columns:1fr 1fr } }
 
-    footer{
-      border-top:1px solid var(--hair);
-      padding:var(--s5) 0 var(--s6);
-      background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
-      text-align:center
-    }
-    .farewell{
-      font-family:"Cormorant Garamond", serif; font-weight:700;
-      font-size:clamp(32px, 5vw, 48px); letter-spacing:.3px; margin-bottom:var(--s2)
-    }
-    .small{ color:var(--muted); font-size:14px }
+/* Inline actions */
+.action{
+  display:inline-flex; align-items:center; gap:8px;
+  font-weight:600; letter-spacing:.2px; border-bottom:1px solid transparent;
+}
+.action svg{ width:18px; height:18px; flex:0 0 18px }
+.no-break{ white-space:nowrap }
+.action:hover{ text-decoration:none; border-bottom:1px solid var(--accent-3) }
+
+/* Footer */
+footer{
+  border-top:1px solid var(--hair);
+  padding:var(--s5) 0 var(--s6);
+  background:linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
+  text-align:center
+}
+.farewell{
+  font-family:"Cormorant Garamond", serif; font-weight:700;
+  font-size:clamp(32px, 5vw, 48px); letter-spacing:.3px; margin-bottom:var(--s2)
+}
+.small{ color:var(--muted); font-size:14px }
+
+/* Make the SVG colours follow the palette */
+.logo svg .ring   { stroke: var(--accent); }
+.logo svg .fell   { stroke: color-mix(in srgb, var(--ink) 85%, transparent); }
+.logo svg .lake1  { stroke: var(--accent); }
+.logo svg .lake2  { stroke: var(--accent-2); }
+.logo svg .disc   { fill: var(--bg); }
   </style>
 </head>
 <body>
@@ -139,8 +142,9 @@
   <header role="banner">
     <div class="wrap">
       <div class="logo" aria-label="Tour The Lakes">
+        <!-- SVG now uses classes so CSS variables control colours -->
         <svg viewBox="0 0 96 96" role="img" aria-label="Tour The Lakes roundel">
-          <circle class="disc" cx="48" cy="48" r="44" stroke-width="6"/>
+          <circle class="disc" cx="48" cy="48" r="44" stroke-width="6" />
           <circle class="ring" cx="48" cy="48" r="44" fill="none" stroke-width="6"/>
           <path class="fell"  d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke-width="5" stroke-linecap="round"/>
           <path class="lake1" d="M16 64 Q48 54, 80 64" fill="none" stroke-width="4" stroke-linecap="round"/>
@@ -173,8 +177,7 @@
         </p>
       </section>
 
-      <!-- VINE DIVIDER -->
-      <div class="rule rule--vine copper" role="separator" aria-hidden="true"></div>
+      <div class="rule" role="separator" aria-hidden="true"></div>
 
       <!-- SPLIT: NEON FORGE & TAXI -->
       <section class="section" aria-label="Updates">
@@ -228,9 +231,8 @@
   </footer>
 
   <script>
-    // Keep Android address-bar tone in sync with background var
-    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', bg);
+    // Set Android theme-color to match any future palette tweaks
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
