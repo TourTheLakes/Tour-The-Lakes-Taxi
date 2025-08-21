@@ -4,36 +4,42 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
-  <meta name="description" content="Tour The Lakes — a light, modern announcement: scenic tours winding down, private requests by email, taxi journeys by advance email booking, and a new experiences partnership with Neon Forge." />
+  <meta name="description" content="Tour The Lakes — a modern, light-autumn announcement. Scenic tours winding down; private scenic requests by email; taxi journeys by advance email booking; and a new experiences partnership with Neon Forge." />
 
-  <!-- TYPE (modern + premium) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+  <!-- TYPE: refined and varied (premium vibe) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- FAVICON (SVG, no pinks) -->
+  <link rel="icon" 
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cdefs/%3E%3Ccircle cx='48' cy='48' r='44' fill='%23f4f1e8' stroke='%23a7642a' stroke-width='6'/%3E%3Cpath d='M20 54q14-11 28-11t28 11' fill='none' stroke='%23524b43' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M20 64q14-8 28-8t28 8' fill='none' stroke='%23a7642a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"/>
 
   <style>
     /* =========================
-       DESIGN SYSTEM
+       DESIGN SYSTEM (no pinks)
+       Light but with richer, modern tones
     ========================== */
     :root{
-      /* Light autumn, premium */
-      --bg: #fffdf8;                  /* warm ivory */
-      --ink: #1f2328;                 /* deep graphite */
-      --muted: #6b6f75;               /* soft pewter */
-      --accent: #b86a2b;              /* copper (autumn) */
-      --accent-soft: #eecaa4;         /* pale copper */
-      --rule: #ebe6df;                /* hairline */
+      --bg:        #f4f1e8;  /* warm light parchment */
+      --surface:   #fbfaf6;  /* subtle panel tint (used rarely) */
+      --ink:       #222429;  /* deep graphite */
+      --muted:     #5d6167;  /* pewter */
+      --accent:    #a7642a;  /* copper/bronze */
+      --accent-2:  #ce9756;  /* amber-gold */
+      --hair:      #e5e0d6;  /* hairline separators */
       --container: 880px;
 
-      --space-1: 8px;
-      --space-2: 12px;
-      --space-3: 16px;
-      --space-4: 24px;
-      --space-5: 36px;
-      --space-6: 56px;
-      --space-7: 84px;
+      /* tighter rhythm (≈30% less than last pass) */
+      --s1: 6px;
+      --s2: 10px;
+      --s3: 14px;
+      --s4: 18px;
+      --s5: 26px;
+      --s6: 38px;
+      --s7: 58px;
     }
 
-    /* Reset-ish */
-    *,*::before,*::after{ box-sizing: border-box }
+    /* Base */
+    *,*::before,*::after{ box-sizing:border-box }
     html,body{ height:100% }
     body{
       margin:0;
@@ -48,59 +54,71 @@
     img{ max-width:100%; height:auto; display:block }
     a{ color:var(--accent); text-decoration:none }
     a:hover{ text-decoration:underline }
-    h1,h2{ margin:0 0 var(--space-2); line-height:1.2 }
+
+    /* Type scales (varied fonts) */
+    h1,h2{ margin:0 0 var(--s2); line-height:1.18 }
     h1{
       font-family:"Cormorant Garamond", Georgia, serif;
       font-weight:700;
-      font-size:clamp(32px, 6vw, 56px);
+      font-size:clamp(32px, 5.4vw, 54px);
       letter-spacing:.2px;
     }
     h2{
       font-family:"Cormorant Garamond", Georgia, serif;
       font-weight:600;
-      font-size:clamp(22px, 3.2vw, 30px);
+      font-size:clamp(22px, 2.8vw, 30px);
       letter-spacing:.2px;
     }
-    p{ margin:0 0 var(--space-3) }
     .muted{ color:var(--muted) }
+    .eyebrow{
+      display:block;
+      font-family: Montserrat, Inter, system-ui, sans-serif;
+      font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+      font-size:12px; color:var(--muted);
+      margin-bottom: var(--s2);
+    }
 
     /* Layout */
-    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--space-3) }
-    .section{ padding: var(--space-6) 0 }
-    .section--tight{ padding: var(--space-5) 0 }
-    .rule{ height:1px; background:var(--rule); margin: var(--space-6) 0 }
+    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--s3) }
+    .section{ padding: var(--s6) 0 }
+    .section--tight{ padding: var(--s5) 0 }
+    .rule{ height:1px; background:var(--hair); margin: var(--s6) 0 }
 
-    /* Header (clean, no shadows, crisp) */
+    /* Header: clean, crisp, darker (no pink) */
     header{
-      padding: var(--space-6) 0 var(--space-5);
-      border-bottom:1px solid var(--rule);
+      padding: var(--s6) 0 var(--s5);
+      border-bottom:1px solid var(--hair);
       background:
-        radial-gradient(800px 280px at 15% -10%, rgba(184,106,43,.12), transparent 60%),
-        radial-gradient(800px 260px at 85% -20%, rgba(238,202,164,.20), transparent 65%),
-        linear-gradient(180deg, #fffefb 0%, #fffdf8 100%);
+        linear-gradient(180deg, #f7f4ec 0%, #f2efe7 100%);
     }
-    .brand{
-      display:flex; align-items:center; justify-content:center; gap:var(--space-2);
-      margin-bottom:var(--space-4);
-    }
-    .brand img{ height:48px; width:auto }
-    .brand .fallback{
-      font-family:"Cormorant Garamond", serif;
-      font-weight:700; font-size:22px; letter-spacing:.3px;
-    }
-    .intro{ text-align:center; max-width:760px; margin:0 auto }
-    .intro p{ color:var(--muted); font-size:clamp(15px, 2.4vw, 18px) }
 
-    /* Content blocks (no cards, no boxes; just type and space) */
+    /* "Designer" logo: SVG icon + wordmark */
+    .logo{
+      display:flex; align-items:center; justify-content:center; gap:var(--s3);
+      margin-bottom: var(--s4);
+      user-select:none;
+    }
+    .logo svg{
+      width:54px; height:54px; flex:0 0 54px;
+    }
+    .wordmark{
+      font-family: Montserrat, Inter, system-ui, sans-serif;
+      font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      font-size:15px; color:var(--ink);
+    }
+
+    .intro{ text-align:center; max-width:760px; margin:0 auto }
+    .intro p{ color:var(--muted); font-size:clamp(15px, 2.2vw, 18px) }
+
+    /* Content (no boxes, just type + space) */
     .lead{
-      font-size:clamp(18px, 2.6vw, 20px);
-      color:var(--ink);
+      font-size:clamp(18px, 2.4vw, 20px);
       max-width:760px;
     }
 
-    /* Split area: equal columns on large, stacked on small */
+    /* Two-column split, crisp and even */
     .split{
-      display:grid; gap:var(--space-5);
+      display:grid; gap: var(--s5);
       grid-template-columns: 1fr;
       align-items:start;
     }
@@ -119,17 +137,17 @@
 
     /* Footer */
     footer{
-      border-top:1px solid var(--rule);
-      padding: var(--space-5) 0 var(--space-6);
-      background:linear-gradient(180deg, #fffdf8 0%, #fffaf2 100%);
+      border-top:1px solid var(--hair);
+      padding: var(--s5) 0 var(--s6);
+      background: linear-gradient(180deg, #f2efe7 0%, #eeebe4 100%);
       text-align:center;
     }
     .farewell{
       font-family:"Cormorant Garamond", serif;
       font-weight:700;
-      font-size:clamp(30px, 5.6vw, 48px);
+      font-size:clamp(32px, 5vw, 48px);
       letter-spacing:.3px;
-      margin-bottom:var(--space-2);
+      margin-bottom: var(--s2);
     }
     .small{ color:var(--muted); font-size:14px }
   </style>
@@ -139,15 +157,27 @@
   <!-- HEADER -->
   <header role="banner">
     <div class="wrap">
-      <div class="brand" aria-label="Tour The Lakes">
-        <!-- Replace with your real wordmark; fallback keeps layout tidy -->
-        <img src="ttl-wordmark.svg" alt="Tour The Lakes" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'">
-        <span class="fallback" style="display:none">Tour The Lakes</span>
-      </div>
 
-      <div class="intro">
-        <h1>Thank you for the ride</h1>
-        <p>After a wonderful run of scenic tours we are opening a fresh chapter together with Neon Forge</p>
+      <!-- Designer logo (SVG icon built with code) -->
+      <div class="logo" aria-label="Tour The Lakes">
+        <!-- Icon: bronze ring, fell + lake lines (no pinks) -->
+        <svg viewBox="0 0 96 96" role="img" aria-label="Tour The Lakes roundel">
+          <defs>
+            <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#b77335"/>
+              <stop offset="1" stop-color="#925622"/>
+            </linearGradient>
+          </defs>
+          <circle cx="48" cy="48" r="44" fill="#f4f1e8" stroke="url(#ring)" stroke-width="6"/>
+          <!-- Fell silhouette -->
+          <path d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke="#524b43" stroke-width="5" stroke-linecap="round"/>
+          <!-- Lake lines -->
+          <path d="M16 64 Q48 54, 80 64" fill="none" stroke="#a7642a" stroke-width="4" stroke-linecap="round"/>
+          <path d="M20 71 Q48 63, 76 71" fill="none" stroke="#ce9756" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+        </svg>
+
+        <!-- Wordmark (coded, no image) -->
+        <div class="wordmark">TOUR THE LAKES</div>
       </div>
     </div>
   </header>
@@ -157,6 +187,7 @@
 
       <!-- WHAT IS CHANGING -->
       <section class="section section--tight" aria-labelledby="changing">
+        <span class="eyebrow">Update</span>
         <h2 id="changing">What is changing</h2>
         <p class="lead">
           Our regular scenic tours are no longer our daily focus. We will still consider private scenic bookings on request,
@@ -166,7 +197,7 @@
         <p>
           <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email Tour The Lakes">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
+              <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
             </svg>
             info@tourthelakes.com
           </a>
@@ -180,6 +211,7 @@
         <div class="split">
           <!-- Neon Forge note -->
           <div>
+            <span class="eyebrow">Experiences</span>
             <h2>A new way to explore with Neon Forge</h2>
             <p class="muted">
               Neon Forge is our partner for the next chapter. Think experiences with a little more spark and a fresh way to see the Lakes,
@@ -197,16 +229,16 @@
 
           <!-- Taxi note -->
           <div>
+            <span class="eyebrow">Travel</span>
             <h2>For our taxi customers</h2>
             <p class="muted">
               If you relied on Tour The Lakes Taxi, pre booked journeys are still very welcome. We now manage all bookings by email.
               Please get in touch at least seven days before you travel so we can plan your pick up and confirm the fare.
-              The phone number has been retired. Email keeps everything clear and in writing for you and for us.
             </p>
             <p>
               <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
+                  <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
                 </svg>
                 Book or enquire: info@tourthelakes.com
               </a>
