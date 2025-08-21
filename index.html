@@ -8,7 +8,6 @@
 
   <!-- TYPE: refined and varied (premium vibe) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
-
   <!-- FAVICON (SVG, no pinks) -->
   <link rel="icon" 
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cdefs/%3E%3Ccircle cx='48' cy='48' r='44' fill='%23f4f1e8' stroke='%23a7642a' stroke-width='6'/%3E%3Cpath d='M20 54q14-11 28-11t28 11' fill='none' stroke='%23524b43' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M20 64q14-8 28-8t28 8' fill='none' stroke='%23a7642a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"/>
@@ -41,56 +40,35 @@
     /* Base */
     *,*::before,*::after{ box-sizing:border-box }
     html,body{ height:100% }
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--ink);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
-      line-height:1.6;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      text-rendering:optimizeLegibility;
-    }
-    img{ max-width:100%; height:auto; display:block }
-    a{ color:var(--accent); text-decoration:none }
-    a:hover{ text-decoration:underline }
-
-    /* Type scales (varied fonts) */
-    h1,h2{ margin:0 0 var(--s2); line-height:1.18 }
-    h1{
-      font-family:"Cormorant Garamond", Georgia, serif;
-      font-weight:700;
-      font-size:clamp(32px, 5.4vw, 54px);
-      letter-spacing:.2px;
-    }
-    h2{
-      font-family:"Cormorant Garamond", Georgia, serif;
-      font-weight:600;
-      font-size:clamp(22px, 2.8vw, 30px);
-      letter-spacing:.2px;
-    }
-    .muted{ color:var(--muted) }
-    .eyebrow{
-      display:block;
-      font-family: Montserrat, Inter, system-ui, sans-serif;
-      font-weight:700; letter-spacing:.12em; text-transform:uppercase;
-      font-size:12px; color:var(--muted);
-      margin-bottom: var(--s2);
-    }
-
-    /* Layout */
-    .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--s3) }
-    .section{ padding: var(--s6) 0 }
-    .section--tight{ padding: var(--s5) 0 }
-    .rule{ height:1px; background:var(--hair); margin: var(--s6) 0 }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family: Manrope, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  line-height:1.58; /* slightly tighter than 1.6 */
+}
+h1{
+  font-family:"Cormorant Garamond", Georgia, serif;
+  font-weight:700;
+  font-size:clamp(32px, 5.2vw, 52px); /* touch tighter */
+}
+h2{
+  font-family:"Cormorant Garamond", Georgia, serif;
+  font-weight:600;
+  font-size:clamp(22px, 2.6vw, 28px);
+}
+p{ margin:0 0 var(--s2) }           /* reduce paragraph gap */
+.section{ padding: var(--s5) 0 }    /* overall section padding down */
+.section--tight{ padding: var(--s5) 0 var(--s3) } /* bottom tightened */
+.rule{ height:1px; background:var(--hair); margin: var(--s2) 0 } /* ↓ ~70% */
 
     /* Header: clean, crisp, darker (no pink) */
-    header{
-      padding: var(--s6) 0 var(--s5);
-      border-bottom:1px solid var(--hair);
-      background:
-        linear-gradient(180deg, #f7f4ec 0%, #f2efe7 100%);
-    }
+header{
+  padding: var(--s6) 0 var(--s5);
+  border-bottom:1px solid var(--hair);
+  background: linear-gradient(180deg, #f3f0e7 0%, #efebdf 100%);
+}
+
 
     /* "Designer" logo: SVG icon + wordmark */
     .logo{
@@ -127,12 +105,18 @@
     }
 
     /* Inline “action” links (no buttons) */
-    .action{
-      display:inline-flex; align-items:center; gap:8px;
-      font-weight:600; letter-spacing:.2px;
-      border-bottom:1px solid transparent;
-    }
-    .action svg{ width:18px; height:18px }
+.action{
+  display:inline-flex; align-items:center; gap:8px;
+  font-weight:600; letter-spacing:.2px;
+  border-bottom:1px solid transparent;
+  white-space:nowrap;             /* keep on one line */
+}
+.action svg{ width:18px; height:18px; flex:0 0 18px }
+
+/* safety: if a device is extremely narrow, gently scale down the link */
+@media (max-width: 380px){
+  .action{ font-size: 15px }
+}
     .action:hover{ text-decoration:none; border-bottom:1px solid var(--accent) }
 
     /* Footer */
@@ -236,11 +220,11 @@
               Please get in touch at least seven days before you travel so we can plan your pick up and confirm the fare.
             </p>
             <p>
-              <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
+             <a class="action" href="mailto:info@tourthelakes.com" aria-label="Email for taxi bookings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
                 </svg>
-                Book or enquire: info@tourthelakes.com
+                 <span>Book or enquire:&nbsp;info@tourthelakes.com</span>
               </a>
             </p>
           </div>
