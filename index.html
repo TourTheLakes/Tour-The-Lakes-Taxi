@@ -5,34 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tour The Lakes</title>
   <meta name="description" content="Tour The Lakes — announcement: scenic tours winding down; private scenic requests by email; taxi journeys by advance email booking; and a new experiences partnership with Neon Forge." />
+  <!-- Android address bar tone -->
+  <meta name="theme-color" content="#ede8df">
 
   <!-- TYPE: headers (Cormorant Garamond), utility (Montserrat), body (Spectral - a little ‘fancier’) -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
-  <!-- FAVICON (SVG) -->
+  <!-- FAVICON (SVG) now matches variables -->
   <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='44' fill='%23eee7d7' stroke='%238c5323' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='%234a433c' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='%238c5323' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='%23b67d48' stroke-width='3' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E"/>
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cstyle%3E:root{--bg:%23ede8df;--accent:%23b87333;--accent2:%23c99a2e;--ink:%231f1f1f}%3C/style%3E%3Ccircle cx='48' cy='48' r='44' fill='var(--bg)' stroke='var(--accent)' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='var(--ink)' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='var(--accent)' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='var(--accent2)' stroke-width='3' stroke-linecap='round' opacity='.9'/%3E%3C/svg%3E"/>
 
   <style>
     /* =========================
-       DESIGN SYSTEM (≈30% darker overall)
+       DESIGN SYSTEM — Autumn Lakes (from your photo)
     ========================== */
-:root{
-  /* Autumn Lakes palette (from your photo) */
-  --bg:        #ede8df;   /* soft stone / sky haze */
-  --surface:   #f5f2ea;   /* lighter panel tint */
-  --ink:       #1f1f1f;   /* slate rock dark */
-  --muted:     #5c5f54;   /* mossy grey-green */
-  --accent:    #b87333;   /* copper leaf */
-  --accent-2:  #c99a2e;   /* golden leaf */
-  --hair:      #d3cbbd;   /* stone separator */
-  --container: 880px;
+    :root{
+      --bg:        #ede8df;   /* soft stone / sky haze */
+      --surface:   #f5f2ea;   /* lighter panel tint */
+      --ink:       #1f1f1f;   /* slate rock dark */
+      --muted:     #5c5f54;   /* mossy grey-green */
+      --accent:    #b87333;   /* copper leaf */
+      --accent-2:  #c99a2e;   /* golden leaf */
+      --hair:      #d3cbbd;   /* stone separator */
+      --container: 880px;
 
-  /* compact rhythm (unchanged) */
-  --s1:6px; --s2:10px; --s3:14px; --s4:18px;
-  --s5:26px; --s6:38px; --s7:58px;
-}
-
+      /* compact rhythm */
+      --s1:6px; --s2:10px; --s3:14px; --s4:18px;
+      --s5:26px; --s6:38px; --s7:58px;
+    }
 
     /* Base */
     *,*::before,*::after{ box-sizing:border-box }
@@ -75,11 +75,12 @@
       font-size:12px; color:var(--muted);
     }
 
-    /* Header (darker gradient) */
+    /* Header — now uses variables, not hard-coded hexes */
     header{
       padding: var(--s6) 0 var(--s5);
       border-bottom:1px solid var(--hair);
-      background:linear-gradient(180deg, #eae6db 0%, #e4dfd2 100%);
+      background:
+        linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
     }
 
     /* Designer logo */
@@ -110,11 +111,11 @@
     .no-break{ white-space:nowrap }         /* only the email stays unbroken */
     .action:hover{ text-decoration:none; border-bottom:1px solid var(--accent) }
 
-    /* Footer (darker) */
+    /* Footer */
     footer{
       border-top:1px solid var(--hair);
       padding:var(--s5) 0 var(--s6);
-      background:linear-gradient(180deg, #e4dfd2 0%, #ded8ca 100%);
+      background:linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
       text-align:center
     }
     .farewell{
@@ -122,6 +123,13 @@
       font-size:clamp(32px, 5vw, 48px); letter-spacing:.3px; margin-bottom:var(--s2)
     }
     .small{ color:var(--muted); font-size:14px }
+
+    /* Make the SVG colours follow the palette */
+    .logo svg .ring   { stroke: var(--accent); }
+    .logo svg .fell   { stroke: color-mix(in srgb, var(--ink) 85%, transparent); }
+    .logo svg .lake1  { stroke: var(--accent); }
+    .logo svg .lake2  { stroke: var(--accent-2); }
+    .logo svg .disc   { fill: var(--bg); }
   </style>
 </head>
 <body>
@@ -130,16 +138,13 @@
   <header role="banner">
     <div class="wrap">
       <div class="logo" aria-label="Tour The Lakes">
+        <!-- SVG now uses classes so CSS variables control colours -->
         <svg viewBox="0 0 96 96" role="img" aria-label="Tour The Lakes roundel">
-          <defs>
-            <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#a6662c"/><stop offset="1" stop-color="#7a451b"/>
-            </linearGradient>
-          </defs>
-        <circle cx="48" cy="48" r="44" fill="#eee7d7" stroke="url(#ring)" stroke-width="6"/>
-        <path d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke="#4a433c" stroke-width="5" stroke-linecap="round"/>
-        <path d="M16 64 Q48 54, 80 64" fill="none" stroke="#8f5522" stroke-width="4" stroke-linecap="round"/>
-        <path d="M20 71 Q48 63, 76 71" fill="none" stroke="#ba8446" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+          <circle class="disc" cx="48" cy="48" r="44" stroke-width="6" />
+          <circle class="ring" cx="48" cy="48" r="44" fill="none" stroke-width="6"/>
+          <path class="fell"  d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke-width="5" stroke-linecap="round"/>
+          <path class="lake1" d="M16 64 Q48 54, 80 64" fill="none" stroke-width="4" stroke-linecap="round"/>
+          <path class="lake2" d="M20 71 Q48 63, 76 71" fill="none" stroke-width="3" stroke-linecap="round" opacity=".9"/>
         </svg>
         <div class="wordmark">TOUR THE LAKES</div>
       </div>
@@ -222,6 +227,8 @@
   </footer>
 
   <script>
+    // Set Android theme-color to match any future palette tweaks
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
