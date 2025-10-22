@@ -10,9 +10,8 @@
   <!-- TYPE -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
-  <!-- FAVICON (palette-driven) -->
-  <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cstyle%3E:root{--bg:%23d9d2c4;--accent:%239c4215;--accent2:%23d18f1b;--ink:%23121212}%3C/style%3E%3Ccircle cx='48' cy='48' r='44' fill='var(--bg)' stroke='var(--accent)' stroke-width='6'/%3E%3Cpath d='M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58' fill='none' stroke='var(--ink)' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M16 64 Q48 54, 80 64' fill='none' stroke='var(--accent)' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M20 71 Q48 63, 76 71' fill='none' stroke='var(--accent2)' stroke-width='3' stroke-linecap='round' opacity='.9'/%3E%3C/svg%3E"/>
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" />
 
   <style>
 /* =========================
@@ -68,12 +67,6 @@ main{ background:var(--surface); box-shadow:0 6px 18px rgba(0,0,0,.06) }
 .section{ padding: var(--s5) 0 }
 .section--tight{ padding: var(--s5) 0 var(--s3) }
 
-/* Dividers */
-.rule, hr{
-  height:1px; background:var(--hair); border:0;
-  margin:var(--s5) 0; opacity:.8
-}
-
 /* Eyebrow */
 .eyebrow{
   display:block; margin-bottom:var(--s2);
@@ -87,6 +80,7 @@ header{
   padding: var(--s6) 0 var(--s5);
   border-bottom:1px solid var(--hair);
   background:linear-gradient(180deg, #cfc6b6 0%, #d6cebf 60%, var(--bg) 100%);
+  text-align:center;
 }
 footer{
   border-top:1px solid var(--hair);
@@ -96,12 +90,11 @@ footer{
 }
 
 /* Logo */
-.logo{ display:flex; align-items:center; justify-content:center; gap:var(--s3); margin-bottom:var(--s4); user-select:none }
-.logo svg{ width:54px; height:54px; flex:0 0 54px }
-.wordmark{
-  font-family: Montserrat, system-ui, sans-serif;
-  font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-  font-size:15px; color:var(--ink);
+.logo img{
+  width:160px;
+  height:auto;
+  margin:0 auto;
+  user-select:none;
 }
 
 /* Content helpers */
@@ -109,10 +102,6 @@ footer{
 .intro p{ color:var(--muted); font-size:clamp(15px, 2.2vw, 18px) }
 .lead{ font-size:clamp(18px, 2.4vw, 20px); max-width:760px }
 .muted{ color:rgba(18,18,18,.82) }
-
-/* Split */
-.split{ display:grid; gap:var(--s5); grid-template-columns:1fr; align-items:start }
-@media (min-width:900px){ .split{ grid-template-columns:1fr 1fr } }
 
 /* Inline actions */
 .action{ display:inline-flex; align-items:center; gap:8px; font-weight:600; letter-spacing:.2px; border-bottom:1px solid transparent }
@@ -126,13 +115,6 @@ footer{
   font-size:clamp(32px, 5vw, 48px); letter-spacing:.3px; margin-bottom:var(--s2)
 }
 .small{ color:rgba(18,18,18,.66); font-size:14px }
-
-/* Make header SVG follow palette via classes */
-.logo svg .ring   { stroke: var(--accent); }
-.logo svg .fell   { stroke: color-mix(in srgb, var(--ink) 85%, transparent); }
-.logo svg .lake1  { stroke: var(--accent); }
-.logo svg .lake2  { stroke: var(--accent-2); }
-.logo svg .disc   { fill: var(--bg); }
   </style>
 </head>
 <body>
@@ -141,22 +123,14 @@ footer{
   <header role="banner">
     <div class="wrap">
       <div class="logo" aria-label="Tour The Lakes">
-        <svg viewBox="0 0 96 96" role="img" aria-label="Tour The Lakes roundel">
-          <circle class="disc" cx="48" cy="48" r="44" stroke-width="6" />
-          <circle class="ring" cx="48" cy="48" r="44" fill="none" stroke-width="6"/>
-          <path class="fell"  d="M14 56 C26 42, 38 38, 48 46 C58 54, 70 52, 82 58" fill="none" stroke-width="5" stroke-linecap="round"/>
-          <path class="lake1" d="M16 64 Q48 54, 80 64" fill="none" stroke-width="4" stroke-linecap="round"/>
-          <path class="lake2" d="M20 71 Q48 63, 76 71" fill="none" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-        </svg>
-        <div class="wordmark">TOUR THE LAKES</div>
+        <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
       </div>
     </div>
   </header>
 
+  <!-- MAIN -->
   <main>
     <div class="wrap">
-
-      <!-- UPDATE MESSAGE -->
       <section class="section section--tight" aria-labelledby="update">
         <span class="eyebrow">Update</span>
         <h2 id="update">We’re preparing for 2026</h2>
@@ -175,20 +149,20 @@ footer{
           </a>
         </p>
       </section>
-
     </div>
   </main>
 
   <!-- FOOTER -->
   <footer role="contentinfo">
     <div class="wrap">
+      <div class="farewell">New 2026 Tours and Days Out are in progress.</div>
       <p class="small">© <span id="year"></span> Tour The Lakes. All rights reserved.</p>
       <p class="small">Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a></p>
     </div>
   </footer>
 
   <script>
-    // keep Android address bar in sync with page bg
+    // Sync Android address bar with background
     const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
     document.querySelector('meta[name="theme-color"]').setAttribute('content', bg);
     document.getElementById('year').textContent = new Date().getFullYear();
