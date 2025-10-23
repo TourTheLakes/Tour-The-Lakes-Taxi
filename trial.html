@@ -9,91 +9,133 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:"IBM Plex Mono",monospace;
-  background:#d9d2c4;
-  color:#000;
-  text-align:center;
+/* ===== CORE STYLE ===== */
+body {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  background: #d9d2c4;
+  color: #000;
+  text-align: center;
 }
 
-/* ---- header ---- */
-header{padding:30px 10px 0;text-align:center;}
-header img{
-  display:block;
-  margin:0 auto;
-  height:auto;
-  user-select:none;
-  width:auto;              /* use image’s natural size */
-  max-width:95%;           /* only shrink if it would overflow */
+/* ===== HEADER ===== */
+header {
+  padding: 30px 10px 0;
+  text-align: center;
 }
-@media(max-width:600px){
-  header img{
-    transform:scale(1.5);  /* zoom +50 % on small screens */
-    transform-origin:center;
+header img {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+  user-select: none;
+  width: auto;             /* natural image width */
+  max-width: 95%;          /* only shrink if too big */
+}
+
+/* ===== small-screen logo scaling (Fold5 fix) ===== */
+@media (max-width: 600px) {
+  header img {
+    transform: scale(1.3);          /* slightly enlarged */
+    transform-origin: center top;   /* anchors it nicely */
+    margin-top: 10px;
   }
 }
 
-/* ---- tab bar ---- */
-.navbar{
-  display:flex;
-  justify-content:center;
-  width:100%;
-  margin:10px 0 0;
-}
-.tab{
-  flex:1;
-  max-width:260px;
-  padding:12px 0;
-  cursor:pointer;
-  font-weight:bold;
-  transition:background .2s,box-shadow .2s;
-}
-.tab[data-tab="tours"]{
-  background:linear-gradient(225deg,#cfc7b9 0%,#d9d2c4 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
-}
-.tab[data-tab="home"]{
-  background:linear-gradient(180deg,#d9d2c4 0%,#cec6b9 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
-}
-.tab[data-tab="contact"]{
-  background:linear-gradient(135deg,#cfc7b9 0%,#d9d2c4 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
-}
-.tab:hover{
-  background:linear-gradient(135deg,#d9d2c4 0%,#d3ccbe 100%);
-}
-.tab.active{
-  background:linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
-  box-shadow:0 2px 3px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.4);
-  position:relative;z-index:2;
-}
-.tab.active::after{
-  content:"";
-  position:absolute;left:0;right:0;bottom:-1px;height:1px;
-  background:#d9d2c4;z-index:3;
+@media (max-width: 400px) {
+  header img {
+    transform: scale(1.2);          /* just a touch smaller again for narrow screens */
+    margin-top: 5px;
+  }
 }
 
-/* ---- hero ---- */
-.hero{width:100%;overflow:hidden;margin-top:0;position:relative;}
-.hero img{width:100%;height:auto;display:none;}
-.hero img.active{display:block;}
-
-/* ---- content ---- */
-.content{max-width:800px;margin:0 auto 40px;text-align:left;padding:40px 20px 60px;}
-section{display:none;}
-section.active{display:block;}
-
-/* ---- footer ---- */
-footer{
-  padding:20px;
-  font-size:14px;
-  color:#000;
-  border-top:1px solid #000;
+/* ===== TAB BAR ===== */
+.navbar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 0;
 }
-a{color:#000;text-decoration:none;border-bottom:1px dotted currentColor;}
-a:hover{border-bottom-style:solid;}
+.tab {
+  flex: 1;
+  max-width: 260px;
+  padding: 12px 0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.tab[data-tab="tours"] {
+  background: linear-gradient(225deg, #cfc7b9 0%, #d9d2c4 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.tab[data-tab="home"] {
+  background: linear-gradient(180deg, #d9d2c4 0%, #cec6b9 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.tab[data-tab="contact"] {
+  background: linear-gradient(135deg, #cfc7b9 0%, #d9d2c4 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.tab:hover {
+  background: linear-gradient(135deg, #d9d2c4 0%, #d3ccbe 100%);
+}
+.tab.active {
+  background: linear-gradient(135deg, #e8e2d5 0%, #d9d2c4 100%);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+  position: relative;
+  z-index: 2;
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: #d9d2c4;
+  z-index: 3;
+}
+
+/* ===== HERO IMAGE SLIDER ===== */
+.hero {
+  width: 100%;
+  overflow: hidden;
+  margin-top: 0;
+  position: relative;
+}
+.hero img {
+  width: 100%;
+  height: auto;
+  display: none;
+}
+.hero img.active {
+  display: block;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  text-align: left;
+  padding: 40px 20px 60px;
+}
+section { display: none; }
+section.active { display: block; }
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 20px;
+  font-size: 14px;
+  color: #000;
+  border-top: 1px solid #000;
+}
+a {
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+a:hover {
+  border-bottom-style: solid;
+}
 </style>
 </head>
 <body>
@@ -133,31 +175,32 @@ a:hover{border-bottom-style:solid;}
 </main>
 
 <footer>
-  © <script>document.write(new Date().getFullYear())</script> Tour The Lakes — 
+  © <script>document.write(new Date().getFullYear())</script> Tour The Lakes —
   Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
 </footer>
 
 <script>
-/* tabs */
-const tabs=document.querySelectorAll('.tab');
-const sections=document.querySelectorAll('section');
-tabs.forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    tabs.forEach(t=>t.classList.remove('active'));
-    sections.forEach(s=>s.classList.remove('active'));
+/* --- tab switching --- */
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('section');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById(tab.dataset.tab).classList.add('active');
   });
 });
 
-/* hero rotation */
-const slides=document.querySelectorAll('#hero img');
-let current=0;
-setInterval(()=>{
+/* --- hero image rotation --- */
+const slides = document.querySelectorAll('#hero img');
+let current = 0;
+setInterval(() => {
   slides[current].classList.remove('active');
-  current=(current+1)%slides.length;
+  current = (current + 1) % slides.length;
   slides[current].classList.add('active');
-},5000);
+}, 5000);
 </script>
+
 </body>
 </html>
