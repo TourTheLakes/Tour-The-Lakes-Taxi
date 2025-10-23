@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tour The Lakes — Scenic Experiences</title>
-<meta name="description" content="Tour The Lakes creates thoughtful scenic experiences across the Lake District. New 2026 tours and days out coming soon.">
+<title>Trial — Tour The Lakes</title>
+<meta name="description" content="Development trial page for Tour The Lakes.">
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 
@@ -17,42 +17,13 @@ body {
   color: #000;
   text-align: center;
 }
-
-/* ===== HEADER ===== */
 header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0 0; /* reduced top padding for better vertical balance */
-  position: relative;
+  padding: 40px 10px 0;
 }
 header img {
-  display: block;
-  margin: 0 auto;
+  max-width: 100%;
   height: auto;
   user-select: none;
-  width: auto;
-  max-width: 95%; /* only shrink if it would overflow */
-  position: relative;
-  top: -5px; /* visually lift slightly */
-}
-
-/* ===== small-screen logo scaling (Fold5 fix) ===== */
-@media (max-width: 600px) {
-  header img {
-    transform: scale(1.3);
-    transform-origin: center center; /* true center anchor */
-    margin-top: 0;
-    top: -8px; /* slight lift on Fold5 front display */
-  }
-}
-
-@media (max-width: 400px) {
-  header img {
-    transform: scale(1.2);
-    top: -6px;
-  }
 }
 
 /* ===== TAB BAR ===== */
@@ -60,7 +31,8 @@ header img {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 10px 0 0;
+  margin: 20px 0 0;
+  gap: 0;
 }
 .tab {
   flex: 1;
@@ -70,6 +42,8 @@ header img {
   font-weight: bold;
   transition: background 0.2s, box-shadow 0.2s;
 }
+
+/* ===== Individual Tab Gradients ===== */
 .tab[data-tab="tours"] {
   background: linear-gradient(225deg, #cfc7b9 0%, #d9d2c4 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
@@ -82,12 +56,18 @@ header img {
   background: linear-gradient(135deg, #cfc7b9 0%, #d9d2c4 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }
+
+/* ===== Hover ===== */
 .tab:hover {
-  background: linear-gradient(135deg, #d9d2c4 0%, #d3ccbe 100%);
+  background: linear-gradient(135deg,#d9d2c4 0%,#d3ccbe 100%);
 }
+
+/* ===== Active (clicked) tab ===== */
 .tab.active {
-  background: linear-gradient(135deg, #e8e2d5 0%, #d9d2c4 100%);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+  background: linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
+  box-shadow:
+    0 2px 3px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.4);
   position: relative;
   z-index: 2;
 }
@@ -98,24 +78,8 @@ header img {
   right: 0;
   bottom: -1px;
   height: 1px;
-  background: #d9d2c4;
+  background: #d9d2c4; /* matches page tone for seamless blend */
   z-index: 3;
-}
-
-/* ===== HERO IMAGE SLIDER ===== */
-.hero {
-  width: 100%;
-  overflow: hidden;
-  margin-top: 0;
-  position: relative;
-}
-.hero img {
-  width: 100%;
-  height: auto;
-  display: none;
-}
-.hero img.active {
-  display: block;
 }
 
 /* ===== CONTENT ===== */
@@ -124,6 +88,8 @@ header img {
   margin: 0 auto 40px;
   text-align: left;
   padding: 40px 20px 60px;
+  position: relative;
+  z-index: 1;
 }
 section { display: none; }
 section.active { display: block; }
@@ -143,40 +109,39 @@ a {
 a:hover {
   border-bottom-style: solid;
 }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .tab { font-size: 15px; padding: 10px 0; max-width:none; }
+}
 </style>
 </head>
 <body>
 
 <header>
   <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
+
+  <div class="navbar">
+    <div class="tab" data-tab="tours">Tours</div>
+    <div class="tab active" data-tab="home">Home</div>
+    <div class="tab" data-tab="contact">Contact</div>
+  </div>
 </header>
-
-<div class="navbar">
-  <div class="tab" data-tab="tours">Tours</div>
-  <div class="tab active" data-tab="home">Home</div>
-  <div class="tab" data-tab="contact">Contact</div>
-</div>
-
-<div class="hero" id="hero">
-  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+1" class="active" alt="">
-  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+2" alt="">
-  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+3" alt="">
-</div>
 
 <main class="content">
   <section id="home" class="active">
-    <h2>Welcome to Tour The Lakes</h2>
-    <p>Tour The Lakes creates relaxed scenic experiences across the Lake District. Each route highlights the beauty, history and calm of this remarkable region. The 2026 season introduces new days out and tailored scenic options.</p>
+    <h2>Home</h2>
+    <p>Welcome to Tour The Lakes. More content coming soon.</p>
   </section>
 
   <section id="tours">
-    <h2>Our Tours</h2>
-    <p>Details of new 2026 itineraries will appear here soon, along with photo galleries and route overviews.</p>
+    <h2>Tours</h2>
+    <p>2026 tours are currently in development. Check back soon.</p>
   </section>
 
   <section id="contact">
     <h2>Contact</h2>
-    <p>Email us for enquiries or bespoke scenic requests:</p>
+    <p>For scenic or taxi bookings, please email:</p>
     <p><a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
   </section>
 </main>
@@ -187,9 +152,10 @@ a:hover {
 </footer>
 
 <script>
-/* --- tab switching --- */
+/* Simple tab switching */
 const tabs = document.querySelectorAll('.tab');
 const sections = document.querySelectorAll('section');
+
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
@@ -198,15 +164,6 @@ tabs.forEach(tab => {
     document.getElementById(tab.dataset.tab).classList.add('active');
   });
 });
-
-/* --- hero image rotation --- */
-const slides = document.querySelectorAll('#hero img');
-let current = 0;
-setInterval(() => {
-  slides[current].classList.remove('active');
-  current = (current + 1) % slides.length;
-  slides[current].classList.add('active');
-}, 5000);
 </script>
 
 </body>
