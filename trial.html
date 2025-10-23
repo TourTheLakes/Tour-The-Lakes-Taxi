@@ -21,11 +21,11 @@ body {
 /* ===== HEADER ===== */
 header {
   padding: 30px 10px 0;
-  text-align: left;
+  text-align: center;
 }
 header img {
-  height: 260px; /* 3–4x larger */
-  width: auto;
+  width: clamp(180px, 35vw, 320px); /* responsive scaling */
+  height: auto;
   user-select: none;
   display: block;
   margin: 0 auto;
@@ -122,12 +122,6 @@ a {
 }
 a:hover {
   border-bottom-style: solid;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 700px) {
-  header img { height: 160px; }
-  .tab { font-size: 15px; padding: 10px 0; max-width: none; }
 }
 </style>
 </head>
