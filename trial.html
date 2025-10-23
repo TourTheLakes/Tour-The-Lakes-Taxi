@@ -24,17 +24,20 @@ header {
   text-align: center;
 }
 header img {
-  max-width: 90vw;   /* never exceed screen width */
-  width: 320px;      /* comfortable desktop size */
+  width: 35vw;           /* scales naturally with screen width */
   height: auto;
   user-select: none;
   display: block;
   margin: 0 auto;
 }
+@media (min-width: 1200px) {
+  header img { width: 400px; }  /* large desktop */
+}
+@media (max-width: 800px) {
+  header img { width: 50vw; }   /* tablets & small laptops */
+}
 @media (max-width: 500px) {
-  header img {
-    width: 220px;    /* moderate shrink, stays visible */
-  }
+  header img { width: 70vw; }   /* mobiles */
 }
 
 /* ===== TAB BAR ===== */
@@ -86,7 +89,7 @@ header img {
   right: 0;
   bottom: -1px;
   height: 1px;
-  background: #d9d2c4; /* seamless blend line */
+  background: #d9d2c4;
   z-index: 3;
 }
 
@@ -137,14 +140,12 @@ a:hover {
   <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
 </header>
 
-<!-- Tabs (same visual system as approved) -->
 <div class="navbar">
   <div class="tab" data-tab="tours">Tours</div>
   <div class="tab active" data-tab="home">Home</div>
   <div class="tab" data-tab="contact">Contact</div>
 </div>
 
-<!-- Hero Image Rotation -->
 <div class="hero" id="hero">
   <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+1" class="active" alt="">
   <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+2" alt="">
