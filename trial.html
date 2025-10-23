@@ -24,20 +24,16 @@ header {
   text-align: center;
 }
 header img {
-  width: 35vw;           /* scales naturally with screen width */
-  height: auto;
-  user-select: none;
   display: block;
   margin: 0 auto;
-}
-@media (min-width: 1200px) {
-  header img { width: 400px; }  /* large desktop */
+  height: auto;
+  user-select: none;
 }
 @media (max-width: 800px) {
-  header img { width: 50vw; }   /* tablets & small laptops */
-}
-@media (max-width: 500px) {
-  header img { width: 70vw; }   /* mobiles */
+  header img {
+    width: auto;
+    max-width: 100%;
+  }
 }
 
 /* ===== TAB BAR ===== */
@@ -188,7 +184,7 @@ tabs.forEach(tab => {
   });
 });
 
-/* Hero image rotation (simple switch, no fade) */
+/* Hero image rotation */
 const slides = document.querySelectorAll('#hero img');
 let current = 0;
 setInterval(() => {
