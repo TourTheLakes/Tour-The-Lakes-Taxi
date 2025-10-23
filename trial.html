@@ -29,30 +29,43 @@ header img {
 /* ===== TAB BAR ===== */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   margin: 20px 0 0;
+  gap: 0;
 }
 .tab {
   flex: 1;
+  max-width: 260px;
   padding: 12px 0;
   cursor: pointer;
   font-weight: bold;
-  /* --- Option A: Soft bevel effect --- */
-  background: linear-gradient(135deg,#dcd5c8 0%,#d3ccbe 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
   transition: background 0.2s, box-shadow 0.2s;
 }
-.tab:not(:last-child) {
-  border-right: 1px solid rgba(0,0,0,0.05);
+
+/* ===== Individual Tab Gradients ===== */
+.tab[data-tab="tours"] {
+  background: linear-gradient(225deg, #cfc7b9 0%, #d9d2c4 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }
+.tab[data-tab="contact"] {
+  background: linear-gradient(135deg, #cfc7b9 0%, #d9d2c4 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.tab[data-tab="home"] {
+  background: #d9d2c4; /* flat, no gradient */
+}
+
+/* ===== Hover ===== */
+.tab:hover {
+  background: linear-gradient(135deg,#d9d2c4 0%,#d3ccbe 100%);
+}
+
+/* ===== Active (clicked) tab ===== */
 .tab.active {
   background: linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
   box-shadow: 0 2px 3px rgba(0,0,0,0.15),
               inset 0 1px 0 rgba(255,255,255,0.4);
-}
-.tab:hover {
-  background: linear-gradient(135deg,#d9d2c4 0%,#d3ccbe 100%);
 }
 
 /* ===== CONTENT ===== */
@@ -83,7 +96,7 @@ a:hover {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
-  .tab { font-size: 15px; padding: 10px 0; }
+  .tab { font-size: 15px; padding: 10px 0; max-width:none; }
 }
 </style>
 </head>
@@ -93,8 +106,8 @@ a:hover {
   <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
 
   <div class="navbar">
-    <div class="tab active" data-tab="home">Home</div>
     <div class="tab" data-tab="tours">Tours</div>
+    <div class="tab active" data-tab="home">Home</div>
     <div class="tab" data-tab="contact">Contact</div>
   </div>
 </header>
@@ -126,6 +139,7 @@ a:hover {
 /* Simple tab switching */
 const tabs = document.querySelectorAll('.tab');
 const sections = document.querySelectorAll('section');
+
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
