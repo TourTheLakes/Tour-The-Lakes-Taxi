@@ -20,31 +20,38 @@ body {
 
 /* ===== HEADER ===== */
 header {
-  padding: 30px 10px 0;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 0; /* reduced top padding for better vertical balance */
+  position: relative;
 }
 header img {
   display: block;
   margin: 0 auto;
   height: auto;
   user-select: none;
-  width: auto;             /* natural image width */
-  max-width: 95%;          /* only shrink if too big */
+  width: auto;
+  max-width: 95%; /* only shrink if it would overflow */
+  position: relative;
+  top: -5px; /* visually lift slightly */
 }
 
 /* ===== small-screen logo scaling (Fold5 fix) ===== */
 @media (max-width: 600px) {
   header img {
-    transform: scale(1.3);          /* slightly enlarged */
-    transform-origin: center top;   /* anchors it nicely */
-    margin-top: 10px;
+    transform: scale(1.3);
+    transform-origin: center center; /* true center anchor */
+    margin-top: 0;
+    top: -8px; /* slight lift on Fold5 front display */
   }
 }
 
 @media (max-width: 400px) {
   header img {
-    transform: scale(1.2);          /* just a touch smaller again for narrow screens */
-    margin-top: 5px;
+    transform: scale(1.2);
+    top: -6px;
   }
 }
 
