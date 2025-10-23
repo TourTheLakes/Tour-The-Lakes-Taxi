@@ -24,11 +24,17 @@ header {
   text-align: center;
 }
 header img {
-  width: clamp(180px, 35vw, 320px); /* responsive scaling */
+  max-width: 90vw;   /* never exceed screen width */
+  width: 320px;      /* comfortable desktop size */
   height: auto;
   user-select: none;
   display: block;
   margin: 0 auto;
+}
+@media (max-width: 500px) {
+  header img {
+    width: 220px;    /* moderate shrink, stays visible */
+  }
 }
 
 /* ===== TAB BAR ===== */
