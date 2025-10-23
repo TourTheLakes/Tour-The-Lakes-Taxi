@@ -65,8 +65,21 @@ header img {
 /* ===== Active (clicked) tab ===== */
 .tab.active {
   background: linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.15),
-              inset 0 1px 0 rgba(255,255,255,0.4);
+  box-shadow:
+    0 2px 3px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  position: relative;
+  z-index: 2;
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: #d9d2c4; /* matches page tone for seamless blend */
+  z-index: 3;
 }
 
 /* ===== CONTENT ===== */
@@ -75,6 +88,8 @@ header img {
   margin: 0 auto 40px;
   text-align: left;
   padding: 40px 20px 60px;
+  position: relative;
+  z-index: 1;
 }
 section { display: none; }
 section.active { display: block; }
