@@ -7,7 +7,7 @@
 <meta name="description" content="Development trial page for Tour The Lakes.">
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png">
 <style>
-/* ============= BASIC STRUCTURE ============= */
+/* ===== CORE STYLE ===== */
 body {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
@@ -24,52 +24,43 @@ header img {
   user-select: none;
 }
 
-/* ============= TAB STRIP ============= */
+/* ===== TAB BAR ===== */
 .navbar {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-.tab-container {
-  display: flex;
-  justify-content: center;
-  position: relative;
-  left: -10%; /* shifts slightly left of centre for “file folder” offset */
+  justify-content: space-between;
+  width: 100%;
+  margin: 20px 0 0;
 }
 .tab {
-  padding: 10px 26px;
+  flex: 1;
+  padding: 12px 0;
   cursor: pointer;
   font-weight: bold;
-  background: #d9d2c4;
   background: linear-gradient(135deg, #d9d2c4 0%, #cfc7b9 100%);
-  margin: 0 4px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.tab:not(:last-child) {
+  border-right: 1px solid rgba(0,0,0,0.05);
 }
 .tab.active {
-  background: #d9d2c4;
-  background: linear-gradient(135deg, #d9d2c4 0%, #d3ccbe 100%);
+  background: linear-gradient(135deg, #e0d9cc 0%, #d9d2c4 100%);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
 }
 .tab:hover {
-  background: linear-gradient(135deg, #d9d2c4 0%, #cdc5b8 100%);
+  background: linear-gradient(135deg, #d9d2c4 0%, #d3ccbe 100%);
 }
 
-/* ============= CONTENT AREA ============= */
+/* ===== CONTENT ===== */
 .content {
   max-width: 800px;
   margin: 0 auto 40px;
   text-align: left;
   padding: 40px 20px 60px;
 }
-section {
-  display: none;
-}
-section.active {
-  display: block;
-}
+section { display: none; }
+section.active { display: block; }
 
-/* ============= FOOTER ============= */
+/* ===== FOOTER ===== */
 footer {
   padding: 20px;
   font-size: 14px;
@@ -84,6 +75,11 @@ a {
 a:hover {
   border-bottom-style: solid;
 }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .tab { font-size: 15px; padding: 10px 0; }
+}
 </style>
 </head>
 <body>
@@ -92,11 +88,9 @@ a:hover {
   <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
 
   <div class="navbar">
-    <div class="tab-container">
-      <div class="tab active" data-tab="home">Home</div>
-      <div class="tab" data-tab="tours">Tours</div>
-      <div class="tab" data-tab="contact">Contact</div>
-    </div>
+    <div class="tab active" data-tab="home">Home</div>
+    <div class="tab" data-tab="tours">Tours</div>
+    <div class="tab" data-tab="contact">Contact</div>
   </div>
 </header>
 
@@ -127,7 +121,6 @@ a:hover {
 /* Simple tab switching */
 const tabs = document.querySelectorAll('.tab');
 const sections = document.querySelectorAll('section');
-
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
