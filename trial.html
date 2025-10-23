@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trial — Tour The Lakes</title>
+<meta name="description" content="Trial development page for Tour The Lakes.">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png">
+<style>
+/* ===== BASIC THEME ===== */
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  background: #d9d2c4;
+  color: #111;
+  text-align: center;
+}
+header {
+  padding: 40px 10px 0;
+  border-bottom: 1px solid #b8ae9f;
+}
+header img {
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+}
 
+/* ===== TAB BAR ===== */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background: #e6dfd1;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: 1px solid #b8ae9f;
+}
+.tab {
+  padding: 10px 30px;
+  cursor: pointer;
+  font-weight: bold;
+  border: 1px solid #b8ae9f;
+  border-bottom: none;
+  background: #d9d2c4;
+  margin: 0 3px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.tab.active {
+  background: #e6dfd1;
+  color: #9c4215;
+}
+.tab:hover {
+  background: #ede7db;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  background: #e6dfd1;
+  padding: 30px 20px 50px;
+  min-height: 300px;
+  border-top: none;
+  border-left: 1px solid #b8ae9f;
+  border-right: 1px solid #b8ae9f;
+  border-bottom: 1px solid #b8ae9f;
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+section {
+  display: none;
+}
+section.active {
+  display: block;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 20px;
+  font-size: 14px;
+  color: #444;
+  border-top: 1px solid #b8ae9f;
+}
+a {
+  color: #2f5e78;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+a:hover {
+  border-bottom-style: solid;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
+
+  <div class="navbar">
+    <div class="tab active" data-tab="home">Home</div>
+    <div class="tab" data-tab="tours">Tours</div>
+    <div class="tab" data-tab="contact">Contact</div>
+  </div>
+</header>
+
+<main class="content">
+  <section id="home" class="active">
+    <h2>Welcome to Tour The Lakes</h2>
+    <p>This is your working area for development. Content will go here.</p>
+  </section>
+
+  <section id="tours">
+    <h2>Tours</h2>
+    <p>2026 Tours under development. More information coming soon.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>For scenic or taxi bookings, please email us:</p>
+    <p><a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
+  </section>
+</main>
+
+<footer>
+  © <script>document.write(new Date().getFullYear())</script> Tour The Lakes —
+  Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
+</footer>
+
+<script>
+/* Simple tab switching */
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('section');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
