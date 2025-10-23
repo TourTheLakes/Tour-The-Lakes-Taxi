@@ -3,159 +3,186 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trial — Tour The Lakes</title>
-<meta name="description" content="Development trial page for Tour The Lakes.">
+<title>Tour The Lakes — Private Scenic Experiences</title>
+<meta name="description" content="Tour The Lakes creates thoughtful scenic experiences across the Lake District. Private tours, small groups and bespoke days out designed with care.">
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SZF9QGPBF4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SZF9QGPBF4');
+</script>
+
+<!-- Font -->
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 
 <style>
-/* ===== CORE STYLE ===== */
+:root {
+  --bg: #d9d2c4;
+  --ink: #000;
+  --shade: #cfc7b9;
+}
+
+/* Base */
 body {
   margin: 0;
   font-family: "IBM Plex Mono", monospace;
-  background: #d9d2c4;
-  color: #000;
-  text-align: center;
-}
-header {
-  padding: 40px 10px 0;
-}
-header img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
+  background: var(--bg);
+  color: var(--ink);
 }
 
-/* ===== TAB BAR ===== */
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+header img {
+  height: 70px;
+  width: auto;
+  user-select: none;
+}
+header h1 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+/* Tabs */
 .navbar {
   display: flex;
   justify-content: center;
-  width: 100%;
-  margin: 20px 0 0;
-  gap: 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
 }
 .tab {
   flex: 1;
-  max-width: 260px;
+  max-width: 220px;
   padding: 12px 0;
   cursor: pointer;
   font-weight: bold;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--shade) 100%);
   transition: background 0.2s, box-shadow 0.2s;
 }
-
-/* ===== Individual Tab Gradients ===== */
-.tab[data-tab="tours"] {
-  background: linear-gradient(225deg, #cfc7b9 0%, #d9d2c4 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-}
-.tab[data-tab="home"] {
-  background: linear-gradient(180deg, #d9d2c4 0%, #cec6b9 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-}
-.tab[data-tab="contact"] {
-  background: linear-gradient(135deg, #cfc7b9 0%, #d9d2c4 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-}
-
-/* ===== Hover ===== */
-.tab:hover {
-  background: linear-gradient(135deg,#d9d2c4 0%,#d3ccbe 100%);
-}
-
-/* ===== Active (clicked) tab ===== */
+.tab:hover { background: linear-gradient(180deg, var(--bg) 0%, #d3ccbe 100%); }
 .tab.active {
-  background: linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
-  box-shadow:
-    0 2px 3px rgba(0,0,0,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.4);
+  background: linear-gradient(180deg,#e8e2d5 0%, var(--bg) 100%);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.15);
   position: relative;
   z-index: 2;
 }
 .tab.active::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
+  left: 0; right: 0; bottom: -1px;
   height: 1px;
-  background: #d9d2c4; /* matches page tone for seamless blend */
-  z-index: 3;
+  background: var(--bg);
 }
 
-/* ===== CONTENT ===== */
-.content {
-  max-width: 800px;
-  margin: 0 auto 40px;
-  text-align: left;
-  padding: 40px 20px 60px;
+/* Hero Slider Placeholder */
+.hero {
+  width: 100%;
+  overflow: hidden;
   position: relative;
-  z-index: 1;
+}
+.hero img {
+  width: 100%;
+  height: auto;
+  display: none;
+}
+.hero img.active { display: block; }
+
+/* Main content */
+main {
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: left;
 }
 section { display: none; }
 section.active { display: block; }
+h2 { font-size: 22px; margin-top: 0; }
 
-/* ===== FOOTER ===== */
+/* Footer */
 footer {
+  border-top: 1px solid var(--ink);
+  text-align: center;
   padding: 20px;
   font-size: 14px;
-  color: #000;
-  border-top: 1px solid #000;
 }
-a {
-  color: #000;
+footer a {
+  color: var(--ink);
   text-decoration: none;
   border-bottom: 1px dotted currentColor;
 }
-a:hover {
-  border-bottom-style: solid;
-}
+footer a:hover { border-bottom-style: solid; }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .tab { font-size: 15px; padding: 10px 0; max-width:none; }
+/* Responsive */
+@media (max-width:700px){
+  header { flex-direction: column; align-items: center; text-align: center; }
+  header img { height: 60px; margin-bottom: 10px; }
+  .tab { font-size: 14px; padding: 10px 0; }
 }
 </style>
 </head>
+
 <body>
 
 <header>
   <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
-
-  <div class="navbar">
-    <div class="tab" data-tab="tours">Tours</div>
-    <div class="tab active" data-tab="home">Home</div>
-    <div class="tab" data-tab="contact">Contact</div>
-  </div>
+  <h1>Scenic Experiences Across The Lake District</h1>
 </header>
 
-<main class="content">
+<div class="navbar">
+  <div class="tab active" data-tab="home">Home</div>
+  <div class="tab" data-tab="tours">Tours</div>
+  <div class="tab" data-tab="gallery">Gallery</div>
+  <div class="tab" data-tab="contact">Contact</div>
+</div>
+
+<!-- Hero / image slider -->
+<div class="hero" id="hero">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Hero+Image+1" class="active" alt="">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Hero+Image+2" alt="">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Hero+Image+3" alt="">
+</div>
+
+<main>
   <section id="home" class="active">
-    <h2>Home</h2>
-    <p>Welcome to Tour The Lakes. More content coming soon.</p>
+    <h2>Welcome to Tour The Lakes</h2>
+    <p>Tour The Lakes offers calm, well-planned scenic experiences across the Lake District. Each journey highlights the character, heritage and landscape of this remarkable region — designed for those who prefer to explore at a thoughtful pace.</p>
   </section>
 
   <section id="tours">
-    <h2>Tours</h2>
-    <p>2026 tours are currently in development. Check back soon.</p>
+    <h2>Our Tours</h2>
+    <p>Placeholder text for upcoming 2026 itineraries. Each will feature a gallery and short description once confirmed.</p>
+  </section>
+
+  <section id="gallery">
+    <h2>Gallery</h2>
+    <p>Image collections will appear here soon.</p>
   </section>
 
   <section id="contact">
     <h2>Contact</h2>
-    <p>For scenic or taxi bookings, please email:</p>
-    <p><a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
+    <p>Email: <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
   </section>
 </main>
 
 <footer>
-  © <script>document.write(new Date().getFullYear())</script> Tour The Lakes —
+  © <script>document.write(new Date().getFullYear())</script> Tour The Lakes — 
   Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
 </footer>
 
 <script>
-/* Simple tab switching */
+// Tab switching
 const tabs = document.querySelectorAll('.tab');
 const sections = document.querySelectorAll('section');
-
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
@@ -164,6 +191,15 @@ tabs.forEach(tab => {
     document.getElementById(tab.dataset.tab).classList.add('active');
   });
 });
+
+// Simple hero slider
+const slides = document.querySelectorAll('#hero img');
+let current = 0;
+setInterval(() => {
+  slides[current].classList.remove('active');
+  current = (current + 1) % slides.length;
+  slides[current].classList.add('active');
+}, 5000);
 </script>
 
 </body>
