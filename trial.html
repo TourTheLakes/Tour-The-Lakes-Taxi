@@ -18,12 +18,19 @@ body {
   text-align: center;
 }
 header {
-  padding: 40px 10px 0;
+  text-align: center;     /* center horizontally */
+  padding: 20px 0;        /* small top/bottom breathing space */
+  background: #d9d2c4;    /* match site background */
 }
+
 header img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
+  display: inline-block;  /* keeps image inline for proper centering */
+  user-select: none;      /* prevent accidental dragging */
+  margin: 0 auto;
+  height: auto;           /* maintain native proportions */
+  width: auto;            /* no scaling applied */
+  max-width: none;        /* allow full pixel width */
+  max-height: none;       /* allow full pixel height */
 }
 
 /* ===== TAB BAR ===== */
@@ -108,11 +115,6 @@ a {
 }
 a:hover {
   border-bottom-style: solid;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .tab { font-size: 15px; padding: 10px 0; max-width:none; }
 }
 
 /* ===== HERO IMAGE SLIDER STYLES ===== */
