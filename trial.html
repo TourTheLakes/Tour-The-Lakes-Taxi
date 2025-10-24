@@ -18,22 +18,35 @@ body {
   text-align: center;
 }
 
-  header {
+header {
   text-align: center;
-  background: #d9d2c4;
-  padding-top: 40px;
-}
+  background:
+    radial-gradient(circle at 25% 25%, rgba(230,223,209,1) 0%, rgba(217,210,196,0.8) 35%, transparent 70%),
+    radial-gradient(circle at 75% 75%, rgba(209,200,182,0.9) 0%, rgba(184,174,159,0.6) 40%, transparent 75%),
+    linear-gradient(180deg, #e6dfd1 0%, #cfc6b3 70%, #d9d2c4 100%);
+  border-bottom: 1px solid #b8ae9f;
+  box-shadow:
+    inset 0 -2px 6px rgba(0,0,0,0.08),
+    inset 0 3px 8px rgba(255,255,255,0.25);
 
+  /* ✳️ Control point: change only this to resize everything */
+  height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 header img {
-  display: block;
-  user-select: none;
+  height: 60%;       /* 👈 scales automatically to 60% of header height */
   width: auto;
-  height: auto;
-  max-height: 140px;
-  padding: 0;  
+  user-select: none;
   margin: 0;
+  padding: 0;
+  object-fit: contain;
 }
+
 
 header img {
   display: inline-block;
@@ -170,7 +183,7 @@ a:hover {
 <body>
 
 <header>
-  <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo1.png" alt="Tour The Lakes logo">
+  <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
 
   <div class="navbar">
     <div class="tab" data-tab="tours">Tours</div>
