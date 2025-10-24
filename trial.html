@@ -20,21 +20,19 @@ body {
 header {
   text-align: center;
   background:
-    /* Base parchment gradient (kept from before) */
-    radial-gradient(circle at 25% 25%, rgba(230,223,209,1) 0%, rgba(217,210,196,0.8) 35%, transparent 70%),
-    radial-gradient(circle at 75% 75%, rgba(209,200,182,0.9) 0%, rgba(184,174,159,0.6) 40%, transparent 75%),
-    linear-gradient(180deg, #e6dfd1 0%, #cfc6b3 70%, #d9d2c4 100%),
+    /* Subtle parchment base (unchanged tone) */
+    radial-gradient(circle at 25% 25%, #e6dfd1 0%, #d9d2c4 100%),
 
-    /* Copper geometric pattern overlay */
+    /* Cross-weave geometric pattern (softer than diamonds) */
     repeating-linear-gradient(
-      45deg,
-      rgba(244,152,44,0.25) 0 6px,
-      transparent 6px 20px
+      60deg,
+      rgba(156,66,21,0.8) 0 2px,
+      transparent 2px 24px
     ),
     repeating-linear-gradient(
-      -45deg,
-      rgba(156,66,21,0.25) 0 6px,
-      transparent 6px 20px
+      -60deg,
+      rgba(209,143,27,0.8) 0 2px,
+      transparent 2px 24px
     );
 
   background-blend-mode: overlay;
