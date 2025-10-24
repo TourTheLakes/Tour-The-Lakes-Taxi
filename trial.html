@@ -114,6 +114,30 @@ a:hover {
 @media (max-width: 600px) {
   .tab { font-size: 15px; padding: 10px 0; max-width:none; }
 }
+
+/* ===== HERO IMAGE SLIDER STYLES ===== */
+.hero {
+  width: 100%;
+  overflow: hidden;
+  margin-top: 0;
+  position: relative;
+}
+
+.hero img {
+  width: 100%;
+  height: auto;
+  display: none;
+  animation: fade 1s ease-in-out;
+}
+
+.hero img.active {
+  display: block;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -146,6 +170,11 @@ a:hover {
   </section>
 </main>
 
+  <div class="hero" id="hero">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+1" class="active" alt="Lake District view 1">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+2" alt="Lake District view 2">
+  <img src="https://placehold.co/1600x500/d9d2c4/000?text=Lake+District+3" alt="Lake District view 3">
+</div>
 <footer>
   © <script>document.write(new Date().getFullYear())</script> Tour The Lakes —
   Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
@@ -164,6 +193,16 @@ tabs.forEach(tab => {
     document.getElementById(tab.dataset.tab).classList.add('active');
   });
 });
+
+  /* ===== HERO IMAGE SLIDER SCRIPT ===== */
+const slides = document.querySelectorAll('#hero img');
+let current = 0;
+
+setInterval(() => {
+  slides[current].classList.remove('active');
+  current = (current + 1) % slides.length;
+  slides[current].classList.add('active');
+}, 5000);
 </script>
 
 </body>
