@@ -1,226 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tour The Lakes — Scenic Tours & Private Days Out in the Lake District</title>
-  <meta name="description" content="Tour The Lakes creates beautifully paced scenic experiences across the Lake District — curated public routes and tailored private days out. Email to plan your perfect day.">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <meta property="og:title" content="Tour The Lakes — Scenic Tours & Private Days Out">
-  <meta property="og:description" content="Curated public routes and tailored private days out across the Lake District.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG">
-  <meta name="theme-color" content="#d9d2c4">
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tour The Lakes — Curated Scenic Experiences</title>
+  <meta name="description" content="Curated scenic experiences across the Lake District. Thoughtfully paced routes, private days out, and photography-friendly vistas." />
+
+  <!-- Fonts (new look) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#d9d2c4; --surface:#e6dfd1; --ink:#121212; --muted:#3c463e;
-      --accent:#9c4215; --accent2:#d18f1b; --accent3:#2f5e78; --hair:#b8ae9f;
+      /* Approved palette */
+      --bg:#d9d2c4;        /* page */
+      --surface:#e6dfd1;   /* panels/nav */
+      --ink:#121212;       /* text */
+      --hair:#b8ae9f;      /* dividers */
+      --accent:#9c4215;    /* copper */
+      --accent2:#d18f1b;   /* golden */
+      --link:#2f5e78;      /* link blue */
       --wrap:1120px;
     }
+
     /* Base */
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
     body{
-      font-family:"IBM Plex Mono",monospace;background:var(--bg);color:var(--ink);
-      display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--ink);
+      display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden;
     }
-    a{color:var(--accent3);text-decoration:none;border-bottom:1px dotted currentColor}
+    a{color:var(--link); text-decoration:none; border-bottom:1px dotted currentColor}
     a:hover{border-bottom-style:solid}
-    .wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
-    /* Header */
-    header{
-      background:
-        radial-gradient(circle at 25% 25%, rgba(230,223,209,1) 0%, rgba(217,210,196,0.8) 35%, transparent 70%),
-        radial-gradient(circle at 75% 75%, rgba(209,200,182,0.9) 0%, rgba(184,174,159,0.6) 40%, transparent 75%),
-        linear-gradient(180deg, #e6dfd1 0%, #cfc6b3 70%, #d9d2c4 100%);
+    .wrap{max-width:var(--wrap); margin:0 auto; padding:0 20px}
+
+    /* Header / Nav (clean, brand-new) */
+    .nav{
+      position:sticky; top:0; z-index:10;
+      background:var(--surface);
       border-bottom:1px solid var(--hair);
-      box-shadow:inset 0 -2px 6px rgba(0,0,0,.08), inset 0 3px 8px rgba(255,255,255,.25);
+    }
+    .nav-row{
+      height:64px; display:flex; align-items:center; justify-content:space-between; gap:20px;
     }
     .brand{
-      display:flex;align-items:center;justify-content:space-between;gap:16px;
-      min-height:92px;padding:14px 0;
+      font-family:"Cormorant Garamond", serif;
+      font-weight:600; letter-spacing:.5px;
+      font-size:24px; color:var(--accent);
+      white-space:nowrap;
     }
-    .brand-left{display:flex;align-items:center;gap:14px;min-width:0}
-    .logo{
-      display:block;height:auto;width:auto;max-height:64px;user-select:none
+    .menu{display:flex; gap:18px; align-items:center}
+    .menu a{
+      font-weight:600; color:var(--ink); border:0; padding:8px 10px; border-radius:6px;
+      background:linear-gradient(180deg, #f0eadc 0%, #e6dfd1 100%);
+      border:1px solid var(--hair);
     }
-    .site-title{font-weight:600;font-size:24px;color:var(--accent);white-space:nowrap}
-    .tagline{font-size:16px;color:var(--accent2);text-align:right}
-    @media (max-width:640px){
-      .site-title{font-size:20px}
-      .tagline{font-size:14px}
-      .logo{max-height:56px}
-      .brand{min-height:84px}
+    .menu a:hover{filter:brightness(0.98)}
+    @media (max-width:720px){
+      .menu{gap:10px}
+      .menu a{padding:6px 8px}
+      .brand{font-size:20px}
     }
-    /* Nav tabs */
-    .tabs{display:flex;gap:0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
-    .tab{flex:1;text-align:center;font-weight:600;padding:12px 10px;cursor:pointer;user-select:none}
-    .tab[data-id="tours"]{background:linear-gradient(225deg,#cfc7b9 0%,#d9d2c4 100%)}
-    .tab[data-id="home"]{background:linear-gradient(180deg,#d9d2c4 0%,#cec6b9 100%)}
-    .tab[data-id="contact"]{background:linear-gradient(135deg,#cfc7b9 0%,#d9d2c4 100%)}
-    .tab:hover{filter:brightness(0.98)}
-    .tab.active{
-      background:linear-gradient(135deg,#e8e2d5 0%,#d9d2c4 100%);
-      box-shadow:0 2px 3px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.4);position:relative;z-index:1
+
+    /* Hero */
+    .hero{
+      position:relative; height:48vh; min-height:300px; max-height:560px; overflow:hidden;
+      border-bottom:1px solid var(--hair);
     }
-    .tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--bg)}
-    /* Hero slider */
-    .hero{position:relative;height:38vh;max-height:520px;min-height:220px;overflow:hidden}
-    .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;animation:fade 1.1s ease}
-    .hero img.active{display:block}
-    @keyframes fade{from{opacity:0}to{opacity:1}}
-    @media (max-width:600px){.hero{height:22vh;max-height:280px}}
+    .slide{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; animation:fade 1.1s ease}
+    .slide.active{display:block}
+    .hero-overlay{
+      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+      background:linear-gradient(180deg, rgba(217,210,196,0.0) 0%, rgba(217,210,196,0.12) 70%, rgba(217,210,196,0.24) 100%);
+      padding:0 20px;
+    }
+    .hero h1{
+      margin:0; font-family:"Cormorant Garamond", serif; font-weight:600;
+      font-size:clamp(34px,5.6vw,64px); color:var(--ink);
+    }
+    .hero p{margin:10px 0 0; font-size:clamp(16px,2.2vw,20px); color:#2b2b2b}
+    @keyframes fade{from{opacity:0} to{opacity:1}}
+    @media (max-width:600px){ .hero{height:32vh; min-height:220px} }
+
     /* Sections */
-    main{background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
-    section{display:none;padding:40px 0}
-    section.active{display:block}
-    h2{margin:0 0 14px;font-size:28px}
-    p{margin:0 0 14px;line-height:1.7}
-    .lead{font-size:18px;color:var(--muted)}
+    main{flex:1}
+    section{padding:48px 0; border-bottom:1px solid var(--hair); background:var(--surface)}
+    h2{margin:0 0 14px; font-size:28px}
+    p{margin:0 0 14px; line-height:1.7}
+    .lead{font-size:18px; color:#2b2b2b}
+
     /* Feature cards */
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
-    .card{background:var(--bg);border:1px solid var(--hair);padding:16px;border-radius:8px}
-    .card h3{margin:0 0 10px;font-size:18px}
-    .card .more{display:inline-block;margin-top:4px}
+    .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:18px}
+    .card{background:var(--bg); border:1px solid var(--hair); padding:18px; border-radius:12px}
+    .card h3{margin:0 0 10px; font-size:18px; color:var(--accent)}
     @media (max-width:900px){.cards{grid-template-columns:1fr 1fr}}
     @media (max-width:560px){.cards{grid-template-columns:1fr}}
-    /* Gallery grid */
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
-    .grid img{width:100%;height:180px;object-fit:cover;border:1px solid var(--hair);background:var(--bg)}
-    @media (max-width:720px){.grid{grid-template-columns:1fr 1fr}.grid img{height:160px}}
-    /* Steps */
-    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
-    .step{background:var(--bg);border:1px dashed var(--hair);padding:16px;border-radius:8px}
-    @media (max-width:900px){.steps{grid-template-columns:1fr}}
-    /* FAQ */
-    details{background:var(--bg);border:1px solid var(--hair);padding:12px 14px;border-radius:8px;margin:10px 0}
-    summary{cursor:pointer;font-weight:600}
-    /* CTA strip */
-    .cta{background:var(--bg);border:1px solid var(--hair);padding:16px;border-radius:10px;margin-top:18px}
-    .cta .btn{display:inline-block;margin-top:8px;font-weight:600;color:var(--ink);border:1px solid var(--ink);padding:10px 14px;border-radius:8px}
-    .cta .btn:hover{background:var(--ink);color:var(--bg)}
+
+    /* Routes */
+    .route{background:var(--bg); border:1px solid var(--hair); border-radius:12px; padding:16px}
+    .route h3{margin:0 0 8px; font-size:20px; color:var(--accent2)}
+    .route small{color:#2b2b2b}
+
+    /* Gallery */
+    .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+    .gallery img{width:100%; height:200px; object-fit:cover; background:var(--bg); border:1px solid var(--hair); border-radius:8px}
+    @media (max-width:800px){.gallery{grid-template-columns:1fr 1fr}.gallery img{height:180px}}
+    @media (max-width:520px){.gallery{grid-template-columns:1fr}.gallery img{height:220px}}
+
     /* Contact */
-    .contact-card{background:var(--bg);border:1px solid var(--hair);padding:18px;border-radius:10px}
-    .k{color:var(--muted)}
+    .contact{
+      display:grid; grid-template-columns:1.2fr .8fr; gap:18px;
+    }
+    .box{background:var(--bg); border:1px solid var(--hair); border-radius:12px; padding:18px}
+    .btn{
+      display:inline-block; margin-top:8px; font-weight:700; color:var(--ink);
+      border:1px solid var(--ink); padding:10px 14px; border-radius:10px; text-decoration:none
+    }
+    .btn:hover{background:var(--ink); color:var(--bg)}
+    @media (max-width:820px){.contact{grid-template-columns:1fr}}
+
     /* Footer */
-    footer{border-top:1px solid var(--hair);padding:18px 0;background:linear-gradient(180deg,var(--bg) 0%, #ece6da 80%, #efe9dc 100%);text-align:center}
+    footer{background:linear-gradient(180deg,var(--bg) 0%, #ece6da 80%, #efe9dc 100%); text-align:center; padding:18px 0; border-top:1px solid var(--hair)}
     .credit{font-size:14px}
   </style>
-
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"TouristAttraction",
-    "name":"Tour The Lakes",
-    "description":"Curated scenic routes and private days out across the Lake District.",
-    "areaServed":"Lake District, UK",
-    "url":"https://tourthelakes.com/",
-    "email":"info@tourthelakes.com"
-  }
-  </script>
 </head>
 <body>
 
-  <!-- Header / Brand -->
-  <header>
-    <div class="wrap brand">
-      <div class="brand-left">
-        <img class="logo" src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/Tour-the-lakes-logo.png" alt="Tour The Lakes logo">
-        <div class="site-title">Tour The Lakes</div>
-      </div>
-      <div class="tagline">Public & Private tours of the Lake District</div>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="wrap nav-row">
+      <div class="brand">Tour The Lakes</div>
+      <nav class="menu">
+        <a href="#home">Home</a>
+        <a href="#experiences">Experiences</a>
+        <a href="#routes">Routes</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
-    <nav class="tabs">
-      <div class="wrap" style="display:flex;gap:0">
-        <div class="tab" data-id="tours">Tours</div>
-        <div class="tab active" data-id="home">Home</div>
-        <div class="tab" data-id="contact">Contact</div>
-      </div>
-    </nav>
-  </header>
-
-  <!-- Hero -->
-  <div class="hero" id="hero">
-    <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" class="active" alt="Lake panorama 1">
-    <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Lake panorama 2">
-    <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Lake panorama 3">
   </div>
 
-  <!-- Content -->
-  <main>
-    <!-- HOME -->
-    <section id="home" class="active">
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <img class="slide active" src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="Lakes 1">
+    <img class="slide"        src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Lakes 2">
+    <img class="slide"        src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Lakes 3">
+    <div class="hero-overlay">
       <div class="wrap">
-        <h2>Welcome</h2>
-        <p class="lead">
-          We create calm, beautifully paced journeys across the Lake District. Each route is crafted to highlight the beauty, history and quiet drama of this remarkable region.
-        </p>
+        <h1>Scenic Experiences, Considered Pace</h1>
+        <p>Thoughtful routes. Quiet viewpoints. Space to breathe.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- EXPERIENCES -->
+    <section id="experiences">
+      <div class="wrap">
+        <h2>Experiences</h2>
+        <p class="lead">Unhurried days that blend landscape, stories and stillness. Choose a curated route or tailor a private itinerary for a birthday, proposal or reunion.</p>
 
         <div class="cards">
-          <article class="card">
-            <h3>Unhurried & considered</h3>
-            <p>Routes are designed for time to pause — photo stops, short walks, viewpoints, and proper tea breaks.</p>
-          </article>
-          <article class="card">
-            <h3>Tailored private days</h3>
-            <p>Mark a birthday, proposal or reunion with an itinerary that feels entirely your own.</p>
-          </article>
-          <article class="card">
-            <h3>Local knowledge</h3>
-            <p>Quiet roads, lesser-known vistas and stories that connect landscape to people.</p>
-          </article>
-        </div>
-
-        <div class="grid" aria-label="Recent scenes">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="Lake view">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Village lane">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Fells">
-        </div>
-
-        <div class="cta">
-          <div class="k">Ready to plan something special?</div>
-          <a class="btn" href="mailto:info@tourthelakes.com">Email: info@tourthelakes.com</a>
+          <div class="card">
+            <h3>Uncrowded Moments</h3>
+            <p>We time routes for light and quiet: reflections at water level, soft fell silhouettes, and lanes where the world slows down.</p>
+          </div>
+          <div class="card">
+            <h3>Photography Friendly</h3>
+            <p>Stops that make sense: vantage points, easy short walks, and time for the shot you actually wanted.</p>
+          </div>
+          <div class="card">
+            <h3>Tailored Days</h3>
+            <p>Start and finish where you need. Add a gentle hike, a garden, a stone circle — or keep it purely scenic.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- TOURS -->
-    <section id="tours">
+    <!-- ROUTES -->
+    <section id="routes">
       <div class="wrap">
-        <h2>Featured Tours</h2>
-        <p class="lead">2026 routes launch soon. Here are three that set the tone.</p>
+        <h2>Routes</h2>
+        <p class="lead">A few starting points for 2026. Every route adapts to weather, light and your pace.</p>
 
         <div class="cards">
-          <article class="card">
-            <h3>Central Lakes Circuit — 5 hrs</h3>
-            <p>Ambleside, Rydal, Grasmere and a sweep over Kirkstone for high views and quiet tarns.</p>
-            <a class="more" href="mailto:info@tourthelakes.com?subject=Central%20Lakes%20Circuit">Enquire</a>
-          </article>
-          <article class="card">
-            <h3>Western Passes & Waters — Full day</h3>
-            <p>Wasdale and Eskdale drama, stone circles and the slow ribbon roads that bind them.</p>
-            <a class="more" href="mailto:info@tourthelakes.com?subject=Western%20Passes%20and%20Waters">Enquire</a>
-          </article>
-          <article class="card">
-            <h3>Evening Light — 2 hrs</h3>
-            <p>Golden-hour wander for reflections, silhouettes and that hush the Lakes keep for late.</p>
-            <a class="more" href="mailto:info@tourthelakes.com?subject=Evening%20Light">Enquire</a>
-          </article>
+          <div class="route">
+            <h3>Central Lakes Circuit <small>~5 hours</small></h3>
+            <p>Ambleside, Rydal, Grasmere and over Kirkstone for elevated views and quiet tarns.</p>
+          </div>
+          <div class="route">
+            <h3>Western Passes & Waters <small>Full day</small></h3>
+            <p>Wasdale and Eskdale drama, slate and stone, and the valley roads that feel like time travel.</p>
+          </div>
+          <div class="route">
+            <h3>Evening Light <small>~2 hours</small></h3>
+            <p>Golden-hour reflections and dusk contours — the Lakes in their softer register.</p>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <h2 style="margin-top:28px">How it works</h2>
-        <div class="steps">
-          <div class="step"><strong>1. Start a conversation</strong><br>Email your ideas, dates and rough wishes.</div>
-          <div class="step"><strong>2. Shape the day</strong><br>We propose timings, stops and options that fit your pace.</div>
-          <div class="step"><strong>3. Enjoy the journey</strong><br>Pick-up arranged, routes confirmed, day unhurried.</div>
+    <!-- GALLERY -->
+    <section id="gallery">
+      <div class="wrap">
+        <h2>Gallery</h2>
+        <p class="lead">A few frames from recent scouting. Full galleries will accompany each route.</p>
+        <div class="gallery">
+          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="View 1">
+          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="View 2">
+          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="View 3">
         </div>
-
-        <h2 style="margin-top:28px">FAQs</h2>
-        <details><summary>How far in advance should I book?</summary><p>Two weeks is ideal; for peak season, a month gives you the best choice of dates.</p></details>
-        <details><summary>Do you offer family-friendly routes?</summary><p>Yes — shorter hops, great picnic spots and places to stretch legs without long walks.</p></details>
-        <details><summary>Where do you collect from?</summary><p>Windermere, Ambleside, Bowness and surrounding areas by arrangement.</p></details>
       </div>
     </section>
 
@@ -228,14 +219,28 @@
     <section id="contact">
       <div class="wrap">
         <h2>Contact</h2>
-        <div class="contact-card">
-          <p><strong>Email</strong><br><a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
-          <p class="k">Tell us your dates, pick-up area and what you’d love to see — we’ll shape the rest.</p>
+        <div class="contact">
+          <div class="box">
+            <p><strong>Plan a day that fits you.</strong></p>
+            <p>Email with your dates, pick-up area and what you’d love to see — we’ll shape the rest.</p>
+            <a class="btn" href="mailto:info@tourthelakes.com">Email: info@tourthelakes.com</a>
+          </div>
+          <div class="box">
+            <p><strong>What to include</strong></p>
+            <ul style="margin:8px 0 0 18px; line-height:1.7">
+              <li>Preferred date(s)</li>
+              <li>Pick-up town / area</li>
+              <li>Interests (scenery, short walks, gardens, heritage)</li>
+              <li>Any accessibility notes</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
+
   </main>
 
+  <!-- FOOTER -->
   <footer>
     <div class="wrap">
       <p class="credit">© <span id="y"></span> Tour The Lakes — Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a></p>
@@ -246,19 +251,20 @@
     // year
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // tabs
-    const tabs=[...document.querySelectorAll('.tab')];
-    const sections=[...document.querySelectorAll('main section')];
-    const show = id=>{
-      tabs.forEach(t=>t.classList.toggle('active',t.dataset.id===id));
-      sections.forEach(s=>s.classList.toggle('active',s.id===id));
-      window.scrollTo({top:0,behavior:'smooth'});
-    };
-    tabs.forEach(t=>t.addEventListener('click',()=>show(t.dataset.id)));
+    // smooth in-page nav
+    document.querySelectorAll('.menu a').forEach(a=>{
+      a.addEventListener('click',e=>{
+        const id=a.getAttribute('href');
+        if(id.startsWith('#')){
+          e.preventDefault();
+          document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
 
-    // hero slider
-    const slides=[...document.querySelectorAll('#hero img')];
-    let i=0; setInterval(()=>{slides[i].classList.remove('active'); i=(i+1)%slides.length; slides[i].classList.add('active');},5000);
+    // hero slider (cross-fade)
+    const slides=[...document.querySelectorAll('.slide')];
+    let idx=0; setInterval(()=>{slides[idx].classList.remove('active'); idx=(idx+1)%slides.length; slides[idx].classList.add('active');}, 5000);
   </script>
 </body>
 </html>
