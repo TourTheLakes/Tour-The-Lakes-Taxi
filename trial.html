@@ -48,12 +48,18 @@
       z-index: 100;
     }
 
-    .brand {
-      font-family: "Playfair Display", serif;
-      font-size: 1.8rem;
-      color: var(--gold);
-      letter-spacing: 1px;
-    }
+  .brand {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+  letter-spacing: 1px;
+  text-decoration: none;       /* removes underline */
+  transition: color var(--transition);
+}
+
+.brand:hover {
+  color: var(--tarn);          /* subtle hover tone */
+}
 
     nav a {
       margin-left: 28px;
@@ -347,7 +353,7 @@
 
 <body>
   <header>
-  <div class="brand">Tour The Lakes</div>
+  <a href="#" class="brand">Tour The Lakes</a>
   <nav>
     <a href="#tours">Tours</a>
     <a href="#about">About</a>
