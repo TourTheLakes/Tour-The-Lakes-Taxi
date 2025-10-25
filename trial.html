@@ -1,283 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tour The Lakes — Scenic Journeys 2026</title>
-<meta name="description" content="Immersive scenic tours across the Lake District — copper dawns, golden afternoons, tarn-blue horizons.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tour The Lakes — Scenic Journeys</title>
+  <meta name="description" content="Scenic journeys across the Lake District — copper dawns, golden hours, and tarn-blue reflections. Book a private day or browse curated routes." />
+  <meta name="theme-color" content="#d9d2c4" />
 
-<style>
-:root{
-  --bg:#d9d2c4;        /* page base */
-  --surface:#e6dfd1;   /* content panels */
-  --ink:#121212;       /* text */
-  --muted:#3c463e;     /* secondary text */
-  --accent:#9c4215;    /* copper */
-  --accent-2:#d18f1b;  /* golden */
-  --accent-3:#2f5e78;  /* tarn blue */
-  --hair:#b8ae9f;      /* dividers */
-  --radius:14px;
-  --wrap:1200px;
-  --transition:0.35s;
-}
+  <!-- Typeface (clean, modern) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-/* RESET + BASE */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;padding:0}
-body{
-  font-family:"Inter",sans-serif;
-  color:var(--ink);
-  background:var(--bg);
-  display:flex;
-  flex-direction:column;
-  overflow-x:hidden;
-  scroll-behavior:smooth;
-}
-a{color:var(--accent-3);text-decoration:none;border-bottom:1px dotted currentColor;transition:color var(--transition)}
-a:hover{color:var(--accent);border-bottom-style:solid}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+  <style>
+    /* ======== DESIGN TOKENS (your palette) ======== */
+    :root{
+      --bg:#d9d2c4;        /* page */
+      --surface:#e6dfd1;   /* panels */
+      --ink:#121212;       /* text */
+      --muted:#3c463e;     /* utility text */
+      --accent:#9c4215;    /* copper */
+      --accent-2:#d18f1b;  /* golden */
+      --accent-3:#2f5e78;  /* tarn blue (links) */
+      --hair:#b8ae9f;      /* dividers */
+      --wrap:1200px;
+      --r:14px;
+      --t:0.25s;
+    }
 
-/* HEADER */
-header{
-  background:linear-gradient(135deg,var(--surface) 0%,#f2ecdf 100%);
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-  position:sticky;top:0;z-index:20;
-}
-nav{
-  display:flex;justify-content:space-between;align-items:center;
-  height:80px;
-}
-.logo{
-  font-family:"Cormorant Garamond",serif;
-  font-weight:600;
-  font-size:30px;
-  color:var(--accent);
-  letter-spacing:.5px;
-}
-.menu{display:flex;gap:22px;align-items:center}
-.menu a{
-  padding:8px 14px;
-  border-radius:var(--radius);
-  background:linear-gradient(180deg,#f4efe4 0%,#e6dfd1 100%);
-  border:1px solid var(--hair);
-  color:var(--ink);
-  font-weight:600;
-  transition:var(--transition);
-}
-.menu a:hover{
-  background:linear-gradient(180deg,var(--accent-2) 0%,var(--accent) 100%);
-  color:#fff;border-color:var(--accent);
-}
+    /* ======== BASE ======== */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--ink);
+      display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden;
+      scroll-behavior:smooth;
+    }
+    a{color:var(--accent-3); text-decoration:none; border-bottom:1px dotted currentColor; transition:color var(--t)}
+    a:hover{color:var(--accent); border-bottom-style:solid}
+    .wrap{max-width:var(--wrap); margin:0 auto; padding:0 20px}
 
-/* HERO */
-.hero{
-  position:relative;height:60vh;min-height:380px;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
-  border-bottom:3px solid var(--hair);
-}
-.hero img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;filter:brightness(0.7);display:none;
-  animation:fade 1.2s ease;
-}
-.hero img.active{display:block}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.hero-text{
-  position:relative;z-index:2;text-align:center;color:#fff;
-}
-.hero-text h1{
-  font-family:"Cormorant Garamond",serif;
-  font-size:clamp(36px,6vw,72px);
-  color:var(--accent-2);
-  margin:0;
-  text-shadow:0 2px 10px rgba(0,0,0,0.6);
-}
-.hero-text p{
-  margin:14px 0 0;
-  font-size:20px;
-  color:#f8f6f3;
-}
+    /* ======== NAV ======== */
+    header{
+      position:sticky; top:0; z-index:20;
+      background:
+        radial-gradient(1200px 300px at 10% 0%, rgba(209,200,182,0.7), transparent 70%),
+        radial-gradient(1200px 300px at 90% 0%, rgba(184,174,159,0.55), transparent 70%),
+        linear-gradient(180deg, var(--surface), #efe8da 80%, var(--surface));
+      border-bottom:1px solid var(--hair);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+    }
+    .nav{
+      height:72px; display:flex; align-items:center; justify-content:space-between; gap:18px;
+    }
+    .brand{
+      font-weight:700; letter-spacing:.3px;
+      color:var(--accent); font-size:22px; white-space:nowrap;
+    }
+    .menu{display:flex; gap:12px; align-items:center}
+    .menu a{
+      border:1px solid var(--hair); color:var(--ink);
+      background:linear-gradient(180deg, #f6efe4, var(--surface));
+      padding:8px 12px; border-radius:10px; font-weight:600;
+      transition:filter var(--t), transform var(--t), color var(--t), border-color var(--t);
+    }
+    .menu a:hover{filter:brightness(0.98); color:var(--accent); border-color:var(--accent-2); transform:translateY(-1px)}
+    @media (max-width:760px){
+      .nav{height:auto; padding:10px 0; flex-direction:column; align-items:stretch}
+      .menu{justify-content:center; flex-wrap:wrap}
+    }
 
-/* SECTIONS */
-main{flex:1}
-section{padding:70px 0;position:relative}
-h2{
-  font-family:"Cormorant Garamond",serif;
-  font-size:34px;color:var(--accent);
-  margin:0 0 16px;
-}
-.lead{font-size:18px;color:var(--muted);max-width:800px}
+    /* ======== HERO ======== */
+    .hero{
+      position:relative; height:58vh; min-height:360px; max-height:640px; overflow:hidden;
+      border-bottom:1px solid var(--hair);
+    }
+    .hero img{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      filter:brightness(.72) saturate(1.03); display:none; animation:fade 1.2s ease;
+    }
+    .hero img.active{display:block}
+    @keyframes fade{from{opacity:0} to{opacity:1}}
+    .hero-overlay{
+      position:absolute; inset:0; display:grid; place-items:center; text-align:center; z-index:2;
+      background:linear-gradient(180deg, rgba(217,210,196,0) 0%, rgba(217,210,196,.12) 70%, rgba(217,210,196,.26) 100%);
+      padding:0 20px;
+    }
+    .hero h1{
+      margin:0; font-size:clamp(32px,6vw,72px); line-height:1.05;
+      color:var(--accent-2); text-shadow:0 2px 10px rgba(0,0,0,.45);
+    }
+    .hero p{margin:10px 0 0; font-size:clamp(15px,2.2vw,20px); color:#f7f4ee; text-shadow:0 1px 6px rgba(0,0,0,.35)}
 
-/* EXPERIENCES CARDS */
-.cards{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:24px;margin-top:26px;
-}
-.card{
-  background:linear-gradient(135deg,#fffdf9 0%,var(--surface) 100%);
-  border:1px solid var(--hair);
-  border-radius:var(--radius);
-  padding:22px;
-  transition:var(--transition);
-}
-.card:hover{transform:translateY(-4px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.card h3{color:var(--accent-2);margin:0 0 10px}
+    /* ======== SECTIONS ======== */
+    main{flex:1}
+    section{padding:64px 0; background:var(--surface); border-bottom:1px solid var(--hair)}
+    .lead{color:var(--muted); font-size:18px; max-width:840px}
 
-/* HONEYCOMB GALLERY */
-.gallery-wrap{margin-top:40px;display:flex;justify-content:center}
-.honeycomb{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:6px;
-  max-width:800px;
-}
-.honeycomb img{
-  aspect-ratio:1;
-  clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
-  object-fit:cover;
-  width:100%;
-  border:3px solid var(--hair);
-  transition:var(--transition);
-}
-.honeycomb img:hover{transform:scale(1.05);border-color:var(--accent-2)}
+    h2{margin:0 0 16px; font-size:30px; color:var(--accent)}
 
-/* CONTACT */
-form{
-  background:linear-gradient(180deg,var(--surface) 0%,#f0e9dc 100%);
-  border:1px solid var(--hair);
-  border-radius:var(--radius);
-  padding:30px;
-  max-width:600px;margin:30px auto 0;
-  box-shadow:0 4px 12px rgba(0,0,0,.06);
-}
-form label{display:block;font-weight:600;margin-top:14px;color:var(--ink)}
-form input,form textarea{
-  width:100%;padding:10px;border:1px solid var(--hair);
-  border-radius:var(--radius);margin-top:4px;
-  font-family:inherit;font-size:15px;
-}
-form textarea{resize:vertical;min-height:120px}
-form button{
-  margin-top:16px;
-  background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%);
-  border:none;color:#fff;font-weight:600;
-  padding:12px 24px;border-radius:var(--radius);
-  cursor:pointer;transition:var(--transition);
-}
-form button:hover{filter:brightness(1.05)}
+    /* Feature cards */
+    .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:22px}
+    .card{
+      background:var(--bg); border:1px solid var(--hair); border-radius:var(--r); padding:18px;
+      transition:transform var(--t), box-shadow var(--t);
+    }
+    .card:hover{transform:translateY(-4px); box-shadow:0 10px 18px rgba(0,0,0,.08)}
+    .card h3{margin:0 0 8px; font-size:18px; color:var(--accent-2)}
 
-/* FOOTER */
-footer{
-  background:linear-gradient(180deg,var(--accent-3) 0%,#1b2f3b 100%);
-  color:#fff;text-align:center;
-  padding:26px 0;margin-top:40px;
-}
-footer a{color:var(--accent-2);border:none;font-weight:600}
-footer a:hover{text-decoration:underline}
-</style>
+    /* ======== HONEYCOMB GALLERY ======== */
+    .honey{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-top:18px}
+    .cell{
+      aspect-ratio:1; position:relative; overflow:hidden; border:2px solid var(--hair); border-radius:10px;
+      clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
+      background:linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      transition:transform var(--t), border-color var(--t), filter var(--t);
+    }
+    .cell img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.02) saturate(1.02)}
+    .cell:hover{transform:scale(1.04); border-color:var(--accent-2); filter:drop-shadow(0 6px 10px rgba(0,0,0,.12))}
+    @media (max-width:560px){ .cell{aspect-ratio:1.15} }
+
+    /* ======== ROUTES ======== */
+    .routes{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:18px}
+    .route{
+      border:1px solid var(--hair); border-radius:var(--r); overflow:hidden;
+      background:linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+    }
+    .route .head{
+      background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+      color:#fff; padding:12px 14px; font-weight:700; letter-spacing:.3px;
+    }
+    .route .body{padding:14px}
+
+    /* ======== CONTACT ======== */
+    .contact{
+      display:grid; grid-template-columns:1.2fr .8fr; gap:18px; margin-top:8px;
+    }
+    .box{background:var(--bg); border:1px solid var(--hair); border-radius:var(--r); padding:18px}
+    form label{display:block; font-weight:600; margin-top:12px}
+    form input, form textarea{
+      width:100%; padding:10px 12px; border:1px solid var(--hair); border-radius:10px; font:inherit; margin-top:6px; background:#fff;
+    }
+    form textarea{resize:vertical; min-height:120px}
+    .btn{
+      display:inline-block; margin-top:14px; padding:12px 16px; border-radius:12px;
+      border:1px solid var(--ink); color:var(--ink); font-weight:700; background:linear-gradient(180deg,#fff,#f6f2ea);
+      transition:transform var(--t), background var(--t), color var(--t), border-color var(--t);
+      cursor:pointer;
+    }
+    .btn:hover{background:linear-gradient(90deg,var(--accent) 0%, var(--accent-2) 100%); color:#fff; border-color:transparent; transform:translateY(-1px)}
+    .ok{color:var(--accent); font-weight:700; display:none; margin-top:10px}
+    .hint{color:var(--muted); font-size:14px}
+
+    @media (max-width:860px){ .contact{grid-template-columns:1fr} }
+
+    /* ======== FOOTER ======== */
+    footer{
+      background:linear-gradient(180deg, var(--accent-3) 0%, #203847 100%);
+      color:#fff; text-align:center; padding:22px 0; border-top:1px solid rgba(255,255,255,.18)
+    }
+    footer a{color:var(--accent-2); border:0; font-weight:700}
+    footer a:hover{text-decoration:underline}
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap">
-    <nav>
-      <div class="logo">Tour The Lakes</div>
-      <div class="menu">
+  <!-- NAV -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">Tour The Lakes</div>
+      <nav class="menu">
         <a href="#home">Home</a>
         <a href="#experiences">Experiences</a>
+        <a href="#routes">Routes</a>
         <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
-      </div>
-    </nav>
-  </div>
-</header>
+      </nav>
+    </div>
+  </header>
 
-<section class="hero" id="home">
-  <img class="active" src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="Lake scene">
-  <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Lake 2">
-  <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Lake 3">
-  <div class="hero-text">
-    <h1>Scenic Journeys 2026</h1>
-    <p>Copper light · Golden hours · Tarn-blue reflections</p>
-  </div>
-</section>
-
-<main>
-  <section id="experiences">
-    <div class="wrap">
-      <h2>Experiences</h2>
-      <p class="lead">Our tours are designed for calm exploration. We chase light, not traffic — weaving through valleys where moss meets slate and the water slows time itself.</p>
-
-      <div class="cards">
-        <div class="card">
-          <h3>Private Routes</h3>
-          <p>Tailored for small groups. Choose a slower rhythm, hidden passes, and time to step out and breathe.</p>
-        </div>
-        <div class="card">
-          <h3>Seasonal Circuits</h3>
-          <p>Spring bluebells to autumn copper — routes that shift with the landscape’s palette.</p>
-        </div>
-        <div class="card">
-          <h3>Twilight Tours</h3>
-          <p>Chasing the last light across the tarns — where gold meets slate and evening folds the fells.</p>
-        </div>
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <!-- Replace with your photos if desired -->
+    <img class="active" src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop" alt="Mountain lake 1">
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop" alt="Mountain lake 2">
+    <img src="https://images.unsplash.com/photo-1508261303786-0e1e2a1a5b1a?q=80&w=1600&auto=format&fit=crop" alt="Mountain lake 3">
+    <div class="hero-overlay">
+      <div class="wrap">
+        <h1>Scenic Journeys • 2026</h1>
+        <p>Copper dawns, golden afternoons, tarn-blue horizons.</p>
       </div>
     </div>
   </section>
 
-  <section id="gallery">
-    <div class="wrap">
-      <h2>Gallery</h2>
-      <p class="lead">Captured moments from recent journeys — golden edges, slate water, and the blue calm that defines the Lakes.</p>
-      <div class="gallery-wrap">
-        <div class="honeycomb">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="Scene 1">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Scene 2">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Scene 3">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0013.JPG" alt="Scene 4">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0006.JPG" alt="Scene 5">
-          <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0020.JPG" alt="Scene 6">
+  <main>
+    <!-- EXPERIENCES -->
+    <section id="experiences">
+      <div class="wrap">
+        <h2>Experiences</h2>
+        <p class="lead">We design days that move at a considered pace — space for viewpoints, short walks, and stories that connect people and place.</p>
+
+        <div class="cards">
+          <article class="card">
+            <h3>Private Days Out</h3>
+            <p>Custom itineraries for couples, families and small groups — mark a birthday, reunion or proposal with something quiet and beautiful.</p>
+          </article>
+          <article class="card">
+            <h3>Curated Routes</h3>
+            <p>Central fells and water, western passes and slate valleys, evening light circuits — all paced for calm and clarity.</p>
+          </article>
+          <article class="card">
+            <h3>Photography Friendly</h3>
+            <p>Stops that make sense: vantage points, easy short walks, and time to get the shot you actually wanted.</p>
+          </article>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="contact">
-    <div class="wrap">
-      <h2>Contact Us</h2>
-      <p class="lead">Plan your private or shared journey across the Lakes — we’ll respond within 24 hours.</p>
+    <!-- ROUTES -->
+    <section id="routes">
+      <div class="wrap">
+        <h2>Routes</h2>
+        <p class="lead">Three routes set the tone — each adapted to season, light and your pace.</p>
 
-      <form>
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
+        <div class="routes">
+          <div class="route">
+            <div class="head">Central Lakes Circuit • ~5 hours</div>
+            <div class="body">Ambleside, Rydal and Grasmere, with a sweep over high roads for views and quiet tarns.</div>
+          </div>
+          <div class="route">
+            <div class="head">Western Passes & Waters • Full day</div>
+            <div class="body">Wrynose, Hardknott and Eskdale — ribbons of road and slate horizons that feel like time travel.</div>
+          </div>
+          <div class="route">
+            <div class="head">Evening Light • ~2 hours</div>
+            <div class="body">Golden-hour reflections and dusk contours when the Lakes soften into silhouette.</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+    <!-- GALLERY (HONEYCOMB) -->
+    <section id="gallery">
+      <div class="wrap">
+        <h2>Gallery</h2>
+        <p class="lead">A handful of frames that carry the palette: copper, gold, slate and tarn-blue.</p>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message" placeholder="Tell us your dates, interests, and group size..."></textarea>
+        <div class="honey">
+          <!-- Replace src values anytime; the hex shape is handled by CSS -->
+          <div class="cell"><img src="https://images.unsplash.com/photo-1508261303786-0e1e2a1a5b1a?q=80&w=800&auto=format&fit=crop" alt="Scene 1"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800&auto=format&fit=crop" alt="Scene 2"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1482192505345-5655af888cc4?q=80&w=800&auto=format&fit=crop" alt="Scene 3"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop" alt="Scene 4"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop" alt="Scene 5"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop" alt="Scene 6"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=800&auto=format&fit=crop" alt="Scene 7"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800&auto=format&fit=crop" alt="Scene 8"></div>
+          <div class="cell"><img src="https://images.unsplash.com/photo-1508261303786-0e1e2a1a5b1a?q=80&w=800&auto=format&fit=crop" alt="Scene 9"></div>
+        </div>
+      </div>
+    </section>
 
-        <button type="submit">Send Enquiry</button>
-      </form>
-    </div>
-  </section>
-</main>
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="wrap">
+        <h2>Contact</h2>
+        <p class="lead">Tell us your dates, pick-up area and what you’d love to see — we’ll shape the rest.</p>
 
-<footer>
-  © <span id="y"></span> Tour The Lakes — Made with copper, gold and tarn blue by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
-</footer>
+        <div class="contact" data-email="info@tourthelakes.com">
+          <div class="box">
+            <form id="mailForm">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required>
 
-<script>
-document.getElementById("y").textContent = new Date().getFullYear();
-const slides = document.querySelectorAll(".hero img");
-let i = 0;
-setInterval(()=>{
-  slides[i].classList.remove("active");
-  i=(i+1)%slides.length;
-  slides[i].classList.add("active");
-},5000);
-</script>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required>
 
+              <label for="dates">Preferred date(s)</label>
+              <input id="dates" name="dates" type="text" placeholder="e.g. 12–14 May">
+
+              <label for="message">Message</label>
+              <textarea id="message" name="message" placeholder="Interests, pick-up area, group size…"></textarea>
+
+              <button class="btn" type="submit">Send enquiry</button>
+              <div class="ok" id="okMsg">Thanks — your email app should be opening now.</div>
+              <div class="hint">This form opens your email client with everything prefilled.</div>
+            </form>
+          </div>
+
+          <div class="box">
+            <strong>Useful notes</strong>
+            <ul style="margin:10px 0 0 18px; line-height:1.7">
+              <li>Pick-up: Windermere, Ambleside, Bowness & nearby</li>
+              <li>Pace: unhurried; regular photo stops</li>
+              <li>Family friendly routes available</li>
+              <li>Weather-smart alternatives on standby</li>
+            </ul>
+            <p class="hint" style="margin-top:12px">Prefer direct email? <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Tour The Lakes — Made by <a href="https://www.neonforge.co.uk" target="_blank" rel="noopener">Neon Forge</a>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Hero slider
+    const slides = document.querySelectorAll('.hero img');
+    let s = 0;
+    setInterval(()=>{slides[s].classList.remove('active'); s=(s+1)%slides.length; slides[s].classList.add('active');}, 5200);
+
+    // Mailto contact form (no backend required)
+    const form = document.getElementById('mailForm');
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const box = form.closest('.contact');
+      const to  = box.getAttribute('data-email') || 'info@example.com';
+      const name = encodeURIComponent(document.getElementById('name').value.trim());
+      const email= encodeURIComponent(document.getElementById('email').value.trim());
+      const dates= encodeURIComponent(document.getElementById('dates').value.trim());
+      const msg  = encodeURIComponent(document.getElementById('message').value.trim());
+
+      const subject = encodeURIComponent('Tour The Lakes — Enquiry');
+      const body = encodeURIComponent(
+        `Name: ${decodeURIComponent(name)}\nEmail: ${decodeURIComponent(email)}\nDates: ${decodeURIComponent(dates)}\n\nMessage:\n${decodeURIComponent(msg)}\n`
+      );
+      const mailto = `mailto:${to}?subject=${subject}&body=${body}`;
+      window.location.href = mailto;
+
+      const ok = document.getElementById('okMsg');
+      ok.style.display = 'block';
+      setTimeout(()=> ok.style.display='none', 6000);
+      form.reset();
+    },{passive:false});
+  </script>
 </body>
 </html>
