@@ -3,7 +3,6 @@
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <!-- Root / Home -->
   <url>
     <loc>https://www.tourthelakes.com/</loc>
     <lastmod>2025-10-26</lastmod>
@@ -11,7 +10,6 @@
     <changefreq>weekly</changefreq>
   </url>
 
-  <!-- Tours Section -->
   <url>
     <loc>https://www.tourthelakes.com/#tours</loc>
     <lastmod>2025-10-26</lastmod>
@@ -19,7 +17,6 @@
     <changefreq>weekly</changefreq>
   </url>
 
-  <!-- Individual Tours (anchor references help search engines understand topical depth) -->
   <url>
     <loc>https://www.tourthelakes.com/#six-lakes-splendour</loc>
     <lastmod>2025-10-26</lastmod>
@@ -38,21 +35,18 @@
     <priority>0.80</priority>
   </url>
 
-  <!-- About -->
   <url>
     <loc>https://www.tourthelakes.com/#about</loc>
     <lastmod>2025-10-26</lastmod>
     <priority>0.70</priority>
   </url>
 
-  <!-- Contact -->
   <url>
     <loc>https://www.tourthelakes.com/#contact</loc>
     <lastmod>2025-10-26</lastmod>
     <priority>0.70</priority>
   </url>
 
-  <!-- 404 (low priority but declared for completeness) -->
   <url>
     <loc>https://www.tourthelakes.com/404.html</loc>
     <lastmod>2025-10-26</lastmod>
