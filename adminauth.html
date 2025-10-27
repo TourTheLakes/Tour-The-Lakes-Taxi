@@ -79,7 +79,31 @@
 
     nav a:hover { color: var(--gold); }
 
+.admin-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  color: var(--muted);
+  font-size: 1rem;
+}
 
+.admin-status a,
+.admin-status button {
+  text-decoration: none;
+  color: var(--muted);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.admin-status a:hover,
+.admin-status button:hover {
+  color: var(--gold);
+}
 
     .logout-btn {
       background: none;
