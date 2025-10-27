@@ -79,23 +79,7 @@
 
     nav a:hover { color: var(--gold); }
 
-    .admin-status {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      color: var(--muted);
-      font-size: 1rem;
-    }
 
-    .admin-status .admin-link {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 1rem;
-      transition: color var(--transition);
-    }
-    .admin-status .admin-link:hover {
-      color: var(--gold);
-    }
 
     .logout-btn {
       background: none;
@@ -292,11 +276,11 @@
 <body>
   <header>
     <div class="brand">Tour The Lakes</div>
-    <div class="admin-status">
+    <nav class="admin-status">
       <span id="userEmail">You're logged on as ...</span>
       <a href="#dates" class="admin-link">Dates</a>
       <button id="logoutBtn" class="logout-btn">Log Off</button>
-    </div>
+    </nav>
   </header>
 
   <section class="hero">
