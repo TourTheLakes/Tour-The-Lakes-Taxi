@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" />
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" type="image/png" />
+  <link rel="mask-icon" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" color="#d8a04e" />
+
+  <title>Admin — Tour The Lakes</title>
+  <meta name="description" content="Authorised administrator panel for Tour The Lakes." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0e1416" />
+  <meta name="color-scheme" content="dark light" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0e1416;
+      --surface: #1a2023;
+      --text: #e8e5df;
+      --muted: #a5aaa9;
+      --gold: #d8a04e;
+      --tarn: #4b8ca7;
+      --shadow: rgba(0,0,0,0.5);
+      --radius: 16px;
+      --transition: 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; scroll-behavior: smooth; }
+    body {
+      font-family: "Work Sans", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      background: rgba(14, 20, 22, 0.6);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      height: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: "Playfair Display", serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      user-select: none;
+      cursor: default;
+    }
+
+    .admin-status {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .logout-btn {
+      background: var(--gold);
+      border: none;
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      background: var(--tarn);
+    }
+
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(rgba(14,14,14,0.4), rgba(14,14,14,0.8)),
+        url('https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0092.JPG') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text);
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold);
+      text-shadow: 0 2px 20px var(--shadow);
+      animation: fadeUp 1.5s ease forwards;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      color: var(--muted);
+      animation: fadeUp 2s ease forwards;
+    }
+
+    footer {
+      background: #0b0f10;
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      header { padding: 0 30px; flex-direction: column; text-align: center; gap: 8px; }
+      .brand { font-size: 1.6rem; }
+      .admin-status { flex-direction: column; gap: 8px; }
+      .logout-btn { padding: 10px 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2.2rem; line-height: 1.2; }
+      .hero p { font-size: 1rem; margin-top: 14px; }
+      footer { font-size: 0.8rem; padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">Tour The Lakes</div>
+    <div class="admin-status">
+      <span id="userEmail">You're logged on as ...</span>
+      <button id="logoutBtn" class="logout-btn">Log Off</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Admin Panel</h1>
+    <p>Authorised access confirmed.</p>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Tour The Lakes — Designed by 
+    <a href="https://www.neonforge.co.uk" target="_blank">Neon Forge</a>
+  </footer>
+
+  <!-- Firebase Auth -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const userEmail = document.getElementById("userEmail");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === "info@tourthelakes.com") {
+        userEmail.textContent = `You're logged on as ${user.email}`;
+      } else {
+        window.location.href = "admin.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "admin.html";
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
