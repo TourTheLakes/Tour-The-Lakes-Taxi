@@ -242,6 +242,28 @@
       footer { font-size: 0.8rem; padding: 20px; }
     }
 
+    @media (max-width: 700px) {
+  .calendar-container {
+    align-items: center;       /* center the whole calendar */
+  }
+
+  .calendar-grid {
+    width: 100%;
+    max-width: 360px;          /* reasonable limit for phones */
+    gap: 8px;                  /* tighter spacing */
+    grid-auto-rows: 28px;      /* slightly smaller cells */
+    font-size: 0.9rem;
+  }
+
+  .month-year {
+    font-size: 1.3rem;         /* smaller month label */
+  }
+
+  .nav-arrow {
+    font-size: 1.6rem;         /* smaller arrows for proportion */
+  }
+    }
+
     #info, #book {
       scroll-margin-top: 50px;
     }
