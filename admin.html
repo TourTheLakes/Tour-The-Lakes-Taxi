@@ -98,18 +98,18 @@
       color: var(--gold);
       text-shadow: 0 2px 20px var(--shadow);
       animation: fadeUp 1.5s ease forwards;
+      margin-bottom: 24px;
     }
 
     .hero p {
       font-size: 1.2rem;
-      margin-top: 18px;
-      max-width: 640px;
+      margin-bottom: 24px;
       color: var(--muted);
       animation: fadeUp 2s ease forwards;
     }
 
     #loginButton {
-      background: linear-gradient(90deg, var(--tarn), var(--gold));
+      background: var(--gold);
       border: none;
       color: #fff;
       padding: 12px 28px;
@@ -120,7 +120,10 @@
       transition: transform var(--transition);
     }
 
-    #loginButton:hover { transform: translateY(-2px); }
+    #loginButton:hover { 
+      transform: translateY(-2px);
+      background: var(--tarn);    
+    }
 
     .warning {
       margin-top: 20px;
