@@ -49,25 +49,27 @@
       background: rgba(14, 20, 22, 0.6);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.05);
+      height: 80px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 12px 60px;
+      padding: 0 60px;
       z-index: 100;
     }
 
-    .brand {
-      font-family: "Playfair Display", serif;
-      font-size: 1.8rem;
-      color: var(--gold);
-      letter-spacing: 1px;
-      text-decoration: none;
-      transition: color var(--transition);
-    }
 
-    .brand:hover { color: var(--tarn); }
+  .brand {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.brand:hover {
+  color: var(--tarn);
+}
 
     nav a {
       margin-left: 28px;
