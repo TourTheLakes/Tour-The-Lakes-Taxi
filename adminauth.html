@@ -164,12 +164,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 540px;
 }
 
 .calendar-header {
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 24px;
 }
 
@@ -178,17 +180,18 @@
   font-size: 1.6rem;
   color: var(--gold);
   user-select: none;
+  text-align: center;
+  flex-grow: 1;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
-  max-width: 480px;
+  width: 540px;
   margin-left: 0;
-  margin-top: 10px;
   font-size: 1rem;
-  justify-items: start;
+  justify-items: center;
 }
 
 .calendar-grid div {
