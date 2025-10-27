@@ -133,7 +133,32 @@
       animation: fadeUp 2s ease forwards;
     }
 
-    
+    /* === Section styling for admin pages === */
+section {
+  padding: 100px 10vw;
+  background: var(--surface);
+  text-align: left;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+section h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+section p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+/* Fix anchor offset so “Dates” scrolls correctly under header */
+#dates {
+  scroll-margin-top: 80px;
+}
 
     footer {
       background: #0b0f10;
