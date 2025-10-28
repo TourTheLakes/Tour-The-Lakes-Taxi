@@ -621,7 +621,30 @@ function loadTourData(tour) {
 }
 
 /* Tour Selector Events */
+document.querySelectorAll(".tour-link").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.querySelectorAll(".tour-link").forEach((l) => l.classList.remove("active"));
+    link.classList.add("active");
+    loadTourData(link.dataset.tour);
 
+    // Update Control Room display
+    const tourName = link.textContent.trim();
+    document.getElementById("selectedTourDisplay").textContent = `Selected Tour: ${tourName}`;
+    document.getElementById("dateInfo").textContent = "Select a date to view or edit details.";
+    document.getElementById("selectedDateDisplay").textContent = "";
+    selectedDate = null;
+
+    // 🧹 Reset Amend Form when changing tours
+    noDataMsg.style.display = "block";
+    amendFields.style.display = "none";
+    formTour.textContent = "";
+    formDate.textContent = "";
+    document.getElementById("startTime").value = "";
+    document.getElementById("capacity").value = "";
+    document.getElementById("price").value = "";
+  });
+});
 
 /* Calendar Navigation */
 prevBtn.addEventListener("click", () => {
