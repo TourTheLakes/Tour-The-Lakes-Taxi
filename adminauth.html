@@ -161,7 +161,7 @@ section h2 {
 /* ───────────── Calendar Layout ───────────── */
 .availability-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
   gap: 60px;
   flex-wrap: nowrap;
@@ -172,7 +172,7 @@ section h2 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 540px;
+  width: 100%;
 }
 
 .calendar-header {
@@ -330,7 +330,6 @@ footer a:hover { text-decoration: underline; }
   }
 }
 
-/* Medium screens (≤700px) */
 @media (max-width: 700px) {
   #userEmail { display: none; }
 
@@ -339,6 +338,7 @@ footer a:hover { text-decoration: underline; }
     align-items: center;
     text-align: center;
     gap: 40px;
+    width: 100%;
   }
 
   .calendar-container,
@@ -370,7 +370,6 @@ footer a:hover { text-decoration: underline; }
   section h2 { text-align: center; }
 }
 
-/* Small screens (≤600px) */
 @media (max-width: 600px) {
   header {
     flex-direction: column;
