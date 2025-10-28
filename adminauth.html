@@ -464,8 +464,7 @@ footer {
 .tab:last-child {
   border-right: none;
 }
-
-/* Responsive: stack tabs vertically on smaller screens */
+    
 @media (max-width: 700px) {
   .tab-container {
     flex-direction: column;
@@ -479,7 +478,11 @@ footer {
   }
 }
     
-  </style>  </head>  <body>  
+  </style>  
+</head>  
+  
+  <body>  
+    
   <header>  
     <div class="brand">Tour The Lakes</div>  
     <nav class="admin-status">  
@@ -487,12 +490,13 @@ footer {
       <a href="#dates" class="admin-link">Dates</a>  
       <button id="logoutBtn" class="logout-btn">Log Off</button>  
     </nav>  
-  </header>    <section class="hero">  
+  </header>
+    
+    <section class="hero">  
     <h1>Admin Panel</h1>  
     <p>Authorised access confirmed.</p>  
   </section>  <section id="dates">  
   <h2>Availability</h2>    <div class="availability-container">  
-    <!-- LEFT: Calendar -->  
     <div class="calendar-container">  
       <div class="calendar-header">  
         <button id="prevMonth" class="nav-arrow">‹</button>  
@@ -506,24 +510,27 @@ footer {
         </div>  
         <div class="calendar-dates" id="calendarGrid"></div>  
       </div>  
-    </div>  <!-- RIGHT: Tour selector -->  
-<div class="tour-selector">  
-  <a href="#" class="tour-link" data-tour="sls">Six Lakes Splendour</a>  
-  <a href="#" class="tour-link" data-tour="bp">Beatrix Potter</a>  
-  <a href="#" class="tour-link" data-tour="ws">Wordsworth's Lakeland</a>  
-</div>  
- <a href="#" id="saveChanges" class="save-link">Save Changes</a>
+    </div> 
+
 </div>  
 </section>
     
 <section id="admin-tabs">
   <h2>Admin Tabs</h2>
   <div class="tab-container">
-    <div class="tab"></div>
+    <div class="tab">
+<div class="tour-selector">  
+  <a href="#" class="tour-link" data-tour="sls">Six Lakes Splendour</a>  
+  <a href="#" class="tour-link" data-tour="bp">Beatrix Potter</a>  
+  <a href="#" class="tour-link" data-tour="ws">Wordsworth's Lakeland</a>  
+   </div> 
+     </div>
     <div class="tab"></div>
     <div class="tab"></div>
   </div>
 </section>    
+
+     <a href="#" id="saveChanges" class="save-link">Save Changes</a>
      
     <footer>  
     © <span id="year"></span> Tour The Lakes — Designed by   
