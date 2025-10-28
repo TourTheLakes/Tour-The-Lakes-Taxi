@@ -509,7 +509,31 @@ footer a:hover { text-decoration: underline; }
       <!-- RIGHT TAB → Seat Arrangement -->
       <div class="tab">
         <h3>Seating Arrangement</h3>
+<div class="seat-grid" id="seatGrid">
+  <!-- Row 1: two right seats -->
+  <div class="seat empty"></div>
+  <div class="seat empty"></div>
+  <div class="seat" data-seat="R1R1"></div>
+  <div class="seat" data-seat="R1R2"></div>
 
+  <!-- Row 2: left seat, blank, two right seats -->
+  <div class="seat" data-seat="R2L1"></div>
+  <div class="seat empty"></div>
+  <div class="seat" data-seat="R2R1"></div>
+  <div class="seat" data-seat="R2R2"></div>
+
+  <!-- Row 3: same as row 2 -->
+  <div class="seat" data-seat="R3L1"></div>
+  <div class="seat empty"></div>
+  <div class="seat" data-seat="R3R1"></div>
+  <div class="seat" data-seat="R3R2"></div>
+
+  <!-- Row 4: all four seats valid -->
+  <div class="seat" data-seat="B1"></div>
+  <div class="seat" data-seat="B2"></div>
+  <div class="seat" data-seat="B3"></div>
+  <div class="seat" data-seat="B4"></div>
+</div>
           </div>
         </div>
       </div>
