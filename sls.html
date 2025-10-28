@@ -228,35 +228,62 @@ footer a:hover { text-decoration: underline; }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 900px) {
-      header { padding: 12px 30px; }
-      .brand { font-size: 1.4rem; }
-      nav a { margin-left: 18px; font-size: 0.95rem; }
-      .hero h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
-      .hero p { font-size: 1rem; padding: 0 20px; }
-      section { padding: 80px 8vw; }
-    }
+   @media (max-width: 900px) {
+  header { padding: 12px 40px; } /* slightly more breathing room */
+  .brand { font-size: 1.5rem; } /* smoother step-down from desktop 1.8rem */
+  nav a { margin-left: 20px; font-size: 1rem; } /* uniform font size */
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); } /* more balanced scaling */
+  .hero p { font-size: 1.05rem; padding: 0 24px; }
+  section { padding: 80px 8vw; }
 
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        justify-content: center;
-        height: auto;
-        padding: 12px 0;
-        text-align: center;
-      }
-      .brand {
-        font-size: 1.6rem;
-        line-height: 1.4;
-        margin-bottom: 8px;
-      }
-      nav a {
-        display: inline-block;
-        margin: 0 12px;
-        font-size: 1rem;
-      }
-      footer { font-size: 0.8rem; padding: 20px; }
-    }
+  .calendar-container { align-items: center; }
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates { max-width: 460px; }
+
+ @media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    padding: 12px 0;
+    text-align: center;
+  }
+  .brand {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  nav a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 0.95rem;
+  }
+  footer { font-size: 0.8rem; padding: 20px; }
+
+  /* sync with 700px calendar behaviour */
+  .calendar-container {
+    align-items: center;
+  }
+
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 340px;
+    gap: 8px;
+    grid-auto-rows: 26px;
+    font-size: 0.85rem;
+  }
+
+  .month-year {
+    font-size: 1.2rem;
+  }
+
+  .nav-arrow {
+    font-size: 1.4rem;
+  }
+ }    
 
 @media (max-width: 700px) {
   .calendar-container {
