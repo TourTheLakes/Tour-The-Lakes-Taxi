@@ -329,36 +329,7 @@ section p {
   color: var(--gold);
 }
   
-/* ========== SEATING GRID ========== */
-.seat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, var(--seat-size));
-  grid-auto-rows: var(--seat-size);
-  justify-content: center;
-  gap: 14px 24px;
-  margin-top: 30px;
-}
-.seat {
-  width: var(--seat-size);
-  height: var(--seat-size);
-  border-radius: 6px;
-  background: #155f1e; /* available default */
-  box-shadow: 0 0 6px rgba(0,0,0,0.4) inset;
-  pointer-events: none;
-  cursor: default;
-}
 
-.seat.booked { background: #8b1a1a; }
-.seat:hover { filter: brightness(1.2); }
-
-/* seat positioning (entrance left, driver right) */
-.row-empty { grid-column: 1; visibility: hidden; }
-.row1-right { grid-column: 3 / span 2; }
-.row2-left { grid-column: 1; }
-.row2-right { grid-column: 3 / span 2; }
-.row3-left { grid-column: 1; }
-.row3-right { grid-column: 3 / span 2; }
-.back-row { grid-column: 1 / span 4; display: flex; justify-content: space-between; }
 
 /* ========== SAVE LINK INSIDE CONTROL ROOM ========== */
 .save-link {
