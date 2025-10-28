@@ -247,6 +247,8 @@
   color: var(--gold);
 }
 
+
+    
 footer {
       background: #0b0f10;
       text-align: center;
@@ -267,6 +269,7 @@ footer {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    
    @media (max-width: 900px) {
   header { padding: 12px 40px; } /* slightly more breathing room */
   .brand { font-size: 1.5rem; } /* smoother step-down from desktop 1.8rem */
@@ -382,29 +385,7 @@ footer {
     <p>Authorised access confirmed.</p>
   </section>
 
-<section id="dates">
-  <h2>Availability</h2>
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <button id="prevMonth" class="nav-arrow">‹</button>
-      <div id="monthYear" class="month-year"></div>
-      <button id="nextMonth" class="nav-arrow">›</button>
-    </div>
 
-    <div class="calendar-grid">
-      <div class="calendar-days">
-        <div>S</div>
-        <div>M</div>
-        <div>T</div>
-        <div>W</div>
-        <div>T</div>
-        <div>F</div>
-        <div>S</div>
-      </div>
-      <div class="calendar-dates" id="calendarGrid"></div>
-    </div>
-  </div>
-</section>
 
   <footer>
     © <span id="year"></span> Tour The Lakes — Designed by 
