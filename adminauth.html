@@ -298,7 +298,38 @@ section p {
   text-shadow: 0 0 10px rgba(75,140,167,0.6);
 }
   
+/* ========== AMENDMENT FORM FIELDS (middle tab) ========== */
+#amendForm label {
+  display: block;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
 
+#amendForm input[type="text"] {
+  width: 100%;
+  max-width: 260px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gold);
+  color: var(--text);
+  font-size: 1rem;
+  text-align: center;
+  padding: 4px 0;
+  margin-bottom: 18px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+#amendForm input[type="text"]:focus {
+  border-color: var(--tarn);
+}
+
+#amendForm p strong {
+  color: var(--gold);
+}
+  
 /* ========== SEATING GRID ========== */
 .seat-grid {
   display: grid;
