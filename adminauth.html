@@ -189,7 +189,7 @@
   color: var(--gold);
   user-select: none;
 }
-
+    
 .calendar-grid {
   width: 540px;
 }
@@ -198,9 +198,10 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
+  grid-auto-rows: 32px;
   text-align: center;
   font-size: 1rem;
-  color: var(--text);
+  color: var(--gold);
   margin-bottom: 10px;
 }
 
@@ -214,8 +215,7 @@
   justify-items: center;
   font-size: 1rem;
   width: 540px;
-}   
-
+}    
 
 .calendar-dates div {
   padding: 8px 0;
@@ -233,8 +233,6 @@
   cursor: pointer;
 }    
 
-
-
 .nav-arrow {
   background: none;
   border: none;
@@ -249,7 +247,7 @@
   color: var(--gold);
 }
 
-    footer {
+footer {
       background: #0b0f10;
       text-align: center;
       padding: 30px;
@@ -269,73 +267,100 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+   @media (max-width: 900px) {
+  header { padding: 12px 40px; } /* slightly more breathing room */
+  .brand { font-size: 1.5rem; } /* smoother step-down from desktop 1.8rem */
+  nav a { margin-left: 20px; font-size: 1rem; } /* uniform font size */
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); } /* more balanced scaling */
+  .hero p { font-size: 1.05rem; padding: 0 24px; }
+  section { padding: 80px 8vw; }
 
-    @media (max-width: 900px) {
-      header { padding: 0 30px; flex-direction: column; text-align: center; gap: 8px; }
-      .brand { font-size: 1.6rem; }
-      .admin-status { flex-direction: column; gap: 8px; }
-      .logout-btn { padding: 10px 20px; }
-    }
+  .calendar-container { align-items: center; }
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates { max-width: 460px; }
+   }
 
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 2.2rem; line-height: 1.2; }
-      .hero p { font-size: 1rem; margin-top: 14px; }
-      footer { font-size: 0.8rem; padding: 20px; }
-    }
-
-    @media (max-width: 700px) {
+ @media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    padding: 12px 0;
+    text-align: center;
+  }
+  .brand {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  nav a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 0.95rem;
+  }
+  footer { font-size: 0.8rem; padding: 20px; }
+   
   .calendar-container {
-    width: 100%;
     align-items: center;
   }
 
-  .calendar-header {
-    justify-content: center;
-    gap: 16px;
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 340px;
+    gap: 8px;
+    grid-auto-rows: 26px;
+    font-size: 0.85rem;
   }
 
   .month-year {
+    font-size: 1.2rem;
+  }
+
+  .nav-arrow {
     font-size: 1.4rem;
+  }
+ }    
+
+@media (max-width: 700px) {
+  .calendar-container {
+    align-items: center;
   }
 
   .calendar-grid {
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
     justify-items: center;
-    gap: 8px;
-    font-size: 0.95rem;
   }
 
-.calendar-days, .calendar-dates {
-  width: 100%;
-  max-width: 380px;
-  gap: 8px;
-  font-size: 0.85rem;
-  grid-auto-rows: 28px;
-}
-      
-      #userEmail {
-        display: none;
-      }
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 360px;
+    gap: 8px;
+    grid-auto-rows: 28px;
+    font-size: 0.9rem;
+  }
 
-header {
-  flex-direction: column;
-  height: auto;
-  padding: 10px 0 14px;
-}
-      
-      .admin-status {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: center;
-        gap: 14px;
-      }
-    }
+  .month-year {
+    font-size: 1.3rem;
+  }
 
-#dates {
-  scroll-margin-top: 50px
+  .nav-arrow {
+    font-size: 1.6rem;
+  }
+
+  section h2 {
+    text-align: center;
+  }
 }
-    
+
+#info,
+#book {
+  scroll-margin-top: 50px;
+}
   </style>
 </head>
 
