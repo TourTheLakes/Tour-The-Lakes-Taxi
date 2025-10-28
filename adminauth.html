@@ -272,6 +272,33 @@ section p {
 .tab:nth-child(2) { text-align: center; }
 .tab:nth-child(3) { text-align: right; }
 
+/* ========== TOUR SELECTOR LINKS (left tab) ========== */
+.tour-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tour-link {
+  font-family: "Playfair Display", serif;
+  color: var(--gold);
+  font-size: 1.2rem;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color var(--transition), text-shadow var(--transition);
+}
+
+.tour-link:hover {
+  color: var(--tarn);
+  text-shadow: 0 0 8px rgba(75,140,167,0.4);
+}
+
+.tour-link.active {
+  color: var(--tarn);
+  text-shadow: 0 0 10px rgba(75,140,167,0.6);
+}
+  
+
 /* ========== SEATING GRID ========== */
 .seat-grid {
   display: grid;
