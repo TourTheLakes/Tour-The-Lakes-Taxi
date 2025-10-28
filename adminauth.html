@@ -396,9 +396,27 @@ footer {
 @media (max-width: 700px) {
 
  #userEmail { display: none; }
+
+    .availability-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+  }
   
   .calendar-container {
     align-items: center;
+  }
+
+  .tour-selector {
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .save-link {
+    font-size: 1rem;
+    margin-top: 16px;
   }
 
   .calendar-grid {
@@ -424,27 +442,10 @@ footer {
     font-size: 1.6rem;
   }
 
-  .availability-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 40px;
-  }
-
-  .tour-selector {
-    flex-direction: row;
-    justify-content: center;
-    gap: 24px;
-  }
-
   .tour-link {
     font-size: 1rem;
   }
 
-  .save-link {
-    font-size: 1rem;
-    margin-top: 16px;
-  }
   section h2 {
     text-align: center;
   }
@@ -498,7 +499,7 @@ footer {
     <div class="tour-selector">
       <a href="#" class="tour-link" data-tour="sls">SLS</a>
       <a href="#" class="tour-link" data-tour="bp">BP</a>
-      <a href="#" class="tour-link" data-tour="wws">WWS</a>
+      <a href="#" class="tour-link" data-tour="ws">WS</a>
     </div>
   </div>
 </section>
