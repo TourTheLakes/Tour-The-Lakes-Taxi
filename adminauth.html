@@ -241,7 +241,6 @@
   flex-wrap: wrap;
 }
 
-/* Tour selector (right column) */
 .tour-selector {
   display: flex;
   flex-direction: column;
@@ -265,7 +264,6 @@
   color: var(--gold);
 }
 
-/* Save Changes link */
 .save-link {
   display: inline-block;
   margin-top: 20px;
@@ -327,10 +325,10 @@ footer {
       to { opacity: 1; transform: translateY(0); }
     }
    @media (max-width: 900px) {
-  header { padding: 12px 40px; } /* slightly more breathing room */
-  .brand { font-size: 1.5rem; } /* smoother step-down from desktop 1.8rem */
-  nav a { margin-left: 20px; font-size: 1rem; } /* uniform font size */
-  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); } /* more balanced scaling */
+  header { padding: 12px 40px; }
+  .brand { font-size: 1.5rem; }
+  nav a { margin-left: 20px; font-size: 1rem; }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
   .hero p { font-size: 1.05rem; padding: 0 24px; }
   section { padding: 80px 8vw; }
 
@@ -338,17 +336,6 @@ footer {
   .calendar-grid,
   .calendar-days,
   .calendar-dates { max-width: 460px; }
-
-   .availability-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .tour-selector {
-    flex-direction: row;
-    justify-content: center;
-    gap: 24px;
-  }
  }
 
  @media (max-width: 600px) {
