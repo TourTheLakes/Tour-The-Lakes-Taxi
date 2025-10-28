@@ -206,6 +206,28 @@
   justify-items: center;
 }
 
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  grid-auto-rows: 32px;
+  min-height: calc(6 * 32px + 5 * 12px);
+  align-content: start;
+  justify-items: center;
+  font-size: 1rem;
+  width: 540px;
+}    
+
 .calendar-grid div {
   padding: 8px 0;
   color: var(--text);
@@ -329,7 +351,29 @@ header {
     <p>Authorised access confirmed.</p>
   </section>
 
+<section id="dates">
+  <h2>Availability</h2>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prevMonth" class="nav-arrow">‹</button>
+      <div id="monthYear" class="month-year"></div>
+      <button id="nextMonth" class="nav-arrow">›</button>
+    </div>
 
+    <div class="calendar-grid">
+      <div class="calendar-days">
+        <div>S</div>
+        <div>M</div>
+        <div>T</div>
+        <div>W</div>
+        <div>T</div>
+        <div>F</div>
+        <div>S</div>
+      </div>
+      <div class="calendar-dates" id="calendarGrid"></div>
+    </div>
+  </div>
+</section>
 
   <footer>
     © <span id="year"></span> Tour The Lakes — Designed by 
