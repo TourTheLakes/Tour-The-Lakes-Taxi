@@ -11,7 +11,7 @@
   <link rel="shortcut icon" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" type="image/png" />
   <link rel="mask-icon" href="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/TTL-Favicon.png" color="#d8a04e" />
 
-  <title>Tour The Lakes — Placeholder Tour</title>
+  <title>Tour The Lakes — Beatrix Potter</title>
   <meta name="description" content="Placeholder page for Tour The Lakes — individual tour details and reservations." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0e1416" />
@@ -141,47 +141,187 @@
       color: var(--gold);
       text-decoration: none;
     }
+    
+footer a:hover { text-decoration: underline; }
 
-    footer a:hover { text-decoration: underline; }
+.calendar-container {
+  margin-top: 40px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.month-year {
+  font-family: "Playfair Display", serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  user-select: none;
+}
+    
+.calendar-grid {
+  width: 540px;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  grid-auto-rows: 32px;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  grid-auto-rows: 32px;
+  min-height: calc(6 * 32px + 5 * 12px);
+  align-content: start;
+  justify-items: center;
+  font-size: 1rem;
+  width: 540px;
+}   
+
+.calendar-dates div {
+  padding: 8px 0;
+  font-size: 1rem;
+  color: var(--text);
+  user-select: none;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.calendar-dates div:hover {
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(216,160,78,0.3);
+  cursor: pointer;
+}  
+
+.nav-arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--transition);
+  user-select: none;
+}
+
+.nav-arrow:hover {
+  color: var(--gold);
+}
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 900px) {
-      header { padding: 12px 30px; }
-      .brand { font-size: 1.4rem; }
-      nav a { margin-left: 18px; font-size: 0.95rem; }
-      .hero h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
-      .hero p { font-size: 1rem; padding: 0 20px; }
-      section { padding: 80px 8vw; }
-    }
+   @media (max-width: 900px) {
+  header { padding: 12px 40px; }
+  .brand { font-size: 1.5rem; }
+  nav a { margin-left: 20px; font-size: 1rem; }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
+  .hero p { font-size: 1.05rem; padding: 0 24px; }
+  section { padding: 80px 8vw; }
 
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        justify-content: center;
-        height: auto;
-        padding: 12px 0;
-        text-align: center;
-      }
-      .brand {
-        font-size: 1.6rem;
-        line-height: 1.4;
-        margin-bottom: 8px;
-      }
-      nav a {
-        display: inline-block;
-        margin: 0 12px;
-        font-size: 1rem;
-      }
-      footer { font-size: 0.8rem; padding: 20px; }
-    }
+  .calendar-container { align-items: center; }
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates { max-width: 460px; }
+   }
+     
+ @media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    padding: 12px 0;
+    text-align: center;
+  }
+  .brand {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  nav a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 0.95rem;
+  }
+  footer { font-size: 0.8rem; padding: 20px; }
+   
+  .calendar-container {
+    align-items: center;
+  }
 
-    #info, #book {
-      scroll-margin-top: 50px;
-    }
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 340px;
+    gap: 8px;
+    grid-auto-rows: 26px;
+    font-size: 0.85rem;
+  }
+
+  .month-year {
+    font-size: 1.2rem;
+  }
+
+  .nav-arrow {
+    font-size: 1.4rem;
+  }
+ }    
+
+@media (max-width: 700px) {
+  .calendar-container {
+    align-items: center;
+  }
+
+  .calendar-grid {
+    width: 100%;
+    max-width: 360px;
+    justify-items: center;
+  }
+
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 360px;
+    gap: 8px;
+    grid-auto-rows: 28px;
+    font-size: 0.9rem;
+  }
+
+  .month-year {
+    font-size: 1.3rem;
+  }
+
+  .nav-arrow {
+    font-size: 1.6rem;
+  }
+
+  section h2 {
+    text-align: center;
+  }
+}
+
+#info,
+#book {
+  scroll-margin-top: 50px;
+}
   </style>
 </head>
 
@@ -196,18 +336,35 @@
   </header>
 
   <section class="hero">
-    <h1>Placeholder — Tour Name</h1>
-    <p>Placeholder subtext for this tour.</p>
+    <h1>Beatrix Potter</h1>
+    <p>Half-day tour visiting the landscapes and villages that inspired Beatrix Potter’s timeless tales.</p>
   </section>
 
   <section id="info">
     <h2>Tour Information</h2>
-    <p>Placeholder text for tour details and description. This section will later include itinerary, highlights, and duration information.</p>
+    <p>Placeholder</p>
   </section>
 
   <section id="book">
     <h2>Reservation</h2>
-    <p>Placeholder text for booking form and reservation details. This section will allow users to book this tour directly.</p>
+ <div class="calendar-container">
+  <div class="calendar-header">
+    <button id="prevMonth" class="nav-arrow">‹</button>
+    <div id="monthYear" class="month-year"></div>
+    <button id="nextMonth" class="nav-arrow">›</button>
+  </div>
+  <div class="calendar-grid">
+   <div class="calendar-days">
+     <div>S</div>
+      <div>M</div>
+       <div>T</div>
+        <div>W</div>
+         <div>T</div>
+          <div>F</div>
+           <div>S</div>
+   </div>
+   <div class="calendar-dates" id="calendarGrid"></div>
+ </div>   
   </section>
 
   <footer>
@@ -218,5 +375,82 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+  
+    <!-- Firebase SDKs -->
+<script type="module">
+  // Import the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+    authDomain: "tourthelakes-1e165.firebaseapp.com",
+    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+    projectId: "tourthelakes-1e165",
+    storageBucket: "tourthelakes-1e165.firebasestorage.app",
+    messagingSenderId: "470758171431",
+    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+    measurementId: "G-W6JY1LZXTP"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  console.log("Firebase initialized successfully");
+</script>
+
+<script>
+  const calendarGrid = document.getElementById("calendarGrid");
+  const monthYear = document.getElementById("monthYear");
+  const prevBtn = document.getElementById("prevMonth");
+  const nextBtn = document.getElementById("nextMonth");
+
+  let currentDate = new Date();
+
+  function renderCalendar(date) {
+    calendarGrid.innerHTML = "";
+
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    monthYear.textContent = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Blank spaces before first day
+    for (let i = 0; i < firstDay; i++) {
+      const blank = document.createElement("div");
+      blank.textContent = "";
+      calendarGrid.appendChild(blank);
+    }
+
+    // Actual days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const day = document.createElement("div");
+      day.textContent = d;
+      calendarGrid.appendChild(day);
+    }
+  }
+
+  prevBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar(currentDate);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar(currentDate);
+  });
+
+  renderCalendar(currentDate);
+</script>
+  
 </body>
 </html>
