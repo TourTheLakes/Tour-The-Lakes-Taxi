@@ -165,13 +165,11 @@
   color: var(--gold);
   user-select: none;
 }
-
-/* Calendar grid wrapper */
+    
 .calendar-grid {
   width: 540px;
 }
 
-/* Days-of-week header */
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -182,13 +180,12 @@
   margin-bottom: 10px;
 }
 
-/* Actual calendar dates */
 .calendar-dates {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
   grid-auto-rows: 32px;
-  min-height: calc(6 * 32px + 5 * 12px); /* consistent grid height */
+  min-height: calc(6 * 32px + 5 * 12px);
   align-content: start;
   justify-items: center;
   font-size: 1rem;
@@ -208,14 +205,7 @@
   cursor: pointer;
 }
 
-.calendar-grid div {
-  padding: 8px 0;
-  color: var(--text);
-  user-select: none;
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.calendar-grid div:hover {
+.calendar-dates div:hover {
   color: var(--gold);
   text-shadow: 0 0 10px rgba(216,160,78,0.3);
   cursor: pointer;
@@ -223,10 +213,9 @@
 
 .calendar-days div {
   font-weight: 500;
-  letters-spacing: 0.5px;
+  letter-spacing: 0.5px;
 }
 
-/* Navigation arrows */
 .nav-arrow {
   background: none;
   border: none;
