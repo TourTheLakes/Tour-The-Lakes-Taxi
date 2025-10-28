@@ -163,9 +163,8 @@ section p {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 20px;
-  background: var(--surface);
-  padding: 20px 30px;
-  border-radius: var(--radius);
+  background: none;
+  padding: 0;
   min-height: 480px;
 }
 .control-room h3 {
@@ -274,7 +273,10 @@ section p {
   border-radius: 6px;
   background: #155f1e; /* available default */
   box-shadow: 0 0 6px rgba(0,0,0,0.4) inset;
+  pointer-events: none;
+  cursor: default;
 }
+
 .seat.booked { background: #8b1a1a; }
 .seat:hover { filter: brightness(1.2); }
 
@@ -404,8 +406,6 @@ footer a:hover { text-decoration: underline; }
 
             <label for="price">Price (£):</label><br>
             <input type="number" id="price" name="price" step="0.01"><br><br>
-
-            <button type="submit" id="saveAmendments" class="save-link">Save Amendments</button>
           </div>
         </form>
       </div>
@@ -594,27 +594,8 @@ function resetAmendFields(tour, date) {
   document.getElementById("price").value = "";
 }
 
-/* Save Amendments */
-amendForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!activeTour || !selectedDate) return alert("Select a tour and date first.");
-
-  const payload = {
-    startTime: document.getElementById("startTime").value,
-    capacity: document.getElementById("capacity").value,
-    price: document.getElementById("price").value
-  };
-  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
-  alert("Amendments saved.");
-});
-
 /* Save New Availability */
-saveLink.addEventListener("click", async (e) => {
-  e.preventDefault();
-  if (!activeTour || !selectedDate) return alert("Select a tour and date first.");
-  await update(ref(db, `availability/${activeTour}/${selectedDate}`), { created: true });
-  alert(`Changes saved for ${activeTour.toUpperCase()} on ${selectedDate}`);
-});
+
 
 /* Load Tour Data */
 function loadTourData(tour) {
