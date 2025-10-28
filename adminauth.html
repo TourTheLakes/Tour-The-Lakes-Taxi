@@ -595,7 +595,23 @@ function resetAmendFields(tour, date) {
 }
 
 /* Save New Availability */
+saveLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!activeTour || !selectedDate) return alert("Select a tour and date first.");
 
+  // Gather amendment values from middle tab
+  const payload = {
+    startTime: document.getElementById("startTime").value || null,
+    capacity: document.getElementById("capacity").value || null,
+    price: document.getElementById("price").value || null,
+  };
+
+  // Seats are visual-only: do NOT modify seats here.
+  // If the date node exists already, we merge; if not, we create with the fields above.
+  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
+
+  alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate}`);
+});
 
 /* Load Tour Data */
 function loadTourData(tour) {
