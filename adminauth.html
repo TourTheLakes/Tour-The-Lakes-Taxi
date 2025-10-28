@@ -179,6 +179,7 @@ section p {
 .calendar-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -235,6 +236,24 @@ section p {
   text-shadow: 0 0 10px rgba(216,160,78,0.3);
 }
 
+/* ===== Calendar Arrows ===== */
+.nav-arrow {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color var(--transition), transform 0.2s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.nav-arrow:hover {
+  color: var(--tarn);
+  transform: scale(1.2);
+}
+  
 /* ========== ADMIN TABS ========== */
 #admin-tabs { padding: 100px 10vw; text-align: center; }
 #admin-tabs h2 {
