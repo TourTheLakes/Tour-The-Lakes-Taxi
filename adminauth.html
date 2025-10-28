@@ -280,18 +280,16 @@
   opacity: 0.7;
 }
 
-/* Gold/tarn half fill for existing tour dates */
 .calendar-dates div.existing {
   background: linear-gradient(90deg, var(--gold) 50%, var(--tarn) 50%);
   color: #fff;
   border-radius: 6px;
 }
 
-/* Freshly selected this session */
 .calendar-dates div.selected {
-  background: var(--gold);
-  color: #fff;
-  border-radius: 6px;
+  background: none;
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(216,160,78,0.3);
 }
 
 .nav-arrow {
@@ -399,6 +397,13 @@ footer {
 @media (max-width: 700px) {
 
  #userEmail { display: none; }
+
+  .availability-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+  }
   
   .calendar-container {
     align-items: center;
@@ -425,6 +430,21 @@ footer {
 
   .nav-arrow {
     font-size: 1.6rem;
+  }
+
+  .tour-selector {
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .tour-link {
+    font-size: 1rem;
+  }
+
+  .save-link {
+    font-size: 1rem;
+    margin-top:16px;
   }
 
   section h2 {
