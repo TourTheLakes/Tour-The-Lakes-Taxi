@@ -192,6 +192,22 @@
   cursor: pointer;
 }
 
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  width: 540px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.calendar-days div {
+  font-weight: 500;
+  letters-spacing: 0.5px;
+}
+
 /* Navigation arrows */
 .nav-arrow {
   background: none;
@@ -242,7 +258,7 @@
       footer { font-size: 0.8rem; padding: 20px; }
     }
 
-    @media (max-width: 700px) {
+@media (max-width: 700px) {
   .calendar-container {
     align-items: center;
   }
@@ -265,6 +281,13 @@
 
   section h2 {
     text-align: center;
+  }
+
+  .calendar-days {
+    width: 100%;
+    max-width: 360px;
+    gap: 8px;
+    font-size: 0.8rem;
   }
     }
 
@@ -307,7 +330,16 @@
     <div id="monthYear" class="month-year"></div>
     <button id="nextMonth" class="nav-arrow">›</button>
   </div>
-  <div class="calendar-grid" id="calendarGrid"></div>
+  <div class="calendar-grid"></div>
+   <div class="calendar-days">
+     <div>S</div>
+      <div>M</div>
+       <div>T</div>
+        <div>W</div>
+         <div>T</div>
+          <div>F</div>
+           <div>S</div>
+   </div>
  </div>   
   </section>
 
