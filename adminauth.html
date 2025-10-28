@@ -329,7 +329,37 @@ section p {
   color: var(--gold);
 }
   
+/* === Seating grid for the 4×4 markup === */
+.seat-grid{
+  display: grid;
+  grid-template-columns: repeat(4, var(--seat-size));
+  grid-template-rows: repeat(4, var(--seat-size));
+  gap: 18px;                 /* equal spacing horizontally & vertically */
+  justify-content: center;   /* center the whole block */
+  align-content: center;
+  margin-top: 30px;
+}
 
+/* Seats */
+.seat{
+  width: var(--seat-size);
+  height: var(--seat-size);
+  border-radius: 6px;
+  background: #155f1e;                       /* available = green */
+  box-shadow: inset 0 0 6px rgba(0,0,0,.4);
+  transition: filter var(--transition), background var(--transition);
+  cursor: pointer;
+}
+.seat:hover{ filter: brightness(1.15); }
+.seat.booked{ background: #8b1a1a; }          /* booked = red */
+
+/* “Blank” cells that keep the grid shape but aren’t seats */
+.seat.empty{
+  background: #2a2f31;                        /* neutral grey */
+  opacity: .7;
+  pointer-events: none;                        /* not interactive */
+  cursor: default;
+}
 
 /* ========== SAVE LINK INSIDE CONTROL ROOM ========== */
 .save-link {
