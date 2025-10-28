@@ -329,62 +329,7 @@ section p {
   color: var(--gold);
 }
   
-/* ========== SEATING GRID FIX ========== */
-.seat-grid {
-  display: grid;
-  grid-template-columns: repeat(5, var(--seat-size)); /* 2 left cols, 1 aisle, 2 right cols */
-  grid-auto-rows: var(--seat-size);
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 30px;
-}
 
-/* Hide the aisle column visually but keep its spacing */
-.seat-grid::before {
-  content: "";
-  grid-column: 3;
-  grid-row: 1 / span 5;
-  width: var(--seat-size);
-  visibility: hidden;
-}
-
-/* General seat look */
-.seat {
-  width: var(--seat-size);
-  height: var(--seat-size);
-  border-radius: 6px;
-  background: #155f1e;
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
-}
-
-.seat.booked { background: #8b1a1a; }
-.seat:hover { filter: brightness(1.2); }
-
-/* Positioning based on your existing data-seat tags */
-.row-empty { grid-column: 4; visibility: hidden; } /* driver seat offset */
-
-/* Row 1 (right side only) */
-.row1-right:nth-of-type(2) { grid-column: 4; }
-.seat[data-seat="R1R2"]     { grid-column: 5; }
-
-/* Row 2 */
-.seat[data-seat="R2L1"]     { grid-column: 1; }
-.seat[data-seat="R2R1"]     { grid-column: 4; }
-.seat[data-seat="R2R2"]     { grid-column: 5; }
-
-/* Row 3 */
-.seat[data-seat="R3L1"]     { grid-column: 1; }
-.seat[data-seat="R3R1"]     { grid-column: 4; }
-.seat[data-seat="R3R2"]     { grid-column: 5; }
-
-/* Back row (4 across) */
-.back-row {
-  grid-column: 1 / span 5;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-}
 
 /* ========== SAVE LINK INSIDE CONTROL ROOM ========== */
 .save-link {
