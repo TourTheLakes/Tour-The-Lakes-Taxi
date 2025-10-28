@@ -369,6 +369,7 @@ footer a:hover { text-decoration: underline; }
       <!-- Control Room Column -->
       <div class="control-room">
         <h3>Control Room</h3>
+        <p id="selectTourDisplay">No tour selected.</p>
         <p id="selectedDateDisplay">Select a date from the calendar to view details.</p>
         <div id="dateInfo"></div>
         <a href="#" id="saveChanges" class="save-link">Save Changes</a>
@@ -599,15 +600,11 @@ saveLink.addEventListener("click", async (e) => {
   e.preventDefault();
   if (!activeTour || !selectedDate) return alert("Select a tour and date first.");
 
-  // Gather amendment values from middle tab
   const payload = {
     startTime: document.getElementById("startTime").value || null,
     capacity: document.getElementById("capacity").value || null,
     price: document.getElementById("price").value || null,
   };
-
-  // Seats are visual-only: do NOT modify seats here.
-  // If the date node exists already, we merge; if not, we create with the fields above.
   await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
 
   alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate}`);
@@ -624,14 +621,7 @@ function loadTourData(tour) {
 }
 
 /* Tour Selector Events */
-document.querySelectorAll(".tour-link").forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    document.querySelectorAll(".tour-link").forEach((l) => l.classList.remove("active"));
-    link.classList.add("active");
-    loadTourData(link.dataset.tour);
-  });
-});
+
 
 /* Calendar Navigation */
 prevBtn.addEventListener("click", () => {
