@@ -433,6 +433,52 @@ footer {
 #book {  
   scroll-margin-top: 80px;  
 }  
+
+#admin-tabs {
+  padding: 100px 10vw;
+  text-align: center;
+}
+
+#admin-tabs h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 40px;
+}
+
+.tab-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+}
+
+.tab {
+  flex: 1;
+  min-height: 320px;
+  border-right: 2px solid var(--gold);
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+/* Responsive: stack tabs vertically on smaller screens */
+@media (max-width: 700px) {
+  .tab-container {
+    flex-direction: column;
+  }
+  .tab {
+    border-right: none;
+    border-bottom: 2px solid var(--gold);
+  }
+  .tab:last-child {
+    border-bottom: none;
+  }
+}
+    
   </style>  </head>  <body>  
   <header>  
     <div class="brand">Tour The Lakes</div>  
