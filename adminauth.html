@@ -468,9 +468,9 @@
   }
   footer a:hover { text-decoration: underline; }
 
-  /* ========== RESPONSIVE BEHAVIOUR (Refined from main site) ========== */
+/* ========== RESPONSIVE BEHAVIOUR (Viewport-Fit, No Scrollbar) ========== */
 
-/* Slightly smaller desktop / large tablet adjustments */
+/* Large tablets & small laptops */
 @media (max-width: 900px) {
   header { padding: 12px 40px; }
   .brand { font-size: 1.5rem; }
@@ -479,27 +479,35 @@
   .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
   .hero p { font-size: 1.05rem; padding: 0 24px; }
 
-  section { padding: 80px 8vw; }
+  section { padding: 80px 6vw; }
 
   .calendar-container,
   .control-room { align-items: center; }
 
   .calendar-grid,
   .calendar-days,
-  .calendar-dates { max-width: 460px; }
+  .calendar-dates {
+    width: 100%;
+    max-width: 460px;
+  }
 
   .month-year { font-size: 1.4rem; }
 
-  #admin-tabs { padding: 80px 8vw; }
+  #admin-tabs { padding: 80px 6vw; }
   .tab-container { gap: 40px; }
 }
 
-/* Phones and narrow tablets */
+/* Tablets & phones */
 @media (max-width: 700px) {
+  html, body, section, #admin-tabs {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   header {
     flex-direction: column;
     justify-content: center;
-    height: auto;
+    align-items: center;
     padding: 12px 0;
     text-align: center;
   }
@@ -518,6 +526,10 @@
 
   .hero h1 { font-size: clamp(2rem, 6vw, 3rem); }
   .hero p { font-size: 1rem; }
+
+  section {
+    padding: 60px 5vw;
+  }
 
   .availability-wrap {
     flex-direction: column;
@@ -539,7 +551,7 @@
   .nav-arrow { font-size: 1.4rem; }
 
   #admin-tabs {
-    padding: 60px 6vw;
+    padding: 60px 5vw;
   }
 
   .tab-container {
@@ -552,6 +564,7 @@
     text-align: center;
     border-bottom: 1px solid var(--gold);
     padding-bottom: 30px;
+    width: 100%;
   }
 
   .tab:last-child { border-bottom: none; }
@@ -567,31 +580,20 @@
   }
 }
 
-/* Very small screens (mobile portrait ~600px and under) */
+/* Small phones */
 @media (max-width: 600px) {
-  header {
-    flex-direction: column;
-    justify-content: center;
-    padding: 12px 0;
-    text-align: center;
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
   }
 
-  .brand {
-    font-size: 1.3rem;
-    line-height: 1.4;
-    margin-bottom: 8px;
-  }
+  .brand { font-size: 1.3rem; margin-bottom: 6px; }
+  nav a { margin: 0 8px; font-size: 0.9rem; }
 
-  nav a {
-    display: inline-block;
-    margin: 0 8px;
-    font-size: 0.9rem;
-  }
-
-  .hero h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); }
+  .hero h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); }
   .hero p { font-size: 0.95rem; }
 
-  section { padding: 60px 6vw; }
+  section { padding: 50px 4vw; }
 
   .calendar-grid,
   .calendar-days,
@@ -618,7 +620,7 @@
   }
 }
 
-
+  
 </style>
   
   </head>
