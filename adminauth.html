@@ -22,13 +22,11 @@
 <style>
   :root {
     --bg: #0e1416;
-    --surface: #1a2023;
     --text: #e8e5df;
     --muted: #a5aaa9;
     --gold: #d8a04e;
     --tarn: #4b8ca7;
     --shadow: rgba(0, 0, 0, 0.5);
-    --radius: 16px;
     --transition: 0.5s ease;
     --seat-size: 36px;
   }
@@ -53,7 +51,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
     gap: 6px;
     padding: 12px 60px;
     z-index: 100;
@@ -179,7 +176,6 @@
     gap: 20px;
     background: none;
     padding: 0;
-    min-height: auto;
     margin-top: 50px;
   }
 
@@ -281,7 +277,7 @@
     transition: color var(--transition);
     user-select: none;
   }
-  .nav-arrow:hover { color: var(--gold); }
+.nav-arrow:hover { color: var(--gold); }
 
 
   /* ========== ADMIN TABS ========== */
@@ -302,9 +298,11 @@
     flex: 1;
     min-height: 380px;
   }
-  .tab:nth-child(1) { text-align: center; }
-  .tab:nth-child(2) { text-align: center; }
-  .tab:nth-child(3) { text-align: center; }
+  
+  .tab:nth-child(1),
+  .tab:nth-child(2),
+  .tab:nth-child(3) {
+    text-align: center; }
 
   /* ========== TOUR SELECTOR LINKS (left tab) ========== */
   .tour-selector {
@@ -371,9 +369,9 @@
   }
 
   #amendForm label {
-    font-family: "Playful Display", serif;
+    font-family: "Playfair Display", serif;
     font-size: 1.6rem;
-    color: var(--gold)
+    color: var(--gold);
     font-weight: 500;
     letter-spacing: 0.4px;
     text-align: center;
