@@ -186,15 +186,22 @@
   .control-room h3 {
     font-family: "Playfair Display", serif;
     color: var(--gold);
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 16px;
   }
   .control-room p { color: var(--muted); line-height: 1.5; }
+
+  #dates h2 {
+    text-align: center;
+    width: 100%;
+  }
 
   /* ========== CALENDAR STYLES ========== */
   .calendar-header {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 24px;
     margin-bottom: 24px;
   }
@@ -204,6 +211,8 @@
     font-size: 1.6rem;
     color: var(--gold);
     user-select: none;
+    width: 190px;
+    text-align: center;
   }
 
   .calendar-grid { width: 540px; }
@@ -373,13 +382,15 @@
 
   /* ========== SAVE LINK INSIDE CONTROL ROOM ========== */
   .save-link {
-    display: inline-block;
-    margin-top: 12px;
-    font-size: 1rem;
+    display: block;
+    margin: 18px auto 0;
+    font-size: 1.6rem;
+    font-family: "Playfair Display", serif;
     text-decoration: none;
     color: var(--gold);
     cursor: pointer;
     transition: opacity var(--transition);
+    text-align: center;
   }
   .save-link:hover { opacity: 0.7; }
 
