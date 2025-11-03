@@ -468,21 +468,157 @@
   }
   footer a:hover { text-decoration: underline; }
 
-  /* ========== RESPONSIVE ========== */
-  @media (max-width: 700px) {
-    .availability-wrap { flex-direction: column; gap: 40px; }
-    .calendar-grid, .calendar-days, .calendar-dates {
-      max-width: 360px;
-    }
-    .tab-container { flex-direction: column; gap: 50px; }
-    .tab { text-align: center; border-bottom: 1px solid var(--gold); }
-    .tab:last-child { border-bottom: none; }
+  /* ========== RESPONSIVE BEHAVIOUR (Refined from main site) ========== */
+
+/* Slightly smaller desktop / large tablet adjustments */
+@media (max-width: 900px) {
+  header { padding: 12px 40px; }
+  .brand { font-size: 1.5rem; }
+  nav a { margin-left: 20px; font-size: 1rem; }
+
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
+  .hero p { font-size: 1.05rem; padding: 0 24px; }
+
+  section { padding: 80px 8vw; }
+
+  .calendar-container,
+  .control-room { align-items: center; }
+
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates { max-width: 460px; }
+
+  .month-year { font-size: 1.4rem; }
+
+  #admin-tabs { padding: 80px 8vw; }
+  .tab-container { gap: 40px; }
+}
+
+/* Phones and narrow tablets */
+@media (max-width: 700px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    padding: 12px 0;
+    text-align: center;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+  .brand {
+    font-size: 1.4rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
   }
+
+  nav a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 0.95rem;
+  }
+
+  .hero h1 { font-size: clamp(2rem, 6vw, 3rem); }
+  .hero p { font-size: 1rem; }
+
+  .availability-wrap {
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 340px;
+    gap: 8px;
+    grid-auto-rows: 28px;
+    font-size: 0.85rem;
+  }
+
+  .month-year { font-size: 1.2rem; }
+  .nav-arrow { font-size: 1.4rem; }
+
+  #admin-tabs {
+    padding: 60px 6vw;
+  }
+
+  .tab-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+  }
+
+  .tab {
+    text-align: center;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 30px;
+  }
+
+  .tab:last-child { border-bottom: none; }
+
+  .tour-link { font-size: 1.3rem; }
+  #noDataMsg,
+  #amendFields p strong,
+  .tab:nth-child(3) h3 { font-size: 1.4rem; }
+
+  footer {
+    font-size: 0.8rem;
+    padding: 20px;
+  }
+}
+
+/* Very small screens (mobile portrait ~600px and under) */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 0;
+    text-align: center;
+  }
+
+  .brand {
+    font-size: 1.3rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  nav a {
+    display: inline-block;
+    margin: 0 8px;
+    font-size: 0.9rem;
+  }
+
+  .hero h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); }
+  .hero p { font-size: 0.95rem; }
+
+  section { padding: 60px 6vw; }
+
+  .calendar-grid,
+  .calendar-days,
+  .calendar-dates {
+    width: 100%;
+    max-width: 300px;
+    gap: 6px;
+    grid-auto-rows: 24px;
+    font-size: 0.8rem;
+  }
+
+  .month-year { font-size: 1.1rem; }
+  .nav-arrow { font-size: 1.2rem; }
+
+  .tab-container { gap: 40px; }
+  .tour-link { font-size: 1.2rem; }
+  #noDataMsg,
+  #amendFields p strong,
+  .tab:nth-child(3) h3 { font-size: 1.3rem; }
+
+  footer {
+    font-size: 0.75rem;
+    padding: 18px;
+  }
+}
+
+
 </style>
   
   </head>
