@@ -626,11 +626,24 @@ let currentDate = new Date();
 let activeTour = null;
 let activeData = {};
 let selectedDate = null;
+let allData = {}
 
 /* Format date key */
 function formatDate(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
+
+const allToursRef = ref(db, "availability");
+  onValue(allToursRef, (snapshot) => {
+    allData = {};
+    const data = snapshot.val() || {};
+    for (const tour in data) {
+      for (const dateKey in data[tour]) {
+        allData[dateKey] = true;
+      }
+    }
+    renderCalendar(currentDate);
+  });
 
 /* Render Calendar */
 function renderCalendar(date) {
@@ -650,7 +663,11 @@ function renderCalendar(date) {
   for (let d = 1; d <= daysInMonth; d++) {
     const div = document.createElement("div");
     const key = formatDate(year, month, d);
-    if (activeData[key]) div.classList.add("existing");
+    
+    if (activeData[key] || allData[key]) {
+      div.classList.add("existing");
+    }
+    
     div.textContent = d;
     div.addEventListener("click", () => handleDateClick(key, div));
     calendarGrid.appendChild(div);
