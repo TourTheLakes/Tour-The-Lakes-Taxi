@@ -340,16 +340,45 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    margin-top: 10px;
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    gap: 12px;
+  }
+
+  #noDataMsg {
+    font-family: "Playfair Display", serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  #amendFields p strong {
+    font-family: "Playfair Display", serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    font-weight: 500;
+    display: block;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  #amendFields p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    text-align: center;
+    line-height: 1.6;
   }
 
   #amendForm label {
-    display: block;
-    font-size: 1rem;
-    color: var(--gold);
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
+    font-family: "Playful Display", serif;
+    font-size: 1.6rem;
+    color: var(--gold)
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-align: center;
+    margin-bottom: 8px;
   }
 
   #amendForm input {
@@ -359,10 +388,10 @@
     border: none;
     border-bottom: 1px solid var(--gold);
     color: var(--text);
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-align: center;
     padding: 4px 0;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     outline: none;
     transition: border-color var(--transition);
   }
@@ -370,8 +399,6 @@
   #amendForm input:focus {
     border-color: var(--tarn);
   }
-
-  #amendForm p strong { color: var(--gold); }
 
   /* ========== SEATING GRID ========== */
   .seat-grid {
