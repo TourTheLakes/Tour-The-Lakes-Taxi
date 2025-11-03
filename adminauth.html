@@ -303,27 +303,32 @@
     flex: 1;
     min-height: 380px;
   }
-  .tab:nth-child(1) { text-align: left; }
+  .tab:nth-child(1) { text-align: center; }
   .tab:nth-child(2) { text-align: center; }
-  .tab:nth-child(3) { text-align: right; }
+  .tab:nth-child(3) { text-align: center; }
 
   /* ========== TOUR SELECTOR LINKS (left tab) ========== */
   .tour-selector {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 50px;
   }
   .tour-link {
+    font-family: "Playfair Display", serif;
+    font-size: 1.6rem;
+    font-weight: 500;
     color: var(--gold);
-    font-size: 1.2rem;
     text-decoration: none;
-    letter-spacing: 0.4px;
-    transition: color var(--transition), text-shadow var(--transition);
+    letter-spacing: 0.5px;
+    transition: opacity var(--transition), color var(--transition);
+    text-align: center;
   }
   .tour-link:hover {
     color: var(--tarn);
-    text-shadow: 0 0 8px rgba(75,140,167,0.4);
+    opacity: 0.85;
   }
   .tour-link.active {
     color: var(--tarn);
