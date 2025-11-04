@@ -429,7 +429,7 @@
   width: var(--seat-size);
   height: var(--seat-size);
   border-radius: 6px;
-  background: #155f1e;
+  background: #8b1a1a;
   box-shadow: inset 0 0 6px rgba(0,0,0,.4);
   transition: filter var(--transition), background var(--transition);
   cursor: pointer;
@@ -459,7 +459,7 @@
 }
 
 .seat:hover { filter: brightness(1.15); }
-.seat.booked { background: #8b1a1a; }
+.seat.booked { background: #155f1e; }
 .seat.empty {
   background: #2a2f31;
   opacity: .7;
@@ -973,30 +973,7 @@ saveLink.addEventListener("click", async (e) => {
   alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate} ✅`);
 });
 
-/* ---------- SEAT ACTIVATION LOGIC ---------- */
-seatGrid.querySelectorAll(".seat").forEach(seat => {
-  seat.addEventListener("click", async () => {
-    if (!activeTour || !selectedDate) {
-      alert("Select a tour and date first.");
-      return;
-    }
-    if (seat.classList.contains("empty")) return;
 
-    const seatKey = seat.dataset.seat;
-    const isActive = seat.classList.toggle("booked");
-    const seatStatus = isActive ? "active" : "inactive";
-
-    const seatRef = ref(db, `availability/${activeTour}/${selectedDate}/seats/${seatKey}`);
-    await update(seatRef, seatStatus);
-
-    const tourRef = ref(db, `availability/${activeTour}/${selectedDate}/seats`);
-    const snapshot = await get(tourRef);
-    const allSeats = snapshot.val() || {};
-    const activeSeats = Object.values(allSeats).filter(s => s === "active").length;
-
-    await update(ref(db, `availability/${activeTour}/${selectedDate}`), { capacity: activeSeats });
-  });
-});
 
 /* ---------- LOAD TOUR DATA ---------- */
 function loadTourData(tour) {
