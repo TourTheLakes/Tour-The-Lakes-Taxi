@@ -730,7 +730,7 @@
             <p><strong>Tour:</strong> <span id="formTour"></span></p>
             <p><strong>Date:</strong> <span id="formDate"></span></p>
             <label for="startTime">Tour Starting Time:</label>
-            <input type="text" id="startTime" name="startTime" placeholder="e.g. 09:00 AM">
+
             <label for="price">Price (£):</label>
             <input type="text" id="price" name="price" placeholder="e.g. 65.00">
           </div>
@@ -935,81 +935,7 @@ function resetAmendFields(tour, date) {
   document.getElementById("price").value = "";
 }
 
-/* ---------- SAVE NEW AVAILABILITY (WITH ENFORCEMENTS) ---------- */
-saveLink.addEventListener("click", async (e) => {
-  e.preventDefault();
-  if (!activeTour) return alert("Please select a tour first.");
-  if (!selectedDate) return alert("Please select a date from the calendar first.");
 
-  const startTime = document.getElementById("startTime").value.trim();
-  const price = document.getElementById("price").value.trim();
-
-  /* ---- ENFORCE FUTURE DATES ONLY ---- */
-  const today = new Date();
-  const [year, month, day] = selectedDate.split("-").map(Number);
-  const selectedDateObj = new Date(year, month - 1, day);
-
-  if (selectedDateObj < today.setHours(0, 0, 0, 0)) {
-    alert("You cannot assign tours to past dates.");
-    return;
-  }
-
-  /* ---- ENFORCE 24-HOUR TIME FORMAT ---- */
-  const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
-  if (!timePattern.test(startTime)) {
-    alert("Please enter a valid 24-hour time, e.g. 09:00 or 21:00.");
-    return;
-  }
-
-  /* ---- BLOCK PAST TIMES TODAY ---- */
-  if (selectedDateObj.toDateString() === new Date().toDateString()) {
-    const [h, m] = startTime.split(":").map(Number);
-    const inputTime = new Date();
-    inputTime.setHours(h, m, 0, 0);
-    if (inputTime < new Date()) {
-      alert("You cannot assign a start time earlier than the current time.");
-      return;
-    }
-  }
-
-  /* ---- ENFORCE PRICE NORMALISATION ---- */
-  let numericPrice = parseFloat(price.replace(/[£]/g, ""));
-  if (isNaN(numericPrice) || numericPrice <= 0) {
-    alert("Please enter a valid price amount, e.g. 12 or 12.50.");
-    return;
-  }
-  const formattedPrice = `£${numericPrice.toFixed(2)}`;
-
-  /* ---- EXISTING REQUIRED FIELDS ---- */
-  if (!startTime || !price) {
-    alert("Start Time and Price are required.");
-    return;
-  }
-
-  /* ---- SEAT VALIDATION ---- */
-  const seatSnap = await get(ref(db, `availability/${activeTour}/${selectedDate}/seats`));
-  const seatData = seatSnap.val() || {};
-  const activeSeats = Object.values(seatData).filter(s => s === "active").length;
-
-  if (activeSeats === 0) {
-    alert("You must activate at least one seat before saving this tour.");
-    return;
-  }
-
-  /* ---- SAVE PAYLOAD ---- */
-  const payload = {
-    tour: activeTour,
-    date: selectedDate,
-    startTime,
-    price: formattedPrice,
-    seats: seatData,
-    capacity: activeSeats,
-    lastUpdated: new Date().toISOString()
-  };
-
-  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
-  alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate} ✅`);
-});
 
 /* ---------- SEAT ACTIVATION LOGIC (FLIPPED LOGIC) ---------- */
 seatGrid.querySelectorAll(".seat").forEach(seat => {
