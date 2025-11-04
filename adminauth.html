@@ -332,7 +332,86 @@
     text-shadow: 0 0 10px rgba(75,140,167,0.6);
   }
 
+/* ===== AMEND FORM FINAL POLISH ===== */
+#amendForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  margin-top: 40px;
+  gap: 10px;
+}
 
+#amendFields {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#amendFields p {
+  margin: 0;
+  color: var(--text);
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+#amendFields p strong {
+  display: block;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--gold);
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+#amendForm label {
+  display: block;
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-top: 14px;
+  margin-bottom: 4px;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+#amendForm input {
+  width: 100%;
+  max-width: 240px;
+  text-align: center;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gold);
+  color: var(--text);
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.05rem;
+  padding: 4px 0 6px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+#amendForm input:focus {
+  border-color: var(--tarn);
+}
+
+#noDataMsg {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.4px;
+  margin-top: 20px;
+}
 
 /* ========== SEATING GRID ========== */
 .seat-grid {
