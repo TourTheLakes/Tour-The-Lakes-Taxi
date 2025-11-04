@@ -942,7 +942,97 @@ function resetAmendFields(tour, date) {
   document.getElementById("price").value = "";
 }
 
-  
+ /* ---------- SAVE NEW AVAILABILITY (FINAL REINFORCED VERSION) ---------- */
+saveLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  // Base requirements
+  if (!activeTour) {
+    alert("Please select a tour first.");
+    return;
+  }
+  if (!selectedDate) {
+    alert("Please select a date from the calendar first.");
+    return;
+  }
+
+  const startTime = document.getElementById("startTime").value.trim();
+  const price = document.getElementById("price").value.trim();
+
+  /* ---- ENFORCE FUTURE DATES ONLY ---- */
+  const today = new Date();
+  const [year, month, day] = selectedDate.split("-").map(Number);
+  const selectedDateObj = new Date(year, month - 1, day);
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+
+  if (selectedDateObj < todayMidnight) {
+    alert("You cannot assign tours to past dates.");
+    console.warn("⚠️ Blocked Firebase write: past date selected.");
+    return; // ✅ HARD EXIT – prevents any Firebase activity
+  }
+
+  /* ---- ENFORCE 24-HOUR TIME FORMAT ---- */
+  const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  if (!timePattern.test(startTime)) {
+    alert("Please enter a valid 24-hour time (e.g. 09:00 or 21:00).");
+    console.warn("⚠️ Blocked Firebase write: invalid time format.");
+    return;
+  }
+
+  /* ---- BLOCK PAST TIMES ON TODAY ---- */
+  const now = new Date();
+  if (selectedDateObj.toDateString() === now.toDateString()) {
+    const [h, m] = startTime.split(":").map(Number);
+    const inputTime = new Date();
+    inputTime.setHours(h, m, 0, 0);
+    if (inputTime < now) {
+      alert("You cannot assign a start time earlier than the current time.");
+      console.warn("⚠️ Blocked Firebase write: past time on current date.");
+      return;
+    }
+  }
+
+  /* ---- ENFORCE PRICE NORMALISATION ---- */
+  let numericPrice = parseFloat(price.replace(/[£]/g, ""));
+  if (isNaN(numericPrice) || numericPrice <= 0) {
+    alert("Please enter a valid price, e.g. 12 or 12.50.");
+    console.warn("⚠️ Blocked Firebase write: invalid price.");
+    return;
+  }
+  const formattedPrice = `£${numericPrice.toFixed(2)}`;
+
+  /* ---- REQUIRED FIELDS ---- */
+  if (!startTime || !price) {
+    alert("Start Time and Price are required.");
+    return;
+  }
+
+  /* ---- SEAT VALIDATION ---- */
+  const seatSnap = await get(ref(db, `availability/${activeTour}/${selectedDate}/seats`));
+  const seatData = seatSnap.val() || {};
+  const activeSeats = Object.values(seatData).filter(s => s === "active").length;
+
+  if (activeSeats === 0) {
+    alert("You must activate at least one seat before saving this tour.");
+    return;
+  }
+
+  /* ---- FINAL PAYLOAD ---- */
+  const payload = {
+    tour: activeTour,
+    date: selectedDate,
+    startTime,
+    price: formattedPrice,
+    seats: seatData,
+    capacity: activeSeats,
+    lastUpdated: new Date().toISOString()
+  };
+
+  // ✅ At this point all checks passed — now and only now, write to Firebase
+  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
+  alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate} ✅`);
+}); 
 
 /* ---------- SEAT ACTIVATION LOGIC (FLIPPED LOGIC) ---------- */
 seatGrid.querySelectorAll(".seat").forEach(seat => {
