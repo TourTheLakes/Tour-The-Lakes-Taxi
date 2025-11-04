@@ -730,14 +730,14 @@
             <p><strong>Tour:</strong> <span id="formTour"></span></p>
             <p><strong>Date:</strong> <span id="formDate"></span></p>
             <label for="startTime">Tour Starting Time:</label>
-<input
-  type="time"
-  id="startTime"
-  name="startTime"
-  placeholder="HH:MM"
-  pattern="[0-2][0-9]:[0-5][0-9]"
-  required
->
+            <input
+              type="time"
+               id="startTime"
+                name="startTime"
+                 placeholder="HH:MM"
+                  pattern="[0-2][0-9]:[0-5][0-9]"
+                   required
+                    >
             <label for="price">Price (£):</label>
             <input type="text" id="price" name="price" placeholder="e.g. 65.00">
           </div>
@@ -942,93 +942,7 @@ function resetAmendFields(tour, date) {
   document.getElementById("price").value = "";
 }
 
-/* ---------- SAVE NEW AVAILABILITY (WITH ENFORCEMENTS + HARD FAILS) ---------- */
-saveLink.addEventListener("click", async (e) => {
-  e.preventDefault();
-
-  /* Prevent accidental continuation if conditions fail */
-  if (!activeTour) {
-    alert("Please select a tour first.");
-    return;
-  }
-  if (!selectedDate) {
-    alert("Please select a date from the calendar first.");
-    return;
-  }
-
-  const startTime = document.getElementById("startTime").value.trim();
-  const price = document.getElementById("price").value.trim();
-
-  /* ---- ENFORCE FUTURE DATES ONLY (HARD STOP) ---- */
-  const today = new Date();
-  const [year, month, day] = selectedDate.split("-").map(Number);
-  const selectedDateObj = new Date(year, month - 1, day);
-
-  // midnight-normalized date comparison
-  const todayMidnight = new Date();
-  todayMidnight.setHours(0, 0, 0, 0);
-
-  if (selectedDateObj < todayMidnight) {
-    alert("You cannot assign tours to past dates.");
-    throw new Error("Attempted to save a past date — aborted before Firebase write.");
-  }
-
-  /* ---- ENFORCE 24-HOUR TIME FORMAT (HH:MM) ---- */
-  const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/; // strictly 00:00–23:59
-  if (!timePattern.test(startTime)) {
-    alert("Please enter a valid 24-hour time in HH:MM format (e.g. 09:00 or 21:00).");
-    throw new Error("Invalid time format — aborted before Firebase write.");
-  }
-
-  /* ---- BLOCK PAST TIMES TODAY ---- */
-  if (selectedDateObj.toDateString() === new Date().toDateString()) {
-    const [h, m] = startTime.split(":").map(Number);
-    const inputTime = new Date();
-    inputTime.setHours(h, m, 0, 0);
-    if (inputTime < new Date()) {
-      alert("You cannot assign a start time earlier than the current time.");
-      throw new Error("Attempted to set past time on current day — aborted.");
-    }
-  }
-
-  /* ---- ENFORCE PRICE NORMALISATION ---- */
-  let numericPrice = parseFloat(price.replace(/[£]/g, ""));
-  if (isNaN(numericPrice) || numericPrice <= 0) {
-    alert("Please enter a valid price amount, e.g. 12 or 12.50.");
-    throw new Error("Invalid price format — aborted before Firebase write.");
-  }
-  const formattedPrice = `£${numericPrice.toFixed(2)}`;
-
-  /* ---- REQUIRED FIELDS ---- */
-  if (!startTime || !price) {
-    alert("Start Time and Price are required.");
-    throw new Error("Missing required fields — aborted before Firebase write.");
-  }
-
-  /* ---- SEAT VALIDATION ---- */
-  const seatSnap = await get(ref(db, `availability/${activeTour}/${selectedDate}/seats`));
-  const seatData = seatSnap.val() || {};
-  const activeSeats = Object.values(seatData).filter(s => s === "active").length;
-
-  if (activeSeats === 0) {
-    alert("You must activate at least one seat before saving this tour.");
-    throw new Error("No active seats — aborted before Firebase write.");
-  }
-
-  /* ---- FINAL PAYLOAD (SAFE TO COMMIT) ---- */
-  const payload = {
-    tour: activeTour,
-    date: selectedDate,
-    startTime,
-    price: formattedPrice,
-    seats: seatData,
-    capacity: activeSeats,
-    lastUpdated: new Date().toISOString()
-  };
-
-  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
-  alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate} ✅`);
-});
+  
 
 /* ---------- SEAT ACTIVATION LOGIC (FLIPPED LOGIC) ---------- */
 seatGrid.querySelectorAll(".seat").forEach(seat => {
