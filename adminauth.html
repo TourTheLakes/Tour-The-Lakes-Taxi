@@ -990,7 +990,7 @@ seatGrid.querySelectorAll(".seat").forEach(seat => {
     seat.classList.toggle("booked", isNowActive);
     const seatStatus = isNowActive ? "active" : "inactive";
 
-    await update(ref(db, `availability/${activeTour}/${selectedDate}/seats/${seatKey}`), seatStatus);
+ 
 
     // recalc live capacity
     const tourRef = ref(db, `availability/${activeTour}/${selectedDate}/seats`);
