@@ -990,7 +990,8 @@ seatGrid.querySelectorAll(".seat").forEach(seat => {
     seat.classList.toggle("booked", isNowActive);
     const seatStatus = isNowActive ? "active" : "inactive";
 
- 
+ import { set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+await set(ref(db, `availability/${activeTour}/${selectedDate}/seats/${seatKey}`), seatStatus);
 
     // recalc live capacity
     const tourRef = ref(db, `availability/${activeTour}/${selectedDate}/seats`);
