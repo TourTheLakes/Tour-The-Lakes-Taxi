@@ -936,7 +936,74 @@ function resetAmendFields(tour, date) {
   document.getElementById("price").value = "";
 }
 
+/* ---------- SAVE NEW AVAILABILITY (MANDATORY ENFORCEMENT) ---------- */
+saveLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!activeTour) return alert("Please select a tour first.");
+  if (!selectedDate) return alert("Please select a date from the calendar first.");
 
+  const startTime = document.getElementById("startTime").value.trim();
+  const price = document.getElementById("price").value.trim();
+
+  if (!startTime || !price) {
+    alert("Start Time and Price are required.");
+    return;
+  }
+
+  // Fetch existing seats data (so we don’t overwrite seats)
+  const seatSnap = await get(ref(db, `availability/${activeTour}/${selectedDate}/seats`));
+  const seatData = seatSnap.val() || {};
+
+  const activeSeats = Object.values(seatData).filter(s => s === "active").length;
+
+  if (activeSeats === 0) {
+    alert("You must activate at least one seat before saving this tour.");
+    return;
+  }
+
+  const payload = {
+    tour: activeTour,
+    date: selectedDate,
+    startTime: startTime,
+    price: price,
+    seats: seatData,
+    capacity: activeSeats,
+    lastUpdated: new Date().toISOString()
+  };
+
+  await update(ref(db, `availability/${activeTour}/${selectedDate}`), payload);
+
+  alert(`Saved ${activeTour.toUpperCase()} — ${selectedDate} ✅`);
+});
+
+/* ---------- SEAT ACTIVATION LOGIC (LIVE CAPACITY FEED) ---------- */
+seatGrid.querySelectorAll(".seat").forEach(seat => {
+  seat.addEventListener("click", async () => {
+    if (!activeTour || !selectedDate) {
+      alert("Select a tour and date first.");
+      return;
+    }
+
+    if (seat.classList.contains("empty")) return;
+
+    const seatKey = seat.dataset.seat;
+    const isActive = seat.classList.toggle("booked");
+    const seatStatus = isActive ? "active" : "inactive";
+
+    const seatRef = ref(db, `availability/${activeTour}/${selectedDate}/seats/${seatKey}`);
+    await update(seatRef, seatStatus);
+
+    // Recalculate capacity instantly
+    const tourRef = ref(db, `availability/${activeTour}/${selectedDate}/seats`);
+    const snapshot = await get(tourRef);
+    const allSeats = snapshot.val() || {};
+    const activeSeats = Object.values(allSeats).filter(s => s === "active").length;
+
+    await update(ref(db, `availability/${activeTour}/${selectedDate}`), { capacity: activeSeats });
+
+    console.log(`Seat ${seatKey} set to ${seatStatus}. Active seats: ${activeSeats}`);
+  });
+});
 
 /* Initial Render */
 renderCalendar(currentDate);
