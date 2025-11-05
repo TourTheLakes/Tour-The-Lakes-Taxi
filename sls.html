@@ -222,6 +222,8 @@ footer a:hover { text-decoration: underline; }
   align-items: flex-start;
 }
 
+    
+
 .calendar-header {
   display: flex;
   align-items: center;
@@ -422,6 +424,8 @@ footer a:hover { text-decoration: underline; }
 
   <section id="book">
     <h2>Reservation</h2>
+
+    <div class="booking-wrap">
  <div class="calendar-container">
   <div class="calendar-header">
     <button id="prevMonth" class="nav-arrow">‹</button>
@@ -440,8 +444,9 @@ footer a:hover { text-decoration: underline; }
    </div>
    <div class="calendar-dates" id="calendarGrid"></div>
  </div>   
+ </div>
 
-<div class="tab">
+<div class="seat-wrap">
         <h3>Seating Arrangement</h3>
         <div class="seat-grid" id="seatGrid">
           <div class="seat empty"></div>
