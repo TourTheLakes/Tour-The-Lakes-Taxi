@@ -87,7 +87,7 @@ nav a:hover { color: var(--gold); }
 
 /* ========== HERO ========== */
 .hero {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   min-height: 100vh;
   background: linear-gradient(rgba(14,14,14,0.4), rgba(14,14,14,0.8)),
   url('https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0092.JPG')
@@ -113,6 +113,7 @@ nav a:hover { color: var(--gold); }
 }
 
 .hero p {
+  font-family: var(--font-sans);
   font-size: 1.2rem;
   margin-bottom: 24px;
   color: var(--muted);
@@ -121,16 +122,18 @@ nav a:hover { color: var(--gold); }
 
 /* ========== SECTIONS ========== */
 section {
+  font-family: var(--font-sans);
   padding: 100px 10vw;
   text-align: left;
 }
 section h2 {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-sans);
   font-size: 2.5rem;
   color: var(--gold);
   margin-bottom: 20px;
 }
 section p {
+  font-family: var(--font-sans);
   max-width: 760px;
   line-height: 1.7;
   font-size: 1.1rem;
@@ -139,6 +142,7 @@ section p {
 
 /* ========== CALENDAR + BOOKING LAYOUT ========== */
 .booking-wrap {
+  font-family: var(--font-sans);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -149,6 +153,7 @@ section p {
 
 .calendar-container,
 .seat-wrap {
+  font-family: var(--font-sans);
   flex: 1 1 420px;
   display: flex;
   flex-direction: column;
@@ -157,11 +162,13 @@ section p {
 
 /* ========== CALENDAR ========== */
 .calendar-container {
+  font-family: var(--font-sans);
   margin-top: 40px;
   text-align: left;
 }
 
 .calendar-header {
+  font-family: var(--font-sans);
   display: flex;
   align-items: center;
   gap: 24px;
@@ -169,7 +176,7 @@ section p {
 }
 
 .month-year {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-sans);
   font-size: 1.6rem;
   color: var(--gold);
   user-select: none;
@@ -178,6 +185,7 @@ section p {
 .calendar-grid { width: 540px; }
 
 .calendar-days {
+  font-family: var(--font-sans);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
@@ -189,6 +197,7 @@ section p {
 }
 
 .calendar-dates {
+  font-family: var(--font-sans);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
@@ -201,6 +210,7 @@ section p {
 }
 
 .calendar-dates div {
+  font-family: var(--font-sans);
   padding: 8px 0;
   font-size: 1rem;
   color: var(--text);
@@ -211,12 +221,14 @@ section p {
   transition: color var(--transition);
 }
 .calendar-dates div:hover {
+  font-family: var(--font-sans);
   color: var(--gold);
   text-shadow: 0 0 10px rgba(216,160,78,0.3);
   cursor: pointer;
 }
 
 .nav-arrow {
+  font-family: var(--font-sans);
   background: none;
   border: none;
   font-size: 2rem;
@@ -229,7 +241,7 @@ section p {
 
 /* ========== SEATING GRID ========== */
 .seat-wrap h3 {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-sans);
   font-size: 1.6rem;
   font-weight: 500;
   color: var(--gold);
@@ -242,7 +254,7 @@ section p {
 }
 
   .seat-wrap .seat-subtitle {
-      font-family: "Playfair Display", serif;
+      font-family: var(--font-sans);
       font-size: 1rem;
       color: var(--muted);
       text-align: center;
@@ -253,6 +265,7 @@ section p {
   }
 
 .seat-grid {
+  font-family: var(--font-sans);
   display: grid;
   grid-template-columns: repeat(4, var(--seat-size));
   grid-template-rows: repeat(4, var(--seat-size));
@@ -263,6 +276,7 @@ section p {
 }
 
 .seat {
+  font-family: var(--font-sans);
   position: relative;
   width: var(--seat-size);
   height: var(--seat-size);
@@ -282,6 +296,7 @@ section p {
   user-select: none;
 }
 .seat::before {
+  font-family: var(--font-sans);
   content: attr(data-seat);
   position: absolute;
   color: #fff;
@@ -297,6 +312,7 @@ section p {
 .seat:hover { filter: brightness(1.15); }
 .seat.booked { background: #155f1e; }
 .seat.empty {
+  font-family: var(--font-sans);
   background: #2a2f31;
   opacity: 0.7;
   pointer-events: none;
@@ -305,6 +321,7 @@ section p {
 
 /* ========== FOOTER ========== */
 footer {
+  font-family: var(--font-sans);
   background: #0b0f10;
   text-align: center;
   padding: 30px;
@@ -313,11 +330,13 @@ footer {
   color: var(--muted);
 }
 footer a {
+  font-family: var(--font-sans);
   color: var(--gold);
   text-decoration: none;
   transition: opacity var(--transition);
 }
 footer a:hover {
+  font-family: var(--font-sans);
   text-decoration: underline;
   opacity: 0.85;
 }
