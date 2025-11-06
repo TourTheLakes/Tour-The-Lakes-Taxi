@@ -679,7 +679,501 @@ footer a:hover {
   </script>
   
     <!-- Firebase SDKs -->
+<script type="module">
+/* ===========================
+   FIREBASE (Modular SDK)
+=========================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase, ref, child, get, runTransaction, push
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+/* Your config */
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+/* ===========================
+   DOM HOOKS
+=========================== */
+const calendarGrid   = document.getElementById("calendarGrid");
+const monthYearEl    = document.getElementById("monthYear");
+const prevBtn        = document.getElementById("prevMonth");
+const nextBtn        = document.getElementById("nextMonth");
+const seatGrid       = document.getElementById("seatGrid");
+const selectedDateEl = document.getElementById("selectedDate");
+const selectedSeatsEl= document.getElementById("selectedSeats");
+const passengersSel  = document.getElementById("passengers");
+const passengerInfo  = document.getElementById("passengerInfo");
+const totalCostEl    = document.getElementById("totalCost");
+const submitLink     = document.getElementById("submitLink");
+const leadPassenger  = document.getElementById("leadPassenger");
+const contactEmail   = document.getElementById("contactEmail");
+const commentsEl     = document.getElementById("comments");
+
+/* ===========================
+   STATE
+=========================== */
+let currentDateObj      = new Date();
+let currentMonthAvail   = {};      // availability/sls (subset for the month)
+let selectedDateKey     = null;    // "YYYY-MM-DD"
+let dateData            = null;    // availability/sls/<date> payload
+let basePriceNumber     = 0;       // numeric £
+let outerSeatSet        = new Set(["R3R1","R4R1","R5R1","B2","B3"]);
+const PAIRS = {
+  R3R1:"R3R2", R3R2:"R3R1",
+  R4R1:"R4R2", R4R2:"R4R1",
+  R5R1:"R5R2", R5R2:"R5R1",
+  B2:"B3",     B3:"B2"
+};
+
+/* Inject an Auto-allocate control under the seat grid (no HTML change needed) */
+const autoWrap = document.createElement("div");
+autoWrap.style.marginTop = "12px";
+autoWrap.style.textAlign = "center";
+autoWrap.innerHTML = `
+  <label style="cursor:pointer;user-select:none;">
+    <input id="autoAllocateToggle" type="checkbox" style="vertical-align:middle;margin-right:8px;">
+    Auto-allocate my seats
+  </label>
+`;
+seatGrid.parentElement.appendChild(autoWrap);
+const autoToggle = document.getElementById("autoAllocateToggle");
+
+/* ===========================
+   UTILITIES
+=========================== */
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+function parsePriceToNumber(v) {
+  if (typeof v === "number") return v;
+  if (!v) return 0;
+  const n = parseFloat(String(v).replace(/[£,\s]/g,""));
+  return isNaN(n) ? 0 : n;
+}
+
+function fmtGBP(n) {
+  return `£${(n ?? 0).toFixed(2)}`;
+}
+
+function countActiveSeats(seats) {
+  return Object.values(seats || {}).filter(s => s === "active").length;
+}
+
+function currentChosenSeats() {
+  return Array.from(seatGrid.querySelectorAll(".seat.chosen"))
+    .map(s => s.dataset.seat);
+}
+
+function setSelectedSeatsText(list) {
+  selectedSeatsEl.textContent = (list && list.length) ? list.join(", ") : "Pending";
+}
+
+/* ===========================
+   CALENDAR
+=========================== */
+async function renderCalendar(dateObj) {
+  calendarGrid.innerHTML = "";
+  const y = dateObj.getFullYear();
+  const m = dateObj.getMonth(); // 0-based
+  monthYearEl.textContent = `${monthNames[m]} ${y}`;
+
+  // Pull availability root once for the month
+  const rootSnap = await get(child(ref(db), "availability/sls"));
+  const all = rootSnap.exists() ? rootSnap.val() : {};
+  currentMonthAvail = {};
+  const monthPrefix = `${y}-${String(m+1).padStart(2,"0")}`;
+
+  for (const key of Object.keys(all)) {
+    if (key.startsWith(monthPrefix)) currentMonthAvail[key] = all[key];
+  }
+
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  // pad
+  for (let i=0;i<firstDay;i++) calendarGrid.appendChild(document.createElement("div"));
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const iso = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const el = document.createElement("div");
+    el.textContent = d;
+
+    if (currentMonthAvail[iso]) {
+      el.classList.add("active-date");
+      el.addEventListener("click", () => handleDateClick(iso, el));
+    } else {
+      el.style.opacity = "0.25";
+      el.style.cursor = "default";
+    }
+    calendarGrid.appendChild(el);
+  }
+}
+
+function clearCalendarSelection() {
+  document.querySelectorAll(".calendar-dates div").forEach(d => d.classList.remove("selected"));
+}
+
+async function handleDateClick(dateKey, cellEl) {
+  clearCalendarSelection();
+  cellEl?.classList.add("selected");
+  selectedDateKey = dateKey;
+  if (selectedDateEl) selectedDateEl.textContent = dateKey;
+
+  // Load the date payload
+  const snap = await get(child(ref(db), `availability/sls/${dateKey}`));
+  if (!snap.exists()) {
+    dateData = null;
+    clearSeatGrid();
+    totalCostEl.textContent = fmtGBP(0);
+    return;
+  }
+
+  dateData = snap.val();
+  basePriceNumber = parsePriceToNumber(dateData.price);
+
+  // Update seats + passengers UI
+  updateSeatGrid(dateData.seats || {});
+  updatePassengersDropdown(dateData.capacity ?? 0, dateData.seats || {}, basePriceNumber);
+
+  // Initial price refresh
+  recalcTotal();
+}
+
+/* ===========================
+   SEAT GRID BINDING
+=========================== */
+function updateSeatGrid(seatsData) {
+  const seats = seatGrid.querySelectorAll(".seat");
+  seats.forEach(seat => {
+    const key = seat.dataset.seat;
+    seat.classList.remove("booked","chosen","empty");
+    seat.replaceWith(seat.cloneNode(true)); // remove stale listeners
+  });
+
+  // Requery after cloneNode replace
+  Array.from(seatGrid.querySelectorAll(".seat")).forEach(seat => {
+    const key = seat.dataset.seat;
+    const state = (seatsData || {})[key];
+
+    seat.classList.remove("booked","chosen","empty");
+    seat.style.pointerEvents = "none";
+
+    if (state === "booked") {
+      seat.classList.add("booked");
+    } else if (state === "active") {
+      seat.style.pointerEvents = "auto";
+      seat.addEventListener("click", onSeatClick);
+    } else {
+      seat.classList.add("empty");
+    }
+  });
+
+  // If auto-allocate is on, (re)allocate to match passenger count
+  if (autoToggle.checked) {
+    autoAllocateToMatchPassengerCount();
+  } else {
+    // Keep summary consistent even if user manually toggled earlier
+    setSelectedSeatsText(currentChosenSeats());
+  }
+}
+
+function clearSeatGrid() {
+  Array.from(seatGrid.querySelectorAll(".seat")).forEach(seat => {
+    seat.classList.remove("booked","chosen");
+    seat.classList.add("empty");
+    seat.style.pointerEvents = "none";
+  });
+  setSelectedSeatsText([]);
+}
+
+function onSeatClick(e) {
+  const seat = e.currentTarget;
+  if (!dateData) return;
+  const state = (dateData.seats || {})[seat.dataset.seat];
+  if (state !== "active") return;
+
+  seat.classList.toggle("chosen");
+
+  const chosen = currentChosenSeats();
+  setSelectedSeatsText(chosen);
+
+  // If auto-allocate is on, turn it off (user is choosing manually)
+  if (autoToggle.checked) autoToggle.checked = false;
+
+  recalcTotal();
+}
+
+/* ===========================
+   PASSENGERS DROPDOWN
+=========================== */
+function updatePassengersDropdown(capacity, seatsData, basePrice) {
+  // available = min(capacity, active seats count)
+  const activeCount = countActiveSeats(seatsData);
+  const available = Math.max(0, Math.min(capacity ?? 0, activeCount));
+
+  // rebuild options
+  passengersSel.innerHTML = "";
+  const ph = document.createElement("option");
+  ph.disabled = true; ph.selected = true;
+  ph.textContent = "Select total seats";
+  passengersSel.appendChild(ph);
+
+  for (let i=1; i<=available; i++) {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = String(i);
+    passengersSel.appendChild(opt);
+  }
+
+  // helper text + events
+  passengersSel.onchange = () => {
+    const num = parseInt(passengersSel.value || "0", 10);
+    if (passengerInfo) {
+      passengerInfo.textContent =
+        (num <= 1) ? "You only" :
+        (num === 2) ? "You + 1 other" :
+        `You + ${num-1} others`;
+    }
+
+    if (autoToggle.checked) {
+      autoAllocateToMatchPassengerCount();
+    }
+    recalcTotal();
+  };
+}
+
+/* ===========================
+   PRICE: base × passengers + supplement
+=========================== */
+function calcSupplement(chosenList, seatsData) {
+  // £20 if chosen is in outer set AND its pair is still "active" AND pair isn't also chosen
+  let suppl = 0;
+  for (const s of chosenList) {
+    if (!outerSeatSet.has(s)) continue;
+    const pair = PAIRS[s];
+    if (!pair) continue;
+    const pairState = (seatsData || {})[pair];
+    const pairChosen = chosenList.includes(pair);
+
+    if (pairState === "active" && !pairChosen) {
+      suppl += 20;
+    }
+  }
+  return suppl;
+}
+
+function recalcTotal() {
+  if (!dateData) {
+    totalCostEl.textContent = fmtGBP(0);
+    return;
+  }
+  const pax = parseInt(passengersSel.value || "0", 10);
+  const chosen = currentChosenSeats();
+
+  // Base price part
+  const base = basePriceNumber * (isNaN(pax) ? 0 : pax);
+
+  // Supplement logic (only when we have chosen seats)
+  let supplement = 0;
+  if (chosen.length > 0) {
+    supplement = calcSupplement(chosen, dateData.seats || {});
+  }
+
+  totalCostEl.textContent = fmtGBP(base + supplement);
+}
+
+/* ===========================
+   AUTO-ALLOCATE
+   - Prefer non-outer active seats
+   - Fill up to selected passengers
+=========================== */
+function autoAllocateToMatchPassengerCount() {
+  if (!dateData) return;
+  const pax = parseInt(passengersSel.value || "0", 10);
+  if (!pax || pax < 1) return;
+
+  const seatsData = dateData.seats || {};
+  // Clear any manual choices
+  seatGrid.querySelectorAll(".seat.chosen").forEach(s => s.classList.remove("chosen"));
+
+  // Build candidate lists
+  const nonOuterActive = [];
+  const outerActive    = [];
+  Array.from(seatGrid.querySelectorAll(".seat")).forEach(s => {
+    const key = s.dataset.seat;
+    const state = seatsData[key];
+    if (state === "active") {
+      if (outerSeatSet.has(key)) outerActive.push(s);
+      else nonOuterActive.push(s);
+    }
+  });
+
+  // Prefer non-outer, then outer
+  const ordered = [...nonOuterActive, ...outerActive];
+
+  for (let i=0; i<pax && i<ordered.length; i++) {
+    ordered[i].classList.add("chosen");
+  }
+
+  const chosen = currentChosenSeats();
+  setSelectedSeatsText(chosen);
+  recalcTotal();
+}
+
+autoToggle.addEventListener("change", () => {
+  if (autoToggle.checked) {
+    autoAllocateToMatchPassengerCount();
+  }
+});
+
+/* ===========================
+   SUBMISSION (Atomic Tx)
+=========================== */
+function simpleEmailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || ""); }
+
+submitLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!selectedDateKey || !dateData) {
+    alert("Please choose an available date first.");
+    return;
+  }
+  const name  = (leadPassenger.value || "").trim();
+  const email = (contactEmail.value || "").trim();
+  const pax   = parseInt(passengersSel.value || "0", 10);
+  const chosen= currentChosenSeats();
+  const notes = (commentsEl.value || "").trim();
+
+  if (!name)           return alert("Please enter the lead passenger name.");
+  if (!pax)            return alert("Please select the total number of seats.");
+  if (!simpleEmailValid(email)) return alert("Please provide a valid email address.");
+
+  // If user hasn't selected seats (or selected too few), auto allocate if toggle is on
+  if (chosen.length !== pax) {
+    if (autoToggle.checked) {
+      autoAllocateToMatchPassengerCount();
+    }
+  }
+  const finalChosen = currentChosenSeats();
+  if (finalChosen.length !== pax) {
+    return alert(`Please select ${pax} seat(s), or enable auto-allocate.`);
+  }
+
+  // Guard: disable link to avoid double submits
+  submitLink.style.pointerEvents = "none";
+  submitLink.style.opacity = "0.6";
+  submitLink.textContent = "Submitting…";
+
+  try {
+    // One atomic transaction on the date node (seats + capacity)
+    const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
+    const txResult = await runTransaction(dateRef, (current) => {
+      if (!current || !current.seats) return; // abort
+      const seats = current.seats;
+      const cap   = typeof current.capacity === "number" ? current.capacity : parseInt(current.capacity || "0", 10);
+
+      // check enough capacity
+      if (!cap || cap < pax) {
+        return; // abort
+      }
+
+      // Ensure all chosen seats are still "active"
+      for (const s of finalChosen) {
+        if (seats[s] !== "active") {
+          return; // abort
+        }
+      }
+
+      // All good -> mark chosen seats as booked
+      const nextSeats = { ...seats };
+      finalChosen.forEach(s => { nextSeats[s] = "booked"; });
+
+      const next = {
+        ...current,
+        seats: nextSeats,
+        capacity: cap - pax,
+        lastUpdated: new Date().toISOString()
+      };
+      return next;
+    }, { applyLocally: false });
+
+    if (!txResult.committed) {
+      throw new Error("Seat availability changed or insufficient capacity.");
+    }
+
+    // Compute final price again (server truth would be better in production)
+    const chosenNow = finalChosen;
+    const supplement = calcSupplement(chosenNow, txResult.snapshot.val().seats || {});
+    const total = basePriceNumber * pax + supplement;
+
+    // Push booking record (separate write)
+    await push(ref(db, `bookings/sls/${selectedDateKey}`), {
+      tour: "Six Lakes Splendour",
+      date: selectedDateKey,
+      leadPassenger: name,
+      passengers: pax,
+      chosenSeats: chosenNow,
+      contact: { email },
+      comments: notes,
+      totalGBP: Number(total.toFixed(2)),
+      createdAt: new Date().toISOString()
+    });
+
+    // Reflect UI
+    alert("Booking confirmed! A confirmation has been recorded.");
+    totalCostEl.textContent = fmtGBP(total);
+    // Refresh local seat grid from the committed snapshot
+    dateData = txResult.snapshot.val();
+    updateSeatGrid(dateData.seats || {});
+    updatePassengersDropdown(dateData.capacity ?? 0, dateData.seats || {}, basePriceNumber);
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Sorry, there was a problem submitting your booking.");
+  } finally {
+    submitLink.style.pointerEvents = "auto";
+    submitLink.style.opacity = "1";
+    submitLink.textContent = "Submit Reservation";
+  }
+});
+
+/* ===========================
+   INIT
+=========================== */
+prevBtn.addEventListener("click", () => {
+  currentDateObj.setMonth(currentDateObj.getMonth() - 1);
+  renderCalendar(currentDateObj);
+});
+nextBtn.addEventListener("click", () => {
+  currentDateObj.setMonth(currentDateObj.getMonth() + 1);
+  renderCalendar(currentDateObj);
+});
+
+await renderCalendar(currentDateObj);
+
+/* Optional: comments autosize */
+(function autosizeComments(){
+  if (!commentsEl) return;
+  const resize = () => {
+    commentsEl.style.height = "auto";
+    commentsEl.style.height = Math.min(commentsEl.scrollHeight, 240) + "px";
+  };
+  commentsEl.addEventListener("input", resize);
+  resize();
+})();
+</script>
 
   
 </body>
