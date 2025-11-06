@@ -366,7 +366,36 @@ section p {
     text-align: center;
   }
 
- 
+ .auto-allocate {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  user-select: none;
+}
+
+.auto-allocate label {
+  cursor: pointer;
+  color: var(--gold);          /* ✅ ensure label text is gold */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                   /* space between box and text */
+  transition: color var(--transition), text-shadow var(--transition);
+}
+
+.auto-allocate label:hover {
+  color: var(--tarn);          /* same subtle hover tint as nav links */
+  text-shadow: 0 0 8px rgba(216,160,78,0.25);
+}
+
+.auto-allocate input[type="checkbox"] {
+  accent-color: var(--gold);
+  transform: scale(1.1);
+  vertical-align: middle;
+  cursor: pointer;
+}
 
 .seat-grid {
   display: grid;
@@ -622,6 +651,12 @@ footer a:hover {
    <p class="seat-subtitle">A SUPPLIMENT APPLIES TO SOLO USE OF DOUBLE SEATS.</p>
           </div>
 
+      <div class="auto-allocate">
+  <label>
+    <input id="autoAllocateToggle" type="checkbox">
+    Auto-allocate my seats
+  </label>
+      </div>
       
             </div>
   </section>
