@@ -327,6 +327,20 @@ section p {
     text-align: center;
   }
 
+  /* Selected calendar day highlight */
+.calendar-dates div.selected {
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(216,160,78,0.35);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(216,160,78,0.5);
+}
+
+/* User-chosen seat state (public booking page) */
+.seat.chosen {
+  background: #a66d21; /* warm amber tone to differentiate from admin green */
+  box-shadow: inset 0 0 6px rgba(0,0,0,.45);
+}
+
 /* ========== SEATING GRID ========== */
 .seat-wrap h3 {
   font-family: "Playfair Display", serif;
@@ -719,6 +733,179 @@ footer a:hover {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar(currentDate);
   });
+
+<script>
+/* ------------------------------
+   PHASE 1: Client-side behaviours
+   - Calendar date select
+   - Seat selection (front-end only)
+   - Form validation & summary
+   - Comments autosize
+   - Submission stub (console only)
+--------------------------------- */
+
+/* ====== CALENDAR: SELECT A DATE ====== */
+// Attach click handlers to dates once the calendar exists.
+// If your renderCalendar() re-creates the nodes, call bindCalendarClicks() after render.
+function bindCalendarClicks() {
+  const dateCells = document.querySelectorAll(".calendar-dates div");
+  dateCells.forEach(cell => {
+    if (!cell.textContent.trim()) return; // skip blanks
+
+    cell.addEventListener("click", () => {
+      // visual state
+      document.querySelectorAll(".calendar-dates div").forEach(c => c.classList.remove("selected"));
+      cell.classList.add("selected");
+
+      // compute an ISO-like date string from current month/year + day
+      const monthYearEl = document.getElementById("monthYear");
+      const [monthName, yearStr] = monthYearEl.textContent.split(" ");
+      const monthIndex = [
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+      ].indexOf(monthName);
+
+      const day = String(parseInt(cell.textContent, 10)).padStart(2, "0");
+      const month = String(monthIndex + 1).padStart(2, "0");
+      const year = yearStr;
+      const iso = `${year}-${month}-${day}`;
+
+      // update summary
+      const selDate = document.getElementById("selectedDate");
+      if (selDate) selDate.textContent = iso;
+    });
+  });
+}
+
+// If your page already called renderCalendar(currentDate); do an initial bind:
+bindCalendarClicks();
+
+// If you re-render on prev/next, hook these to re-bind:
+document.getElementById("prevMonth")?.addEventListener("click", () => {
+  setTimeout(bindCalendarClicks, 0);
+});
+document.getElementById("nextMonth")?.addEventListener("click", () => {
+  setTimeout(bindCalendarClicks, 0);
+});
+
+
+/* ====== SEAT PICKING (CLIENT SIDE ONLY) ====== */
+(function setupSeatPicking(){
+  const grid = document.getElementById("seatGrid");
+  if (!grid) return;
+
+  grid.addEventListener("click", (e) => {
+    const seat = e.target.closest(".seat");
+    if (!seat || seat.classList.contains("empty")) return;
+
+    // toggle user choice
+    seat.classList.toggle("chosen");
+
+    // update summary line
+    const chosen = Array.from(grid.querySelectorAll(".seat.chosen"))
+      .map(s => s.getAttribute("data-seat"))
+      .filter(Boolean);
+
+    const selSeats = document.getElementById("selectedSeats");
+    if (selSeats) selSeats.textContent = chosen.length ? chosen.join(", ") : "Pending";
+
+    // (Later) we’ll enforce ‘max seats allowed’ once Firebase gives capacity,
+    // and we’ll auto-assign remaining seats if user under-selects.
+  });
+})();
+
+
+/* ====== COMMENTS AUTOSIZE (no manual resize) ====== */
+(function autosizeComments(){
+  const ta = document.getElementById("comments");
+  if (!ta) return;
+
+  const resize = () => {
+    ta.style.height = "auto";
+    ta.style.height = Math.min(ta.scrollHeight, 240) + "px"; // soft cap
+  };
+  ta.addEventListener("input", resize);
+  // initial
+  resize();
+})();
+
+
+/* ====== FORM VALIDATION + SUBMISSION STUB ====== */
+(function setupReservationSubmission(){
+  const form = document.getElementById("reservationForm");
+  const submitLink = document.getElementById("submitLink");
+  if (!form || !submitLink) return;
+
+  // helper: simple email check (leave robust checks to browser + backend)
+  const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  submitLink.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // collect inputs
+    const leadName   = document.getElementById("leadPassenger")?.value.trim() || "";
+    const seatsValue = document.getElementById("passengers")?.value || "";
+    const phone      = document.getElementById("contactNumber")?.value.trim() || "";
+    const email      = document.getElementById("contactEmail")?.value.trim() || "";
+    const comments   = document.getElementById("comments")?.value.trim() || "";
+    const dateText   = document.getElementById("selectedDate")?.textContent.trim() || "Not selected";
+
+    // summary seats (chosen)
+    const chosenSeats = Array.from(document.querySelectorAll("#seatGrid .seat.chosen"))
+      .map(s => s.getAttribute("data-seat"))
+      .filter(Boolean);
+
+    // validate basics
+    const errors = [];
+    if (!leadName) errors.push("Please enter the lead passenger name.");
+    if (!seatsValue) errors.push("Please select the total number of seats.");
+    if (!email || !isEmail(email)) errors.push("Please provide a valid email address.");
+    if (!dateText || dateText === "Not selected") errors.push("Please select a date from the calendar.");
+
+    if (errors.length) {
+      alert(errors.join("\n"));
+      return;
+    }
+
+    // (Optional) if you want to enforce the user selects exactly N seats on the grid now:
+    // const totalSeatsRequested = parseInt(seatsValue, 10);
+    // if (chosenSeats.length && chosenSeats.length !== totalSeatsRequested) {
+    //   if (!confirm(`You picked ${chosenSeats.length} seat(s), but requested ${totalSeatsRequested}. Continue and auto-allocate remaining seats later?`)) {
+    //     return;
+    //   }
+    // }
+
+    // total cost: placeholder for now (Firebase price will replace this)
+    // You can later inject price into the DOM (e.g., data attribute) and compute here.
+    const totalCostEl = document.getElementById("totalCost");
+    const totalCost = totalCostEl ? totalCostEl.textContent.trim() : "£0.00";
+
+    // Build payload (ready for Firebase write later)
+    const payload = {
+      tour: "Six Lakes Splendour",
+      date: dateText,
+      leadPassenger: leadName,
+      totalSeatsRequested: parseInt(seatsValue, 10),
+      chosenSeats, // may be [] if user didn’t choose; we’ll auto-assign later.
+      contact: { phone, email },
+      comments,
+      totalCost
+    };
+
+    console.log("Reservation payload (stub):", payload);
+
+    // For now, just a friendly confirmation.
+    alert("Thanks! Your reservation details are ready. We’ll enable final submission shortly.");
+
+    // TODOs for Phase 2:
+    // - Read `availability/sls/<date>` from Firebase -> get price, active seats, capacity
+    // - Validate capacity >= requested seats
+    // - If chosenSeats < requested, auto-assign remaining from active seats not taken
+    // - Write a booking record to Firebase and redirect/show success
+  });
+})();
+</script>
+  
 
   renderCalendar(currentDate);
 </script>
