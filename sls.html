@@ -185,7 +185,7 @@ textarea {
 select {
   appearance: none; /* removes native OS style */
   -webkit-appearance: none;
-  -moz-appearance;none;
+  -moz-appearance: none;
   background-color: var(--surface);
   color: var(--text);
   border: 1px solid rgba(255,255,255,0.01);
@@ -197,7 +197,7 @@ select {
   transition: border-color var(--transition), background var(--transition);
 }
 
-select: focus {
+select:focus {
   border-color: var(--gold);
   background-color: var(--text);
   border: none;
@@ -209,7 +209,7 @@ select option {
   border: none;
 }
 
-select: :-ms-expand {
+select::-ms-expand {
   display: none;
 }
 
