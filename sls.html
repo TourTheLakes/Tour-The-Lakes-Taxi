@@ -635,15 +635,12 @@ footer a:hover {
         <label for="passengers">Other Passengers <span>*</span></label>
         <select id="passengers" name="passengers" required>
           <option value="" disabled selected>Select total seats</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
+        
         </select>
+<p id="passengerInfo" class="seat-subtitle" 
+  style="margin-top:8px;color:var(--gold);text-align:left;">
+</p>
+        
       </div>
     </div>
 
@@ -777,6 +774,53 @@ async function handleDateClick(dateKey) {
     : `£${parseFloat(rawPrice).toFixed(2)}`;
   document.getElementById("totalCost").textContent = price;
 }
+
+  /* -------------------  DYNAMIC PASSENGER DROPDOWN + PRICE LOGIC  ------------------- */
+function updatePassengerOptions(capacity, seatsData, priceValue) {
+  const dropdown = document.getElementById("passengers");
+  const infoLine = document.getElementById("passengerInfo");
+  if (!dropdown) return;
+
+  // Count available seats
+  const activeSeats = Object.values(seatsData).filter(v => v === "active").length;
+  const available = Math.min(capacity, activeSeats);
+
+  // Reset dropdown
+  dropdown.innerHTML = "";
+  const placeholder = document.createElement("option");
+  placeholder.textContent = "Select total seats";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  dropdown.appendChild(placeholder);
+
+  for (let i = 1; i <= available; i++) {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = i;
+    dropdown.appendChild(opt);
+  }
+
+  // Listen for live changes
+  dropdown.addEventListener("change", () => {
+    const num = parseInt(dropdown.value, 10);
+    const phrase =
+      num === 1 ? "You only" :
+      num === 2 ? "You + 1 other" :
+      `You + ${num - 1} others`;
+
+    // Update helper text
+    if (infoLine) infoLine.textContent = phrase;
+
+    // Update total price line
+    const base = typeof priceValue === "string"
+      ? parseFloat(priceValue.replace(/[£,]/g, "")) || 0
+      : priceValue || 0;
+    const total = base * num;
+    document.getElementById("totalCost").textContent = `£${total.toFixed(2)}`;
+  });
+}
+
+updatePassengerOptions(data.capacity || 8, data.seats || {}, data.price || 0);
 
 /* -------------------  SEAT GRID  ------------------- */
 function updateSeatGrid(seatsData) {
