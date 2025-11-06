@@ -184,15 +184,33 @@ textarea {
 /* Ensure dropdown matches dark theme */
 select {
   appearance: none; /* removes native OS style */
+  -webkit-appearance: none;
+  -moz-appearance;none;
   background-color: var(--surface);
   color: var(--text);
   border: 1px solid rgba(255,255,255,0.01);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: none;
+  transition: border-color var(--transition), background var(--transition);
 }
 
-/* Style the dropdown list itself */
+select: focus {
+  border-color: var(--gold);
+  background-color: var(--text);
+  border: none;
+}
+
 select option {
   background-color: var(--surface);
   color: var(--text);
+  border: none;
+}
+
+select: :-ms-expand {
+  display: none;
 }
 
 .summary {
