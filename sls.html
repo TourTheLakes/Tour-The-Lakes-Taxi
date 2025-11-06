@@ -774,6 +774,7 @@ async function handleDateClick(dateKey) {
     : `£${parseFloat(rawPrice).toFixed(2)}`;
   document.getElementById("totalCost").textContent = price;
 }
+updatePassengerOptions(data.capacity || 8, data.seats || {}, data.price || 0);
 
   /* -------------------  DYNAMIC PASSENGER DROPDOWN + PRICE LOGIC  ------------------- */
 function updatePassengerOptions(capacity, seatsData, priceValue) {
@@ -819,8 +820,6 @@ function updatePassengerOptions(capacity, seatsData, priceValue) {
     document.getElementById("totalCost").textContent = `£${total.toFixed(2)}`;
   });
 }
-
-updatePassengerOptions(data.capacity || 8, data.seats || {}, data.price || 0);
 
 /* -------------------  SEAT GRID  ------------------- */
 function updateSeatGrid(seatsData) {
