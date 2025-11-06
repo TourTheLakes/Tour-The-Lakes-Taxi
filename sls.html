@@ -356,7 +356,7 @@ section p {
   user-select: none;
 }
 
-  .seat-wrap .seat-subtitle {
+  .seat-wrap .seat-subtitle .auto-allocate {
     font-family: "Work Sans", sans-serif;
     font-size: 1rem;
     color: var(--gold);
@@ -364,6 +364,13 @@ section p {
     margin-bottom: 10px;
     font-weight: 500;
     text-align: center;
+  }
+
+  .auto-allocate input[type="checkbox"] {
+    accent-color: var(--gold);
+    tranform: scale(1.1);
+    margin-right: 8px;
+    vertical-align: middle;
   }
 
 .seat-grid {
@@ -741,12 +748,15 @@ const PAIRS = {
 const autoWrap = document.createElement("div");
 autoWrap.style.marginTop = "12px";
 autoWrap.style.textAlign = "center";
-autoWrap.innerHTML = `
+  
+  autoWrap.classList.add("auto-allocate");
+  autoWrap.innerHTML = `
   <label style="cursor:pointer;user-select:none;">
-    <input id="autoAllocateToggle" type="checkbox" style="vertical-align:middle;margin-right:8px;">
+    <input id="autoAllocateToggle" type="checkbox">
     Auto-allocate my seats
   </label>
 `;
+  
 seatGrid.parentElement.appendChild(autoWrap);
 const autoToggle = document.getElementById("autoAllocateToggle");
 
