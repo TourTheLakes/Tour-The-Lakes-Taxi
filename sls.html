@@ -734,45 +734,7 @@ footer a:hover {
     renderCalendar(currentDate);
   });
 
-  /* -------------------  ON DATE CLICK  ------------------- */
-  async function handleDateClick(dateKey) {
-    document.querySelectorAll(".calendar-dates div").forEach(d => d.classList.remove("selected"));
-    const target = Array.from(document.querySelectorAll(".calendar-dates div"))
-      .find(el => el.textContent.padStart(2,"0") === dateKey.slice(-2));
-    if (target) target.classList.add("selected");
-
-    const selDate = document.getElementById("selectedDate");
-    if (selDate) selDate.textContent = dateKey;
-
-    const snapshot = await get(child(ref(db), `availability/sls/${dateKey}`));
-    if (!snapshot.exists()) {
-      alert("No tour scheduled for this date.");
-      clearSeatGrid();
-      document.getElementById("totalCost").textContent = "£0.00";
-      return;
-    }
-
-    const data = snapshot.val();
-    updateSeatGrid(data.seats || {});
-    const price = parseFloat(data.price || 0).toFixed(2);
-    document.getElementById("totalCost").textContent = `£${price}`;
-  }
-
-  /* -------------------  SEAT GRID  ------------------- */
-  function updateSeatGrid(seatsData) {
-    const seats = seatGrid.querySelectorAll(".seat");
-    seats.forEach(seat => {
-      const key = seat.dataset.seat;
-      seat.classList.remove("booked","chosen");
-      if (seatsData[key] === "booked") {
-        seat.classList.add("booked");
-        seat.style.pointerEvents = "none";
-      } else {
-        seat.style.pointerEvents = "auto";
-        seat.addEventListener("click", toggleSeatChoice);
-      }
-    });
-  }
+ 
 
   function clearSeatGrid() {
     seatGrid.querySelectorAll(".seat").forEach(seat => {
