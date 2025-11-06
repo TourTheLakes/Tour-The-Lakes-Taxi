@@ -181,7 +181,18 @@ textarea {
   min-height: 120px;
 }
 
+/* Ensure dropdown matches dark theme */
+select {
+  appearance: none; /* removes native OS style */
+  background-color: var(--surface);
+  color: var(--text);
+}
 
+/* Style the dropdown list itself */
+select option {
+  background-color: var(--surface);
+  color: var(--text);
+}
 
 .summary {
   margin-top: 40px;
