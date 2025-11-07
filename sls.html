@@ -1298,25 +1298,7 @@ submitLink.addEventListener("click", async (e) => {
     const supplement = calcSupplement(finalChosen, seats);
     const total = basePriceNumber * pax + supplement;
 
-    // Record booking in Firebase
-    await push(ref(db, `bookings/sls/${selectedDateKey}`), {
-      tour: "Six Lakes Splendour",
-      date: selectedDateKey,
-      leadPassenger: name,
-      passengers: pax,
-      chosenSeats: finalChosen,
-      contact: { email },
-      comments: notes,
-      totalGBP: Number(total.toFixed(2)),
-      createdAt: new Date().toISOString()
-    });
 
-    // Update UI on success
-    alert("Booking confirmed! A confirmation has been recorded.");
-    totalCostEl.textContent = fmtGBP(total);
-    dateData = { ...current, seats, capacity: nextCap };
-    updateSeatGrid(seats);
-    updatePassengersDropdown(nextCap, seats, basePriceNumber);
 
   } catch (err) {
     console.error(err);
