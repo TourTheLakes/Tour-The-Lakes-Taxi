@@ -1300,14 +1300,17 @@ await push(ref(db, `bookings/sls/${selectedDateKey}`), {
   comments: notes,
   totalGBP: Number(total.toFixed(2)),
   createdAt: new Date().toISOString()
-});
 
-// update UI
+  // update UI
 alert("Booking confirmed! A confirmation has been recorded.");
 totalCostEl.textContent = fmtGBP(total);
 dateData = { ...current, seats, capacity: nextCap };
 updateSeatGrid(seats);
 updatePassengersDropdown(nextCap, seats, basePriceNumber);
+  
+});
+
+
 
 /* ===========================
    INIT
