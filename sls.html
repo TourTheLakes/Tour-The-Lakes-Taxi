@@ -826,7 +826,216 @@ footer a:hover {
   </script>
   
     <!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase, ref, child, get, update, push
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+/* --- CONFIG --- */
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+/* --- DOM HOOKS --- */
+const calendarGrid   = document.getElementById("calendarGrid");
+const monthYearEl    = document.getElementById("monthYear");
+const prevBtn        = document.getElementById("prevMonth");
+const nextBtn        = document.getElementById("nextMonth");
+const seatGrid       = document.getElementById("seatGrid");
+const selectedDateEl = document.getElementById("selectedDate");
+const selectedSeatsEl= document.getElementById("selectedSeats");
+const selectedTimeEl = document.getElementById("selectedTime");
+const passengersSel  = document.getElementById("passengers");
+const passengerInfo  = document.getElementById("passengerInfo");
+const totalCostEl    = document.getElementById("totalCost");
+const submitLink     = document.getElementById("submitLink");
+const leadPassenger  = document.getElementById("leadPassenger");
+const contactEmail   = document.getElementById("contactEmail");
+const commentsEl     = document.getElementById("comments");
+
+/* --- STATE --- */
+let currentDateObj    = new Date();
+let selectedDateKey   = null;
+let dateData          = null;
+let basePriceNumber   = 0;
+const outerSeatSet    = new Set(["R3R1","R4R1","R5R1","B2","B3"]);
+const PAIRS = {
+  R3R1:"R3R2", R3R2:"R3R1",
+  R4R1:"R4R2", R4R2:"R4R1",
+  R5R1:"R5R2", R5R2:"R5R1",
+  B2:"B3", B3:"B2"
+};
+
+/* --- UTILITIES --- */
+function fmtGBP(n){ return `£${(n??0).toFixed(2)}`; }
+function parsePriceToNumber(v){ return parseFloat(String(v||"").replace(/[£,\s]/g,"")) || 0; }
+function currentChosenSeats(){ return [...seatGrid.querySelectorAll(".seat.chosen")].map(s=>s.dataset.seat); }
+function setSelectedSeatsText(list){ selectedSeatsEl.textContent = list.length ? list.join(", ") : "Pending"; }
+
+/* --- AUTO ALLOCATE --- */
+const autoWrap = document.createElement("div");
+autoWrap.classList.add("auto-allocate");
+autoWrap.innerHTML = `
+  <label><input id="autoAllocateToggle" type="checkbox"> AUTO ALLOCATE MY SEATS</label>`;
+seatGrid.parentElement.appendChild(autoWrap);
+const autoToggle = document.getElementById("autoAllocateToggle");
+
+/* --- CALENDAR RENDER --- */
+async function renderCalendar(dateObj){
+  calendarGrid.innerHTML = "";
+  const y=dateObj.getFullYear(), m=dateObj.getMonth();
+  monthYearEl.textContent=`${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m]} ${y}`;
+  const snap=await get(child(ref(db),"availability/sls"));
+  const all=snap.exists()?snap.val():{};
+  const monthPrefix=`${y}-${String(m+1).padStart(2,"0")}`;
+  const firstDay=new Date(y,m,1).getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  for(let i=0;i<firstDay;i++)calendarGrid.appendChild(document.createElement("div"));
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const el=document.createElement("div");
+    el.textContent=d;
+    if(all[iso]){ el.classList.add("active-date"); el.onclick=()=>handleDateClick(iso,el); }
+    else { el.style.opacity="0.25"; el.style.cursor="default"; }
+    calendarGrid.appendChild(el);
+  }
+}
+function clearCalendarSelection(){ document.querySelectorAll(".calendar-dates div").forEach(d=>d.classList.remove("selected")); }
+
+/* --- DATE CLICK --- */
+async function handleDateClick(dateKey,el){
+  clearCalendarSelection(); el.classList.add("selected");
+  selectedDateKey=dateKey; selectedDateEl.textContent=dateKey;
+  const snap=await get(child(ref(db),`availability/sls/${dateKey}`));
+  if(!snap.exists()){ dateData=null; clearSeatGrid(); totalCostEl.textContent=fmtGBP(0); return; }
+  dateData=snap.val(); basePriceNumber=parsePriceToNumber(dateData.price);
+  selectedTimeEl.textContent=dateData.startTime||"TBC";
+  updateSeatGrid(dateData.seats||{}); recalcTotal();
+}
+
+/* --- SEAT GRID --- */
+function updateSeatGrid(seatsData){
+  const allSeats=[...seatGrid.querySelectorAll(".seat")];
+  allSeats.forEach(s=>{
+    s.classList.remove("booked","chosen","empty");
+    s.replaceWith(s.cloneNode(true));
+  });
+  [...seatGrid.querySelectorAll(".seat")].forEach(s=>{
+    const key=s.dataset.seat, state=seatsData[key];
+    s.classList.remove("booked","chosen","empty");
+    s.style.pointerEvents="none";
+    if(state==="booked") s.classList.add("booked");
+    else if(state==="active"){ s.style.pointerEvents="auto"; s.onclick=onSeatClick; }
+    else s.classList.add("empty");
+  });
+  if(autoToggle.checked) autoAllocate();
+  else setSelectedSeatsText(currentChosenSeats());
+}
+function clearSeatGrid(){ seatGrid.querySelectorAll(".seat").forEach(s=>{s.className="seat empty";s.style.pointerEvents="none";}); setSelectedSeatsText([]); }
+function onSeatClick(e){ const s=e.currentTarget; if((dateData.seats||{})[s.dataset.seat]!=="active")return; s.classList.toggle("chosen"); if(autoToggle.checked)autoToggle.checked=false; setSelectedSeatsText(currentChosenSeats()); recalcTotal(); }
+
+/* --- AUTO ALLOCATE --- */
+function autoAllocate(){
+  if(!dateData)return; const pax=parseInt(passengersSel.value||"0",10); if(!pax)return;
+  seatGrid.querySelectorAll(".seat.chosen").forEach(s=>s.classList.remove("chosen"));
+  const nonOuter=[], outer=[];
+  seatGrid.querySelectorAll(".seat").forEach(s=>{
+    const st=(dateData.seats||{})[s.dataset.seat];
+    if(st==="active"){ (outerSeatSet.has(s.dataset.seat)?outer:nonOuter).push(s); }
+  });
+  const ordered=[...nonOuter,...outer]; for(let i=0;i<pax&&i<ordered.length;i++)ordered[i].classList.add("chosen");
+  setSelectedSeatsText(currentChosenSeats()); recalcTotal();
+}
+autoToggle.addEventListener("change",()=>{ if(autoToggle.checked)autoAllocate(); });
+
+/* --- PRICE --- */
+function calcSupplement(chosen,seats){
+  let total=0;
+  for(const s of chosen){
+    if(!outerSeatSet.has(s))continue;
+    const pair=PAIRS[s], ps=seats[pair], pc=chosen.includes(pair);
+    if(ps==="active"&&!pc) total+=20;
+  }
+  return total;
+}
+function recalcTotal(){
+  if(!dateData){ totalCostEl.textContent=fmtGBP(0); return; }
+  const pax=parseInt(passengersSel.value||"0",10)||0;
+  const chosen=currentChosenSeats();
+  const base=basePriceNumber*pax;
+  const supp=chosen.length?calcSupplement(chosen,dateData.seats||{}):0;
+  totalCostEl.textContent=fmtGBP(base+supp);
+}
+
+/* --- BOOKING SUBMIT --- */
+function simpleEmailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v||""); }
+submitLink.onclick=async(e)=>{
+  e.preventDefault();
+  if(!selectedDateKey||!dateData) return alert("Please choose an available date first.");
+  const name=leadPassenger.value.trim();
+  const email=contactEmail.value.trim();
+  const pax=parseInt(passengersSel.value||"0",10);
+  const chosen=currentChosenSeats();
+  const notes=commentsEl.value.trim();
+  if(!name) return alert("Please enter the lead passenger name.");
+  if(!pax) return alert("Please select the total number of seats.");
+  if(!simpleEmailValid(email)) return alert("Please provide a valid email.");
+  if(chosen.length!==pax && autoToggle.checked) autoAllocate();
+  const final=currentChosenSeats();
+  if(final.length!==pax) return alert(`Please select ${pax} seat(s), or enable auto-allocate.`);
+  submitLink.style.pointerEvents="none"; submitLink.style.opacity="0.6"; submitLink.textContent="Submitting…";
+  try{
+    const dateRef=ref(db,`availability/sls/${selectedDateKey}`);
+    const snap=await get(dateRef);
+    if(!snap.exists()) throw new Error("Date not found in database.");
+    const current=snap.val(), seats={...(current.seats||{})};
+    for(const s of final){
+      if(seats[s]!=="active") throw new Error(`Seat ${s} is no longer available.`);
+      seats[s]="booked";
+    }
+    const nextCap=Math.max(0,(Number(current.capacity)||0)-pax);
+    await update(dateRef,{seats,capacity:nextCap,lastUpdated:new Date().toISOString()});
+    const total=basePriceNumber*pax+calcSupplement(final,seats);
+    await push(ref(db,`bookings/sls/${selectedDateKey}`),{
+      tour:"Six Lakes Splendour",
+      date:selectedDateKey,
+      leadPassenger:name,
+      passengers:pax,
+      chosenSeats:final,
+      contact:{email},
+      comments:notes,
+      totalGBP:total,
+      createdAt:new Date().toISOString()
+    });
+    alert("Booking confirmed!");
+    totalCostEl.textContent=fmtGBP(total);
+    dateData={...current,seats,capacity:nextCap};
+    updateSeatGrid(seats);
+  }catch(err){
+    console.error(err);
+    alert(err.message||"Error submitting booking.");
+  }finally{
+    submitLink.style.pointerEvents="auto";
+    submitLink.style.opacity="1";
+    submitLink.textContent="Submit Reservation";
+  }
+};
+
+/* --- INIT --- */
+prevBtn.onclick=()=>{ currentDateObj.setMonth(currentDateObj.getMonth()-1); renderCalendar(currentDateObj); };
+nextBtn.onclick=()=>{ currentDateObj.setMonth(currentDateObj.getMonth()+1); renderCalendar(currentDateObj); };
+await renderCalendar(currentDateObj);
+</script>
 
   
 </body>
