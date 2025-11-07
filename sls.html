@@ -808,6 +808,7 @@ footer a:hover {
     <div class="summary">
       <p><strong>Tour:</strong> Six Lakes Splendour</p>
       <p><strong>Date:</strong> <span id="selectedDate">Not selected</span></p>
+      <p><strong>Time:</strong> <span id="selectTime">-</span></p>
       <p><strong>Seats:</strong> <span id="selectedSeats">Pending</span></p>
       <p><strong>Total:</strong> <span id="totalCost">£0.00</span></p>
       <a href="#" id="submitLink">Submit Reservation</a>
@@ -858,6 +859,7 @@ const nextBtn        = document.getElementById("nextMonth");
 const seatGrid       = document.getElementById("seatGrid");
 const selectedDateEl = document.getElementById("selectedDate");
 const selectedSeatsEl= document.getElementById("selectedSeats");
+const selectedTimeEl= document.getElementById("selectedTime");
 const passengersSel  = document.getElementById("passengers");
 const passengerInfo  = document.getElementById("passengerInfo");
 const totalCostEl    = document.getElementById("totalCost");
@@ -980,6 +982,7 @@ async function handleDateClick(dateKey, cellEl) {
   cellEl?.classList.add("selected");
   selectedDateKey = dateKey;
   if (selectedDateEl) selectedDateEl.textContent = dateKey;
+  if (selectedTimeEl) selectedTimeEl.textContent = "-";
 
   // Load the date payload
   const snap = await get(child(ref(db), `availability/sls/${dateKey}`));
@@ -992,6 +995,8 @@ async function handleDateClick(dateKey, cellEl) {
 
   dateData = snap.val();
   basePriceNumber = parsePriceToNumber(dateData.price);
+
+  if (selectedTimeEl) selectedTimeEl.textContent = dateData.startTime || "TBC";
 
   // Update seats + passengers UI
   updateSeatGrid(dateData.seats || {});
