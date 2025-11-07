@@ -278,7 +278,7 @@
       font-size: 1.4rem;
     }
 
-   .tour-price {
+  .tour-price {
   font-family: "Work Sans", sans-serif;
   color: var(--muted);
   font-size: 1rem;
@@ -290,6 +290,21 @@
 .tour-price.loaded {
   color: var(--gold);
 } 
+
+  .tour-nextdate {
+  font-family: "Work Sans", sans-serif;
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: -8px 24px 24px;
+  text-transform: uppercase;
+  transition: color var(--transition);
+  opacity: 0.85;
+}
+
+.tour-nextdate.loaded {
+  opacity: 1;
+}
 
     .tour-card p {
       color: var(--muted);
@@ -476,6 +491,7 @@
     <img src="https://raw.githubusercontent.com/TourTheLakes/Tour-The-Lakes-Taxi/main/assets/images/DSC_0090.JPG" alt="Lakeland Horizons">
     <h3>Six Lakes Splendour <span id="slsPrice" class="tour-price">- from £..."</span></h3>
     <p>Half-day tour exploring six of the Lake District’s most distinctive waters. A relaxed journey through contrasting landscapes — from open vistas to quiet shorelines — offering a true sense of the region’s natural variety and character.</p>
+    <p id="slsNextDate" class="tour-next-date">Next date available: -</p>
   </div>
 
   <div class="tour-card">
@@ -572,6 +588,8 @@ async function fetchCheapestSLSPrice() {
 }
 
 fetchCheapestSLSPrice();
+
+  
   
 </script>
 
