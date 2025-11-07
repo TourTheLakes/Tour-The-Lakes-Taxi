@@ -608,88 +608,8 @@ footer a:hover {
   opacity: 0.85;
 }
 
-/* ========== ANIMATIONS ========== */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
-/* ========== RESPONSIVE ========== */
-
-/* Tablets & small laptops */
-@media (max-width: 900px) {
-    header { padding: 12px 40px; }
-  .brand { font-size: 1.5rem; }
-     nav a { margin-left: 20px; font-size: 1rem; }
-  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
-  .hero p { font-size: 1.05rem; padding: 0 24px; }
-     section { padding: 80px 8vw; }
-
-  .calendar-container,
-  .seat-wrap { align-items: center; }
-  .calendar-grid,
-  .calendar-days,
-  .calendar-dates { max-width: 460px; }
-
-  .seat-grid { gap: 14px; }
-}
-
-/* Phones */
-@media (max-width: 700px) {
-  header {
-    flex-direction: column;
-    justify-content: center;
-    height: auto;
-    padding: 12px 0;
-    text-align: center;
-  }
-  .brand {
-    font-size: 1.5rem;
-    line-height: 1.4;
-    margin-bottom: 8px;
-  }
-  nav a {
-    display: inline-block;
-    margin: 0 10px;
-    font-size: 0.95rem;
-  }
-  section { padding: 80px 6vw; }
-  section h2 { text-align: center; }
-
-  .calendar-container { align-items: center; }
-  .calendar-grid,
-  .calendar-days,
-  .calendar-dates {
-    width: 100%;
-    max-width: 360px;
-    gap: 8px;
-    grid-auto-rows: 28px;
-    font-size: 0.9rem;
-  }
-  .month-year { font-size: 1.3rem; }
-  .nav-arrow { font-size: 1.6rem; }
-
-  footer { font-size: 0.8rem; padding: 20px; }
-}
-
-/* Small phones */
-@media (max-width: 600px) {
-  .calendar-grid,
-  .calendar-days,
-  .calendar-dates {
-    max-width: 340px;
-    gap: 6px;
-    grid-auto-rows: 26px;
-    font-size: 0.85rem;
-  }
-  .month-year { font-size: 1.2rem; }
-  .nav-arrow { font-size: 1.4rem; }
-  footer { font-size: 0.75rem; padding: 18px; }
-}
-
-/* Smooth anchor scrolling offset */
-#info,
-#book { scroll-margin-top: 50px; }
+  
 </style>
   
 </head>
