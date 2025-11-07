@@ -1262,7 +1262,33 @@ submitLink.addEventListener("click", async (e) => {
   try {
     // One atomic transaction on the date node (seats + capacity)
     const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
-    
+    const txResult = await runTransaction(dateRef, (current) => {
+  if (!current || typeof current !== "object") return;
+
+  const seats = current.seats || {};
+  let cap = Number(current.capacity);
+  if (isNaN(cap)) cap = parseInt(current.capacity || "0", 10);
+  if (isNaN(cap)) cap = 0;
+
+  // Validate seat states only for seats that actually exist
+  for (const s of finalChosen) {
+    if (seats[s] !== "active") {
+      console.warn("Seat not active:", s, seats[s]);
+      return; // abort
+    }
+  }
+
+  // Proceed with safe mutation
+  const nextSeats = { ...seats };
+  finalChosen.forEach(s => { nextSeats[s] = "booked"; });
+
+  return {
+    ...current,
+    seats: nextSeats,
+    capacity: Math.max(0, cap - pax),
+    lastUpdated: new Date().toISOString()
+  };
+}, { applyLocally: false });
 
     if (!txResult.committed) {
       throw new Error("Seat availability changed or insufficient capacity.");
