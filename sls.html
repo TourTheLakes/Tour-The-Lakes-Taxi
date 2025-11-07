@@ -788,12 +788,7 @@ footer a:hover {
 </div>
 <p id="passengerInfo" class="seat-subtitle"
    style="margin-top:8px;color:var(--gold);text-align:left;"></p>
-        
-<p id="passengerInfo" class="seat-subtitle" 
-  style="margin-top:8px;color:var(--gold);text-align:left;">
-</p>
-        
-      </div>
+        </div>
     </div>
 
     <div class="form-group">
@@ -1070,46 +1065,7 @@ function onSeatClick(e) {
 
   recalcTotal();
 }
-
-/* ===========================
-   PASSENGERS DROPDOWN
-=========================== */
-function updatePassengersDropdown(capacity, seatsData, basePrice) {
-  // available = min(capacity, active seats count)
-  const activeCount = countActiveSeats(seatsData);
-  const available = Math.max(0, Math.min(capacity ?? 0, activeCount));
-
-  // rebuild options
-  passengersSel.innerHTML = "";
-  const ph = document.createElement("option");
-  ph.disabled = true; ph.selected = true;
-  ph.textContent = "Select total seats";
-  passengersSel.appendChild(ph);
-
-  for (let i=1; i<=available; i++) {
-    const opt = document.createElement("option");
-    opt.value = String(i);
-    opt.textContent = String(i);
-    passengersSel.appendChild(opt);
-  }
-
-  // helper text + events
-  passengersSel.onchange = () => {
-    const num = parseInt(passengersSel.value || "0", 10);
-    if (passengerInfo) {
-      passengerInfo.textContent =
-        (num <= 1) ? "You only" :
-        (num === 2) ? "You + 1 other" :
-        `You + ${num-1} others`;
-    }
-
-    if (autoToggle.checked) {
-      autoAllocateToMatchPassengerCount();
-    }
-    recalcTotal();
-  };
-}
-
+  
   /* -------------------- CUSTOM SELECT INTEGRATION -------------------- */
 function updatePassengersDropdown(capacity, seatsData, basePrice) {
   const wrapper   = document.getElementById("passengersWrapper");
