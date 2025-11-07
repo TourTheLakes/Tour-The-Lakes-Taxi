@@ -619,7 +619,7 @@ async function fetchNextAvailableSLSDate() {
     const el = document.getElementById("slsNextDate");
     if (el) {
       if (nextDate) {
-
+      el.textContent = `Next date available: ${formatDateDMY(nextDate)} — ${capLeft} seat${capLeft === 1 ? "" : "s"} remaining`;
         el.classList.add("loaded");
       } else {
         el.textContent = "Next date available: none currently";
