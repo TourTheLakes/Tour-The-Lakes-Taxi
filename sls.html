@@ -1298,7 +1298,61 @@ submitLink.addEventListener("click", async (e) => {
     const supplement = calcSupplement(finalChosen, seats);
     const total = basePriceNumber * pax + supplement;
 
+// Record booking in Firebase and capture key
+const newBookingRef = await push(ref(db, `bookings/sls/${selectedDateKey}`), {
+  tour: "Six Lakes Splendour",
+  date: selectedDateKey,
+  leadPassenger: name,
+  passengers: pax,
+  chosenSeats: finalChosen,
+  contact: { email, phone: contactNumber?.value || null },
+  comments: notes,
+  totalGBP: Number(total.toFixed(2)),
+  createdAt: new Date().toISOString()
+});
 
+const bookingKey = newBookingRef.key || "";
+const shortRef = bookingKey.slice(0, 6);
+
+// Update UI — thank-you panel replaces entire form
+const formEl = document.getElementById("reservationForm");
+formEl.innerHTML = `
+  <div class="confirmation" style="text-align:left; line-height:1.6; font-size:1.1rem; color:var(--text);">
+    <h3 style="color:var(--gold); font-family:'Playfair Display',serif; margin-bottom:12px;">
+      Thank you! We've got your booking and your seats are safe.
+    </h3>
+
+    <p><strong>Actual seats:</strong> ${finalChosen.join(", ")}</p>
+    <p><strong>Reservation number:</strong> ${shortRef}</p>
+
+    <p>We have your contact details as:
+      <br><strong>Email:</strong> ${email}
+      ${contactNumber?.value ? `<br><strong>Phone:</strong> ${contactNumber.value}` : ""}
+    </p>
+
+    <p>If any of your contact details look incorrect, please email
+      <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+      quoting your booking reference <strong>${shortRef}</strong>, and we’ll put things right.
+    </p>
+
+    <p><strong>What’s next?</strong><br>
+      Please look out for an email from
+      <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+      which will contain a payment link and further instructions.
+    </p>
+
+    <p style="margin-top:20px;">We’re looking forward to spending time with you!</p>
+
+    <p style="margin-top:40px;">
+      <a href="index.html" style="color:var(--gold); text-decoration:none; font-weight:500;">← Return Home</a>
+    </p>
+  </div>
+`;
+
+// Lock out further interaction
+formEl.style.pointerEvents = "none";
+formEl.style.opacity = "1";
+formEl.style.transition = "opacity 0.3s ease";
 
   } catch (err) {
     console.error(err);
