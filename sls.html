@@ -1261,39 +1261,7 @@ submitLink.addEventListener("click", async (e) => {
 
   try {
     // One atomic transaction on the date node (seats + capacity)
-  const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
-const txResult = await runTransaction(dateRef, (current) => {
-  if (!current || typeof current !== "object") return;
-
-  const seats = { ...(current.seats || {}) };
-  let cap = Number(current.capacity) || 0;
-  if (isNaN(cap)) cap = parseInt(current.capacity || "0", 10);
-  if (isNaN(cap)) cap = 0;
-
-  // ✅ Strip volatile fields so they don't cause hash mismatch
-  delete current.lastUpdated;
-
-  // Validate seat states only for seats that actually exist
-  for (const s of finalChosen) {
-    if (seats[s] !== "active") {
-      console.warn("Seat not active:", s, seats[s]);
-      return; // abort
-    }
-  }
-
-  // ✅ Perform updates only on fields that matter
-  finalChosen.forEach(s => { seats[s] = "booked"; });
-
-  const next = {
-    ...current,
-    seats,
-    capacity: Math.max(0, cap - pax)
-  };
-
-  // ✅ Add lastUpdated AFTER object merge
-  next.lastUpdated = new Date().toISOString();
-  return next;
-});
+ 
 
     // Compute final price again (server truth would be better in production)
     const chosenNow = finalChosen;
