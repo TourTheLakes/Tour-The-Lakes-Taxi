@@ -536,6 +536,43 @@
   const analytics = getAnalytics(app);
 
   console.log("Firebase initialized successfully");
+import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// Connect to Realtime Database
+const db = getDatabase(app);
+
+// Find the cheapest available price for Six Lakes Splendour
+async function fetchCheapestSLSPrice() {
+  try {
+    const rootRef = ref(db);
+    const snapshot = await get(child(rootRef, "availability/sls"));
+    if (!snapshot.exists()) return;
+
+    const allDates = snapshot.val();
+    let cheapest = Infinity;
+
+    for (const dateKey in allDates) {
+      const entry = allDates[dateKey];
+      const raw = entry.price;
+      if (!raw) continue;
+      const num = parseFloat(String(raw).replace(/[£,\s]/g, ""));
+      if (!isNaN(num) && num < cheapest) cheapest = num;
+    }
+
+    if (cheapest < Infinity) {
+      const el = document.getElementById("slsPrice");
+      if (el) {
+        el.textContent = `– from £${cheapest.toFixed(2)}`;
+        el.classList.add("loaded");
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching price:", err);
+  }
+}
+
+fetchCheapestSLSPrice();
+  
 </script>
 
   <script>
