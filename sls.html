@@ -1261,7 +1261,54 @@ submitLink.addEventListener("click", async (e) => {
 
   try {
     // One atomic transaction on the date node (seats + capacity)
- 
+ // --- simplified atomic update (no transaction retries) ---
+const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
+const snap = await get(dateRef);
+if (!snap.exists()) throw new Error("Date not found in database.");
+const current = snap.val();
+
+const seats = { ...(current.seats || {}) };
+for (const s of finalChosen) {
+  if (seats[s] !== "active") {
+    throw new Error(`Seat ${s} is no longer available.`);
+  }
+  seats[s] = "booked";
+}
+
+// recompute capacity
+const cap = Number(current.capacity) || 0;
+const nextCap = Math.max(0, cap - pax);
+
+// commit the new data
+await update(dateRef, {
+  seats,
+  capacity: nextCap,
+  lastUpdated: new Date().toISOString()
+});
+
+// compute price locally
+const supplement = calcSupplement(finalChosen, seats);
+const total = basePriceNumber * pax + supplement;
+
+// record booking
+await push(ref(db, `bookings/sls/${selectedDateKey}`), {
+  tour: "Six Lakes Splendour",
+  date: selectedDateKey,
+  leadPassenger: name,
+  passengers: pax,
+  chosenSeats: finalChosen,
+  contact: { email },
+  comments: notes,
+  totalGBP: Number(total.toFixed(2)),
+  createdAt: new Date().toISOString()
+});
+
+// update UI
+alert("Booking confirmed! A confirmation has been recorded.");
+totalCostEl.textContent = fmtGBP(total);
+dateData = { ...current, seats, capacity: nextCap };
+updateSeatGrid(seats);
+updatePassengersDropdown(nextCap, seats, basePriceNumber);
 
     // Compute final price again (server truth would be better in production)
     const chosenNow = finalChosen;
