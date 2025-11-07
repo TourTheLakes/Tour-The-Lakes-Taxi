@@ -291,21 +291,6 @@
   color: var(--gold);
 } 
 
-  .tour-nextdate {
-  font-family: "Work Sans", sans-serif;
-  color: var(--gold);
-  font-size: 1rem;
-  font-weight: 400;
-  margin-left: -8px 24px 24px;
-  text-transform: uppercase;
-  transition: color var(--transition);
-  opacity: 0.85;
-}
-
-.tour-nextdate.loaded {
-  opacity: 1;
-}
-
     .tour-card p {
       color: var(--muted);
       padding: 0 24px 30px;
@@ -333,6 +318,21 @@
 
 #tours, #about, #contact {
   scroll-margin-top: 80px;
+}
+
+  .tour-nextdate {
+  font-family: "Work Sans", sans-serif;
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: -8px 24px 24px;
+  text-transform: uppercase;
+  transition: color var(--transition);
+  opacity: 0.85;
+}
+
+.tour-nextdate.loaded {
+  opacity: 1;
 }
 
     .contact h2 {
@@ -619,7 +619,7 @@ async function fetchNextAvailableSLSDate() {
     const el = document.getElementById("slsNextDate");
     if (el) {
       if (nextDate) {
-        el.textContent = `Next date available: ${nextDate} — ${capLeft} seat${capLeft === 1 ? "" : "s"} remaining`;
+
         el.classList.add("loaded");
       } else {
         el.textContent = "Next date available: none currently";
