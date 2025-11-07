@@ -1260,8 +1260,8 @@ submitLink.addEventListener("click", async (e) => {
   submitLink.textContent = "Submitting…";
 
   try {
-    // One atomic transaction on the date node (seats + capacity)
- // --- simplified atomic update (no transaction retries) ---
+
+
 const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
 const snap = await get(dateRef);
 if (!snap.exists()) throw new Error("Date not found in database.");
