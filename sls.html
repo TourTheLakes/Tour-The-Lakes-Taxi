@@ -1015,9 +1015,6 @@ async function handleDateClick(dateKey, cellEl) {
   if (selectedTimeEl) selectedTimeEl.textContent = dateData.startTime || "TBC";
 
   const seatsLeftEl = document.getElementById("seatsLeft");
-if (seatsLeftEl) seatsLeftEl.textContent = "Seats left on this date: —";
-  // Update seats-left info
-const seatsLeftEl = document.getElementById("seatsLeft");
 if (seatsLeftEl) {
   const capLeft = dateData.capacity ?? 0;
   seatsLeftEl.textContent = `Seats left on this date: ${capLeft}`;
