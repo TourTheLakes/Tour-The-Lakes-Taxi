@@ -589,7 +589,48 @@ async function fetchCheapestSLSPrice() {
 
 fetchCheapestSLSPrice();
 
-  
+  // Find the next date available with capacity > 0 for Six Lakes Splendour
+async function fetchNextAvailableSLSDate() {
+  try {
+    const rootRef = ref(db);
+    const snapshot = await get(child(rootRef, "availability/sls"));
+    if (!snapshot.exists()) return;
+
+    const all = snapshot.val();
+    const today = new Date();
+    let nextDate = null;
+    let capLeft = 0;
+
+    // Loop through all dates to find the earliest with available capacity
+    for (const key of Object.keys(all).sort()) {
+      const entry = all[key];
+      if (!entry || !entry.capacity) continue;
+      const cap = parseInt(entry.capacity);
+      if (isNaN(cap) || cap <= 0) continue;
+
+      const d = new Date(key);
+      if (d >= today && (!nextDate || d < new Date(nextDate))) {
+        nextDate = key;
+        capLeft = cap;
+      }
+    }
+
+    // Update UI
+    const el = document.getElementById("slsNextDate");
+    if (el) {
+      if (nextDate) {
+        el.textContent = `Next date available: ${nextDate} — ${capLeft} seat${capLeft === 1 ? "" : "s"} remaining`;
+        el.classList.add("loaded");
+      } else {
+        el.textContent = "Next date available: none currently";
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching next available SLS date:", err);
+  }
+}
+
+fetchNextAvailableSLSDate();
   
 </script>
 
