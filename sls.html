@@ -1261,7 +1261,6 @@ submitLink.addEventListener("click", async (e) => {
 
   try {
 
-
 const dateRef = ref(db, `availability/sls/${selectedDateKey}`);
 const snap = await get(dateRef);
 if (!snap.exists()) throw new Error("Date not found in database.");
@@ -1309,42 +1308,6 @@ totalCostEl.textContent = fmtGBP(total);
 dateData = { ...current, seats, capacity: nextCap };
 updateSeatGrid(seats);
 updatePassengersDropdown(nextCap, seats, basePriceNumber);
-
-    // Compute final price again (server truth would be better in production)
-    const chosenNow = finalChosen;
-    const supplement = calcSupplement(chosenNow, txResult.snapshot.val().seats || {});
-    const total = basePriceNumber * pax + supplement;
-
-    // Push booking record (separate write)
-    await push(ref(db, `bookings/sls/${selectedDateKey}`), {
-      tour: "Six Lakes Splendour",
-      date: selectedDateKey,
-      leadPassenger: name,
-      passengers: pax,
-      chosenSeats: chosenNow,
-      contact: { email },
-      comments: notes,
-      totalGBP: Number(total.toFixed(2)),
-      createdAt: new Date().toISOString()
-    });
-
-    // Reflect UI
-    alert("Booking confirmed! A confirmation has been recorded.");
-    totalCostEl.textContent = fmtGBP(total);
-    // Refresh local seat grid from the committed snapshot
-    dateData = txResult.snapshot.val();
-    updateSeatGrid(dateData.seats || {});
-    updatePassengersDropdown(dateData.capacity ?? 0, dateData.seats || {}, basePriceNumber);
-
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Sorry, there was a problem submitting your booking.");
-  } finally {
-    submitLink.style.pointerEvents = "auto";
-    submitLink.style.opacity = "1";
-    submitLink.textContent = "Submit Reservation";
-  }
-});
 
 /* ===========================
    INIT
