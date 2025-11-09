@@ -1226,22 +1226,6 @@ function updatePassengersDropdown(capacity, seatsData, basePrice) {
 /* ===========================
    PRICE: base × passengers + supplement
 =========================== */
-function calcSupplement(chosenList, seatsData) {
-  // £20 if chosen is in outer set AND its pair is still "active" AND pair isn't also chosen
-  let suppl = 0;
-  for (const s of chosenList) {
-    if (!outerSeatSet.has(s)) continue;
-    const pair = PAIRS[s];
-    if (!pair) continue;
-    const pairState = (seatsData || {})[pair];
-    const pairChosen = chosenList.includes(pair);
-
-    if (pairState === "active" && !pairChosen) {
-      suppl += 20;
-    }
-  }
-  return suppl;
-}
 
 function recalcTotal() {
   if (!dateData) {
@@ -1253,14 +1237,7 @@ function recalcTotal() {
 
   // Base price part
   const base = basePriceNumber * (isNaN(pax) ? 0 : pax);
-
-  // Supplement logic (only when we have chosen seats)
-  let supplement = 0;
-  if (chosen.length > 0) {
-    supplement = calcSupplement(chosen, dateData.seats || {});
-  }
-
-  totalCostEl.textContent = fmtGBP(base + supplement);
+  totalCostEl.textContent = fmtGBP(base);
 }
 
 /* ===========================
@@ -1375,8 +1352,7 @@ submitLink.addEventListener("click", async (e) => {
     });
 
     // Calculate total cost
-    const supplement = calcSupplement(finalChosen, seats);
-    const total = basePriceNumber * pax + supplement;
+    const total = basePriceNumber * pax;
 
 // Record booking in Firebase and capture key
 const newBookingRef = await push(ref(db, `bookings/sls/${selectedDateKey}`), {
