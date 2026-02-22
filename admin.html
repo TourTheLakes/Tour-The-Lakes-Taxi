@@ -236,6 +236,12 @@ deleteBtn.addEventListener("click", async () => {
 });
 
 saveBtn.addEventListener("click", async () => {
+
+  if (selectedTourId) {
+    msgEl.textContent = "Use AMEND to update an existing tour.";
+    return;
+  }
+
   const title = titleEl.value.trim();
   const isLive = !!liveEl.checked;
 
