@@ -43,6 +43,14 @@ img {
   position: relative;
 }
 
+.hero-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 to control darkness */
+  pointer-events: none;
+}
+
 .hero-wrapper h1 {
   position: absolute;
   left: 0;
