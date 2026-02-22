@@ -79,6 +79,90 @@ img {
   -webkit-backdrop-filter: blur(3px);
 }
 
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 33% 67%;
+  text-align: center;
+  color: rgba(255,255,255,0.95);
+  padding: 0 20px;
+}
+
+.hero-upper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-upper h1 {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.hero-upper p {
+  margin: 14px 0 0;
+  font-size: 18px;
+  opacity: 0.9;
+  max-width: 900px;
+}
+
+.hero-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-cta {
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0.95;
+}.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 33% 67%;
+  text-align: center;
+  color: rgba(255,255,255,0.95);
+  padding: 0 20px;
+}
+
+.hero-upper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-upper h1 {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.hero-upper p {
+  margin: 14px 0 0;
+  font-size: 18px;
+  opacity: 0.9;
+  max-width: 900px;
+}
+
+.hero-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-cta {
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
 
 
 .site-footer {
@@ -118,7 +202,18 @@ img {
 
 <div class="hero-wrapper">
   <img src="images/DSC_0092.JPG" alt="Tour The Lakes Image" class="hero-image">
+
+ <div class="hero-overlay">
+  <div class="hero-upper">
+    <h1>Public Tours Across the Lake District</h1>
+    <p>Small group departures covering the Lake District’s most established routes.</p>
 </div>
+
+<div class="hero-middle">
+    <div class="hero-cta">Explore and book our tours below</div>
+</div>
+ </div>
+  </div>
 
 
 <footer class="site-footer">
