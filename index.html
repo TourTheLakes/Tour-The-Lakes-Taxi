@@ -169,10 +169,12 @@ img {
     
 </div>
 
-<section id="tours">
+<section id="tours"></section>
+
+<template id="tourTemplate">
   <article class="tour" data-tour-id="">
     <div class="tour-row">
-      <div class="tour-title">TOUR TITLE</div>
+      <div class="tour-title"></div>
       <div class="tour-meta">
         <span class="tour-price"></span>
         <span class="tour-nextdate"></span>
@@ -185,8 +187,8 @@ img {
     <div class="tour-divider">
       <div class="tour-divider-line"></div>
       <button class="tour-toggle" type="button" aria-expanded="false">
-         <img src="images/TTLFAVIcon.png" alt="Expand tour">
-       </button>
+        <img src="images/TTLFAVIcon.png" alt="Expand tour">
+      </button>
       <div class="tour-divider-line"></div>
     </div>
 
@@ -200,7 +202,7 @@ img {
       </div>
     </div>
   </article>
-</section>
+</template>
 
 
 <footer class="site-footer">
@@ -211,8 +213,8 @@ img {
 
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -227,22 +229,65 @@ img {
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+
+  const toursEl = document.getElementById("tours");
+const tpl = document.getElementById("tourTemplate");
+
+function clearTours() {
+  toursEl.innerHTML = "";
+}
+
+function renderTours(toursObj) {
+  clearTours();
+
+  if (!toursObj) return;
+
+  const entries = Object.entries(toursObj);
+
+  for (const [tourId, tour] of entries) {
+    if (!tour || tour.isLive !== true) continue;
+
+    const node = tpl.content.cloneNode(true);
+    const article = node.querySelector(".tour");
+    article.dataset.tourId = tourId;
+
+    node.querySelector(".tour-title").textContent = tour.title || tourId;
+
+    // imageUrl expected to be a Firebase Storage download URL
+    const imageWrap = node.querySelector(".tour-image");
+    if (tour.imageUrl) {
+      const img = document.createElement("img");
+      img.src = tour.imageUrl;
+      img.alt = tour.title || "Tour image";
+      imageWrap.appendChild(img);
+    }
+
+    // Leave these blank for now (listeners later)
+    // .tour-price / .tour-nextdate / .tour-seats
+
+    toursEl.appendChild(node);
+  }
+}
+
+// Listen to /tours. If empty/null => nothing renders.
+onValue(ref(db, "tours"), (snapshot) => {
+  renderTours(snapshot.val());
+});
+
+// Toggle open/close (works for dynamically-rendered tours)
+document.addEventListener("click", (e) => {
+  const toggle = e.target.closest(".tour-toggle");
+  if (!toggle) return;
+
+  const tour = toggle.closest(".tour");
+  const details = tour.querySelector(".tour-details");
+
+  const isOpen = toggle.getAttribute("aria-expanded") === "true";
+  toggle.setAttribute("aria-expanded", String(!isOpen));
+  details.hidden = isOpen;
+});
+    
   void db;
-</script>
-
-<script>
-  document.addEventListener("click", function (e) {
-    const toggle = e.target.closest(".tour-toggle");
-    if (!toggle) return;
-
-    const tour = toggle.closest(".tour");
-    const details = tour.querySelector(".tour-details");
-
-    const isOpen = toggle.getAttribute("aria-expanded") === "true";
-
-    toggle.setAttribute("aria-expanded", !isOpen);
-    details.hidden = isOpen;
-  });
 </script>
 
 </body>
