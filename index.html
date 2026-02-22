@@ -231,7 +231,7 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
   const db = getDatabase(app);
 
   const toursEl = document.getElementById("tours");
-const tpl = document.getElementById("tourTemplate");
+  const tpl = document.getElementById("tourTemplate");
 
 function clearTours() {
   toursEl.innerHTML = "";
@@ -252,6 +252,10 @@ function renderTours(toursObj) {
     article.dataset.tourId = tourId;
 
     node.querySelector(".tour-title").textContent = tour.title || tourId;
+      
+    const desc = node.querySelector(".tour-description");
+desc.textContent = tour.description || "";
+if (!tour.description) desc.style.display = "none";
 
     // imageUrl expected to be a Firebase Storage download URL
     const imageWrap = node.querySelector(".tour-image");
