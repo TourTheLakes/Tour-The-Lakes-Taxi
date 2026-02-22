@@ -84,7 +84,21 @@
       <div id="adminMsg" style="color:rgba(255,255,255,0.6); font:400 14px/1 system-ui;"></div>
     </div>
   </div>
-</main>   
+</main> 
+
+<div style="margin-top:20px; color:rgba(255,255,255,0.92); font:600 16px/1 system-ui;">
+  Existing Tours
+</div>
+<div id="tourList" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;"></div>
+
+<div style="display:flex; gap:10px; margin-top:12px;">
+  <button id="amendTour" type="button" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:#b86b2a; cursor:pointer;">
+    AMEND
+  </button>
+  <button id="deleteTour" type="button" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:#b86b2a; cursor:pointer;">
+    DELETE
+  </button>
+</div>
 
 
 <footer class="site-footer">
@@ -97,7 +111,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
 
   const firebaseConfig = {
@@ -129,6 +143,97 @@ const imgFileEl = document.getElementById("tourImageFile");
 const liveEl = document.getElementById("tourLive");
 const saveBtn = document.getElementById("saveTour");
 const msgEl = document.getElementById("adminMsg");
+const tourListEl = document.getElementById("tourList");
+const amendBtn = document.getElementById("amendTour");
+const deleteBtn = document.getElementById("deleteTour");
+
+let selectedTourId = "";
+let selectedTourData = null;
+
+// Render list and allow selecting a tour
+onValue(ref(db, "tours"), (snapshot) => {
+  const tours = snapshot.val();
+  tourListEl.innerHTML = "";
+
+  if (!tours) return;
+
+  for (const [tourId, tour] of Object.entries(tours)) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.textContent = tour?.title ? tour.title : tourId;
+    row.style.padding = "10px";
+    row.style.border = "1px solid #b86b2a";
+    row.style.background = (tourId === selectedTourId) ? "#1f1f1f" : "#2b2b2b";
+    row.style.color = "rgba(255,255,255,0.92)";
+    row.style.cursor = "pointer";
+    row.style.textAlign = "left";
+
+    row.addEventListener("click", () => {
+      selectedTourId = tourId;
+      selectedTourData = tour || null;
+
+      // Load into the form for editing
+      titleEl.value = tour?.title || "";
+      liveEl.checked = !!tour?.isLive;
+
+      msgEl.textContent = `Selected: ${tourId}`;
+    });
+
+    tourListEl.appendChild(row);
+  }
+});
+
+amendBtn.addEventListener("click", async () => {
+  if (!selectedTourId) {
+    msgEl.textContent = "Select a tour first.";
+    return;
+  }
+
+  const title = titleEl.value.trim();
+  const isLive = !!liveEl.checked;
+
+  if (!title) {
+    msgEl.textContent = "Title required.";
+    return;
+  }
+
+  try {
+    // Keep existing imageUrl; only amend title/live in this step
+    const imageUrl = selectedTourData?.imageUrl || "";
+
+    await set(ref(db, `tours/${selectedTourId}`), {
+      title,
+      imageUrl,
+      isLive
+    });
+
+    msgEl.textContent = `Amended: tours/${selectedTourId}`;
+  } catch (err) {
+    msgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
+
+deleteBtn.addEventListener("click", async () => {
+  if (!selectedTourId) {
+    msgEl.textContent = "Select a tour first.";
+    return;
+  }
+
+  const ok = confirm(`Delete tour "${selectedTourId}" from database?`);
+  if (!ok) return;
+
+  try {
+    await remove(ref(db, `tours/${selectedTourId}`));
+    msgEl.textContent = `Deleted: tours/${selectedTourId}`;
+
+    selectedTourId = "";
+    selectedTourData = null;
+    titleEl.value = "";
+    liveEl.checked = false;
+  } catch (err) {
+    msgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
 
 saveBtn.addEventListener("click", async () => {
   const title = titleEl.value.trim();
