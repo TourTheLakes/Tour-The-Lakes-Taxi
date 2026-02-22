@@ -47,8 +47,9 @@ img {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 to control darkness */
+  background: rgba(0, 0, 0, 0.45);
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-wrapper h1 {
@@ -58,6 +59,7 @@ img {
   text-align: center;
   margin: 0;
   color: #b86b2a;
+  z-index: 2;
 }
 
 .hero-wrapper p {
@@ -67,6 +69,7 @@ img {
   text-align: center;
   margin: 0;
   color: rgba(255,255,255,0.92);
+  z-index: 2;
 }
 
 .hero-wrapper h1 { top: 35%; }
