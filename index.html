@@ -56,6 +56,28 @@ img {
   border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
+.hero-image {
+  width: 100%;
+  display: block;
+}
+
+.hero-image {
+  position: relative;
+}
+
+.hero-wrapper {
+  position: relative;
+}
+
+.hero-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 43, 43, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
 
 
 .site-footer {
@@ -93,7 +115,9 @@ img {
   </div>
 </header>
 
-<img src="images/DSC_0092.JPG" alt="Tour The Lakes Image">
+<div class="hero-wrapper">
+  <img src="images/DSC_0092.JPG" alt="Tour The Lakes Image" class="hero-image">
+</div>
 
 
 <footer class="site-footer">
