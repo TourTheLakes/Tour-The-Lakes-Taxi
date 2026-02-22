@@ -230,5 +230,20 @@ img {
   void db;
 </script>
 
+<script>
+  document.addEventListener("click", function (e) {
+    const toggle = e.target.closest(".tour-toggle");
+    if (!toggle) return;
+
+    const tour = toggle.closest(".tour");
+    const details = tour.querySelector(".tour-details");
+
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+
+    toggle.setAttribute("aria-expanded", !isOpen);
+    details.hidden = isOpen;
+  });
+</script>
+
 </body>
 </html>
