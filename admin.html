@@ -70,9 +70,9 @@
 
     <div style="display:flex; flex-direction:column; gap:10px;">
       <input id="tourTitle" type="text" placeholder="Tour title" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92);">
-      <input id="tourImageUrl" type="text" placeholder="Image URL (Firebase Storage download URL)" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92);">
-
-      <label style="display:flex; gap:8px; align-items:center; color:rgba(255,255,255,0.92);">
+      <input id="tourImageFile" type="file" accept="image/*" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92);">
+        
+        <label style="display:flex; gap:8px; align-items:center; color:rgba(255,255,255,0.92);">
         <input id="tourLive" type="checkbox">
         Live
       </label>
@@ -96,8 +96,9 @@
 
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -112,6 +113,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  const storage = getStorage(app);
 
   function slugifyTitle(input) {
   return String(input || "")
@@ -123,14 +125,13 @@
 }
 
 const titleEl = document.getElementById("tourTitle");
-const imgEl = document.getElementById("tourImageUrl");
+const imgFileEl = document.getElementById("tourImageFile");
 const liveEl = document.getElementById("tourLive");
 const saveBtn = document.getElementById("saveTour");
 const msgEl = document.getElementById("adminMsg");
 
 saveBtn.addEventListener("click", async () => {
   const title = titleEl.value.trim();
-  const imageUrl = imgEl.value.trim();
   const isLive = !!liveEl.checked;
 
   if (!title) {
@@ -144,13 +145,28 @@ saveBtn.addEventListener("click", async () => {
     return;
   }
 
-  const tourData = {
-    title,
-    imageUrl: imageUrl || "",
-    isLive
-  };
+  const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
+
+  let imageUrl = "";
 
   try {
+    // If an image file is chosen, upload it first
+    if (file) {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const stamp = Date.now();
+      const path = `tours/${tourId}/images/${stamp}-${safeName}`;
+
+      const storageRef = sRef(storage, path);
+      await uploadBytes(storageRef, file);
+      imageUrl = await getDownloadURL(storageRef);
+    }
+
+    const tourData = {
+      title,
+      imageUrl,
+      isLive
+    };
+
     await set(ref(db, `tours/${tourId}`), tourData);
     msgEl.textContent = `Saved: tours/${tourId}`;
   } catch (err) {
