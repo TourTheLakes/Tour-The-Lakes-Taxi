@@ -71,7 +71,7 @@
     <div style="display:flex; flex-direction:column; gap:10px;">
       <input id="tourTitle" type="text" placeholder="Tour title" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92);">
       <input id="tourImageFile" type="file" accept="image/*" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92);">
-        
+      <textarea id="tourDescription" placeholder="Tour description" rows="6" style="padding:10px; border:1px solid #b86b2a; background:#2b2b2b; color:rgba(255,255,255,0.92); resize:vertical;"></textarea>  
         <label style="display:flex; gap:8px; align-items:center; color:rgba(255,255,255,0.92);">
         <input id="tourLive" type="checkbox">
         Live
@@ -146,6 +146,7 @@ const msgEl = document.getElementById("adminMsg");
 const tourListEl = document.getElementById("tourList");
 const amendBtn = document.getElementById("amendTour");
 const deleteBtn = document.getElementById("deleteTour");
+const descEl = document.getElementById("tourDescription");
 
 function hardRefresh() {
   window.location.reload();
@@ -179,6 +180,7 @@ onValue(ref(db, "tours"), (snapshot) => {
       // Load into the form for editing
       titleEl.value = tour?.title || "";
       liveEl.checked = !!tour?.isLive;
+      descEl.value = tour?.description || "";
 
       msgEl.textContent = `Selected: ${tourId}`;
     });
@@ -195,6 +197,7 @@ amendBtn.addEventListener("click", async () => {
 
   const title = titleEl.value.trim();
   const isLive = !!liveEl.checked;
+  const description = descEl.value.trim();
 
   if (!title) {
     msgEl.textContent = "Title required.";
@@ -205,11 +208,12 @@ amendBtn.addEventListener("click", async () => {
     // Keep existing imageUrl; only amend title/live in this step
     const imageUrl = selectedTourData?.imageUrl || "";
 
-    await set(ref(db, `tours/${selectedTourId}`), {
-      title,
-      imageUrl,
-      isLive
-    });
+     await set(ref(db, `tours/${selectedTourId}`), {
+     title,
+     imageUrl,
+     isLive,
+     description
+       });
 
     msgEl.textContent = `Amended: tours/${selectedTourId}`;
     hardRefresh();
@@ -250,6 +254,7 @@ saveBtn.addEventListener("click", async () => {
 
   const title = titleEl.value.trim();
   const isLive = !!liveEl.checked;
+  const description = descEl.value.trim();
 
   if (!title) {
     msgEl.textContent = "Title required.";
@@ -278,11 +283,12 @@ saveBtn.addEventListener("click", async () => {
       imageUrl = await getDownloadURL(storageRef);
     }
 
-    const tourData = {
+     const tourData = {
       title,
       imageUrl,
-      isLive
-    };
+      isLive,
+      description
+        };
 
     await set(ref(db, `tours/${tourId}`), tourData);
     msgEl.textContent = `Saved: tours/${tourId}`;
