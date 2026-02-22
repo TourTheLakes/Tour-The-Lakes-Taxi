@@ -147,6 +147,10 @@ const tourListEl = document.getElementById("tourList");
 const amendBtn = document.getElementById("amendTour");
 const deleteBtn = document.getElementById("deleteTour");
 
+function hardRefresh() {
+  window.location.reload(true);
+}
+
 let selectedTourId = "";
 let selectedTourData = null;
 
@@ -208,6 +212,7 @@ amendBtn.addEventListener("click", async () => {
     });
 
     msgEl.textContent = `Amended: tours/${selectedTourId}`;
+    hardRefresh();
   } catch (err) {
     msgEl.textContent = `Error: ${err?.message || err}`;
   }
@@ -225,6 +230,7 @@ deleteBtn.addEventListener("click", async () => {
   try {
     await remove(ref(db, `tours/${selectedTourId}`));
     msgEl.textContent = `Deleted: tours/${selectedTourId}`;
+    hardRefresh();
 
     selectedTourId = "";
     selectedTourData = null;
@@ -280,6 +286,7 @@ saveBtn.addEventListener("click", async () => {
 
     await set(ref(db, `tours/${tourId}`), tourData);
     msgEl.textContent = `Saved: tours/${tourId}`;
+    hardRefresh();
   } catch (err) {
     msgEl.textContent = `Error: ${err?.message || err}`;
   }
