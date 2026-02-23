@@ -251,7 +251,6 @@ onValue(ref(db, "tours"), (snapshot) => {
       selectedTourId = tourId;
       selectedTourData = tour || null;
 
-      // Load into the form for editing
       titleEl.value = tour?.title || "";
       liveEl.checked = !!tour?.isLive;
       descEl.value = tour?.description || "";
@@ -278,16 +277,28 @@ amendBtn.addEventListener("click", async () => {
     return;
   }
 
-  try {
-    // Keep existing imageUrl; only amend title/live in this step
-    const imageUrl = selectedTourData?.imageUrl || "";
+  const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
 
-     await set(ref(db, `tours/${selectedTourId}`), {
-     title,
-     imageUrl,
-     isLive,
-     description
-       });
+  try {
+ 
+    let imageUrl = selectedTourData?.imageUrl || "";
+
+    if (file) {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const stamp = Date.now();
+      const path = `tours/${selectedTourId}/images/${stamp}-${safeName}`;
+
+      const storageRef = sRef(storage, path);
+      await uploadBytes(storageRef, file);
+      imageUrl = await getDownloadURL(storageRef);
+    }
+
+    await set(ref(db, `tours/${selectedTourId}`), {
+      title,
+      imageUrl,
+      isLive,
+      description
+    });
 
     msgEl.textContent = `Amended: tours/${selectedTourId}`;
     hardRefresh();
