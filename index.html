@@ -95,6 +95,22 @@ img {
   pointer-events: none;
 }
 
+.tour-image {
+  position: relative;
+}
+
+.tour-image .tour-title {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 18%;
+  text-align: center;
+  margin: 0;
+  color: #b86b2a;
+  z-index: 2;
+  font: 600 34px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
 .tour-divider {
   display: flex;
   align-items: center;
@@ -195,16 +211,17 @@ img {
 
 <template id="tourTemplate">
   <article class="tour" data-tour-id="">
-    <div class="tour-row">
-      <div class="tour-title"></div>
-      <div class="tour-meta">
-        <span class="tour-price"></span>
-        <span class="tour-nextdate"></span>
-        <span class="tour-seats"></span>
-      </div>
-    </div>
+   <div class="tour-image">
+    <div class="tour-title"></div>
+     </div>
 
-    <div class="tour-image"></div>
+      <div class="tour-row">
+       <div class="tour-meta">
+        <span class="tour-price"></span>
+         <span class="tour-nextdate"></span>
+          <span class="tour-seats"></span>
+          </div>
+           </div>
 
     <div class="tour-divider">
       <div class="tour-divider-line"></div>
