@@ -328,6 +328,8 @@
     // ===== Schedule state =====
     let selectedDateKey = "";
     const selectedDateEl = document.getElementById("selectedDate");
+    const scheduleMsgEl = document.getElementById("scheduleMsg");
+    const scheduleControlsEl = document.getElementById("scheduleControls");
 
     function hardRefresh() {
       window.location.reload();
@@ -459,6 +461,8 @@
       // set selected date (for Times/Capacity section)
         selectedDateKey = key;
      if (selectedDateEl) selectedDateEl.value = key;
+     if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+     if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
 
       // highlight only the clicked date as "selected"
       calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
