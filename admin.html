@@ -458,20 +458,8 @@
         return;
       }
 
-      // set selected date (for Times/Capacity section)
-        selectedDateKey = key;
-     if (selectedDateEl) selectedDateEl.value = key;
-     if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-     if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
-
-      // highlight only the clicked date as "selected"
-      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
-        c.classList.remove("selected");
-      });
-      cell.classList.add("selected");
-
-try {
-  if (savedDates.has(key)) {
+        try {
+     if (savedDates.has(key)) {
     // removing date => also hide schedule controls
     await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
 
