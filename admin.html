@@ -330,6 +330,9 @@
     const selectedDateEl = document.getElementById("selectedDate");
     const scheduleMsgEl = document.getElementById("scheduleMsg");
     const scheduleControlsEl = document.getElementById("scheduleControls");
+    const tourTimeEl = document.getElementById("tourTime");
+    const tourCapacityEl = document.getElementById("tourCapacity");
+    const confirmScheduleBtn = document.getElementById("confirmSchedule");
 
     function hardRefresh() {
       window.location.reload();
@@ -657,6 +660,48 @@ calendarGrid.addEventListener("click", async (e) => {
         msgEl.textContent = `Error: ${err?.message || err}`;
       }
     });
+
+    // ===== CONFIRM (add/update time + capacity) =====
+confirmScheduleBtn.addEventListener("click", async () => {
+  if (!selectedTourId) {
+    scheduleMsgEl.textContent = "Select a tour first.";
+    return;
+  }
+
+  if (!selectedDateKey) {
+    scheduleMsgEl.textContent = "Select a date first.";
+    return;
+  }
+
+  const time = tourTimeEl.value;
+  const capacity = parseInt(tourCapacityEl.value, 10);
+
+  if (!time) {
+    scheduleMsgEl.textContent = "Select a time.";
+    return;
+  }
+
+  if (!capacity || capacity < 1) {
+    scheduleMsgEl.textContent = "Enter valid capacity.";
+    return;
+  }
+
+  try {
+    await set(
+      ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
+      { capacity }
+    );
+
+    scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
+
+    // optional: clear inputs
+    tourTimeEl.value = "";
+    tourCapacityEl.value = "";
+
+  } catch (err) {
+    scheduleMsgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
 
     void db;
   </script>
