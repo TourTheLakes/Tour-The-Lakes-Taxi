@@ -255,7 +255,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+    import { getDatabase, ref, set, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
     import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
 
     const firebaseConfig = {
@@ -519,7 +519,7 @@
           imageUrl = await getDownloadURL(storageRef);
         }
 
-        await set(ref(db, `tours/${selectedTourId}`), {
+        await update(ref(db, `tours/${selectedTourId}`), {
           title,
           imageUrl,
           isLive,
@@ -598,7 +598,7 @@
         }
 
         const tourData = { title, imageUrl, isLive, description };
-        await set(ref(db, `tours/${tourId}`), tourData);
+        await update(ref(db, `tours/${tourId}`), tourData);
 
         msgEl.textContent = `Saved: tours/${tourId}`;
         hardRefresh();
