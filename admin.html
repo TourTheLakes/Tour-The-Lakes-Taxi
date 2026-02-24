@@ -449,7 +449,7 @@
       });
     }
 
-calendarGrid.addEventListener("click", async (e) => {
+     calendarGrid.addEventListener("click", async (e) => {
   const cell = e.target.closest(".calendar-cell");
   if (!cell) return;
 
@@ -461,31 +461,22 @@ calendarGrid.addEventListener("click", async (e) => {
     return;
   }
 
+  // Always select the date in UI
+  selectedDateKey = key;
+  if (selectedDateEl) selectedDateEl.value = key;
+  if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+  if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+
+  // highlight only the clicked date as "selected"
+  calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
+    c.classList.remove("selected");
+  });
+  cell.classList.add("selected");
+
+  // If date isn't saved yet, create it once. Never delete on click.
   try {
-    if (savedDates.has(key)) {
-      // removing date => also hide schedule controls
-      await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
-
-      selectedDateKey = "";
-      if (selectedDateEl) selectedDateEl.value = "";
-      if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-      if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
-
-      cell.classList.remove("selected");
-    } else {
-      // adding date => show schedule controls
+    if (!savedDates.has(key)) {
       await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
-
-      selectedDateKey = key;
-      if (selectedDateEl) selectedDateEl.value = key;
-      if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-      if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
-
-      // highlight only the clicked date as "selected"
-      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
-        c.classList.remove("selected");
-      });
-      cell.classList.add("selected");
     }
   } catch (err) {
     msgEl.textContent = `Error: ${err?.message || err}`;
@@ -692,11 +683,22 @@ confirmScheduleBtn.addEventListener("click", async () => {
       { capacity }
     );
 
-    scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
+   scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
 
-    // optional: clear inputs
-    tourTimeEl.value = "";
-    tourCapacityEl.value = "";
+// clear inputs
+tourTimeEl.value = "";
+tourCapacityEl.value = "";
+
+// clear selected date + hide schedule section
+selectedDateKey = "";
+if (selectedDateEl) selectedDateEl.value = "";
+if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
+
+// remove the visual "selected" border (keep has-data shading)
+calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
+  c.classList.remove("selected");
+});
 
   } catch (err) {
     scheduleMsgEl.textContent = `Error: ${err?.message || err}`;
