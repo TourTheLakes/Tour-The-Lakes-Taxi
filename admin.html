@@ -178,6 +178,11 @@
       background: rgba(255,255,255,0.05);
     }
 
+    .admin-schedule-section {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
     .site-footer {
       width: 100%;
       border-top: 1px solid #b86b2a;
@@ -248,6 +253,28 @@
         <div class="calendar-grid" id="calendarGrid"></div>
       </div>
 
+      <!-- Schedule (below calendar) -->
+<div class="admin-schedule-section">
+  <div class="admin-subtitle">Manage Times & Capacity</div>
+
+  <div class="admin-msg" id="scheduleMsg">
+    Select a tour, then click a date in the calendar.
+  </div>
+
+  <div class="admin-stack" id="scheduleControls" hidden>
+    <input id="selectedDate" class="admin-field" type="text" readonly />
+
+    <input id="tourTime" class="admin-field" type="time" />
+
+    <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
+
+    <button id="confirmSchedule" type="button" class="admin-btn">
+      CONFIRM
+    </button>
+  </div>
+</div>
+
+      
     </div>
   </main>
 
