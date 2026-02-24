@@ -491,11 +491,6 @@ try {
 } catch (err) {
   msgEl.textContent = `Error: ${err?.message || err}`;
 }
-      
-        // UI will update via onValue listener
-      } catch (err) {
-        msgEl.textContent = `Error: ${err?.message || err}`;
-      }
     });
 
     calPrevBtn.addEventListener("click", () => {
