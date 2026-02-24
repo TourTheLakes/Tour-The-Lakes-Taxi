@@ -442,7 +442,6 @@
       });
     }
 
-    // click date -> toggle in Firebase
     calendarGrid.addEventListener("click", async (e) => {
       const cell = e.target.closest(".calendar-cell");
       if (!cell) return;
@@ -454,6 +453,16 @@
         msgEl.textContent = "Select a tour first (then pick dates).";
         return;
       }
+
+      // set selected date (for Times/Capacity section)
+        selectedDateKey = key;
+     if (selectedDateEl) selectedDateEl.value = key;
+
+      // highlight only the clicked date as "selected"
+      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
+        c.classList.remove("selected");
+      });
+      cell.classList.add("selected");
 
       try {
         if (savedDates.has(key)) {
