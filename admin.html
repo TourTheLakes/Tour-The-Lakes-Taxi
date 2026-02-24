@@ -470,12 +470,28 @@
       });
       cell.classList.add("selected");
 
-      try {
-        if (savedDates.has(key)) {
-          await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
-        } else {
-          await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
-        }
+try {
+  if (savedDates.has(key)) {
+    // removing date => also hide schedule controls
+    await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
+
+    selectedDateKey = "";
+    if (selectedDateEl) selectedDateEl.value = "";
+    if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+    if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
+  } else {
+    // adding date => show schedule controls
+    await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
+
+    selectedDateKey = key;
+    if (selectedDateEl) selectedDateEl.value = key;
+    if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+    if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+  }
+} catch (err) {
+  msgEl.textContent = `Error: ${err?.message || err}`;
+}
+      
         // UI will update via onValue listener
       } catch (err) {
         msgEl.textContent = `Error: ${err?.message || err}`;
