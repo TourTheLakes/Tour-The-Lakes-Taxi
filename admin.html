@@ -446,40 +446,48 @@
       });
     }
 
-    calendarGrid.addEventListener("click", async (e) => {
-      const cell = e.target.closest(".calendar-cell");
-      if (!cell) return;
+calendarGrid.addEventListener("click", async (e) => {
+  const cell = e.target.closest(".calendar-cell");
+  if (!cell) return;
 
-      const key = cell.dataset.key;
-      if (!key) return; // empty cell
+  const key = cell.dataset.key;
+  if (!key) return; // empty cell
 
-      if (!selectedTourId) {
-        msgEl.textContent = "Select a tour first (then pick dates).";
-        return;
-      }
-
-        try {
-     if (savedDates.has(key)) {
-    // removing date => also hide schedule controls
-    await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
-
-    selectedDateKey = "";
-    if (selectedDateEl) selectedDateEl.value = "";
-    if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-    if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
-  } else {
-    // adding date => show schedule controls
-    await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
-
-    selectedDateKey = key;
-    if (selectedDateEl) selectedDateEl.value = key;
-    if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-    if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+  if (!selectedTourId) {
+    msgEl.textContent = "Select a tour first (then pick dates).";
+    return;
   }
-} catch (err) {
-  msgEl.textContent = `Error: ${err?.message || err}`;
-}
-    });
+
+  try {
+    if (savedDates.has(key)) {
+      // removing date => also hide schedule controls
+      await remove(ref(db, `tours/${selectedTourId}/dates/${key}`));
+
+      selectedDateKey = "";
+      if (selectedDateEl) selectedDateEl.value = "";
+      if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+      if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
+
+      cell.classList.remove("selected");
+    } else {
+      // adding date => show schedule controls
+      await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
+
+      selectedDateKey = key;
+      if (selectedDateEl) selectedDateEl.value = key;
+      if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+      if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+
+      // highlight only the clicked date as "selected"
+      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
+        c.classList.remove("selected");
+      });
+      cell.classList.add("selected");
+    }
+  } catch (err) {
+    msgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
 
     calPrevBtn.addEventListener("click", () => {
       viewMonth -= 1;
