@@ -131,11 +131,15 @@
       letter-spacing: 0.2px;
     }
 
-    .calendar-weekdays,
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-auto-rows: 1fr;
+      grid-template-rows: repeat(6, 1fr);
     }
 
     .calendar-weekdays div {
@@ -304,9 +308,7 @@
     const calNextBtn = document.getElementById("calNext");
     const calMonthEl = document.getElementById("calMonth");
     const calendarGrid = document.getElementById("calendarGrid");
-
-    // 0..34 cell slots, fixed 5x7
-    const CELL_COUNT = 35;
+    const CELL_COUNT = 42;
 
     // which month are we looking at?
     let viewYear = new Date().getFullYear();
@@ -524,9 +526,6 @@
           imageUrl,
           isLive,
           description,
-          // NOTE: dates live under tours/{id}/dates and are not overwritten by this set()
-          // because this set() replaces the entire node at tours/{id}.
-          // If you want to preserve dates while amending, we must switch to update().
         });
 
         msgEl.textContent = `Amended: tours/${selectedTourId}`;
