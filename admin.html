@@ -138,7 +138,30 @@ html, body {
 .calendar-cell {
   border: 1px solid #444;
   min-height: 56px;
-}       
+}  
+
+.calendar-cell {
+  border: 1px solid #444;
+  min-height: 56px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 6px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+.calendar-cell.selected {
+  border: 2px solid #b86b2a;
+}
+
+.calendar-cell.has-data {
+  background: rgba(184,107,42,0.15);
+}
+
+.calendar-cell:hover {
+  background: rgba(255,255,255,0.05);
+}        
 
 .site-footer {
   width: 100%;
