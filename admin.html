@@ -110,6 +110,35 @@ html, body {
   margin-bottom: 30px;
 }
 
+ .admin-calendar-section {
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-weekdays div {
+  text-align: center;
+  font-weight: 600;
+  padding: 10px 0;
+}
+
+.calendar-cell {
+  aspect-ratio: 1 / 1;
+  border: 1px solid #444;
+}       
+
 .site-footer {
   width: 100%;
   border-top: 1px solid #b86b2a;
@@ -168,6 +197,68 @@ html, body {
       <button id="amendTour" type="button" class="admin-btn">AMEND</button>
       <button id="deleteTour" type="button" class="admin-btn">DELETE</button>
     </div>
+
+     <div class="admin-calendar-section">
+
+  <div class="calendar-header">
+    <button class="calendar-prev">◀</button>
+    <div class="calendar-month">June 2026</div>
+    <button class="calendar-next">▶</button>
+  </div>
+
+  <div class="calendar-weekdays">
+    <div>Mon</div>
+    <div>Tue</div>
+    <div>Wed</div>
+    <div>Thu</div>
+    <div>Fri</div>
+    <div>Sat</div>
+    <div>Sun</div>
+  </div>
+
+  <div class="calendar-grid">
+    <!-- 35 cells -->
+    <!-- Leave empty for now -->
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+    <div class="calendar-cell"></div>
+  </div>
+
+     </div> 
 
   </div>
 </main>
