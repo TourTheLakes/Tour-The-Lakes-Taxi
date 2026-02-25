@@ -808,7 +808,6 @@ confirmScheduleBtn.addEventListener("click", async () => {
     scheduleMsgEl.textContent = "Select a tour first.";
     return;
   }
-
   if (!selectedDateKey) {
     scheduleMsgEl.textContent = "Select a date first.";
     return;
@@ -821,7 +820,6 @@ confirmScheduleBtn.addEventListener("click", async () => {
     scheduleMsgEl.textContent = "Select a time.";
     return;
   }
-
   if (!capacity || capacity < 1) {
     scheduleMsgEl.textContent = "Enter valid capacity.";
     return;
@@ -833,28 +831,27 @@ confirmScheduleBtn.addEventListener("click", async () => {
       { capacity }
     );
 
-   scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
+    // show saved message briefly, then reset UI
+    scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
 
-// clear inputs
-tourTimeEl.value = "";
-tourCapacityEl.value = "";
+    tourTimeEl.value = "";
+    tourCapacityEl.value = "";
 
-// clear selected date + hide schedule section
-selectedDateKey = "";
-if (selectedDateEl) selectedDateEl.value = "";
-if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
+    detachTimesListener();
+    clearTimesUI();
 
-// remove the visual "selected" border (keep has-data shading)
-calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
-  c.classList.remove("selected");
-});
+    selectedDateKey = "";
+    if (selectedDateEl) selectedDateEl.value = "";
+    if (scheduleControlsEl) scheduleControlsEl.hidden = true;
 
+    calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+
+    // if you still want the generic hint, set it after reset (optionally after a timeout)
+    scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
   } catch (err) {
     scheduleMsgEl.textContent = `Error: ${err?.message || err}`;
   }
 });
-
     void db;
   </script>
 </body>
