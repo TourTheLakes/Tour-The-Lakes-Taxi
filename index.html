@@ -187,6 +187,16 @@ img {
   letter-spacing: 0.2px;
 }
 
+/* Keep overlay text clipped inside the image borders */
+.tour-image { 
+  overflow: hidden; 
+}
+
+/* DEFAULT for 601–1023px (tablet range) */
+.tour-row {
+  top: 52%;
+}
+
 .tour-price,
 .tour-seats {
   display: none !important;
@@ -254,7 +264,6 @@ img {
 
   .tour-image .tour-title {
       font-size: 36px;
-      line-height: 1.25;
   }
 
   .tour-row { 
@@ -262,8 +271,8 @@ img {
   }
 
   .tour-meta {
-    font-size: 14px;
-    gap: 10px;
+    font-size: 13px;
+    kine-height: 1.25;
   }
 
 }
