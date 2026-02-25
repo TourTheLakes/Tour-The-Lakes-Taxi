@@ -468,9 +468,9 @@ const capText = Number.isFinite(capNum) ? `${capNum}` : "";
 
 const sentence =
   `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
-  (capText ? ` and we currently have ${capText} left` : "") +
+  (capText ? ` and we currently have ${capText} places left` : "") +
   (priceText ? ` at the price of ${priceText}.` : ".") +
-  ` Read more to find out and book.`;
+  ` Read More to find out and book.`;
 
 if (nextEl) nextEl.textContent = sentence;
 if (priceEl) priceEl.textContent = "";
