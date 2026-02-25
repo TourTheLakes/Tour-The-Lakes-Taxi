@@ -13,7 +13,10 @@
             padding: 0;
             height: 100%;
             background-color: #2b2b2b;
+            overflow-x: hidden;
         }
+
+*, *::before, *::after { box-sizing: border-box; }
 
 .site-header {
   width: 100%;
@@ -167,14 +170,15 @@ img {
 .tour-description {
     white-space: pre-wrap;
 }
-
-/* Make the meta sentence behave like a subtitle under the tour title */
+        
 .tour-row {
   position: absolute;
   left: 0;
   width: 100%;
   z-index: 2;
   padding: 0 16px; 
+  top: 52%;
+  box-sizing: border-box;
 }
 
 .tour-meta {
@@ -187,14 +191,8 @@ img {
   letter-spacing: 0.2px;
 }
 
-/* Keep overlay text clipped inside the image borders */
 .tour-image { 
   overflow: hidden; 
-}
-
-/* DEFAULT for 601–1023px (tablet range) */
-.tour-row {
-  top: 52%;
 }
 
 .tour-price,
