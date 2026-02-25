@@ -168,19 +168,23 @@ img {
     white-space: pre-wrap;
 }
 
-/* --- Tour subtitle overlay (price / next / seats) --- */
+/* --- Proper subtitle positioning inside tour image --- */
+
 .tour-row {
-  position: relative;
-  z-index: 3;                 /* above the image overlay */
-  margin-top: -58px;          /* pull meta up over the image */
-  padding-top: 0;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 38%; /* distance below title — adjust slightly if needed */
+  z-index: 2;
 }
 
 .tour-meta {
+  display: flex;
   justify-content: center;
-  text-align: center;
+  gap: 20px;
   color: rgba(255,255,255,0.92);
-  font: 500 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font: 500 20px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: center;
 }
 
 .tour-meta span {
@@ -237,8 +241,14 @@ img {
       font-size: 36px;
   }
 
-  .tour-row { margin-top: -44px; }
-  .tour-meta { font-size: 14px; }
+  .tour-row { 
+      top: 40%; 
+  }
+
+  .tour-meta {
+    font-size: 14px;
+    gap: 10px;
+  }
 
 }
         
