@@ -512,7 +512,6 @@ function renderTimesList(timesObj) {
     top.textContent = `${time} — capacity: ${cap}`;
     row.appendChild(top);
 
-    // edit controls
 // edit controls
 const controls = document.createElement("div");
 controls.style.display = "flex";
@@ -638,24 +637,6 @@ saveTimeBtn.addEventListener("click", async () => {
     if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
   }
 });
-
-    delBtn.addEventListener("click", async () => {
-      const ok = confirm(`Delete time ${time} for ${selectedDateKey}?`);
-      if (!ok) return;
-
-      try {
-        await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
-        if (timesListMsgEl) timesListMsgEl.textContent = `Deleted ${time}.`;
-      } catch (err) {
-        if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
-      }
-    });
-
-    controls.appendChild(capInput);
-    controls.appendChild(saveBtn);
-    controls.appendChild(delBtn);
-
-    row.appendChild(controls);
     timesListEl.appendChild(row);
   }
 }
