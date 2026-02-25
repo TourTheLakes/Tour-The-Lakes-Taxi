@@ -168,23 +168,23 @@ img {
     white-space: pre-wrap;
 }
 
+/* --- Tour subtitle overlay (price / next / seats) --- */
 .tour-row {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 14px 20px 0 20px;
+  position: relative;
+  z-index: 3;                 /* above the image overlay */
+  margin-top: -58px;          /* pull meta up over the image */
+  padding-top: 0;
 }
 
 .tour-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-  align-items: center;
+  justify-content: center;
+  text-align: center;
   color: rgba(255,255,255,0.92);
-  font: 600 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font: 500 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-.tour-meta span:empty {
-  display: none;
+.tour-meta span {
+  white-space: nowrap;
 }
 
 .site-footer {
@@ -236,6 +236,9 @@ img {
   .tour-image .tour-title {
       font-size: 36px;
   }
+
+  .tour-row { margin-top: -44px; }
+  .tour-meta { font-size: 14px; }
 
 }
         
@@ -427,10 +430,10 @@ function attachTourDatesListener(tourId, articleEl) {
     const priceText = formatGBP(next.price);
     const nextText = formatNextLabel(next.dt, next.timeStr);
 
-    if (priceEl) priceEl.textContent = priceText ? `Price: ${priceText}` : "";
-    if (nextEl) nextEl.textContent = nextText;
+    if (priceEl) priceEl.textContent = priceText || "";
+    if (nextEl) nextEl.textContent = nextText.replace(/^Next:\s*/, ""); // remove "Next:"
     if (seatsEl) seatsEl.textContent =
-      Number.isFinite(Number(next.capacity)) ? `Seats: ${Number(next.capacity)}` : "";
+          Number.isFinite(Number(next.capacity)) ? `${Number(next.capacity)} seats` : "";
   });
 
   tourDatesUnsubs.set(tourId, unsub);
