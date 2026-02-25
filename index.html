@@ -289,7 +289,191 @@ img {
   </div>
 </footer>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+  measurementId: "G-W6JY1LZXTP"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const toursEl = document.getElementById("tours");
+const tpl = document.getElementById("tourTemplate");
+
+// Keep track of per-tour listeners so we can clean them up on re-render
+const tourDatesUnsubs = new Map();
+
+function cleanupTourDatesListeners() {
+  for (const unsub of tourDatesUnsubs.values()) {
+    try { unsub(); } catch {}
+  }
+  tourDatesUnsubs.clear();
+}
+
+function clearTours() {
+  cleanupTourDatesListeners();
+  toursEl.innerHTML = "";
+}
+
+function parseSlotDateTime(dateKey, timeStr) {
+  // dateKey: "YYYY-MM-DD", timeStr: "HH:MM"
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const [hh, mm] = String(timeStr || "").split(":").map(Number);
+  if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
+  return new Date(y, m - 1, d, hh, mm, 0, 0);
+}
+
+function formatNextLabel(dt, timeStr) {
+  // Matches your screenshot expectation: "Next: 22 Feb 2026 14:30"
+  const datePart = dt.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+  return `Next: ${datePart} ${timeStr}`;
+}
+
+function formatGBP(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "";
+  // Keep it simple and consistent
+  return `£${n.toFixed(2)}`;
+}
+
+function findNextUpcomingSlot(datesObj) {
+  // datesObj shape:
+  // dates[YYYY-MM-DD].times[HH:MM] = { capacity, price, ... }
+  if (!datesObj || typeof datesObj !== "object") return null;
+
+  const now = new Date();
+  let best = null;
+
+  for (const [dateKey, dateNode] of Object.entries(datesObj)) {
+    const timesObj = dateNode?.times;
+    if (!timesObj || typeof timesObj !== "object") continue;
+
+    for (const [timeStr, slot] of Object.entries(timesObj)) {
+      const dt = parseSlotDateTime(dateKey, timeStr);
+      if (!dt) continue;
+
+      // Only future (or "now") slots
+      if (dt.getTime() < now.getTime()) continue;
+
+      if (!best || dt.getTime() < best.dt.getTime()) {
+        best = {
+          dateKey,
+          timeStr,
+          dt,
+          capacity: slot?.capacity ?? null,
+          price: slot?.price ?? null
+        };
+      }
+    }
+  }
+
+  return best;
+}
+
+function attachTourDatesListener(tourId, articleEl) {
+  const priceEl = articleEl.querySelector(".tour-price");
+  const nextEl = articleEl.querySelector(".tour-nextdate");
+  const seatsEl = articleEl.querySelector(".tour-seats");
+
+  // sensible defaults while loading
+  if (priceEl) priceEl.textContent = "";
+  if (nextEl) nextEl.textContent = "";
+  if (seatsEl) seatsEl.textContent = "";
+
+  const datesRef = ref(db, `tours/${tourId}/dates`);
+  const unsub = onValue(datesRef, (snap) => {
+    const datesObj = snap.val();
+    const next = findNextUpcomingSlot(datesObj);
+
+    if (!next) {
+      if (priceEl) priceEl.textContent = "";
+      if (nextEl) nextEl.textContent = "";
+      if (seatsEl) seatsEl.textContent = "";
+      return;
+    }
+
+    const priceText = formatGBP(next.price);
+    const nextText = formatNextLabel(next.dt, next.timeStr);
+
+    if (priceEl) priceEl.textContent = priceText ? `Price: ${priceText}` : "";
+    if (nextEl) nextEl.textContent = nextText;
+    if (seatsEl) seatsEl.textContent =
+      Number.isFinite(Number(next.capacity)) ? `Seats: ${Number(next.capacity)}` : "";
+  });
+
+  tourDatesUnsubs.set(tourId, unsub);
+}
+
+function renderTours(toursObj) {
+  clearTours();
+
+  if (!toursObj) return;
+
+  for (const [tourId, tour] of Object.entries(toursObj)) {
+    if (!tour || tour.isLive !== true) continue;
+
+    const node = tpl.content.cloneNode(true);
+    const article = node.querySelector(".tour");
+    article.dataset.tourId = tourId;
+
+    node.querySelector(".tour-title").textContent = tour.title || tourId;
+
+    const desc = node.querySelector(".tour-description");
+    desc.textContent = tour.description || "";
+    if (!tour.description) desc.style.display = "none";
+
+    const imageWrap = node.querySelector(".tour-image");
+    if (tour.imageUrl) {
+      const img = document.createElement("img");
+      img.src = tour.imageUrl;
+      img.alt = tour.title || "Tour image";
+      imageWrap.appendChild(img);
+    }
+
+    toursEl.appendChild(node);
+
+    // IMPORTANT: attach dates listener AFTER the node is in the DOM
+    const insertedArticle = toursEl.querySelector(`.tour[data-tour-id="${tourId}"]`);
+    if (insertedArticle) {
+      attachTourDatesListener(tourId, insertedArticle);
+    }
+  }
+}
+
+// Listen to /tours. If empty/null => nothing renders.
+onValue(ref(db, "tours"), (snapshot) => {
+  renderTours(snapshot.val());
+});
+
+// Toggle open/close (works for dynamically-rendered tours)
+document.addEventListener("click", (e) => {
+  const toggle = e.target.closest(".tour-toggle");
+  if (!toggle) return;
+
+  const tour = toggle.closest(".tour");
+  const details = tour.querySelector(".tour-details");
+
+  const isOpen = toggle.getAttribute("aria-expanded") === "true";
+  toggle.setAttribute("aria-expanded", String(!isOpen));
+  details.hidden = isOpen;
+});
+
+void db;
+</script>
 
 </body>
 </html>
