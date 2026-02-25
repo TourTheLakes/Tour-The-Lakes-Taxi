@@ -273,6 +273,12 @@
     <button id="confirmSchedule" type="button" class="admin-btn">
       CONFIRM
     </button>
+
+    <div id="timesListWrap" class="admin-stack">
+  <div class="admin-msg" id="timesListMsg">No date selected.</div>
+  <div id="timesList" class="admin-list"></div>
+   </div>
+    
   </div>
 </div>
 
@@ -333,6 +339,11 @@
     const tourTimeEl = document.getElementById("tourTime");
     const tourCapacityEl = document.getElementById("tourCapacity");
     const confirmScheduleBtn = document.getElementById("confirmSchedule");
+    const timesListMsgEl = document.getElementById("timesListMsg");
+    const timesListEl = document.getElementById("timesList");
+
+    // listener cleanup for currently selected date's times
+    let unsubscribeTimes = null;
 
     function hardRefresh() {
       window.location.reload();
@@ -449,7 +460,135 @@
       });
     }
 
-     calendarGrid.addEventListener("click", async (e) => {
+function clearTimesUI() {
+  if (timesListEl) timesListEl.innerHTML = "";
+  if (timesListMsgEl) timesListMsgEl.textContent = "No date selected.";
+}
+
+function detachTimesListener() {
+  if (typeof unsubscribeTimes === "function") {
+    unsubscribeTimes();
+    unsubscribeTimes = null;
+  }
+}
+
+function renderTimesList(timesObj) {
+  if (!timesListEl) return;
+
+  timesListEl.innerHTML = "";
+
+  if (!timesObj || typeof timesObj !== "object") {
+    if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
+    return;
+  }
+
+  const times = Object.keys(timesObj).sort(); // "09:30", "14:30", ...
+
+  if (!times.length) {
+    if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
+    return;
+  }
+
+  if (timesListMsgEl) timesListMsgEl.textContent = `Saved times for ${selectedDateKey}:`;
+
+  for (const time of times) {
+    const row = document.createElement("div");
+    row.style.border = "1px solid #b86b2a";
+    row.style.padding = "10px";
+    row.style.background = "#2b2b2b";
+    row.style.color = "rgba(255,255,255,0.92)";
+    row.style.display = "flex";
+    row.style.flexDirection = "column";
+    row.style.gap = "8px";
+
+    const cap = timesObj?.[time]?.capacity ?? "";
+
+    // top line
+    const top = document.createElement("div");
+    top.textContent = `${time} — capacity: ${cap}`;
+    row.appendChild(top);
+
+    // edit controls
+    const controls = document.createElement("div");
+    controls.style.display = "flex";
+    controls.style.gap = "8px";
+
+    const capInput = document.createElement("input");
+    capInput.type = "number";
+    capInput.min = "1";
+    capInput.value = String(cap || "");
+    capInput.className = "admin-field";
+    capInput.style.padding = "10px";
+    capInput.style.flex = "1";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "admin-btn";
+    saveBtn.textContent = "UPDATE CAPACITY";
+    saveBtn.style.flex = "1";
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "admin-btn";
+    delBtn.textContent = "DELETE TIME";
+    delBtn.style.flex = "1";
+
+    saveBtn.addEventListener("click", async () => {
+      const newCap = parseInt(capInput.value, 10);
+      if (!newCap || newCap < 1) {
+        if (timesListMsgEl) timesListMsgEl.textContent = "Enter a valid capacity (>= 1).";
+        return;
+      }
+
+      try {
+        await update(
+          ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
+          { capacity: newCap }
+        );
+        if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} to capacity ${newCap}.`;
+      } catch (err) {
+        if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    delBtn.addEventListener("click", async () => {
+      const ok = confirm(`Delete time ${time} for ${selectedDateKey}?`);
+      if (!ok) return;
+
+      try {
+        await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
+        if (timesListMsgEl) timesListMsgEl.textContent = `Deleted ${time}.`;
+      } catch (err) {
+        if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    controls.appendChild(capInput);
+    controls.appendChild(saveBtn);
+    controls.appendChild(delBtn);
+
+    row.appendChild(controls);
+    timesListEl.appendChild(row);
+  }
+}
+
+function attachTimesListenerForSelectedDate() {
+  detachTimesListener();
+
+  if (!selectedTourId || !selectedDateKey) {
+    clearTimesUI();
+    return;
+  }
+
+  if (timesListMsgEl) timesListMsgEl.textContent = "Loading times...";
+
+  const timesRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times`);
+  unsubscribeTimes = onValue(timesRef, (snap) => {
+    renderTimesList(snap.val());
+  });
+}
+    
+calendarGrid.addEventListener("click", async (e) => {
   const cell = e.target.closest(".calendar-cell");
   if (!cell) return;
 
@@ -460,6 +599,30 @@
     msgEl.textContent = "Select a tour first (then pick dates).";
     return;
   }
+
+  // If date doesn't exist yet, create the date node (but never delete on click)
+  try {
+    if (!savedDates.has(key)) {
+      await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
+    }
+  } catch (err) {
+    msgEl.textContent = `Error: ${err?.message || err}`;
+    return;
+  }
+
+  // select date in UI
+  selectedDateKey = key;
+  if (selectedDateEl) selectedDateEl.value = key;
+  if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+  if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+
+  // highlight only the clicked date
+  calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+  cell.classList.add("selected");
+
+  // load times list for this date
+  attachTimesListenerForSelectedDate();
+});
 
   // Always select the date in UI
   selectedDateKey = key;
