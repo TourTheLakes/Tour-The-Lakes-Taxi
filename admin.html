@@ -265,10 +265,9 @@
 
   <div class="admin-stack" id="scheduleControls" hidden>
     <input id="selectedDate" class="admin-field" type="text" readonly />
-
-    <input id="tourTime" class="admin-field" type="time" />
-
+    <input id="tourTime" class="admin-field" type="time" /
     <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
+    <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
 
     <button id="confirmSchedule" type="button" class="admin-btn">
       CONFIRM
@@ -345,6 +344,7 @@
     const confirmScheduleBtn = document.getElementById("confirmSchedule");
     const timesListMsgEl = document.getElementById("timesListMsg");
     const timesListEl = document.getElementById("timesList");
+    const tourPriceEl = document.getElementById("tourPrice");
 
     // listener cleanup for currently selected date's times
     let unsubscribeTimes = null;
