@@ -265,7 +265,7 @@
 
   <div class="admin-stack" id="scheduleControls" hidden>
     <input id="selectedDate" class="admin-field" type="text" readonly />
-    <input id="tourTime" class="admin-field" type="time" /
+    <input id="tourTime" class="admin-field" type="time" />
     <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
     <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
 
@@ -509,7 +509,7 @@ function renderTimesList(timesObj) {
 
     // top line
     const top = document.createElement("div");
-    top.textContent = `${time} — capacity: ${cap}`;
+    top.textContent = `${time} — capacity: ${cap} — £${price}`;
     row.appendChild(top);
 
 // edit controls
@@ -572,6 +572,21 @@ controls.appendChild(row1);
 controls.appendChild(row2);
 row.appendChild(controls);
 
+const priceInput = document.createElement("input");
+priceInput.type = "number";
+priceInput.min = "0";
+priceInput.step = "0.01";
+priceInput.value = String(price || "");
+priceInput.className = "admin-field";
+priceInput.style.padding = "10px";
+priceInput.style.flex = "1";
+
+const savePriceBtn = document.createElement("button");
+savePriceBtn.type = "button";
+savePriceBtn.className = "admin-btn";
+savePriceBtn.textContent = "UPDATE PRICE";
+savePriceBtn.style.flex = "1";
+
 // handlers
 saveCapBtn.addEventListener("click", async () => {
   const newCap = parseInt(capInput.value, 10);
@@ -614,6 +629,24 @@ saveTimeBtn.addEventListener("click", async () => {
     if (timesListMsgEl) timesListMsgEl.textContent = "Time unchanged.";
     return;
   }
+
+  savePriceBtn.addEventListener("click", async () => {
+  const newPrice = parseFloat(priceInput.value);
+  if (isNaN(newPrice) || newPrice < 0) {
+    timesListMsgEl.textContent = "Enter valid price.";
+    return;
+  }
+
+  try {
+    await update(
+      ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
+      { price: newPrice }
+    );
+    timesListMsgEl.textContent = `Updated ${time} price to £${newPrice}.`;
+  } catch (err) {
+    timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
 
   // prevent collisions (don’t overwrite another existing time)
   if (timesObj && Object.prototype.hasOwnProperty.call(timesObj, newTime)) {
@@ -875,6 +908,7 @@ confirmScheduleBtn.addEventListener("click", async () => {
 
   const time = tourTimeEl.value;
   const capacity = parseInt(tourCapacityEl.value, 10);
+  const price = parseFloat(tourPriceEl.value);
 
   if (!time) {
     scheduleMsgEl.textContent = "Select a time.";
@@ -885,10 +919,15 @@ confirmScheduleBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (isNaN(price) || price < 0) {
+  scheduleMsgEl.textContent = "Enter valid price.";
+  return;
+}
+  
   try {
     await set(
       ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
-      { capacity }
+      { capacity, price }
     );
 
     scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces).`;
@@ -896,6 +935,7 @@ confirmScheduleBtn.addEventListener("click", async () => {
     // clear inputs only
     tourTimeEl.value = "";
     tourCapacityEl.value = "";
+    tourPriceEl.value = "";
 
     // keep selectedDateKey and schedule UI visible
     // times list will update automatically via onValue listener
