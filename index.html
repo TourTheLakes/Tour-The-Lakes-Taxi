@@ -440,13 +440,28 @@ function attachTourDatesListener(tourId, articleEl) {
       return;
     }
 
-    const priceText = formatGBP(next.price);
-    const nextText = formatNextLabel(next.dt, next.timeStr);
+const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
 
-    if (priceEl) priceEl.textContent = priceText || "";
-    if (nextEl) nextEl.textContent = nextText.replace(/^Next:\s*/, ""); // remove "Next:"
-    if (seatsEl) seatsEl.textContent =
-          Number.isFinite(Number(next.capacity)) ? `${Number(next.capacity)} seats` : "";
+const priceText = formatGBP(next.price); // already "£xx.xx" or ""
+const datePart = next.dt.toLocaleDateString(undefined, {
+  day: "2-digit",
+  month: "short",
+  year: "numeric"
+});
+
+const capNum = Number(next.capacity);
+const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+
+const sentence =
+  `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
+  (capText ? ` and we currently have ${capText} left` : "") +
+  (priceText ? ` at the price of ${priceText}.` : ".") +
+  ` Read more to find out and book.`;
+
+if (nextEl) nextEl.textContent = sentence;
+if (priceEl) priceEl.textContent = "";
+if (seatsEl) seatsEl.textContent = "";
+      
   });
 
   tourDatesUnsubs.set(tourId, unsub);
