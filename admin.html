@@ -274,6 +274,10 @@
       CONFIRM
     </button>
 
+    <div class="admin-msg" id="confirmHelp">
+  Tip: CONFIRM adds a NEW time slot. To edit an existing slot, use UPDATE CAPACITY / UPDATE TIME on the row below.
+</div>
+
     <div id="timesListWrap" class="admin-stack">
   <div class="admin-msg" id="timesListMsg">No date selected.</div>
   <div id="timesList" class="admin-list"></div>
@@ -509,47 +513,131 @@ function renderTimesList(timesObj) {
     row.appendChild(top);
 
     // edit controls
-    const controls = document.createElement("div");
-    controls.style.display = "flex";
-    controls.style.gap = "8px";
+// edit controls
+const controls = document.createElement("div");
+controls.style.display = "flex";
+controls.style.flexDirection = "column";
+controls.style.gap = "8px";
 
-    const capInput = document.createElement("input");
-    capInput.type = "number";
-    capInput.min = "1";
-    capInput.value = String(cap || "");
-    capInput.className = "admin-field";
-    capInput.style.padding = "10px";
-    capInput.style.flex = "1";
+// row 1: capacity + update/delete
+const row1 = document.createElement("div");
+row1.style.display = "flex";
+row1.style.gap = "8px";
 
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.className = "admin-btn";
-    saveBtn.textContent = "UPDATE CAPACITY";
-    saveBtn.style.flex = "1";
+const capInput = document.createElement("input");
+capInput.type = "number";
+capInput.min = "1";
+capInput.value = String(cap || "");
+capInput.className = "admin-field";
+capInput.style.padding = "10px";
+capInput.style.flex = "1";
 
-    const delBtn = document.createElement("button");
-    delBtn.type = "button";
-    delBtn.className = "admin-btn";
-    delBtn.textContent = "DELETE TIME";
-    delBtn.style.flex = "1";
+const saveCapBtn = document.createElement("button");
+saveCapBtn.type = "button";
+saveCapBtn.className = "admin-btn";
+saveCapBtn.textContent = "UPDATE CAPACITY";
+saveCapBtn.style.flex = "1";
 
-    saveBtn.addEventListener("click", async () => {
-      const newCap = parseInt(capInput.value, 10);
-      if (!newCap || newCap < 1) {
-        if (timesListMsgEl) timesListMsgEl.textContent = "Enter a valid capacity (>= 1).";
-        return;
-      }
+const delBtn = document.createElement("button");
+delBtn.type = "button";
+delBtn.className = "admin-btn";
+delBtn.textContent = "DELETE TIME";
+delBtn.style.flex = "1";
 
-      try {
-        await update(
-          ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
-          { capacity: newCap }
-        );
-        if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} to capacity ${newCap}.`;
-      } catch (err) {
-        if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
-      }
-    });
+row1.appendChild(capInput);
+row1.appendChild(saveCapBtn);
+row1.appendChild(delBtn);
+
+// row 2: change time + update time
+const row2 = document.createElement("div");
+row2.style.display = "flex";
+row2.style.gap = "8px";
+
+const timeInput = document.createElement("input");
+timeInput.type = "time";
+timeInput.value = time; // prefill current time
+timeInput.className = "admin-field";
+timeInput.style.padding = "10px";
+timeInput.style.flex = "1";
+
+const saveTimeBtn = document.createElement("button");
+saveTimeBtn.type = "button";
+saveTimeBtn.className = "admin-btn";
+saveTimeBtn.textContent = "UPDATE TIME";
+saveTimeBtn.style.flex = "1";
+
+row2.appendChild(timeInput);
+row2.appendChild(saveTimeBtn);
+
+controls.appendChild(row1);
+controls.appendChild(row2);
+row.appendChild(controls);
+
+// handlers
+saveCapBtn.addEventListener("click", async () => {
+  const newCap = parseInt(capInput.value, 10);
+  if (!newCap || newCap < 1) {
+    if (timesListMsgEl) timesListMsgEl.textContent = "Enter a valid capacity (>= 1).";
+    return;
+  }
+
+  try {
+    await update(
+      ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`),
+      { capacity: newCap }
+    );
+    if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} to capacity ${newCap}.`;
+  } catch (err) {
+    if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
+
+delBtn.addEventListener("click", async () => {
+  const ok = confirm(`Delete time ${time} for ${selectedDateKey}?`);
+  if (!ok) return;
+
+  try {
+    await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
+    if (timesListMsgEl) timesListMsgEl.textContent = `Deleted ${time}.`;
+  } catch (err) {
+    if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
+
+saveTimeBtn.addEventListener("click", async () => {
+  const newTime = timeInput.value;
+  if (!newTime) {
+    if (timesListMsgEl) timesListMsgEl.textContent = "Select a valid time.";
+    return;
+  }
+
+  if (newTime === time) {
+    if (timesListMsgEl) timesListMsgEl.textContent = "Time unchanged.";
+    return;
+  }
+
+  // prevent collisions (don’t overwrite another existing time)
+  if (timesObj && Object.prototype.hasOwnProperty.call(timesObj, newTime)) {
+    if (timesListMsgEl) timesListMsgEl.textContent = `That time (${newTime}) already exists.`;
+    return;
+  }
+
+  const ok = confirm(`Change time ${time} → ${newTime} for ${selectedDateKey}?`);
+  if (!ok) return;
+
+  try {
+    const oldRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
+    const newRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${newTime}`);
+
+    // copy then delete (rename key)
+    await set(newRef, { capacity: cap || 1 });
+    await remove(oldRef);
+
+    if (timesListMsgEl) timesListMsgEl.textContent = `Updated time ${time} → ${newTime}.`;
+  } catch (err) {
+    if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+  }
+});
 
     delBtn.addEventListener("click", async () => {
       const ok = confirm(`Delete time ${time} for ${selectedDateKey}?`);
