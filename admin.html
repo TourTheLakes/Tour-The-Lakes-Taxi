@@ -670,16 +670,6 @@ calendarGrid.addEventListener("click", async (e) => {
     return;
   }
 
-  // If date doesn't exist yet, create the date node (but never delete on click)
-  try {
-    if (!savedDates.has(key)) {
-      await set(ref(db, `tours/${selectedTourId}/dates/${key}`), { exists: true });
-    }
-  } catch (err) {
-    msgEl.textContent = `Error: ${err?.message || err}`;
-    return;
-  }
-
   // select date in UI
   selectedDateKey = key;
   if (selectedDateEl) selectedDateEl.value = key;
