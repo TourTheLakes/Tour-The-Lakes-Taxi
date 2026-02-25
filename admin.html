@@ -628,9 +628,10 @@ saveTimeBtn.addEventListener("click", async () => {
     const oldRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
     const newRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${newTime}`);
 
-    // copy then delete (rename key)
-    await set(newRef, { capacity: cap || 1 });
-    await remove(oldRef);
+  // copy then delete (rename key) — copy the full object at that time slot
+const oldData = (timesObj && timesObj[time]) ? timesObj[time] : { capacity: 1 };
+await set(newRef, oldData);
+await remove(oldRef);
 
     if (timesListMsgEl) timesListMsgEl.textContent = `Updated time ${time} → ${newTime}.`;
   } catch (err) {
