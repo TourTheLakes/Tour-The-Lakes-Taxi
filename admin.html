@@ -624,28 +624,6 @@ calendarGrid.addEventListener("click", async (e) => {
   attachTimesListenerForSelectedDate();
 });
 
-  // Always select the date in UI
-  selectedDateKey = key;
-  if (selectedDateEl) selectedDateEl.value = key;
-  if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-  if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
-
-  // highlight only the clicked date as "selected"
-  calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => {
-    c.classList.remove("selected");
-  });
-  cell.classList.add("selected");
-
-  // If date isn't saved yet, create it once. Never delete on click.
-  try {
-    if (!savedDates.has(key)) {
-      await set(ref(db, `tours/${selectedTourId}/dates/${key}`), true);
-    }
-  } catch (err) {
-    msgEl.textContent = `Error: ${err?.message || err}`;
-  }
-});
-
     calPrevBtn.addEventListener("click", () => {
       viewMonth -= 1;
       if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
@@ -678,22 +656,31 @@ calendarGrid.addEventListener("click", async (e) => {
         row.style.cursor = "pointer";
         row.style.textAlign = "left";
 
-        row.addEventListener("click", () => {
-          selectedTourId = tourId;
-          selectedTourData = tour || null;
+row.addEventListener("click", () => {
+  selectedTourId = tourId;
+  selectedTourData = tour || null;
 
-          titleEl.value = tour?.title || "";
-          liveEl.checked = !!tour?.isLive;
-          descEl.value = tour?.description || "";
+  // reset schedule selection when switching tours
+  selectedDateKey = "";
+  if (selectedDateEl) selectedDateEl.value = "";
+  if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+  if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
 
-          msgEl.textContent = `Selected: ${tourId}`;
+  // remove selected border on calendar (from previous tour/date)
+  calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
 
-          // start listening to this tour's dates and paint calendar markers
-          attachDatesListenerForTour(tourId);
+  detachTimesListener();
+  clearTimesUI();
 
-          // repaint list selection highlight
-          // (simple approach: rely on onValue rerender; this is enough for now)
-        });
+  // populate the tour form fields
+  titleEl.value = tour?.title || "";
+  liveEl.checked = !!tour?.isLive;
+  descEl.value = tour?.description || "";
+
+  msgEl.textContent = `Selected: ${tourId}`;
+
+  attachDatesListenerForTour(tourId);
+});
 
         tourListEl.appendChild(row);
       }
