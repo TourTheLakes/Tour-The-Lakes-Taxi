@@ -201,16 +201,6 @@ img {
   color: rgba(255,255,255,0.92);
   line-height: 1.5;
 }
-
-.ttl-morebtn{
-  background: transparent;
-  border: 1px solid #b86b2a;
-  color: #b86b2a;
-  padding: 4px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  font: 500 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
         
 .tour-row {
   position: absolute;
@@ -480,52 +470,6 @@ function findNextUpcomingSlot(datesObj) {
   return best;
 }
 
-function applyCollapses(rootEl, limit = 100) {
-  if (!rootEl) return;
-
-  const targets = rootEl.querySelectorAll(".tit-body, .tsec-b");
-
-  targets.forEach((el) => {
-    if (el.dataset.collapsed === "1") return;
-
-    const fullText = (el.textContent || "").trim();
-    if (fullText.length <= limit) return;
-
-    const shortText = fullText.slice(0, limit).trimEnd() + "…";
-
-    el.dataset.collapsed = "1";
-    el.innerHTML = "";
-
-    const shortSpan = document.createElement("span");
-    shortSpan.className = "ttl-short";
-    shortSpan.textContent = shortText;
-
-    const fullSpan = document.createElement("span");
-    fullSpan.className = "ttl-full";
-    fullSpan.textContent = fullText;
-    fullSpan.hidden = true;
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "ttl-morebtn";
-    btn.textContent = "Read more";
-    btn.setAttribute("aria-expanded", "false");
-
-    btn.addEventListener("click", () => {
-      const expanded = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", String(!expanded));
-      fullSpan.hidden = expanded;
-      shortSpan.hidden = !expanded;
-      btn.textContent = expanded ? "Read more" : "Read less";
-    });
-
-    el.appendChild(shortSpan);
-    el.appendChild(fullSpan);
-    el.appendChild(document.createTextNode(" "));
-    el.appendChild(btn);
-  });
-}
-
 function attachTourDatesListener(tourId, articleEl) {
   const priceEl = articleEl.querySelector(".tour-price");
   const nextEl = articleEl.querySelector(".tour-nextdate");
@@ -548,26 +492,28 @@ function attachTourDatesListener(tourId, articleEl) {
       return;
     }
 
-    const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
-    const priceText = formatGBP(next.price);
-    const datePart = next.dt.toLocaleDateString(undefined, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
+const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
 
-    const capNum = Number(next.capacity);
-    const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+const priceText = formatGBP(next.price); // already "£xx.xx" or ""
+const datePart = next.dt.toLocaleDateString(undefined, {
+  day: "2-digit",
+  month: "short",
+  year: "numeric"
+});
 
-    const sentence =
-      `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
-      (capText ? ` and we currently have ${capText} places left` : "") +
-      (priceText ? ` at the price of ${priceText}.` : ".") +
-      ` Read More to find out and book.`;
+const capNum = Number(next.capacity);
+const capText = Number.isFinite(capNum) ? `${capNum}` : "";
 
-    if (nextEl) nextEl.textContent = sentence;
-    if (priceEl) priceEl.textContent = "";
-    if (seatsEl) seatsEl.textContent = "";
+const sentence =
+  `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
+  (capText ? ` and we currently have ${capText} places left` : "") +
+  (priceText ? ` at the price of ${priceText}.` : ".") +
+  ` Read More to find out and book.`;
+
+if (nextEl) nextEl.textContent = sentence;
+if (priceEl) priceEl.textContent = "";
+if (seatsEl) seatsEl.textContent = "";
+      
   });
 
   tourDatesUnsubs.set(tourId, unsub);
@@ -587,10 +533,9 @@ function renderTours(toursObj) {
 
     node.querySelector(".tour-title").textContent = tour.title || tourId;
 
-const desc = node.querySelector(".tour-description");
-desc.innerHTML = tour.description || "";
-if (!tour.description) desc.style.display = "none";
-applyCollapses(desc, 100);
+    const desc = node.querySelector(".tour-description");
+    desc.innerHTML = tour.description || "";
+    if (!tour.description) desc.style.display = "none";
 
     const imageWrap = node.querySelector(".tour-image");
     if (tour.imageUrl) {
