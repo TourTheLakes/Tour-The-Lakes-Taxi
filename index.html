@@ -171,6 +171,12 @@ img {
     white-space: pre-wrap;
 }
 
+.tour-description.collapsed {
+  max-height: 180px;   /* adjust height as needed */
+  overflow: hidden;
+  position: relative;
+}
+
 .tsec {
   margin-bottom: 24px;
 }
@@ -488,10 +494,8 @@ function applyCollapses(rootEl, limit = 100) {
   targets.forEach((el) => {
     if (el.dataset.collapsed === "1") return;
 
-    const fullText = (el.textContent || "").trim();
+    const fullHTML = el.innerHTML.trim();
     if (fullText.length <= limit) return;
-
-    const shortText = fullText.slice(0, limit).trimEnd() + "…";
 
     el.dataset.collapsed = "1";
     el.innerHTML = "";
@@ -502,7 +506,7 @@ function applyCollapses(rootEl, limit = 100) {
 
     const fullSpan = document.createElement("span");
     fullSpan.className = "ttl-full";
-    fullSpan.textContent = fullText;
+    fullSpan.innerHTML = fullHTML;
     fullSpan.hidden = true;
 
     const btn = document.createElement("button");
@@ -592,7 +596,6 @@ function renderTours(toursObj) {
     const desc = node.querySelector(".tour-description");
     desc.innerHTML = tour.description || "";
     if (!tour.description) desc.style.display = "none";
-      applyCollapses(desc, 100);
 
     const imageWrap = node.querySelector(".tour-image");
     if (tour.imageUrl) {
