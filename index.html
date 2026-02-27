@@ -226,57 +226,6 @@ img {
   overflow: hidden; 
 }
 
-.tour-price,
-.tour-seats {
-  display: none !important;
-}
-
-.tour-nextdate {
-  display: block;
-  white-space: normal;
-}
-
-.tour-meta span {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.site-footer {
-  width: 100%;
-  border-top: 2px solid #b86b2a;
-}
-
-.footer-inner {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-}
-
-.footer-text {
-  color: rgba(255,255,255,0.6);
-  font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.2px;
-}
-
-@media screen and (min-width: 1024px) {
-  .hero-wrapper img {
-    max-height: 600px;
-    object-fit: cover;
-  }
-
-.hero-wrapper h1 { top: 35%; }
-.hero-wrapper p { top: 48%; }
-
-.tour-image img {
-    max-height: 300px;
-    object-fit: cover;
-  }
-
-  .tour-row { 
-      top: 46%; 
-  }
-
 /* ===== Public calendar (match admin look) ===== */
 
 .tour-booking-area{
@@ -400,6 +349,57 @@ img {
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+.tour-price,
+.tour-seats {
+  display: none !important;
+}
+
+.tour-nextdate {
+  display: block;
+  white-space: normal;
+}
+
+.tour-meta span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.site-footer {
+  width: 100%;
+  border-top: 2px solid #b86b2a;
+}
+
+.footer-inner {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.footer-text {
+  color: rgba(255,255,255,0.6);
+  font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+@media screen and (min-width: 1024px) {
+  .hero-wrapper img {
+    max-height: 600px;
+    object-fit: cover;
+  }
+
+.hero-wrapper h1 { top: 35%; }
+.hero-wrapper p { top: 48%; }
+
+.tour-image img {
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  .tour-row { 
+      top: 46%; 
+  }
 
 }
 
@@ -552,6 +552,13 @@ function cleanupTourDatesListeners() {
 
 function clearTours() {
   cleanupTourDatesListeners();
+
+  // clean up public calendars (listeners + state) before wiping DOM
+  for (const state of tourCalStates.values()) {
+    try { detachTourCalendarListeners(state); } catch {}
+  }
+  tourCalStates.clear();
+
   toursEl.innerHTML = "";
 }
 
@@ -785,6 +792,16 @@ function attachTimesListenerForDate(state){
 }
 
 function initTourCalendar(tourId, articleEl){
+
+  console.log(
+    "initTourCalendar:",
+    tourId,
+    !!articleEl,
+    !!articleEl?.querySelector(".tour-details"),
+    !!articleEl?.querySelector(".tour-calendar"),
+    !!articleEl?.querySelector(".cal-grid")
+  );
+    
   // only init once per tour
   if (tourCalStates.has(tourId)) return;
 
@@ -951,6 +968,7 @@ function renderTours(toursObj) {
 
 // Listen to /tours. If empty/null => nothing renders.
 onValue(ref(db, "tours"), (snapshot) => {
+  console.log("tours snapshot:", snapshot.val());
   renderTours(snapshot.val());
 });
 
