@@ -859,23 +859,29 @@ function initTourCalendar(tourId, articleEl){
     renderCalendarUI(state);
   });
 
-  gridEl.addEventListener("click", (e) => {
-    const cell = e.target.closest(".cal-cell");
-    if (!cell) return;
+gridEl.addEventListener("click", (e) => {
+  const cell = e.target.closest(".cal-cell");
+  if (!cell) return;
 
-    const key = cell.dataset.key;
-    if (!key) return;
+  const key = cell.dataset.key;
+  if (!key) return;
 
-    state.selectedDateKey = key;
-    state.selectedTime = ""; // selecting a new date clears time selection
+  state.selectedDateKey = key;
+  state.selectedTime = "";
 
-    // visual selection
-    gridEl.querySelectorAll(".cal-cell.selected")
-      .forEach(c => c.classList.remove("selected"));
-    cell.classList.add("selected");
+  // visual selection
+  gridEl.querySelectorAll(".cal-cell.selected")
+    .forEach(c => c.classList.remove("selected"));
+  cell.classList.add("selected");
 
-    attachTimesListenerForDate(state);
-  });
+  // if no data on this date, show confirmation + clear list
+  if (!state.savedDates.has(key)) {
+    clearSlots(state, `No availability on ${key}. Select another date.`);
+    return;
+  }
+
+  attachTimesListenerForDate(state);
+});
 
   tourCalStates.set(tourId, state);
 }
