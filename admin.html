@@ -67,11 +67,10 @@
   flex-direction: column;
   gap: 10px;
 }
-.it-row {
-  display: flex;
-  gap: 10px;
-}
-.it-row > * { flex: 1; }
+
+.it-row { display: flex; gap: 10px; }
+.it-row .admin-field { flex: 1 1 auto; min-width: 0; } 
+.it-row .admin-btn { width: auto; flex: 0 0 auto; }   
 
     .admin-check {
       display: flex;
@@ -404,7 +403,7 @@ function nl2br(s) {
   return escHtml(s).replace(/\r?\n/g, "<br>");
 }
 
-function renderItineraryEditor() {
+function renderItineraryBlank() {
   itineraryListEl.innerHTML = "";
 
   itineraryItems.forEach((item, idx) => {
