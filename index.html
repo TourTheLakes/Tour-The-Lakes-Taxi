@@ -387,7 +387,7 @@ img {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { getDatabase, ref, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -411,7 +411,11 @@ const tourDatesUnsubs = new Map();
 
 function cleanupTourDatesListeners() {
   for (const unsub of tourDatesUnsubs.values()) {
-    try { unsub(); } catch {}
+    try {
+      if (typeof unsub === "function") {
+        unsub(); // Firebase unsubscribe
+      }
+    } catch {}
   }
   tourDatesUnsubs.clear();
 }
@@ -430,7 +434,6 @@ function parseSlotDateTime(dateKey, timeStr) {
 }
 
 function formatNextLabel(dt, timeStr) {
-  // Matches your screenshot expectation: "Next: 22 Feb 2026 14:30"
   const datePart = dt.toLocaleDateString(undefined, {
     day: "2-digit",
     month: "short",
@@ -442,13 +445,10 @@ function formatNextLabel(dt, timeStr) {
 function formatGBP(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return "";
-  // Keep it simple and consistent
   return `£${n.toFixed(2)}`;
 }
 
 function findNextUpcomingSlot(datesObj) {
-  // datesObj shape:
-  // dates[YYYY-MM-DD].times[HH:MM] = { capacity, price, ... }
   if (!datesObj || typeof datesObj !== "object") return null;
 
   const now = new Date();
@@ -462,7 +462,6 @@ function findNextUpcomingSlot(datesObj) {
       const dt = parseSlotDateTime(dateKey, timeStr);
       if (!dt) continue;
 
-      // Only future (or "now") slots
       if (dt.getTime() < now.getTime()) continue;
 
       if (!best || dt.getTime() < best.dt.getTime()) {
@@ -480,6 +479,7 @@ function findNextUpcomingSlot(datesObj) {
   return best;
 }
 
+    
 function applyCollapses(rootEl, limit = 100) {
   if (!rootEl) return;
 
