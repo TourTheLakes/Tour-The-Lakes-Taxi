@@ -277,6 +277,130 @@ img {
       top: 46%; 
   }
 
+/* ===== Public calendar (match admin look) ===== */
+
+.tour-booking-area{
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+  padding: 0 20px;
+}
+
+.tour-calendar{
+  margin-top: 18px;
+  border: 1px solid #b86b2a;
+  padding: 14px;
+  background: #2b2b2b;
+}
+
+.cal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 14px;
+}
+
+.cal-nav{
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  color: #b86b2a;
+  padding: 8px 12px;
+  cursor: pointer;
+  font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.cal-month{
+  color: rgba(255,255,255,0.92);
+  font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+.cal-weekdays{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.cal-weekdays div{
+  text-align:center;
+  font-weight:600;
+  padding: 8px 0;
+  color: rgba(255,255,255,0.92);
+}
+
+.cal-grid{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 0;
+}
+
+.cal-cell{
+  border: 1px solid #444;
+  min-height: 52px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-end;
+  padding: 6px;
+  color: rgba(255,255,255,0.8);
+  cursor:pointer;
+  user-select:none;
+}
+
+.cal-cell.is-empty{
+  opacity: 0.25;
+  cursor: default;
+}
+
+.cal-cell.has-data{
+  background: rgba(184,107,42,0.15);
+}
+
+.cal-cell:not(.is-empty):hover{
+  background: rgba(255,255,255,0.05);
+}
+
+.cal-cell.selected{
+  border: 2px solid #b86b2a;
+}
+
+/* ===== Slots list (selectable, same visual language) ===== */
+
+.slots-msg{
+  margin: 14px 0 10px 0;
+  color: rgba(255,255,255,0.6);
+  font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.slots-list{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.slot-btn{
+  width: 100%;
+  text-align:left;
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  color: rgba(255,255,255,0.92);
+  padding: 12px;
+  cursor: pointer;
+  font: 500 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.slot-btn.has-data{
+  background: rgba(184,107,42,0.15); /* SAME as calendar has-data */
+}
+
+.slot-btn.selected{
+  border: 2px solid #b86b2a;        /* SAME as calendar selected */
+}
+
+.slot-btn:disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 }
 
 @media screen and (max-width: 600px) {
@@ -357,14 +481,34 @@ img {
       <div class="tour-divider-line"></div>
     </div>
 
-    <div class="tour-details" hidden>
-      <div class="tour-description"></div>
+<div class="tour-details" hidden>
+  <div class="tour-description"></div>
 
-      <div class="tour-booking-area">
-        <div class="tour-calendar"></div>
-        <div class="tour-workspace"></div>
+  <div class="tour-booking-area">
+    <!-- Calendar (public) -->
+    <div class="tour-calendar">
+      <div class="cal-header">
+        <button type="button" class="cal-nav cal-prev">◀</button>
+        <div class="cal-month"></div>
+        <button type="button" class="cal-nav cal-next">▶</button>
       </div>
+
+      <div class="cal-weekdays">
+        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+      </div>
+
+      <div class="cal-grid"></div>
     </div>
+
+    <!-- Times list (public) -->
+    <div class="tour-workspace">
+      <div class="slots-msg">Select a date.</div>
+      <div class="slots-list"></div>
+    </div>
+  </div>
+</div>
+
+      
   </article>
 </template>
 
@@ -470,6 +614,255 @@ function findNextUpcomingSlot(datesObj) {
   return best;
 }
 
+// ===== Public calendar per-tour state =====
+const tourCalStates = new Map(); // tourId -> state object
+
+function pad2(n){ return String(n).padStart(2, "0"); }
+function toKeyYYYYMMDD(y, m0, d){ return `${y}-${pad2(m0+1)}-${pad2(d)}`; }
+function monthLabel(y, m0){
+  const dt = new Date(y, m0, 1);
+  return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
+}
+function firstDayIndexMonFirst(y, m0){
+  const js = new Date(y, m0, 1).getDay(); // Sun=0..Sat=6
+  return (js + 6) % 7; // Mon=0..Sun=6
+}
+function daysInMonth(y, m0){ return new Date(y, m0+1, 0).getDate(); }
+
+function ensureCalendarGrid(gridEl){
+  const CELL_COUNT = 42;
+  if (gridEl.children.length === CELL_COUNT) return;
+
+  gridEl.innerHTML = "";
+  for (let i=0; i<CELL_COUNT; i++){
+    const cell = document.createElement("div");
+    cell.className = "cal-cell is-empty";
+    cell.dataset.key = "";
+    cell.textContent = "";
+    gridEl.appendChild(cell);
+  }
+}
+
+function renderCalendarUI(state){
+  const { monthEl, gridEl } = state;
+  ensureCalendarGrid(gridEl);
+
+  monthEl.textContent = monthLabel(state.viewYear, state.viewMonth);
+
+  const startIdx = firstDayIndexMonFirst(state.viewYear, state.viewMonth);
+  const dim = daysInMonth(state.viewYear, state.viewMonth);
+
+  for (let i=0; i<42; i++){
+    const cell = gridEl.children[i];
+    cell.className = "cal-cell is-empty";
+    cell.dataset.key = "";
+    cell.textContent = "";
+
+    const dayNum = i - startIdx + 1;
+    if (dayNum < 1 || dayNum > dim) continue;
+
+    const key = toKeyYYYYMMDD(state.viewYear, state.viewMonth, dayNum);
+    cell.dataset.key = key;
+    cell.textContent = String(dayNum);
+    cell.classList.remove("is-empty");
+
+    if (state.savedDates.has(key)) cell.classList.add("has-data");
+    if (state.selectedDateKey === key) cell.classList.add("selected");
+  }
+}
+
+function clearSlots(state, msg){
+  state.slotsListEl.innerHTML = "";
+  state.slotsMsgEl.textContent = msg || "Select a date.";
+  state.selectedTime = "";
+}
+
+function renderSlots(state, timesObj){
+  state.slotsListEl.innerHTML = "";
+
+  if (!timesObj || typeof timesObj !== "object"){
+    state.slotsMsgEl.textContent = "No times available for this date.";
+    return;
+  }
+
+  const times = Object.keys(timesObj).sort();
+  if (!times.length){
+    state.slotsMsgEl.textContent = "No times available for this date.";
+    return;
+  }
+
+  state.slotsMsgEl.textContent = `Available times for ${state.selectedDateKey}:`;
+
+  for (const time of times){
+    const slot = timesObj[time] || {};
+    const cap = Number(slot.capacity);
+    const price = Number(slot.price);
+
+    // capacity is already "remaining places" per your instruction
+    const capText = Number.isFinite(cap) ? `${cap}` : "";
+    const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "slot-btn has-data";
+    btn.dataset.time = time;
+
+    btn.textContent =
+      `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
+      `${priceText ? " — " + priceText : ""}`;
+
+    // If you ever store 0, disable it (still visible)
+    if (Number.isFinite(cap) && cap <= 0) btn.disabled = true;
+
+    if (state.selectedTime === time) btn.classList.add("selected");
+
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+
+      // local selection only
+      state.selectedTime = time;
+
+      // clear other selections visually
+      state.slotsListEl.querySelectorAll(".slot-btn.selected")
+        .forEach(x => x.classList.remove("selected"));
+      btn.classList.add("selected");
+    });
+
+    state.slotsListEl.appendChild(btn);
+  }
+}
+
+function detachTourCalendarListeners(state){
+  if (typeof state.unsubDates === "function"){
+    try { state.unsubDates(); } catch {}
+  }
+  if (typeof state.unsubTimes === "function"){
+    try { state.unsubTimes(); } catch {}
+  }
+  state.unsubDates = null;
+  state.unsubTimes = null;
+}
+
+function attachDatesListener(state){
+  detachTourCalendarListeners(state); // clears both; we reattach times when date is clicked
+  state.savedDates = new Set();
+
+  const datesRef = ref(db, `tours/${state.tourId}/dates`);
+  state.unsubDates = onValue(datesRef, (snap) => {
+    const val = snap.val();
+    state.savedDates = new Set();
+    if (val && typeof val === "object"){
+      for (const k of Object.keys(val)) state.savedDates.add(k);
+    }
+    renderCalendarUI(state);
+
+    // if currently selected date disappears, clear slots
+    if (state.selectedDateKey && !state.savedDates.has(state.selectedDateKey)){
+      state.selectedDateKey = "";
+      clearSlots(state, "Select a date.");
+      renderCalendarUI(state);
+    }
+  });
+}
+
+function attachTimesListenerForDate(state){
+  if (typeof state.unsubTimes === "function"){
+    try { state.unsubTimes(); } catch {}
+  }
+  state.unsubTimes = null;
+
+  if (!state.selectedDateKey){
+    clearSlots(state, "Select a date.");
+    return;
+  }
+
+  state.slotsMsgEl.textContent = "Loading times...";
+
+  const timesRef = ref(db, `tours/${state.tourId}/dates/${state.selectedDateKey}/times`);
+  state.unsubTimes = onValue(timesRef, (snap) => {
+    renderSlots(state, snap.val());
+  });
+}
+
+function initTourCalendar(tourId, articleEl){
+  // only init once per tour
+  if (tourCalStates.has(tourId)) return;
+
+  const detailsEl = articleEl.querySelector(".tour-details");
+  const calWrap = detailsEl.querySelector(".tour-calendar");
+  const monthEl = calWrap.querySelector(".cal-month");
+  const gridEl = calWrap.querySelector(".cal-grid");
+  const prevBtn = calWrap.querySelector(".cal-prev");
+  const nextBtn = calWrap.querySelector(".cal-next");
+
+  const slotsMsgEl = detailsEl.querySelector(".slots-msg");
+  const slotsListEl = detailsEl.querySelector(".slots-list");
+
+  const now = new Date();
+  const state = {
+    tourId,
+    articleEl,
+    monthEl,
+    gridEl,
+    prevBtn,
+    nextBtn,
+    slotsMsgEl,
+    slotsListEl,
+
+    viewYear: now.getFullYear(),
+    viewMonth: now.getMonth(),
+    savedDates: new Set(),
+    selectedDateKey: "",
+    selectedTime: "",
+
+    unsubDates: null,
+    unsubTimes: null,
+  };
+
+  ensureCalendarGrid(gridEl);
+  renderCalendarUI(state);
+  clearSlots(state, "Select a date.");
+  attachDatesListener(state);
+
+  prevBtn.addEventListener("click", () => {
+    state.viewMonth -= 1;
+    if (state.viewMonth < 0){
+      state.viewMonth = 11;
+      state.viewYear -= 1;
+    }
+    renderCalendarUI(state);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    state.viewMonth += 1;
+    if (state.viewMonth > 11){
+      state.viewMonth = 0;
+      state.viewYear += 1;
+    }
+    renderCalendarUI(state);
+  });
+
+  gridEl.addEventListener("click", (e) => {
+    const cell = e.target.closest(".cal-cell");
+    if (!cell) return;
+
+    const key = cell.dataset.key;
+    if (!key) return;
+
+    state.selectedDateKey = key;
+    state.selectedTime = ""; // selecting a new date clears time selection
+
+    // visual selection
+    gridEl.querySelectorAll(".cal-cell.selected")
+      .forEach(c => c.classList.remove("selected"));
+    cell.classList.add("selected");
+
+    attachTimesListenerForDate(state);
+  });
+
+  tourCalStates.set(tourId, state);
+}
+
 function attachTourDatesListener(tourId, articleEl) {
   const priceEl = articleEl.querySelector(".tour-price");
   const nextEl = articleEl.querySelector(".tour-nextdate");
@@ -549,8 +942,9 @@ function renderTours(toursObj) {
 
     // IMPORTANT: attach dates listener AFTER the node is in the DOM
     const insertedArticle = toursEl.querySelector(`.tour[data-tour-id="${tourId}"]`);
-    if (insertedArticle) {
+     if (insertedArticle) {
       attachTourDatesListener(tourId, insertedArticle);
+       initTourCalendar(tourId, insertedArticle);
     }
   }
 }
