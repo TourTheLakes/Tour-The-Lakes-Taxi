@@ -171,12 +171,6 @@ img {
     white-space: pre-wrap;
 }
 
-.tour-description.collapsed {
-  max-height: 180px;   /* adjust height as needed */
-  overflow: hidden;
-  position: relative;
-}
-
 .tsec {
   margin-bottom: 24px;
 }
@@ -599,7 +593,6 @@ desc.innerHTML = tour.description || "";
 if (!tour.description) {
   desc.style.display = "none";
 } else {
-  desc.classList.add("collapsed");
 }
 
     const imageWrap = node.querySelector(".tour-image");
@@ -640,7 +633,6 @@ document.addEventListener("click", (e) => {
   details.hidden = isOpen;
 
   if (desc) {
-    desc.classList.toggle("collapsed", isOpen);
   }
 });
 
