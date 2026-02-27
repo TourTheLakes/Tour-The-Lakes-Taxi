@@ -393,7 +393,7 @@ img {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getDatabase, ref, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -495,7 +495,6 @@ function applyCollapses(rootEl, limit = 100) {
     if (el.dataset.collapsed === "1") return;
 
     const fullHTML = el.innerHTML.trim();
-    if (fullText.length <= limit) return;
 
     el.dataset.collapsed = "1";
     el.innerHTML = "";
@@ -593,9 +592,15 @@ function renderTours(toursObj) {
 
     node.querySelector(".tour-title").textContent = tour.title || tourId;
 
-    const desc = node.querySelector(".tour-description");
-    desc.classList.add("collapsed");
-    if (!tour.description) desc.style.display = "none";
+   const desc = node.querySelector(".tour-description");
+
+desc.innerHTML = tour.description || "";
+
+if (!tour.description) {
+  desc.style.display = "none";
+} else {
+  desc.classList.add("collapsed");
+}
 
     const imageWrap = node.querySelector(".tour-image");
     if (tour.imageUrl) {
