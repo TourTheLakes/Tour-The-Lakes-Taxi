@@ -594,7 +594,7 @@ function renderTours(toursObj) {
     node.querySelector(".tour-title").textContent = tour.title || tourId;
 
     const desc = node.querySelector(".tour-description");
-    desc.innerHTML = tour.description || "";
+    desc.classList.add("collapsed");
     if (!tour.description) desc.style.display = "none";
 
     const imageWrap = node.querySelector(".tour-image");
@@ -627,10 +627,16 @@ document.addEventListener("click", (e) => {
 
   const tour = toggle.closest(".tour");
   const details = tour.querySelector(".tour-details");
+  const desc = tour.querySelector(".tour-description");
 
   const isOpen = toggle.getAttribute("aria-expanded") === "true";
+
   toggle.setAttribute("aria-expanded", String(!isOpen));
   details.hidden = isOpen;
+
+  if (desc) {
+    desc.classList.toggle("collapsed", isOpen);
+  }
 });
 
 void db;
