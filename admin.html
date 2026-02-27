@@ -60,6 +60,19 @@
 
     .admin-textarea { resize: vertical; }
 
+.it-item {
+  border: 1px solid #b86b2a;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.it-row {
+  display: flex;
+  gap: 10px;
+}
+.it-row > * { flex: 1; }
+
     .admin-check {
       display: flex;
       align-items: center;
@@ -221,7 +234,29 @@
       <div class="admin-stack">
         <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
         <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
-        <textarea id="tourDescription" rows="6" placeholder="Tour description" class="admin-field admin-textarea"></textarea>
+
+        
+    <!-- Structured Tour Description Editor -->
+<div id="tourDescEditor" class="admin-stack" style="gap:12px;">
+
+  <div class="admin-msg">Product Title:</div>
+  <input id="descProductTitle" type="text" class="admin-field" placeholder="" />
+
+  <div class="admin-msg">Overview:</div>
+  <textarea id="descOverview" rows="5" class="admin-field admin-textarea" placeholder=""></textarea>
+
+  <div class="admin-msg">Meeting Point:</div>
+  <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea" placeholder=""></textarea>
+
+  <div class="admin-msg">Itinerary:</div>
+  <div id="itineraryList" class="admin-stack" style="gap:12px;"></div>
+
+  <button id="addItineraryItem" type="button" class="admin-btn">ADD MORE</button>
+
+</div>
+
+<!-- This is what actually gets saved to Firebase (generated automatically) -->
+<textarea id="tourDescription" hidden></textarea>
 
         <label class="admin-check">
           <input id="tourLive" type="checkbox" />
@@ -345,6 +380,191 @@
   const amendBtn = document.getElementById("amendTour");
   const deleteBtn = document.getElementById("deleteTour");
   const descEl = document.getElementById("tourDescription");
+
+  // ===== Tour Description Editor (structured -> hidden textarea) =====
+const descProductTitleEl = document.getElementById("descProductTitle");
+const descOverviewEl = document.getElementById("descOverview");
+const descMeetingPointEl = document.getElementById("descMeetingPoint");
+const itineraryListEl = document.getElementById("itineraryList");
+const addItineraryBtn = document.getElementById("addItineraryItem");
+
+// itinerary state in JS
+let itineraryItems = [];
+
+function escHtml(s) {
+  return String(s || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function nl2br(s) {
+  return escHtml(s).replace(/\r?\n/g, "<br>");
+}
+
+function renderItineraryEditor() {
+  itineraryListEl.innerHTML = "";
+
+  itineraryItems.forEach((item, idx) => {
+    const wrap = document.createElement("div");
+    wrap.className = "it-item";
+
+    const row = document.createElement("div");
+    row.className = "it-row";
+
+    const title = document.createElement("input");
+    title.type = "text";
+    title.className = "admin-field";
+    title.placeholder = "";
+    title.value = item.title || "";
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "admin-btn";
+    removeBtn.textContent = "REMOVE";
+    removeBtn.style.flex = "0 0 auto";
+
+    row.appendChild(title);
+    row.appendChild(removeBtn);
+
+    const body = document.createElement("textarea");
+    body.rows = 4;
+    body.className = "admin-field admin-textarea";
+    body.placeholder = "";
+    body.value = item.body || "";
+
+    title.addEventListener("input", () => {
+      itineraryItems[idx].title = title.value;
+      syncEditorToHiddenTextarea();
+    });
+
+    body.addEventListener("input", () => {
+      itineraryItems[idx].body = body.value;
+      syncEditorToHiddenTextarea();
+    });
+
+    removeBtn.addEventListener("click", () => {
+      itineraryItems.splice(idx, 1);
+      renderItineraryEditor();
+      syncEditorToHiddenTextarea();
+    });
+
+    wrap.appendChild(row);
+    wrap.appendChild(body);
+    itineraryListEl.appendChild(wrap);
+  });
+}
+
+function addItineraryBlank() {
+  itineraryItems.push({ title: "", body: "" });
+  renderItineraryEditor();
+  syncEditorToHiddenTextarea();
+}
+
+addItineraryBtn.addEventListener("click", addItineraryBlank);
+
+function buildDescriptionHtml() {
+  const pt = descProductTitleEl.value.trim();
+  const ov = descOverviewEl.value.trim();
+  const mp = descMeetingPointEl.value.trim();
+
+  const items = itineraryItems
+    .map((x) => ({
+      title: String(x.title || "").trim(),
+      body: String(x.body || "").trim(),
+    }))
+    .filter((x) => x.title || x.body);
+
+  // Only include a section if user typed something under it
+  let html = "";
+
+  if (pt) {
+    html += `<div class="tsec"><div class="tsec-h">Product Title</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
+  }
+  if (ov) {
+    html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
+  }
+  if (mp) {
+    html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
+  }
+
+  if (items.length) {
+    html += `<div class="tsec"><div class="tsec-h">Itinerary</div><div class="tsec-b">`;
+    for (const it of items) {
+      html += `<div class="tit-item">`;
+      if (it.title) html += `<div class="tit-title">${nl2br(it.title)}</div>`;
+      if (it.body) html += `<div class="tit-body">${nl2br(it.body)}</div>`;
+      html += `</div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  return html;
+}
+
+function syncEditorToHiddenTextarea() {
+  // descEl is your existing hidden textarea with id="tourDescription"
+  descEl.value = buildDescriptionHtml();
+}
+
+function loadEditorFromHtml(htmlString) {
+  // reset
+  descProductTitleEl.value = "";
+  descOverviewEl.value = "";
+  descMeetingPointEl.value = "";
+  itineraryItems = [];
+
+  const raw = String(htmlString || "").trim();
+  if (!raw) {
+    renderItineraryEditor();
+    syncEditorToHiddenTextarea();
+    return;
+  }
+
+  // Parse only our own known structure; if not found, dump everything into Overview.
+  const doc = new DOMParser().parseFromString(raw, "text/html");
+  const sections = Array.from(doc.querySelectorAll(".tsec"));
+
+  if (!sections.length) {
+    descOverviewEl.value = raw;
+    renderItineraryEditor();
+    syncEditorToHiddenTextarea();
+    return;
+  }
+
+  for (const sec of sections) {
+    const h = sec.querySelector(".tsec-h")?.textContent?.trim() || "";
+    const bEl = sec.querySelector(".tsec-b");
+    const b = bEl ? bEl.textContent.trim() : "";
+
+    if (h === "Product Title") descProductTitleEl.value = b;
+    if (h === "Overview") descOverviewEl.value = b;
+    if (h === "Meeting Point") descMeetingPointEl.value = b;
+
+    if (h === "Itinerary") {
+      const items = Array.from(sec.querySelectorAll(".tit-item"));
+      for (const it of items) {
+        itineraryItems.push({
+          title: it.querySelector(".tit-title")?.textContent?.trim() || "",
+          body: it.querySelector(".tit-body")?.textContent?.trim() || "",
+        });
+      }
+    }
+  }
+
+  renderItineraryEditor();
+  syncEditorToHiddenTextarea();
+}
+
+// Keep hidden textarea synced on normal fields too
+[descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => {
+  el.addEventListener("input", syncEditorToHiddenTextarea);
+});
+
+// Start with one blank itinerary node (optional; remove if you want truly blank)
+renderItineraryEditor();
 
   // ===== Schedule state =====
   let selectedDateKey = "";
