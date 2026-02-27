@@ -170,6 +170,37 @@ img {
 .tour-description {
     white-space: pre-wrap;
 }
+
+.tsec {
+  margin-bottom: 24px;
+}
+
+.tsec-h {
+  color: #b86b2a;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.tsec-b {
+  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+}
+
+.tit-item {
+  margin-bottom: 18px;
+}
+
+.tit-title {
+  color: #b86b2a;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.tit-body {
+  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+}
         
 .tour-row {
   position: absolute;
@@ -503,7 +534,7 @@ function renderTours(toursObj) {
     node.querySelector(".tour-title").textContent = tour.title || tourId;
 
     const desc = node.querySelector(".tour-description");
-    desc.textContent = tour.description || "";
+    desc.innerHTML = tour.description || "";
     if (!tour.description) desc.style.display = "none";
 
     const imageWrap = node.querySelector(".tour-image");
