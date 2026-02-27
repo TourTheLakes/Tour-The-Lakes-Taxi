@@ -480,8 +480,57 @@ function findNextUpcomingSlot(datesObj) {
   return best;
 }
 
+function applyCollapses(rootEl, limit = 100) {
+  if (!rootEl) return;
 
-    
+  const targets = rootEl.querySelectorAll(".tit-body, .tsec-b");
+
+  targets.forEach((el) => {
+    if (el.dataset.collapsed === "1") return;
+
+    const fullText = (el.textContent || "").trim();
+    if (fullText.length <= limit) return;
+
+    const shortText = fullText.slice(0, limit).trimEnd() + "…";
+
+    el.dataset.collapsed = "1";
+    el.innerHTML = "";
+
+    const shortSpan = document.createElement("span");
+    shortSpan.className = "ttl-short";
+    shortSpan.textContent = shortText;
+
+    const fullSpan = document.createElement("span");
+    fullSpan.className = "ttl-full";
+    fullSpan.textContent = fullText;
+    fullSpan.hidden = true;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ttl-morebtn";
+    btn.textContent = "Read more";
+    btn.setAttribute("aria-expanded", "false");
+
+    btn.addEventListener("click", () => {
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!expanded));
+      fullSpan.hidden = expanded;
+      shortSpan.hidden = !expanded;
+      btn.textContent = expanded ? "Read more" : "Read less";
+    });
+
+    el.appendChild(shortSpan);
+    el.appendChild(fullSpan);
+    el.appendChild(document.createTextNode(" "));
+    el.appendChild(btn);
+  });
+}
+
+function attachTourDatesListener(tourId, articleEl) {
+  const priceEl = articleEl.querySelector(".tour-price");
+  const nextEl = articleEl.querySelector(".tour-nextdate");
+  const seatsEl = articleEl.querySelector(".tour-seats");
+
   // sensible defaults while loading
   if (priceEl) priceEl.textContent = "";
   if (nextEl) nextEl.textContent = "";
@@ -499,28 +548,26 @@ function findNextUpcomingSlot(datesObj) {
       return;
     }
 
-const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
+    const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
+    const priceText = formatGBP(next.price);
+    const datePart = next.dt.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
 
-const priceText = formatGBP(next.price); // already "£xx.xx" or ""
-const datePart = next.dt.toLocaleDateString(undefined, {
-  day: "2-digit",
-  month: "short",
-  year: "numeric"
-});
+    const capNum = Number(next.capacity);
+    const capText = Number.isFinite(capNum) ? `${capNum}` : "";
 
-const capNum = Number(next.capacity);
-const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+    const sentence =
+      `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
+      (capText ? ` and we currently have ${capText} places left` : "") +
+      (priceText ? ` at the price of ${priceText}.` : ".") +
+      ` Read More to find out and book.`;
 
-const sentence =
-  `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
-  (capText ? ` and we currently have ${capText} places left` : "") +
-  (priceText ? ` at the price of ${priceText}.` : ".") +
-  ` Read More to find out and book.`;
-
-if (nextEl) nextEl.textContent = sentence;
-if (priceEl) priceEl.textContent = "";
-if (seatsEl) seatsEl.textContent = "";
-      
+    if (nextEl) nextEl.textContent = sentence;
+    if (priceEl) priceEl.textContent = "";
+    if (seatsEl) seatsEl.textContent = "";
   });
 
   tourDatesUnsubs.set(tourId, unsub);
