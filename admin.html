@@ -1009,6 +1009,7 @@ renderItineraryEditor();
         titleEl.value = tour?.title || "";
         liveEl.checked = !!tour?.isLive;
         descEl.value = tour?.description || "";
+        loadEditorFromHtml(descEl.value);
 
         msgEl.textContent = `Selected: ${tourId}`;
 
@@ -1028,6 +1029,7 @@ renderItineraryEditor();
 
     const title = titleEl.value.trim();
     const isLive = !!liveEl.checked;
+    syncEditorToHiddenTextarea();
     const description = descEl.value.trim();
 
     if (!title) {
@@ -1097,6 +1099,7 @@ renderItineraryEditor();
 
     const title = titleEl.value.trim();
     const isLive = !!liveEl.checked;
+    syncEditorToHiddenTextarea();
     const description = descEl.value.trim();
 
     if (!title) {
