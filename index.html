@@ -365,6 +365,58 @@ img {
   overflow-wrap: anywhere;
 }
 
+.booking-wrap{
+  margin-top: 14px;
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  padding: 14px;
+}
+
+.booking-title{
+  color: rgba(255,255,255,0.92);
+  font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin-bottom: 10px;
+}
+
+.booking-summary{
+  color: rgba(255,255,255,0.6);
+  font: 400 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin-bottom: 12px;
+  white-space: normal;
+}
+
+.booking-field{
+  width: 100%;
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  color: rgba(255,255,255,0.92);
+  padding: 12px;
+  margin-bottom: 10px;
+  font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.booking-btn{
+  width: 100%;
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  color: #b86b2a;
+  padding: 12px;
+  cursor: pointer;
+  font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.booking-btn:disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.booking-msg{
+  margin-top: 10px;
+  color: rgba(255,255,255,0.6);
+  font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
 .site-footer {
   width: 100%;
   border-top: 2px solid #b86b2a;
@@ -500,11 +552,24 @@ img {
       <div class="cal-grid"></div>
     </div>
 
-    <!-- Times list (public) -->
-    <div class="tour-workspace">
-      <div class="slots-msg">Select a date.</div>
-      <div class="slots-list"></div>
-    </div>
+<div class="tour-workspace">
+  <div class="slots-msg">Select a date.</div>
+  <div class="slots-list"></div>
+
+  <!-- Booking panel (shows after a slot is selected) -->
+  <div class="booking-wrap" hidden>
+    <div class="booking-title">Your booking</div>
+    <div class="booking-summary"></div>
+
+    <input class="booking-field booking-name" type="text" placeholder="Full name">
+    <input class="booking-field booking-email" type="email" placeholder="Email">
+    <input class="booking-field booking-phone" type="tel" placeholder="Phone">
+    <input class="booking-field booking-qty" type="number" min="1" value="1" placeholder="Passengers">
+
+    <button type="button" class="booking-btn">REQUEST BOOKING</button>
+    <div class="booking-msg"></div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -521,7 +586,7 @@ img {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, runTransaction, serverTimestamp, } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -560,6 +625,126 @@ function clearTours() {
   tourCalStates.clear();
 
   toursEl.innerHTML = "";
+}
+
+function bookingEls(state){
+  const root = state.articleEl.querySelector(".tour-details");
+  return {
+    wrap: root.querySelector(".booking-wrap"),
+    summary: root.querySelector(".booking-summary"),
+    name: root.querySelector(".booking-name"),
+    email: root.querySelector(".booking-email"),
+    phone: root.querySelector(".booking-phone"),
+    qty: root.querySelector(".booking-qty"),
+    btn: root.querySelector(".booking-btn"),
+    msg: root.querySelector(".booking-msg"),
+  };
+}
+
+function showBooking(state, slot){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+
+  els.wrap.hidden = false;
+  els.msg.textContent = "";
+
+  const cap = Number(slot.capacity);
+  const price = Number(slot.price);
+
+  const capText = Number.isFinite(cap) ? `${cap} places remaining` : "places unknown";
+  const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+  els.summary.textContent =
+    `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText}` : "");
+
+  // qty defaults to 1 and clamps to capacity if known
+  els.qty.value = "1";
+  els.qty.min = "1";
+  if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
+  else els.qty.removeAttribute("max");
+}
+
+function hideBooking(state){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+  els.wrap.hidden = true;
+  els.msg.textContent = "";
+}
+
+async function submitBooking(state){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+
+  if (!state.selectedDateKey || !state.selectedSlot) {
+    els.msg.textContent = "Select a date and time slot first.";
+    return;
+  }
+
+  const name = (els.name.value || "").trim();
+  const email = (els.email.value || "").trim();
+  const phone = (els.phone.value || "").trim();
+  const qty = parseInt(els.qty.value, 10);
+
+  if (!name) { els.msg.textContent = "Enter your full name."; return; }
+  if (!email) { els.msg.textContent = "Enter your email."; return; }
+  if (!qty || qty < 1) { els.msg.textContent = "Enter a valid passenger quantity."; return; }
+
+  els.btn.disabled = true;
+  els.msg.textContent = "Submitting...";
+
+  const tourId = state.tourId;
+  const dateKey = state.selectedDateKey;
+  const time = state.selectedSlot.time;
+
+  const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
+
+  try {
+    // 1) reduce capacity (transaction to prevent oversell)
+    const tx = await runTransaction(capRef, (current) => {
+      const cur = Number(current);
+      if (!Number.isFinite(cur)) return current;        // if missing/invalid, do nothing
+      if (cur < qty) return;                            // abort (undefined cancels)
+      return cur - qty;
+    });
+
+    if (!tx.committed) {
+      els.msg.textContent = "Not enough places remaining for that time slot.";
+      els.btn.disabled = false;
+      return;
+    }
+
+    // 2) write booking record (simple store; admin UI later can read this)
+    const bookingRef = push(ref(db, `bookings/${tourId}`));
+    await set(bookingRef, {
+      tourId,
+      dateKey,
+      time,
+      qty,
+      name,
+      email,
+      phone,
+      price: Number(state.selectedSlot.price) || 0,
+      createdAt: serverTimestamp(),
+      status: "new",
+    });
+
+    els.msg.textContent = "Booking request received.";
+    // optional: clear inputs but keep summary visible
+    // els.name.value = ""; els.email.value = ""; els.phone.value = ""; els.qty.value = "1";
+  } catch (err) {
+    // if booking write fails after capacity change, add it back
+    try {
+      await runTransaction(capRef, (current) => {
+        const cur = Number(current);
+        if (!Number.isFinite(cur)) return current;
+        return cur + qty;
+      });
+    } catch {}
+
+    els.msg.textContent = `Error: ${err?.message || err}`;
+  } finally {
+    els.btn.disabled = false;
+  }
 }
 
 function parseSlotDateTime(dateKey, timeStr) {
@@ -682,6 +867,9 @@ function clearSlots(state, msg){
   state.slotsListEl.innerHTML = "";
   state.slotsMsgEl.textContent = msg || "Select a date.";
   state.selectedTime = "";
+  state.selectedSlot = null;
+  hideBooking(state);
+  state.SelectedTime = "";
 }
 
 function renderSlots(state, timesObj){
@@ -733,6 +921,8 @@ function renderSlots(state, timesObj){
       state.slotsListEl.querySelectorAll(".slot-btn.selected")
         .forEach(x => x.classList.remove("selected"));
       btn.classList.add("selected");
+
+        showBooking(state, state.selectedSlot);
     });
 
     state.slotsListEl.appendChild(btn);
@@ -753,6 +943,12 @@ function detachTourCalendarListeners(state){
 function attachDatesListener(state){
   detachTourCalendarListeners(state); // clears both; we reattach times when date is clicked
   state.savedDates = new Set();
+
+  const els = bookingEls(state);
+if (els.btn) {
+  els.btn.addEventListener("click", () => submitBooking(state));
+}
+hideBooking(state);
 
   const datesRef = ref(db, `tours/${state.tourId}/dates`);
   state.unsubDates = onValue(datesRef, (snap) => {
@@ -830,7 +1026,7 @@ function initTourCalendar(tourId, articleEl){
     viewMonth: now.getMonth(),
     savedDates: new Set(),
     selectedDateKey: "",
-    selectedTime: "",
+    selectedTime: null,
 
     unsubDates: null,
     unsubTimes: null,
