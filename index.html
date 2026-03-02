@@ -584,7 +584,623 @@ img {
   </div>
 </footer>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  set,
+  runTransaction,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+  measurementId: "G-W6JY1LZXTP"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const toursEl = document.getElementById("tours");
+const tpl = document.getElementById("tourTemplate");
+
+// ---------- shared helpers ----------
+function pad2(n){ return String(n).padStart(2, "0"); }
+function toKeyYYYYMMDD(y, m0, d){ return `${y}-${pad2(m0+1)}-${pad2(d)}`; }
+
+function monthLabel(y, m0){
+  const dt = new Date(y, m0, 1);
+  return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
+}
+function firstDayIndexMonFirst(y, m0){
+  const js = new Date(y, m0, 1).getDay(); // Sun=0..Sat=6
+  return (js + 6) % 7; // Mon=0..Sun=6
+}
+function daysInMonth(y, m0){ return new Date(y, m0 + 1, 0).getDate(); }
+
+function parseSlotDateTime(dateKey, timeStr){
+  const [y, m, d] = String(dateKey).split("-").map(Number);
+  const [hh, mm] = String(timeStr || "").split(":").map(Number);
+  if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
+  return new Date(y, m - 1, d, hh, mm, 0, 0);
+}
+
+function formatGBP(value){
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "";
+  return `£${n.toFixed(2)}`;
+}
+
+function findNextUpcomingSlot(datesObj){
+  if (!datesObj || typeof datesObj !== "object") return null;
+
+  const now = new Date();
+  let best = null;
+
+  for (const [dateKey, dateNode] of Object.entries(datesObj)){
+    const timesObj = dateNode?.times;
+    if (!timesObj || typeof timesObj !== "object") continue;
+
+    for (const [timeStr, slot] of Object.entries(timesObj)){
+      const dt = parseSlotDateTime(dateKey, timeStr);
+      if (!dt) continue;
+      if (dt.getTime() < now.getTime()) continue;
+
+      if (!best || dt.getTime() < best.dt.getTime()){
+        best = {
+          dateKey,
+          timeStr,
+          dt,
+          capacity: slot?.capacity ?? null,
+          price: slot?.price ?? null,
+        };
+      }
+    }
+  }
+
+  return best;
+}
+
+// ---------- cleanup on re-render ----------
+const tourDatesUnsubs = new Map(); // tourId -> unsub
+const tourCalStates = new Map();   // tourId -> state
+
+function cleanupTourDatesListeners(){
+  for (const unsub of tourDatesUnsubs.values()){
+    try { unsub(); } catch {}
+  }
+  tourDatesUnsubs.clear();
+}
+
+function detachTourCalendarListeners(state){
+  if (typeof state.unsubDates === "function"){
+    try { state.unsubDates(); } catch {}
+  }
+  if (typeof state.unsubTimes === "function"){
+    try { state.unsubTimes(); } catch {}
+  }
+  state.unsubDates = null;
+  state.unsubTimes = null;
+}
+
+function clearTours(){
+  cleanupTourDatesListeners();
+
+  for (const state of tourCalStates.values()){
+    try { detachTourCalendarListeners(state); } catch {}
+  }
+  tourCalStates.clear();
+
+  toursEl.innerHTML = "";
+}
+
+// ---------- booking UI helpers ----------
+function bookingEls(state){
+  const root = state.articleEl.querySelector(".tour-details");
+  return {
+    wrap: root.querySelector(".booking-wrap"),
+    summary: root.querySelector(".booking-summary"),
+    name: root.querySelector(".booking-name"),
+    email: root.querySelector(".booking-email"),
+    phone: root.querySelector(".booking-phone"),
+    qty: root.querySelector(".booking-qty"),
+    btn: root.querySelector(".booking-btn"),
+    msg: root.querySelector(".booking-msg"),
+  };
+}
+
+function hideBooking(state){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+  els.wrap.hidden = true;
+  if (els.msg) els.msg.textContent = "";
+}
+
+function showBooking(state){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+
+  const slot = state.selectedSlot;
+  if (!state.selectedDateKey || !slot || !slot.time){
+    hideBooking(state);
+    return;
+  }
+
+  els.wrap.hidden = false;
+  if (els.msg) els.msg.textContent = "";
+
+  const cap = Number(slot.capacity);
+  const price = Number(slot.price);
+
+  const capText = Number.isFinite(cap) ? `${cap} places remaining` : "places unknown";
+  const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+  if (els.summary){
+    els.summary.textContent =
+      `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText}` : "");
+  }
+
+  if (els.qty){
+    els.qty.value = "1";
+    els.qty.min = "1";
+    if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
+    else els.qty.removeAttribute("max");
+  }
+}
+
+async function submitBooking(state){
+  const els = bookingEls(state);
+  if (!els.wrap) return;
+
+  if (!state.selectedDateKey || !state.selectedSlot || !state.selectedSlot.time){
+    if (els.msg) els.msg.textContent = "Select a date and time slot first.";
+    return;
+  }
+
+  const name = (els.name?.value || "").trim();
+  const email = (els.email?.value || "").trim();
+  const phone = (els.phone?.value || "").trim();
+  const qty = parseInt(els.qty?.value || "", 10);
+
+  if (!name){ if (els.msg) els.msg.textContent = "Enter your full name."; return; }
+  if (!email){ if (els.msg) els.msg.textContent = "Enter your email."; return; }
+  if (!qty || qty < 1){ if (els.msg) els.msg.textContent = "Enter a valid passenger quantity."; return; }
+
+  if (els.btn) els.btn.disabled = true;
+  if (els.msg) els.msg.textContent = "Submitting...";
+
+  const tourId = state.tourId;
+  const dateKey = state.selectedDateKey;
+  const time = state.selectedSlot.time;
+
+  const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
+
+  try {
+    // 1) reduce capacity (transaction)
+    const tx = await runTransaction(capRef, (current) => {
+      const cur = Number(current);
+      if (!Number.isFinite(cur)) return current; // if missing/invalid, do nothing
+      if (cur < qty) return;                     // abort (undefined cancels)
+      return cur - qty;
+    });
+
+    if (!tx.committed){
+      if (els.msg) els.msg.textContent = "Not enough places remaining for that time slot.";
+      if (els.btn) els.btn.disabled = false;
+      return;
+    }
+
+    // 2) write booking record
+    const bookingRef = push(ref(db, `bookings/${tourId}`));
+    await set(bookingRef, {
+      tourId,
+      dateKey,
+      time,
+      qty,
+      name,
+      email,
+      phone,
+      price: Number(state.selectedSlot.price) || 0,
+      createdAt: serverTimestamp(),
+      status: "new",
+    });
+
+    if (els.msg) els.msg.textContent = "Booking request received.";
+  } catch (err) {
+    // if booking write fails after capacity change, add it back
+    try {
+      await runTransaction(capRef, (current) => {
+        const cur = Number(current);
+        if (!Number.isFinite(cur)) return current;
+        return cur + qty;
+      });
+    } catch {}
+
+    if (els.msg) els.msg.textContent = `Error: ${err?.message || err}`;
+  } finally {
+    if (els.btn) els.btn.disabled = false;
+  }
+}
+
+// ---------- public calendar + slots ----------
+function ensureCalendarGrid(gridEl){
+  const CELL_COUNT = 42;
+  if (gridEl.children.length === CELL_COUNT) return;
+
+  gridEl.innerHTML = "";
+  for (let i = 0; i < CELL_COUNT; i++){
+    const cell = document.createElement("div");
+    cell.className = "cal-cell is-empty";
+    cell.dataset.key = "";
+    cell.textContent = "";
+    gridEl.appendChild(cell);
+  }
+}
+
+function renderCalendarUI(state){
+  ensureCalendarGrid(state.gridEl);
+
+  state.monthEl.textContent = monthLabel(state.viewYear, state.viewMonth);
+
+  const startIdx = firstDayIndexMonFirst(state.viewYear, state.viewMonth);
+  const dim = daysInMonth(state.viewYear, state.viewMonth);
+
+  for (let i = 0; i < 42; i++){
+    const cell = state.gridEl.children[i];
+    cell.className = "cal-cell is-empty";
+    cell.dataset.key = "";
+    cell.textContent = "";
+
+    const dayNum = i - startIdx + 1;
+    if (dayNum < 1 || dayNum > dim) continue;
+
+    const key = toKeyYYYYMMDD(state.viewYear, state.viewMonth, dayNum);
+    cell.dataset.key = key;
+    cell.textContent = String(dayNum);
+    cell.classList.remove("is-empty");
+
+    if (state.savedDates.has(key)) cell.classList.add("has-data");
+    if (state.selectedDateKey === key) cell.classList.add("selected");
+  }
+}
+
+function clearSlots(state, msg){
+  state.slotsListEl.innerHTML = "";
+  state.slotsMsgEl.textContent = msg || "Select a date.";
+  state.selectedTime = "";
+  state.selectedSlot = null;
+  hideBooking(state);
+}
+
+function renderSlots(state, timesObj){
+  state.slotsListEl.innerHTML = "";
+
+  if (!timesObj || typeof timesObj !== "object"){
+    state.slotsMsgEl.textContent = "No times available for this date.";
+    clearSlots(state, state.slotsMsgEl.textContent);
+    return;
+  }
+
+  const times = Object.keys(timesObj).sort();
+  if (!times.length){
+    state.slotsMsgEl.textContent = "No times available for this date.";
+    clearSlots(state, state.slotsMsgEl.textContent);
+    return;
+  }
+
+  state.slotsMsgEl.textContent = `Available times for ${state.selectedDateKey}:`;
+
+  for (const time of times){
+    const slot = timesObj[time] || {};
+    const cap = Number(slot.capacity);
+    const price = Number(slot.price);
+
+    const capText = Number.isFinite(cap) ? `${cap}` : "";
+    const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "slot-btn has-data";
+    btn.dataset.time = time;
+
+    btn.textContent =
+      `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
+      `${priceText ? " — " + priceText : ""}`;
+
+    if (Number.isFinite(cap) && cap <= 0) btn.disabled = true;
+
+    if (state.selectedTime === time) btn.classList.add("selected");
+
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+
+      state.selectedTime = time;
+      state.selectedSlot = {
+        time,
+        capacity: slot.capacity,
+        price: slot.price,
+      };
+
+      state.slotsListEl.querySelectorAll(".slot-btn.selected")
+        .forEach(x => x.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      showBooking(state);
+    });
+
+    state.slotsListEl.appendChild(btn);
+  }
+}
+
+function attachDatesListener(state){
+  // do not kill times listener here; only dates
+  if (typeof state.unsubDates === "function"){
+    try { state.unsubDates(); } catch {}
+  }
+  state.unsubDates = null;
+
+  state.savedDates = new Set();
+
+  const datesRef = ref(db, `tours/${state.tourId}/dates`);
+  state.unsubDates = onValue(datesRef, (snap) => {
+    const val = snap.val();
+    state.savedDates = new Set();
+    if (val && typeof val === "object"){
+      for (const k of Object.keys(val)) state.savedDates.add(k);
+    }
+
+    renderCalendarUI(state);
+
+    // if selected date disappears, reset UI
+    if (state.selectedDateKey && !state.savedDates.has(state.selectedDateKey)){
+      state.selectedDateKey = "";
+      clearSlots(state, "Select a date.");
+      renderCalendarUI(state);
+    }
+  });
+}
+
+function attachTimesListenerForDate(state){
+  if (typeof state.unsubTimes === "function"){
+    try { state.unsubTimes(); } catch {}
+  }
+  state.unsubTimes = null;
+
+  if (!state.selectedDateKey){
+    clearSlots(state, "Select a date.");
+    return;
+  }
+
+  state.slotsMsgEl.textContent = "Loading times...";
+
+  const timesRef = ref(db, `tours/${state.tourId}/dates/${state.selectedDateKey}/times`);
+  state.unsubTimes = onValue(timesRef, (snap) => {
+    renderSlots(state, snap.val());
+  });
+}
+
+function initTourCalendar(tourId, articleEl){
+  if (tourCalStates.has(tourId)) return;
+
+  const detailsEl = articleEl.querySelector(".tour-details");
+  const calWrap = detailsEl.querySelector(".tour-calendar");
+
+  const monthEl = calWrap.querySelector(".cal-month");
+  const gridEl = calWrap.querySelector(".cal-grid");
+  const prevBtn = calWrap.querySelector(".cal-prev");
+  const nextBtn = calWrap.querySelector(".cal-next");
+
+  const slotsMsgEl = detailsEl.querySelector(".slots-msg");
+  const slotsListEl = detailsEl.querySelector(".slots-list");
+
+  const now = new Date();
+
+  const state = {
+    tourId,
+    articleEl,
+
+    monthEl,
+    gridEl,
+    prevBtn,
+    nextBtn,
+
+    slotsMsgEl,
+    slotsListEl,
+
+    viewYear: now.getFullYear(),
+    viewMonth: now.getMonth(),
+
+    savedDates: new Set(),
+    selectedDateKey: "",
+    selectedTime: "",
+    selectedSlot: null,
+
+    unsubDates: null,
+    unsubTimes: null,
+
+    bookingBound: false,
+  };
+
+  ensureCalendarGrid(gridEl);
+  renderCalendarUI(state);
+  clearSlots(state, "Select a date.");
+  attachDatesListener(state);
+
+  // bind booking button ONCE per tour instance
+  if (!state.bookingBound){
+    const els = bookingEls(state);
+    if (els.btn){
+      els.btn.addEventListener("click", () => submitBooking(state));
+    }
+    hideBooking(state);
+    state.bookingBound = true;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    state.viewMonth -= 1;
+    if (state.viewMonth < 0){
+      state.viewMonth = 11;
+      state.viewYear -= 1;
+    }
+    renderCalendarUI(state);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    state.viewMonth += 1;
+    if (state.viewMonth > 11){
+      state.viewMonth = 0;
+      state.viewYear += 1;
+    }
+    renderCalendarUI(state);
+  });
+
+  gridEl.addEventListener("click", (e) => {
+    const cell = e.target.closest(".cal-cell");
+    if (!cell) return;
+
+    const key = cell.dataset.key;
+    if (!key) return;
+
+    // set date + reset slot selection (THIS is where your two lines belong)
+    state.selectedDateKey = key;
+    state.selectedTime = "";
+    state.selectedSlot = null;
+    hideBooking(state);
+
+    // visual selection
+    gridEl.querySelectorAll(".cal-cell.selected").forEach(c => c.classList.remove("selected"));
+    cell.classList.add("selected");
+
+    // confirmation when no data
+    if (!state.savedDates.has(key)){
+      clearSlots(state, `No availability on ${key}. Select another date.`);
+      renderCalendarUI(state);
+      return;
+    }
+
+    attachTimesListenerForDate(state);
+  });
+
+  tourCalStates.set(tourId, state);
+}
+
+// ---------- top line "next available" ----------
+function attachTourDatesListener(tourId, articleEl){
+  const priceEl = articleEl.querySelector(".tour-price");
+  const nextEl = articleEl.querySelector(".tour-nextdate");
+  const seatsEl = articleEl.querySelector(".tour-seats");
+
+  if (priceEl) priceEl.textContent = "";
+  if (nextEl) nextEl.textContent = "";
+  if (seatsEl) seatsEl.textContent = "";
+
+  const datesRef = ref(db, `tours/${tourId}/dates`);
+  const unsub = onValue(datesRef, (snap) => {
+    const datesObj = snap.val();
+    const next = findNextUpcomingSlot(datesObj);
+
+    if (!next){
+      if (priceEl) priceEl.textContent = "";
+      if (nextEl) nextEl.textContent = "";
+      if (seatsEl) seatsEl.textContent = "";
+      return;
+    }
+
+    const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
+    const priceText = formatGBP(next.price);
+
+    const datePart = next.dt.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    const capNum = Number(next.capacity);
+    const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+
+    const sentence =
+      `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
+      (capText ? ` and we currently have ${capText} places left` : "") +
+      (priceText ? ` at the price of ${priceText}.` : ".") +
+      ` Read More to find out and book.`;
+
+    if (nextEl) nextEl.textContent = sentence;
+    if (priceEl) priceEl.textContent = "";
+    if (seatsEl) seatsEl.textContent = "";
+  });
+
+  tourDatesUnsubs.set(tourId, unsub);
+}
+
+// ---------- render tours ----------
+function renderTours(toursObj){
+  clearTours();
+  if (!toursObj) return;
+
+  for (const [tourId, tour] of Object.entries(toursObj)){
+    if (!tour || tour.isLive !== true) continue;
+
+    const node = tpl.content.cloneNode(true);
+
+    const article = node.querySelector(".tour");
+    article.dataset.tourId = tourId;
+
+    node.querySelector(".tour-title").textContent = tour.title || tourId;
+
+    const desc = node.querySelector(".tour-description");
+    desc.innerHTML = tour.description || "";
+    if (!tour.description) desc.style.display = "none";
+
+    const imageWrap = node.querySelector(".tour-image");
+    if (tour.imageUrl){
+      const img = document.createElement("img");
+      img.src = tour.imageUrl;
+      img.alt = tour.title || "Tour image";
+      imageWrap.appendChild(img);
+    }
+
+    toursEl.appendChild(node);
+
+    const insertedArticle = toursEl.querySelector(`.tour[data-tour-id="${tourId}"]`);
+    if (insertedArticle){
+      attachTourDatesListener(tourId, insertedArticle);
+      initTourCalendar(tourId, insertedArticle);
+    }
+  }
+}
+
+// Listen to /tours
+onValue(ref(db, "tours"), (snapshot) => {
+  renderTours(snapshot.val());
+});
+
+// Toggle open/close
+document.addEventListener("click", (e) => {
+  const toggle = e.target.closest(".tour-toggle");
+  if (!toggle) return;
+
+  const tour = toggle.closest(".tour");
+  if (!tour) return;
+
+  const details = tour.querySelector(".tour-details");
+  if (!details) return;
+
+  const isOpen = toggle.getAttribute("aria-expanded") === "true";
+  toggle.setAttribute("aria-expanded", String(!isOpen));
+  details.hidden = isOpen;
+});
+
+void db;
+      </script>
 
 </body>
 </html>
