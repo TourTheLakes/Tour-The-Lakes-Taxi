@@ -870,6 +870,9 @@ function clearSlots(state, msg){
   state.selectedSlot = null;
   hideBooking(state);
   state.SelectedTime = "";
+  selectedDateKey: "",
+  selectedTime: "",
+  selectedSlot: null,
 }
 
 function renderSlots(state, timesObj){
@@ -912,18 +915,21 @@ function renderSlots(state, timesObj){
     if (state.selectedTime === time) btn.classList.add("selected");
 
     btn.addEventListener("click", () => {
-      if (btn.disabled) return;
+  if (btn.disabled) return;
 
-      // local selection only
-      state.selectedTime = time;
+  state.selectedTime = time;
+  state.selectedSlot = {
+    time,
+    capacity: slot.capacity,
+    price: slot.price
+  };
 
-      // clear other selections visually
-      state.slotsListEl.querySelectorAll(".slot-btn.selected")
-        .forEach(x => x.classList.remove("selected"));
-      btn.classList.add("selected");
+  state.slotsListEl.querySelectorAll(".slot-btn.selected")
+    .forEach(x => x.classList.remove("selected"));
+  btn.classList.add("selected");
 
-        showBooking(state, state.selectedSlot);
-    });
+  showBooking(state, state.selectedSlot);
+});
 
     state.slotsListEl.appendChild(btn);
   }
@@ -947,9 +953,8 @@ function attachDatesListener(state){
   const els = bookingEls(state);
 if (els.btn) {
   els.btn.addEventListener("click", () => submitBooking(state));
-}
 hideBooking(state);
-
+}
   const datesRef = ref(db, `tours/${state.tourId}/dates`);
   state.unsubDates = onValue(datesRef, (snap) => {
     const val = snap.val();
@@ -1026,6 +1031,7 @@ function initTourCalendar(tourId, articleEl){
     viewMonth: now.getMonth(),
     savedDates: new Set(),
     selectedDateKey: "",
+    selectedTime: "",
     selectedTime: null,
 
     unsubDates: null,
@@ -1063,7 +1069,6 @@ gridEl.addEventListener("click", (e) => {
   if (!key) return;
 
   state.selectedDateKey = key;
-  state.selectedTime = "";
 
   // visual selection
   gridEl.querySelectorAll(".cal-cell.selected")
