@@ -757,6 +757,122 @@ function showBooking(state){
   }
 }
 
+
+function ensureBookingModalStyles(){
+  if (document.getElementById("ttl-booking-modal-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "ttl-booking-modal-styles";
+  style.textContent = `
+    .ttl-modal-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .ttl-modal{
+      width: 100%;
+      max-width: 680px;
+      border: 1px solid #b86b2a;
+      background: #2b2b2b;
+      color: rgba(255,255,255,0.92);
+      padding: 16px;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .ttl-modal-close{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid #b86b2a;
+      background: #2b2b2b;
+      color: #b86b2a;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .ttl-modal h2{
+      margin: 0 0 10px 0;
+      color: #b86b2a;
+      padding-right: 44px;
+    }
+    .ttl-modal p{
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .ttl-box{
+      border: 1px solid #b86b2a;
+      padding: 12px;
+      margin: 12px 0;
+    }
+    .ttl-no-scroll{
+      overflow: hidden !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function openBookingSuccessModal(data){
+  ensureBookingModalStyles();
+
+  document.documentElement.classList.add("ttl-no-scroll");
+  document.body.classList.add("ttl-no-scroll");
+
+  const overlay = document.createElement("div");
+  overlay.className = "ttl-modal-overlay";
+
+  const modal = document.createElement("div");
+  modal.className = "ttl-modal";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "ttl-modal-close";
+  closeBtn.textContent = "×";
+
+  closeBtn.addEventListener("click", () => {
+    overlay.remove();
+    document.documentElement.classList.remove("ttl-no-scroll");
+    document.body.classList.remove("ttl-no-scroll");
+  });
+
+  modal.innerHTML += `
+    <h2>Booking Confirmed</h2>
+    <p>Thank you for booking your tour. Your booking reference is: <strong>${data.ref}</strong></p>
+    <p>When contacting us, please quote your booking reference.</p>
+    <p>We can confirm that you have reserved ${data.qty} passenger(s) and this confirms your place on the tour.</p>
+
+    <div class="ttl-box">
+      <p><strong>Tour:</strong> ${data.tour}</p>
+      <p><strong>Date & Time:</strong> ${data.date} at ${data.time}</p>
+      <p><strong>Passengers:</strong> ${data.qty}</p>
+      <p><strong>Price:</strong> ${data.price}</p>
+    </div>
+
+    <p><strong>What’s Next?</strong></p>
+    <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know. You will also receive a text message containing this link.</p>
+
+    <p><strong>Please confirm your details:</strong></p>
+
+    <div class="ttl-box">
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Phone:</strong> ${data.phone}</p>
+    </div>
+
+    <p>If something doesn’t look right, email info@tourthelakes.com and quote your booking reference <strong>${data.ref}</strong>.</p>
+  `;
+
+  modal.appendChild(closeBtn);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}    
+
 async function submitBooking(state){
   const els = bookingEls(state);
   if (!els.wrap) return;
@@ -814,21 +930,51 @@ async function submitBooking(state){
       status: "new",
     });
 
-    if (els.msg) els.msg.textContent = "Booking request received.";
-  } catch (err) {
-    // if booking write fails after capacity change, add it back
-    try {
-      await runTransaction(capRef, (current) => {
-        const cur = Number(current);
-        if (!Number.isFinite(cur)) return current;
-        return cur + qty;
-      });
-    } catch {}
+// 2) write booking record (simple store; admin UI later can read this)
+const bookingRef = push(ref(db, `bookings/${tourId}`));
+await set(bookingRef, {
+  tourId,
+  dateKey,
+  time,
+  qty,
+  name,
+  email,
+  phone,
+  price: Number(state.selectedSlot.price) || 0,
+  createdAt: serverTimestamp(),
+  status: "new",
+});
 
-    if (els.msg) els.msg.textContent = `Error: ${err?.message || err}`;
-  } finally {
-    if (els.btn) els.btn.disabled = false;
-  }
+const bookingKey = bookingRef.key || "";
+const bookingRefShort = bookingKey.slice(-7);
+
+openBookingSuccessModal({
+  ref: bookingRefShort,
+  qty,
+  tour: state.articleEl.querySelector(".tour-title")?.textContent || state.tourId,
+  date: dateKey,
+  time,
+  price: formatGBP(Number(state.selectedSlot.price) || 0),
+  name,
+  email,
+  phone
+});
+
+} catch (err) {
+
+  // if booking write fails after capacity change, add it back
+  try {
+    await runTransaction(capRef, (current) => {
+      const cur = Number(current);
+      if (!Number.isFinite(cur)) return current;
+      return cur + qty;
+    });
+  } catch {}
+
+  if (els.msg) els.msg.textContent = `Error: ${err?.message || err}`;
+
+} finally {
+  if (els.btn) els.btn.disabled = false;
 }
 
 // ---------- public calendar + slots ----------
