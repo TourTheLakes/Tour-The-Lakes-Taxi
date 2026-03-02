@@ -329,7 +329,925 @@
     </div>
   </footer>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    set,
+    update,
+    onValue,
+    remove,
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import {
+    getStorage,
+    ref as sRef,
+    uploadBytes,
+    getDownloadURL,
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+    authDomain: "tourthelakes-1e165.firebaseapp.com",
+    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+    projectId: "tourthelakes-1e165",
+    storageBucket: "tourthelakes-1e165.firebasestorage.app",
+    messagingSenderId: "470758171431",
+    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+    measurementId: "G-W6JY1LZXTP",
+  };
+
+  const ALLOWED_EMAIL = "info@tourthelakes.com";
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
+  const auth = getAuth(app);
+
+  // --- Simple auth bar (injected, so you don't need to change HTML) ---
+  const adminMain = document.querySelector(".admin-main");
+  if (adminMain) adminMain.style.display = "none";
+
+  const bar = document.createElement("div");
+  bar.style.borderBottom = "1px solid #b86b2a";
+  bar.style.padding = "10px 16px";
+  bar.style.display = "flex";
+  bar.style.alignItems = "center";
+  bar.style.gap = "10px";
+  bar.style.color = "rgba(255,255,255,0.92)";
+  bar.style.font = "400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif";
+
+  const msg = document.createElement("div");
+  msg.textContent = "Checking sign-in…";
+  msg.style.flex = "1";
+
+  const btnLogin = document.createElement("button");
+  btnLogin.type = "button";
+  btnLogin.textContent = "SIGN IN (Google)";
+  btnLogin.style.border = "1px solid #b86b2a";
+  btnLogin.style.background = "#2b2b2b";
+  btnLogin.style.color = "#b86b2a";
+  btnLogin.style.padding = "8px 12px";
+  btnLogin.style.cursor = "pointer";
+
+  const btnLogout = document.createElement("button");
+  btnLogout.type = "button";
+  btnLogout.textContent = "SIGN OUT";
+  btnLogout.style.border = "1px solid #b86b2a";
+  btnLogout.style.background = "#2b2b2b";
+  btnLogout.style.color = "#b86b2a";
+  btnLogout.style.padding = "8px 12px";
+  btnLogout.style.cursor = "pointer";
+  btnLogout.hidden = true;
+
+  bar.appendChild(msg);
+  bar.appendChild(btnLogin);
+  bar.appendChild(btnLogout);
+
+  const header = document.querySelector(".site-header");
+  if (header && header.parentNode) {
+    header.parentNode.insertBefore(bar, header.nextSibling);
+  } else {
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+
+  btnLogin.addEventListener("click", async () => {
+    msg.textContent = "Signing in…";
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      msg.textContent = `Sign-in failed: ${e?.message || e}`;
+    }
+  });
+
+  btnLogout.addEventListener("click", async () => {
+    await signOut(auth);
+  });
+
+  let booted = false;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      btnLogin.hidden = false;
+      btnLogout.hidden = true;
+      if (adminMain) adminMain.style.display = "none";
+      msg.textContent = "Sign in to access admin.";
+      return;
+    }
+
+    const email = String(user.email || "").toLowerCase();
+    if (email !== ALLOWED_EMAIL.toLowerCase()) {
+      msg.textContent = `Not authorised: ${user.email || "(no email)"}`;
+      if (adminMain) adminMain.style.display = "none";
+      btnLogin.hidden = false;
+      btnLogout.hidden = true;
+      await signOut(auth);
+      return;
+    }
+
+    msg.textContent = `Signed in as ${user.email}`;
+    btnLogin.hidden = true;
+    btnLogout.hidden = false;
+    if (adminMain) adminMain.style.display = "";
+
+    if (!booted) {
+      booted = true;
+      bootAdminApp(); // <-- your existing admin code runs only now
+    }
+  });
+
+  // =========================
+  // YOUR EXISTING ADMIN LOGIC
+  // =========================
+  function bootAdminApp() {
+
+    function slugifyTitle(input) {
+      return String(input || "")
+        .trim()
+        .toLowerCase()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    const titleEl = document.getElementById("tourTitle");
+    const imgFileEl = document.getElementById("tourImageFile");
+    const liveEl = document.getElementById("tourLive");
+    const saveBtn = document.getElementById("saveTour");
+    const msgEl = document.getElementById("adminMsg");
+    const tourListEl = document.getElementById("tourList");
+    const amendBtn = document.getElementById("amendTour");
+    const deleteBtn = document.getElementById("deleteTour");
+    const descEl = document.getElementById("tourDescription");
+
+    // ===== Tour Description Editor (structured -> hidden textarea) =====
+    const descProductTitleEl = document.getElementById("descProductTitle");
+    const descOverviewEl = document.getElementById("descOverview");
+    const descMeetingPointEl = document.getElementById("descMeetingPoint");
+    const itineraryListEl = document.getElementById("itineraryList");
+    const addItineraryBtn = document.getElementById("addItineraryItem");
+
+    let itineraryItems = [];
+
+    function escHtml(s) {
+      return String(s || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function nl2br(s) {
+      return escHtml(s).replace(/\r?\n/g, "<br>");
+    }
+
+    function renderItineraryEditor() {
+      itineraryListEl.innerHTML = "";
+
+      itineraryItems.forEach((item, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "it-item";
+
+        const row = document.createElement("div");
+        row.className = "it-row";
+
+        const title = document.createElement("input");
+        title.type = "text";
+        title.className = "admin-field";
+        title.placeholder = "";
+        title.value = item.title || "";
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "admin-btn";
+        removeBtn.textContent = "REMOVE";
+        removeBtn.style.flex = "0 0 auto";
+
+        row.appendChild(title);
+        row.appendChild(removeBtn);
+
+        const body = document.createElement("textarea");
+        body.rows = 4;
+        body.className = "admin-field admin-textarea";
+        body.placeholder = "";
+        body.value = item.body || "";
+
+        title.addEventListener("input", () => {
+          itineraryItems[idx].title = title.value;
+          syncEditorToHiddenTextarea();
+        });
+
+        body.addEventListener("input", () => {
+          itineraryItems[idx].body = body.value;
+          syncEditorToHiddenTextarea();
+        });
+
+        removeBtn.addEventListener("click", () => {
+          itineraryItems.splice(idx, 1);
+          renderItineraryEditor();
+          syncEditorToHiddenTextarea();
+        });
+
+        wrap.appendChild(row);
+        wrap.appendChild(body);
+        itineraryListEl.appendChild(wrap);
+      });
+    }
+
+    function addItineraryBlank() {
+      itineraryItems.push({ title: "", body: "" });
+      renderItineraryEditor();
+      syncEditorToHiddenTextarea();
+    }
+
+    addItineraryBtn.addEventListener("click", addItineraryBlank);
+
+    function buildDescriptionHtml() {
+      const pt = descProductTitleEl.value.trim();
+      const ov = descOverviewEl.value.trim();
+      const mp = descMeetingPointEl.value.trim();
+
+      const items = itineraryItems
+        .map((x) => ({
+          title: String(x.title || "").trim(),
+          body: String(x.body || "").trim(),
+        }))
+        .filter((x) => x.title || x.body);
+
+      let html = "";
+
+      if (pt) {
+        html += `<div class="tsec"><div class="tsec-h">Product Title</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
+      }
+      if (ov) {
+        html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
+      }
+      if (mp) {
+        html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
+      }
+
+      if (items.length) {
+        html += `<div class="tsec"><div class="tsec-h">Itinerary</div><div class="tsec-b">`;
+        for (const it of items) {
+          html += `<div class="tit-item">`;
+          if (it.title) html += `<div class="tit-title">${nl2br(it.title)}</div>`;
+          if (it.body) html += `<div class="tit-body">${nl2br(it.body)}</div>`;
+          html += `</div>`;
+        }
+        html += `</div></div>`;
+      }
+
+      return html;
+    }
+
+    function syncEditorToHiddenTextarea() {
+      descEl.value = buildDescriptionHtml();
+    }
+
+    function loadEditorFromHtml(htmlString) {
+      descProductTitleEl.value = "";
+      descOverviewEl.value = "";
+      descMeetingPointEl.value = "";
+      itineraryItems = [];
+
+      const raw = String(htmlString || "").trim();
+      if (!raw) {
+        renderItineraryEditor();
+        syncEditorToHiddenTextarea();
+        return;
+      }
+
+      const doc = new DOMParser().parseFromString(raw, "text/html");
+      const sections = Array.from(doc.querySelectorAll(".tsec"));
+
+      if (!sections.length) {
+        descOverviewEl.value = raw;
+        renderItineraryEditor();
+        syncEditorToHiddenTextarea();
+        return;
+      }
+
+      for (const sec of sections) {
+        const h = sec.querySelector(".tsec-h")?.textContent?.trim() || "";
+        const bEl = sec.querySelector(".tsec-b");
+        const b = bEl ? bEl.textContent.trim() : "";
+
+        if (h === "Product Title") descProductTitleEl.value = b;
+        if (h === "Overview") descOverviewEl.value = b;
+        if (h === "Meeting Point") descMeetingPointEl.value = b;
+
+        if (h === "Itinerary") {
+          const items = Array.from(sec.querySelectorAll(".tit-item"));
+          for (const it of items) {
+            itineraryItems.push({
+              title: it.querySelector(".tit-title")?.textContent?.trim() || "",
+              body: it.querySelector(".tit-body")?.textContent?.trim() || "",
+            });
+          }
+        }
+      }
+
+      renderItineraryEditor();
+      syncEditorToHiddenTextarea();
+    }
+
+    [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => {
+      el.addEventListener("input", syncEditorToHiddenTextarea);
+    });
+
+    renderItineraryEditor();
+
+    // ===== Schedule state =====
+    let selectedDateKey = "";
+    const selectedDateEl = document.getElementById("selectedDate");
+    const scheduleMsgEl = document.getElementById("scheduleMsg");
+    const scheduleControlsEl = document.getElementById("scheduleControls");
+    const tourTimeEl = document.getElementById("tourTime");
+    const tourCapacityEl = document.getElementById("tourCapacity");
+    const tourPriceEl = document.getElementById("tourPrice");
+    const confirmScheduleBtn = document.getElementById("confirmSchedule");
+    const timesListMsgEl = document.getElementById("timesListMsg");
+    const timesListEl = document.getElementById("timesList");
+
+    let unsubscribeTimes = null;
+
+    function hardRefresh() {
+      window.location.reload();
+    }
+
+    let selectedTourId = "";
+    let selectedTourData = null;
+
+    // ===== Calendar state =====
+    const calPrevBtn = document.getElementById("calPrev");
+    const calNextBtn = document.getElementById("calNext");
+    const calMonthEl = document.getElementById("calMonth");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const CELL_COUNT = 42;
+
+    let viewYear = new Date().getFullYear();
+    let viewMonth = new Date().getMonth();
+
+    let savedDates = new Set();
+    let unsubscribeDates = null;
+
+    function pad2(n) { return String(n).padStart(2, "0"); }
+    function toKeyYYYYMMDD(y, m0, d) { return `${y}-${pad2(m0 + 1)}-${pad2(d)}`; }
+    function monthLabel(y, m0) {
+      const dt = new Date(y, m0, 1);
+      return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
+    }
+    function firstDayIndexMonFirst(y, m0) {
+      const js = new Date(y, m0, 1).getDay();
+      return (js + 6) % 7;
+    }
+    function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
+
+    function ensureGridCells() {
+      if (calendarGrid.children.length === CELL_COUNT) return;
+      calendarGrid.innerHTML = "";
+      for (let i = 0; i < CELL_COUNT; i++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell is-empty";
+        cell.dataset.key = "";
+        cell.textContent = "";
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    function renderCalendar() {
+      ensureGridCells();
+      calMonthEl.textContent = monthLabel(viewYear, viewMonth);
+
+      const startIdx = firstDayIndexMonFirst(viewYear, viewMonth);
+      const dim = daysInMonth(viewYear, viewMonth);
+
+      for (let i = 0; i < CELL_COUNT; i++) {
+        const cell = calendarGrid.children[i];
+        cell.classList.remove("selected", "has-data", "is-empty");
+        cell.dataset.key = "";
+        cell.textContent = "";
+        cell.classList.add("is-empty");
+
+        const dayNum = i - startIdx + 1;
+        if (dayNum < 1 || dayNum > dim) continue;
+
+        const key = toKeyYYYYMMDD(viewYear, viewMonth, dayNum);
+        cell.dataset.key = key;
+        cell.textContent = String(dayNum);
+        cell.classList.remove("is-empty");
+
+        if (savedDates.has(key)) cell.classList.add("has-data");
+      }
+    }
+
+    function attachDatesListenerForTour(tourId) {
+      if (typeof unsubscribeDates === "function") {
+        unsubscribeDates();
+        unsubscribeDates = null;
+      }
+
+      savedDates = new Set();
+
+      if (!tourId) {
+        renderCalendar();
+        return;
+      }
+
+      const datesRef = ref(db, `tours/${tourId}/dates`);
+      unsubscribeDates = onValue(datesRef, (snap) => {
+        const val = snap.val();
+        savedDates = new Set();
+        if (val && typeof val === "object") {
+          for (const k of Object.keys(val)) savedDates.add(k);
+        }
+        renderCalendar();
+      });
+    }
+
+    function clearTimesUI() {
+      if (timesListEl) timesListEl.innerHTML = "";
+      if (timesListMsgEl) timesListMsgEl.textContent = "No date selected.";
+    }
+
+    function detachTimesListener() {
+      if (typeof unsubscribeTimes === "function") {
+        unsubscribeTimes();
+        unsubscribeTimes = null;
+      }
+    }
+
+    function renderTimesList(timesObj) {
+      if (!timesListEl) return;
+
+      timesListEl.innerHTML = "";
+
+      if (!timesObj || typeof timesObj !== "object") {
+        if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
+        return;
+      }
+
+      const times = Object.keys(timesObj).sort();
+      if (!times.length) {
+        if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
+        return;
+      }
+
+      if (timesListMsgEl) timesListMsgEl.textContent = `Saved times for ${selectedDateKey}:`;
+
+      for (const time of times) {
+        const row = document.createElement("div");
+        row.style.border = "1px solid #b86b2a";
+        row.style.padding = "10px";
+        row.style.background = "#2b2b2b";
+        row.style.color = "rgba(255,255,255,0.92)";
+        row.style.display = "flex";
+        row.style.flexDirection = "column";
+        row.style.gap = "8px";
+
+        const cap = timesObj?.[time]?.capacity ?? "";
+        const price = timesObj?.[time]?.price ?? "";
+
+        const top = document.createElement("div");
+        top.textContent = `${time} — capacity: ${cap} — £${price !== "" ? Number(price).toFixed(2) : "0.00"}`;
+        row.appendChild(top);
+
+        const controls = document.createElement("div");
+        controls.style.display = "flex";
+        controls.style.flexDirection = "column";
+        controls.style.gap = "8px";
+
+        const row1 = document.createElement("div");
+        row1.style.display = "flex";
+        row1.style.gap = "8px";
+
+        const capInput = document.createElement("input");
+        capInput.type = "number";
+        capInput.min = "1";
+        capInput.value = String(cap || "");
+        capInput.className = "admin-field";
+        capInput.style.padding = "10px";
+        capInput.style.flex = "1";
+
+        const saveCapBtn = document.createElement("button");
+        saveCapBtn.type = "button";
+        saveCapBtn.className = "admin-btn";
+        saveCapBtn.textContent = "UPDATE CAPACITY";
+        saveCapBtn.style.flex = "1";
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "admin-btn";
+        delBtn.textContent = "DELETE TIME SLOT";
+        delBtn.style.flex = "1";
+
+        row1.appendChild(capInput);
+        row1.appendChild(saveCapBtn);
+        row1.appendChild(delBtn);
+
+        const row2 = document.createElement("div");
+        row2.style.display = "flex";
+        row2.style.gap = "8px";
+
+        const timeInput = document.createElement("input");
+        timeInput.type = "time";
+        timeInput.value = time;
+        timeInput.className = "admin-field";
+        timeInput.style.padding = "10px";
+        timeInput.style.flex = "1";
+
+        const saveTimeBtn = document.createElement("button");
+        saveTimeBtn.type = "button";
+        saveTimeBtn.className = "admin-btn";
+        saveTimeBtn.textContent = "UPDATE TIME";
+        saveTimeBtn.style.flex = "1";
+
+        row2.appendChild(timeInput);
+        row2.appendChild(saveTimeBtn);
+
+        const row3 = document.createElement("div");
+        row3.style.display = "flex";
+        row3.style.gap = "8px";
+
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "0";
+        priceInput.step = "0.01";
+        priceInput.value = price === "" ? "" : String(price);
+        priceInput.className = "admin-field";
+        priceInput.style.padding = "10px";
+        priceInput.style.flex = "1";
+
+        const savePriceBtn = document.createElement("button");
+        savePriceBtn.type = "button";
+        savePriceBtn.className = "admin-btn";
+        savePriceBtn.textContent = "UPDATE PRICE";
+        savePriceBtn.style.flex = "1";
+
+        row3.appendChild(priceInput);
+        row3.appendChild(savePriceBtn);
+
+        controls.appendChild(row1);
+        controls.appendChild(row2);
+        controls.appendChild(row3);
+
+        row.appendChild(controls);
+
+        saveCapBtn.addEventListener("click", async () => {
+          const newCap = parseInt(capInput.value, 10);
+          if (!newCap || newCap < 1) {
+            if (timesListMsgEl) timesListMsgEl.textContent = "Enter a valid capacity (>= 1).";
+            return;
+          }
+
+          try {
+            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
+              capacity: newCap,
+            });
+            if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} to capacity ${newCap}.`;
+          } catch (err) {
+            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        savePriceBtn.addEventListener("click", async () => {
+          const newPrice = parseFloat(priceInput.value);
+          if (Number.isNaN(newPrice) || newPrice < 0) {
+            if (timesListMsgEl) timesListMsgEl.textContent = "Enter valid price (>= 0).";
+            return;
+          }
+
+          try {
+            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
+              price: newPrice,
+            });
+            if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} price to £${newPrice.toFixed(2)}.`;
+          } catch (err) {
+            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        delBtn.addEventListener("click", async () => {
+          const ok = confirm(`Delete time slot ${time} for ${selectedDateKey}?`);
+          if (!ok) return;
+
+          try {
+            await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
+            if (timesListMsgEl) timesListMsgEl.textContent = `Deleted ${time}.`;
+          } catch (err) {
+            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        saveTimeBtn.addEventListener("click", async () => {
+          const newTime = timeInput.value;
+          if (!newTime) {
+            if (timesListMsgEl) timesListMsgEl.textContent = "Select a valid time.";
+            return;
+          }
+          if (newTime === time) {
+            if (timesListMsgEl) timesListMsgEl.textContent = "Time unchanged.";
+            return;
+          }
+
+          if (timesObj && Object.prototype.hasOwnProperty.call(timesObj, newTime)) {
+            if (timesListMsgEl) timesListMsgEl.textContent = `That time (${newTime}) already exists.`;
+            return;
+          }
+
+          const ok = confirm(`Change time ${time} → ${newTime} for ${selectedDateKey}?`);
+          if (!ok) return;
+
+          try {
+            const oldRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
+            const newRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${newTime}`);
+
+            const oldData = timesObj && timesObj[time] ? timesObj[time] : { capacity: 1, price: 0 };
+            await set(newRef, oldData);
+            await remove(oldRef);
+
+            if (timesListMsgEl) timesListMsgEl.textContent = `Updated time ${time} → ${newTime}.`;
+          } catch (err) {
+            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        timesListEl.appendChild(row);
+      }
+    }
+
+    function attachTimesListenerForSelectedDate() {
+      detachTimesListener();
+
+      if (!selectedTourId || !selectedDateKey) {
+        clearTimesUI();
+        return;
+      }
+
+      if (timesListMsgEl) timesListMsgEl.textContent = "Loading times...";
+
+      const timesRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times`);
+      unsubscribeTimes = onValue(timesRef, (snap) => {
+        renderTimesList(snap.val());
+      });
+    }
+
+    calendarGrid.addEventListener("click", async (e) => {
+      const cell = e.target.closest(".calendar-cell");
+      if (!cell) return;
+
+      const key = cell.dataset.key;
+      if (!key) return;
+
+      if (!selectedTourId) {
+        msgEl.textContent = "Select a tour first (then pick dates).";
+        return;
+      }
+
+      selectedDateKey = key;
+      if (selectedDateEl) selectedDateEl.value = key;
+      if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+      if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+
+      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+      cell.classList.add("selected");
+
+      attachTimesListenerForSelectedDate();
+    });
+
+    calPrevBtn.addEventListener("click", () => {
+      viewMonth -= 1;
+      if (viewMonth < 0) {
+        viewMonth = 11;
+        viewYear -= 1;
+      }
+      renderCalendar();
+    });
+
+    calNextBtn.addEventListener("click", () => {
+      viewMonth += 1;
+      if (viewMonth > 11) {
+        viewMonth = 0;
+        viewYear += 1;
+      }
+      renderCalendar();
+    });
+
+    renderCalendar();
+
+    onValue(ref(db, "tours"), (snapshot) => {
+      const tours = snapshot.val();
+      tourListEl.innerHTML = "";
+      if (!tours) return;
+
+      for (const [tourId, tour] of Object.entries(tours)) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.textContent = tour?.title ? tour.title : tourId;
+        row.style.padding = "10px";
+        row.style.border = "1px solid #b86b2a";
+        row.style.background = tourId === selectedTourId ? "#1f1f1f" : "#2b2b2b";
+        row.style.color = "rgba(255,255,255,0.92)";
+        row.style.cursor = "pointer";
+        row.style.textAlign = "left";
+
+        row.addEventListener("click", () => {
+          selectedTourId = tourId;
+          selectedTourData = tour || null;
+
+          selectedDateKey = "";
+          if (selectedDateEl) selectedDateEl.value = "";
+          if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+          if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
+
+          calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+
+          detachTimesListener();
+          clearTimesUI();
+
+          titleEl.value = tour?.title || "";
+          liveEl.checked = !!tour?.isLive;
+          descEl.value = tour?.description || "";
+          loadEditorFromHtml(descEl.value);
+
+          msgEl.textContent = `Selected: ${tourId}`;
+
+          attachDatesListenerForTour(tourId);
+        });
+
+        tourListEl.appendChild(row);
+      }
+    });
+
+    amendBtn.addEventListener("click", async () => {
+      if (!selectedTourId) {
+        msgEl.textContent = "Select a tour first.";
+        return;
+      }
+
+      const title = titleEl.value.trim();
+      const isLive = !!liveEl.checked;
+      syncEditorToHiddenTextarea();
+      const description = descEl.value.trim();
+
+      if (!title) {
+        msgEl.textContent = "Title required.";
+        return;
+      }
+
+      const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
+
+      try {
+        let imageUrl = selectedTourData?.imageUrl || "";
+
+        if (file) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const stamp = Date.now();
+          const path = `tours/${selectedTourId}/images/${stamp}-${safeName}`;
+
+          const storageRef = sRef(storage, path);
+          await uploadBytes(storageRef, file);
+          imageUrl = await getDownloadURL(storageRef);
+        }
+
+        await update(ref(db, `tours/${selectedTourId}`), {
+          title,
+          imageUrl,
+          isLive,
+          description,
+        });
+
+        msgEl.textContent = `Amended: tours/${selectedTourId}`;
+        hardRefresh();
+      } catch (err) {
+        msgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!selectedTourId) {
+        msgEl.textContent = "Select a tour first.";
+        return;
+      }
+
+      const ok = confirm(`Delete tour "${selectedTourId}" from database?`);
+      if (!ok) return;
+
+      try {
+        await remove(ref(db, `tours/${selectedTourId}`));
+        msgEl.textContent = `Deleted: tours/${selectedTourId}`;
+        hardRefresh();
+
+        selectedTourId = "";
+        selectedTourData = null;
+        titleEl.value = "";
+        liveEl.checked = false;
+      } catch (err) {
+        msgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      if (selectedTourId) {
+        msgEl.textContent = "Use AMEND to update an existing tour.";
+        return;
+      }
+
+      const title = titleEl.value.trim();
+      const isLive = !!liveEl.checked;
+      syncEditorToHiddenTextarea();
+      const description = descEl.value.trim();
+
+      if (!title) {
+        msgEl.textContent = "Title required.";
+        return;
+      }
+
+      const tourId = slugifyTitle(title);
+      if (!tourId) {
+        msgEl.textContent = "Invalid title.";
+        return;
+      }
+
+      const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
+      let imageUrl = selectedTourData?.imageUrl || "";
+
+      try {
+        if (file) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const stamp = Date.now();
+          const path = `tours/${tourId}/images/${stamp}-${safeName}`;
+
+          const storageRef = sRef(storage, path);
+          await uploadBytes(storageRef, file);
+          imageUrl = await getDownloadURL(storageRef);
+        }
+
+        const tourData = { title, imageUrl, isLive, description };
+        await update(ref(db, `tours/${tourId}`), tourData);
+
+        msgEl.textContent = `Saved: tours/${tourId}`;
+        hardRefresh();
+      } catch (err) {
+        msgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    confirmScheduleBtn.addEventListener("click", async () => {
+      if (!selectedTourId) {
+        scheduleMsgEl.textContent = "Select a tour first.";
+        return;
+      }
+      if (!selectedDateKey) {
+        scheduleMsgEl.textContent = "Select a date first.";
+        return;
+      }
+
+      const time = tourTimeEl.value;
+      const capacity = parseInt(tourCapacityEl.value, 10);
+      const price = parseFloat(tourPriceEl.value);
+
+      if (!time) {
+        scheduleMsgEl.textContent = "Select a time.";
+        return;
+      }
+      if (!capacity || capacity < 1) {
+        scheduleMsgEl.textContent = "Enter valid capacity.";
+        return;
+      }
+      if (Number.isNaN(price) || price < 0) {
+        scheduleMsgEl.textContent = "Enter valid price (>= 0).";
+        return;
+      }
+
+      try {
+        await set(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
+          capacity,
+          price,
+        });
+
+        scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces) at £${price.toFixed(2)}.`;
+
+        tourTimeEl.value = "";
+        tourCapacityEl.value = "";
+        tourPriceEl.value = "";
+      } catch (err) {
+        scheduleMsgEl.textContent = `Error: ${err?.message || err}`;
+      }
+    });
+
+    void db;
+  }
+                                </script>
   
 </body>
 </html>
