@@ -228,6 +228,10 @@
   <main class="admin-main">
     <div class="admin-wrap">
 
+      <div class="admin-subtitle" style="margin: 20px 0 12px 0;">Live bookings feed</div>
+        <div class="admin-msg" id="liveBookingsMsg">Loading…</div>
+          <div id="liveBookingsList" class="admin-list" style="margin-bottom: 30px;"></div>
+
       <div class="admin-section-title">Create Tour</div>
 
       <div class="admin-stack">
@@ -348,6 +352,7 @@ import {
   query,
   orderByChild,
   equalTo,
+  limitToLast,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
   
   import {
@@ -677,6 +682,122 @@ import {
     });
 
     renderItineraryEditor();
+
+    // ===== Live bookings feed (read-only) =====
+    const liveBookingsMsgEl = document.getElementById("liveBookingsMsg");
+    const liveBookingsListEl = document.getElementById("liveBookingsList");
+
+    let unsubscribeLiveBookings = null;
+
+    function detachLiveBookings(){
+      if (typeof unsubscribeLiveBookings === "function"){
+        try { unsubscribeLiveBookings(); } catch {}
+      }
+      unsubscribeLiveBookings = null;
+    }
+
+    function clearLiveBookingsUI(msg){
+      if (liveBookingsListEl) liveBookingsListEl.innerHTML = "";
+      if (liveBookingsMsgEl) liveBookingsMsgEl.textContent = msg || "";
+    }
+
+    function safeStr(v){ return String(v ?? ""); }
+
+    function renderLiveBookings(items){
+      if (!liveBookingsListEl) return;
+
+      liveBookingsListEl.innerHTML = "";
+
+      if (!items.length){
+        clearLiveBookingsUI("No bookings yet.");
+        return;
+      }
+
+      if (liveBookingsMsgEl) liveBookingsMsgEl.textContent = `Showing latest ${items.length} booking(s)`;
+
+      for (const it of items){
+        const b = it.b || {};
+        const bookingId = safeStr(it.bookingId);
+        const refShort = bookingId.slice(-7);
+
+        const row = document.createElement("div");
+        row.style.border = "1px solid #b86b2a";
+        row.style.padding = "10px";
+        row.style.background = "#2b2b2b";
+        row.style.color = "rgba(255,255,255,0.92)";
+        row.style.display = "flex";
+        row.style.flexDirection = "column";
+        row.style.gap = "6px";
+
+        const top = document.createElement("div");
+        top.textContent = `${safeStr(b.tourTitle || it.tourId)} — ${safeStr(b.dateKey)} — ${safeStr(b.time)} — Ref: ${refShort}`;
+        row.appendChild(top);
+
+        const line2 = document.createElement("div");
+        line2.className = "admin-msg";
+        line2.textContent = `${safeStr(b.name)} • ${safeStr(b.email)}${b.phone ? " • " + safeStr(b.phone) : ""}`;
+        row.appendChild(line2);
+
+        const line3 = document.createElement("div");
+        line3.className = "admin-msg";
+        const qty = Number(b.qty || 0);
+        const price = Number(b.price || 0);
+        line3.textContent = `${qty ? qty + " pax" : ""}${Number.isFinite(price) ? " • £" + price.toFixed(2) : ""}${b.paymentStatus ? " • " + safeStr(b.paymentStatus) : ""}`;
+        row.appendChild(line3);
+
+        liveBookingsListEl.appendChild(row);
+      }
+    }
+
+    function attachLiveBookingsFeed(){
+      detachLiveBookings();
+
+      if (!liveBookingsListEl) return;
+
+      // Pull all tours' latest bookings by listening to /bookings (flatten client-side)
+      // Keeps it simple and works with your current structure: bookings/{tourId}/{bookingId}
+      const rootRef = ref(db, "bookings");
+
+      unsubscribeLiveBookings = onValue(rootRef, (snap) => {
+        const root = snap.val();
+
+        if (!root || typeof root !== "object"){
+          renderLiveBookings([]);
+          return;
+        }
+
+        const all = [];
+
+        for (const [tourId, tourBookings] of Object.entries(root)){
+          if (!tourBookings || typeof tourBookings !== "object") continue;
+
+          for (const [bookingId, b] of Object.entries(tourBookings)){
+            if (!b || typeof b !== "object") continue;
+
+            // createdAt is serverTimestamp -> may be number/object depending on timing
+            // Use a best-effort numeric sort key.
+            let sortKey = 0;
+            const ca = b.createdAt;
+            if (typeof ca === "number") sortKey = ca;
+            else if (typeof ca === "string" && /^\d+$/.test(ca)) sortKey = Number(ca);
+
+            all.push({ tourId, bookingId, b, sortKey });
+          }
+        }
+
+        // newest first (fallback: bookingId order)
+        all.sort((a, c) => {
+          if (c.sortKey !== a.sortKey) return c.sortKey - a.sortKey;
+          return String(c.bookingId).localeCompare(String(a.bookingId));
+        });
+
+        // show latest 50
+        renderLiveBookings(all.slice(0, 50));
+      });
+    }
+
+    // start feed
+    attachLiveBookingsFeed();
 
     // ===== Schedule state =====
     let selectedDateKey = "";
