@@ -1,1344 +1,1112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tour The Lakes</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="images/TTLFAVIcon.png">
-
-    <style>
-        html, body {
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: #2b2b2b;
-            overflow-x: hidden;
-        }
-
-*, *::before, *::after { box-sizing: border-box; }
-
-.site-header {
-  width: 100%;
-}
-
-.header-inner {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-}
-
-.brand {
-  color: rgba(255,255,255,0.92);
-  font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.2px;
-}
-
-img {
-  width: 100%;
-  display: block;
-}
-
-.hero-wrapper {
-  position: relative;
-  border-top: 2px solid #b86b2a;
-  border-bottom: 2px solid #b86b2a;
-}
-
-.hero-wrapper::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-wrapper h1 {
-  font-weight: 600;
-  position: absolute;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  margin: 0;
-  color: #b86b2a;
-  z-index: 2;
-}
-
-.hero-wrapper p {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  margin: 0;
-  color: rgba(255,255,255,0.92);
-  z-index: 2;
-}
-
-.hero-wrapper h1 { top: 35%; }
-.hero-wrapper p  { top: 52%; }
-.hero-wrapper h1 { font-size: 58px; }
-.hero-wrapper p  { font-size: 28px; }
-
-.hero-gap {
-    height: 64px;
-    width: 100%;
-}
-
-.tour-image img {
-    max-height: 200px;
-    object-fit: cover;
-    position: relative;
-    z-index: 0;
-}
-
-.tour-image::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  pointer-events: none;
-  z-index: 1;
-  border-top: 2px solid #b86b2a;
-  border-bottom: 2px solid #b86b2a;
-}
-
-.tour-image {
-  position: relative;
-}
-
-.tour-image .tour-title {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  top: 18%;
-  text-align: center;
-  margin: 0;
-  color: #b86b2a;
-  z-index: 2;
-  font: 600 58px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.tour-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 40px 0 20px 0;
-}
-
-.tour-divider-line {
-  flex: 1;
-  height: 1px;
-  background: #b86b2a;
-}
-
-.tour-read,
-.tour-more {
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(255,255,255,0.6);
-  margin: 0 8px;
-  letter-spacing: 0.5px;
-}
-
-.tour-toggle {
-  background: #2b2b2b;
-  border: 1px solid #b86b2a;
-  border-radius: 50%;
-  padding: 8px;
-  margin: 0 12px;
-  cursor: pointer;
-}
-
-.tour-toggle img {
-  display: block;
-  width: 20px;
-  height: 20px;
-  border-bottom: none;
-}
-
-.tour-details {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px 20px 40px 20px;
-
-  font-weight: 600;
-  color: rgba(255,255,255,0.92);
-}
-
-.tour-description {
-    white-space: pre-wrap;
-}
-
-.tsec {
-  margin-bottom: 24px;
-}
-
-.tsec-h {
-  color: #b86b2a;
-  font-weight: 600;
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-
-.tsec-b {
-  color: rgba(255,255,255,0.92);
-  line-height: 1.5;
-}
-
-.tit-item {
-  margin-bottom: 18px;
-}
-
-.tit-title {
-  color: #b86b2a;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.tit-body {
-  color: rgba(255,255,255,0.92);
-  line-height: 1.5;
-}
-        
-.tour-row {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  z-index: 2;
-  padding: 0 16px; 
-  top: 52%;
-  box-sizing: border-box;
-}
-
-.tour-meta {
-  display: block;      
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-  color: rgba(255,255,255,0.92);
-  font: 500 20px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.2px;
-}
-
-.tour-image { 
-  overflow: hidden; 
-}
-
-/* ===== Public calendar (match admin look) ===== */
-
-.tour-booking-area{
-  max-width: 900px;
-  margin: 0 auto 40px auto;
-  padding: 0 20px;
-}
-
-.tour-calendar{
-  margin-top: 18px;
-  border: 1px solid #b86b2a;
-  padding: 14px;
-  background: #2b2b2b;
-}
-
-.cal-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom: 14px;
-}
-
-.cal-nav{
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  color: #b86b2a;
-  padding: 8px 12px;
-  cursor: pointer;
-  font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.cal-month{
-  color: rgba(255,255,255,0.92);
-  font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.2px;
-}
-
-.cal-weekdays{
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 6px;
-}
-
-.cal-weekdays div{
-  text-align:center;
-  font-weight:600;
-  padding: 8px 0;
-  color: rgba(255,255,255,0.92);
-}
-
-.cal-grid{
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: 0;
-}
-
-.cal-cell{
-  border: 1px solid #444;
-  min-height: 52px;
-  display:flex;
-  align-items:flex-start;
-  justify-content:flex-end;
-  padding: 6px;
-  color: rgba(255,255,255,0.8);
-  cursor:pointer;
-  user-select:none;
-}
-
-.cal-cell.is-empty{
-  opacity: 0.25;
-  cursor: default;
-}
-
-.cal-cell.has-data{
-  background: rgba(184,107,42,0.15);
-}
-
-.cal-cell:not(.is-empty):hover{
-  background: rgba(255,255,255,0.05);
-}
-
-.cal-cell.selected{
-  border: 2px solid #b86b2a;
-}
-
-/* ===== Slots list (selectable, same visual language) ===== */
-
-.slots-msg{
-  margin: 14px 0 10px 0;
-  color: rgba(255,255,255,0.6);
-  font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.slots-list{
-  display:flex;
-  flex-direction:column;
-  gap: 10px;
-}
-
-.slot-btn{
-  width: 100%;
-  text-align:left;
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  color: rgba(255,255,255,0.92);
-  padding: 12px;
-  cursor: pointer;
-  font: 500 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.slot-btn.has-data{
-  background: rgba(184,107,42,0.15); /* SAME as calendar has-data */
-}
-
-.slot-btn.selected{
-  border: 2px solid #b86b2a;        /* SAME as calendar selected */
-}
-
-.slot-btn:disabled{
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.tour-price,
-.tour-seats {
-  display: none !important;
-}
-
-.tour-nextdate {
-  display: block;
-  white-space: normal;
-}
-
-.tour-meta span {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.booking-wrap{
-  margin-top: 14px;
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  padding: 14px;
-}
-
-.booking-title{
-  color: rgba(255,255,255,0.92);
-  font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  margin-bottom: 10px;
-}
-
-.booking-summary{
-  color: rgba(255,255,255,0.6);
-  font: 400 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  margin-bottom: 12px;
-  white-space: normal;
-}
-
-.booking-field{
-  width: 100%;
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  color: rgba(255,255,255,0.92);
-  padding: 12px;
-  margin-bottom: 10px;
-  font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  box-sizing: border-box;
-}
-
-.booking-btn{
-  width: 100%;
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  color: #b86b2a;
-  padding: 12px;
-  cursor: pointer;
-  font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.booking-btn:disabled{
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.booking-msg{
-  margin-top: 10px;
-  color: rgba(255,255,255,0.6);
-  font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.site-footer {
-  width: 100%;
-  border-top: 2px solid #b86b2a;
-}
-
-.footer-inner {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-}
-
-.footer-text {
-  color: rgba(255,255,255,0.6);
-  font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.2px;
-}
-
-@media screen and (min-width: 1024px) {
-  .hero-wrapper img {
-    max-height: 600px;
-    object-fit: cover;
-  }
-
-.hero-wrapper h1 { top: 35%; }
-.hero-wrapper p { top: 48%; }
-
-.tour-image img {
-    max-height: 300px;
-    object-fit: cover;
-  }
-
-  .tour-row { 
-      top: 46%; 
-  }
-
-}
-
-@media screen and (max-width: 600px) {
-
-  .hero-wrapper h1 {
-    top: 32%;
-    font-size: 36px;
-  }
-
-  .hero-wrapper p {
-    top: 50%;
-    font-size: 18px;
-  }
-
-  .tour-image .tour-title {
-      font-size: 36px;
-  }
-
-  .tour-row { 
-      top: 40%; 
-  }
-
-  .tour-meta {
-    font-size: 13px;
-    line-height: 1.25;
-  }
-
-}
-        
-    </style>
-</head>
- <body>
-
-    <header class="site-header">
-  <div class="header-inner">
-    <div class="brand">Tour The Lakes</div>
-  </div>
-</header>
-
-<div class="hero-wrapper">
-  <img src="images/DSC_0092.JPG.jpg" alt="Tour The Lakes Image" class="hero-image">
-
-  <h1>Discover the Lakes</h1>
-   <p>Sightseeing with a difference</p>
-    
-</div>
-
-     <div class="hero-gap"></div>
-
-<section id="tours"></section>
-
-<template id="tourTemplate">
-  <article class="tour" data-tour-id="">
-   <div class="tour-image">
-    <div class="tour-title"></div>
-
-
-      <div class="tour-row">
-       <div class="tour-meta">
-        <span class="tour-price"></span>
-         <span class="tour-nextdate"></span>
-          <span class="tour-seats"></span>
-          </div>
-           </div>
-            </div>
-
-    <div class="tour-divider">
-      <div class="tour-divider-line"></div>
-
-      <span class="tour-read">Read</span>
-        
-      <button class="tour-toggle" type="button" aria-expanded="false">
-        <img src="images/TTLFAVIcon.png" alt="Expand tour">
-      </button>
-
-    <span class="tour-read">More</span>
-        
-      <div class="tour-divider-line"></div>
-    </div>
-
-<div class="tour-details" hidden>
-  <div class="tour-description"></div>
-
-  <div class="tour-booking-area">
-    <!-- Calendar (public) -->
-    <div class="tour-calendar">
-      <div class="cal-header">
-        <button type="button" class="cal-nav cal-prev">◀</button>
-        <div class="cal-month"></div>
-        <button type="button" class="cal-nav cal-next">▶</button>
-      </div>
-
-      <div class="cal-weekdays">
-        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-      </div>
-
-      <div class="cal-grid"></div>
-    </div>
-
-<div class="tour-workspace">
-  <div class="slots-msg">Select a date.</div>
-  <div class="slots-list"></div>
-
-  <!-- Booking panel (shows after a slot is selected) -->
-  <div class="booking-wrap" hidden>
-    <div class="booking-title">Your booking</div>
-    <div class="booking-summary"></div>
-
-    <input class="booking-field booking-name" type="text" placeholder="Full name">
-    <input class="booking-field booking-email" type="email" placeholder="Email">
-    <input class="booking-field booking-phone" type="tel" placeholder="Phone">
-    <input class="booking-field booking-qty" type="number" min="1" value="1" placeholder="Passengers">
-
-    <button type="button" class="booking-btn">REQUEST BOOKING</button>
-    <div class="booking-msg"></div>
-  </div>
-</div>
-  </div>
-</div>
-
-      
-  </article>
-</template>
-
-
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-text">© Tour The Lakes</div>
-  </div>
-</footer>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  onValue,
-  push,
-  set,
-  runTransaction,
-  serverTimestamp,
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-  authDomain: "tourthelakes-1e165.firebaseapp.com",
-  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
-  projectId: "tourthelakes-1e165",
-  storageBucket: "tourthelakes-1e165.firebasestorage.app",
-  messagingSenderId: "470758171431",
-  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
-  measurementId: "G-W6JY1LZXTP"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const toursEl = document.getElementById("tours");
-const tpl = document.getElementById("tourTemplate");
-
-// ---------- shared helpers ----------
-function pad2(n){ return String(n).padStart(2, "0"); }
-function toKeyYYYYMMDD(y, m0, d){ return `${y}-${pad2(m0+1)}-${pad2(d)}`; }
-
-function monthLabel(y, m0){
-  const dt = new Date(y, m0, 1);
-  return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
-}
-function firstDayIndexMonFirst(y, m0){
-  const js = new Date(y, m0, 1).getDay(); // Sun=0..Sat=6
-  return (js + 6) % 7; // Mon=0..Sun=6
-}
-function daysInMonth(y, m0){ return new Date(y, m0 + 1, 0).getDate(); }
-
-function parseSlotDateTime(dateKey, timeStr){
-  const [y, m, d] = String(dateKey).split("-").map(Number);
-  const [hh, mm] = String(timeStr || "").split(":").map(Number);
-  if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
-  return new Date(y, m - 1, d, hh, mm, 0, 0);
-}
-
-function formatGBP(value){
-  const n = Number(value);
-  if (!Number.isFinite(n)) return "";
-  return `£${n.toFixed(2)}`;
-}
-
-function findNextUpcomingSlot(datesObj){
-  if (!datesObj || typeof datesObj !== "object") return null;
-
-  const now = new Date();
-  let best = null;
-
-  for (const [dateKey, dateNode] of Object.entries(datesObj)){
-    const timesObj = dateNode?.times;
-    if (!timesObj || typeof timesObj !== "object") continue;
-
-    for (const [timeStr, slot] of Object.entries(timesObj)){
-      const dt = parseSlotDateTime(dateKey, timeStr);
-      if (!dt) continue;
-      if (dt.getTime() < now.getTime()) continue;
-
-      if (!best || dt.getTime() < best.dt.getTime()){
-        best = {
-          dateKey,
-          timeStr,
-          dt,
-          capacity: slot?.capacity ?? null,
-          price: slot?.price ?? null,
-        };
-      }
+  <meta charset="UTF-8" />
+  <title>Tour The Lakes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
+
+  <style>
+    html, body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #2b2b2b;
+      overflow-x: hidden;
     }
-  }
-  return best;
-}
+    *, *::before, *::after { box-sizing: border-box; }
 
-// ---------- cleanup on re-render ----------
-const tourDatesUnsubs = new Map(); // tourId -> unsub
-const tourCalStates = new Map();   // tourId -> state
+    .site-header { width: 100%; }
+    .header-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
+    .brand { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
 
-function cleanupTourDatesListeners(){
-  for (const unsub of tourDatesUnsubs.values()){
-    try { unsub(); } catch {}
-  }
-  tourDatesUnsubs.clear();
-}
+    img { width: 100%; display: block; }
 
-function detachTourCalendarListeners(state){
-  if (typeof state.unsubDates === "function"){
-    try { state.unsubDates(); } catch {}
-  }
-  if (typeof state.unsubTimes === "function"){
-    try { state.unsubTimes(); } catch {}
-  }
-  state.unsubDates = null;
-  state.unsubTimes = null;
-}
-
-function clearTours(){
-  cleanupTourDatesListeners();
-
-  for (const state of tourCalStates.values()){
-    try { detachTourCalendarListeners(state); } catch {}
-  }
-  tourCalStates.clear();
-
-  toursEl.innerHTML = "";
-}
-
-// ---------- booking UI helpers ----------
-function bookingEls(state){
-  const root = state.articleEl.querySelector(".tour-details");
-  return {
-    wrap: root.querySelector(".booking-wrap"),
-    summary: root.querySelector(".booking-summary"),
-    name: root.querySelector(".booking-name"),
-    email: root.querySelector(".booking-email"),
-    phone: root.querySelector(".booking-phone"),
-    qty: root.querySelector(".booking-qty"),
-    btn: root.querySelector(".booking-btn"),
-    msg: root.querySelector(".booking-msg"),
-  };
-}
-
-function hideBooking(state){
-  const els = bookingEls(state);
-  if (!els.wrap) return;
-  els.wrap.hidden = true;
-  if (els.msg) els.msg.textContent = "";
-}
-
-function showBooking(state){
-  const els = bookingEls(state);
-  if (!els.wrap) return;
-
-  const slot = state.selectedSlot;
-  if (!state.selectedDateKey || !slot || !slot.time){
-    hideBooking(state);
-    return;
-  }
-
-  els.wrap.hidden = false;
-  if (els.msg) els.msg.textContent = "";
-
-  const cap = Number(slot.capacity);
-  const price = Number(slot.price);
-
-  const capText = Number.isFinite(cap) ? `${cap} places remaining` : "places unknown";
-  const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
-
-  if (els.summary){
-    els.summary.textContent =
-      `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText}` : "");
-  }
-
-  if (els.qty){
-    els.qty.value = "1";
-    els.qty.min = "1";
-    if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
-    else els.qty.removeAttribute("max");
-  }
-}
-
-// ---------- modal ----------
-function ensureBookingModalStyles(){
-  if (document.getElementById("ttl-booking-modal-styles")) return;
-
-  const style = document.createElement("style");
-  style.id = "ttl-booking-modal-styles";
-  style.textContent = `
-    .ttl-modal-overlay{
-      position: fixed;
+    .hero-wrapper {
+      position: relative;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 2px solid #b86b2a;
+    }
+    .hero-wrapper::after {
+      content: "";
+      position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.65);
-      z-index: 99999;
+      background: rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-wrapper h1 {
+      font-weight: 600;
+      position: absolute;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+      color: #b86b2a;
+      z-index: 2;
+      top: 35%;
+      font-size: 58px;
+    }
+    .hero-wrapper p {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+      color: rgba(255,255,255,0.92);
+      z-index: 2;
+      top: 52%;
+      font-size: 28px;
+    }
+
+    .hero-gap { height: 64px; width: 100%; }
+
+    .tour-image { position: relative; overflow: hidden; }
+    .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
+    .tour-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+      z-index: 1;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 2px solid #b86b2a;
+    }
+    .tour-image .tour-title {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      top: 18%;
+      text-align: center;
+      margin: 0;
+      color: #b86b2a;
+      z-index: 2;
+      font: 600 58px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-divider {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      margin: 40px 0 20px 0;
     }
-    .ttl-modal{
-      width: 100%;
-      max-width: 680px;
-      border: 1px solid #b86b2a;
+    .tour-divider-line { flex: 1; height: 1px; background: #b86b2a; }
+    .tour-read, .tour-more {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      margin: 0 8px;
+      letter-spacing: 0.5px;
+    }
+    .tour-toggle {
       background: #2b2b2b;
+      border: 1px solid #b86b2a;
+      border-radius: 50%;
+      padding: 8px;
+      margin: 0 12px;
+      cursor: pointer;
+    }
+    .tour-toggle img { display: block; width: 20px; height: 20px; border-bottom: none; }
+
+    .tour-details {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 20px 40px 20px;
+      font-weight: 600;
       color: rgba(255,255,255,0.92);
-      padding: 16px;
-      position: relative;
+    }
+
+    .tour-description { white-space: pre-wrap; }
+    .tsec { margin-bottom: 24px; }
+    .tsec-h { color: #b86b2a; font-weight: 600; font-size: 20px; margin-bottom: 8px; }
+    .tsec-b { color: rgba(255,255,255,0.92); line-height: 1.5; }
+    .tit-item { margin-bottom: 18px; }
+    .tit-title { color: #b86b2a; font-weight: 600; margin-bottom: 6px; }
+    .tit-body { color: rgba(255,255,255,0.92); line-height: 1.5; }
+
+    .tour-row {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      z-index: 2;
+      padding: 0 16px;
+      top: 52%;
       box-sizing: border-box;
     }
-    .ttl-modal-close{
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
+    .tour-meta {
+      display: block;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      color: rgba(255,255,255,0.92);
+      font: 500 20px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.2px;
+    }
+
+    /* ===== Public calendar (match admin look) ===== */
+    .tour-booking-area { max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; }
+    .tour-calendar { margin-top: 18px; border: 1px solid #b86b2a; padding: 14px; background: #2b2b2b; }
+    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+    .cal-nav {
       border: 1px solid #b86b2a;
       background: #2b2b2b;
       color: #b86b2a;
+      padding: 8px 12px;
       cursor: pointer;
-      font-weight: 700;
-      line-height: 1;
+      font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .ttl-modal h2{
-      margin: 0 0 10px 0;
-      color: #b86b2a;
-      padding-right: 44px;
-      font-size: 18px;
+    .cal-month { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+
+    .cal-weekdays { display:grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
+    .cal-weekdays div { text-align:center; font-weight:600; padding: 8px 0; color: rgba(255,255,255,0.92); }
+
+    .cal-grid { display:grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 0; }
+    .cal-cell {
+      border: 1px solid #444;
+      min-height: 52px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:flex-end;
+      padding: 6px;
+      color: rgba(255,255,255,0.8);
+      cursor:pointer;
+      user-select:none;
     }
-    .ttl-modal p{
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      line-height: 1.5;
-      color: rgba(255,255,255,0.92);
+    .cal-cell.is-empty { opacity: 0.25; cursor: default; }
+    .cal-cell.has-data { background: rgba(184,107,42,0.15); }
+    .cal-cell:not(.is-empty):hover { background: rgba(255,255,255,0.05); }
+    .cal-cell.selected { border: 2px solid #b86b2a; }
+
+    /* ===== Slots list ===== */
+    .slots-msg {
+      margin: 14px 0 10px 0;
+      color: rgba(255,255,255,0.6);
+      font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .ttl-box{
+    .slots-list { display:flex; flex-direction:column; gap: 10px; }
+    .slot-btn {
+      width: 100%;
+      text-align:left;
       border: 1px solid #b86b2a;
+      background: #2b2b2b;
+      color: rgba(255,255,255,0.92);
       padding: 12px;
-      margin: 12px 0;
+      cursor: pointer;
+      font: 500 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .ttl-no-scroll{
-      overflow: hidden !important;
+    .slot-btn.has-data { background: rgba(184,107,42,0.15); }
+    .slot-btn.selected { border: 2px solid #b86b2a; }
+    .slot-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .tour-price, .tour-seats { display: none !important; }
+    .tour-nextdate { display: block; white-space: normal; }
+    .tour-meta span { white-space: normal; overflow-wrap: anywhere; }
+
+    .booking-wrap { margin-top: 14px; border: 1px solid #b86b2a; background: #2b2b2b; padding: 14px; }
+    .booking-title { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin-bottom: 10px; }
+    .booking-summary {
+      color: rgba(255,255,255,0.6);
+      font: 400 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin-bottom: 12px;
+      white-space: normal;
     }
-  `;
-  document.head.appendChild(style);
-}
+    .booking-field {
+      width: 100%;
+      border: 1px solid #b86b2a;
+      background: #2b2b2b;
+      color: rgba(255,255,255,0.92);
+      padding: 12px;
+      margin-bottom: 10px;
+      font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      box-sizing: border-box;
+    }
+    .booking-btn {
+      width: 100%;
+      border: 1px solid #b86b2a;
+      background: #2b2b2b;
+      color: #b86b2a;
+      padding: 12px;
+      cursor: pointer;
+      font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .booking-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .booking-msg {
+      margin-top: 10px;
+      color: rgba(255,255,255,0.6);
+      font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
 
-function escapeHtml(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#39;");
-}
+    .site-footer { width: 100%; border-top: 2px solid #b86b2a; }
+    .footer-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
+    .footer-text { color: rgba(255,255,255,0.6); font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
 
-function openBookingSuccessModal(data){
-  ensureBookingModalStyles();
+    @media screen and (min-width: 1024px) {
+      .hero-wrapper img { max-height: 600px; object-fit: cover; }
+      .hero-wrapper h1 { top: 35%; }
+      .hero-wrapper p { top: 48%; }
 
-  document.documentElement.classList.add("ttl-no-scroll");
-  document.body.classList.add("ttl-no-scroll");
+      .tour-image img { max-height: 300px; object-fit: cover; }
+      .tour-row { top: 46%; }
+    }
 
-  const overlay = document.createElement("div");
-  overlay.className = "ttl-modal-overlay";
+    @media screen and (max-width: 600px) {
+      .hero-wrapper h1 { top: 32%; font-size: 36px; }
+      .hero-wrapper p { top: 50%; font-size: 18px; }
+      .tour-image .tour-title { font-size: 36px; }
+      .tour-row { top: 40%; }
+      .tour-meta { font-size: 13px; line-height: 1.25; }
+    }
+  </style>
+</head>
 
-  const modal = document.createElement("div");
-  modal.className = "ttl-modal";
-
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "ttl-modal-close";
-  closeBtn.type = "button";
-  closeBtn.textContent = "×";
-
-  closeBtn.addEventListener("click", () => {
-    overlay.remove();
-    document.documentElement.classList.remove("ttl-no-scroll");
-    document.body.classList.remove("ttl-no-scroll");
-  });
-
-  modal.innerHTML = `
-    <h2>Booking Confirmed</h2>
-
-    <p>Thank you for booking your tour. Your booking reference is: <strong>${escapeHtml(data.ref)}</strong></p>
-    <p>When contacting us, please quote your booking reference.</p>
-    <p>We can confirm that you have reserved ${escapeHtml(data.qty)} passenger(s) and this confirms your place on the tour.</p>
-
-    <div class="ttl-box">
-      <p><strong>Tour:</strong> ${escapeHtml(data.tour)}</p>
-      <p><strong>Date & Time:</strong> ${escapeHtml(data.date)} at ${escapeHtml(data.time)}</p>
-      <p><strong>Passengers:</strong> ${escapeHtml(data.qty)}</p>
-      <p><strong>Price:</strong> ${escapeHtml(data.price)}</p>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">Tour The Lakes</div>
     </div>
+  </header>
 
-    <p><strong>What’s Next?</strong></p>
-    <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know. You will also receive a text message containing this link.</p>
+  <div class="hero-wrapper">
+    <img src="images/DSC_0092.JPG.jpg" alt="Tour The Lakes Image" class="hero-image" />
+    <h1>Discover the Lakes</h1>
+    <p>Sightseeing with a difference</p>
+  </div>
 
-    <p><strong>Please confirm your details:</strong></p>
+  <div class="hero-gap"></div>
 
-    <div class="ttl-box">
-      <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
-      <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
-      <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
+  <section id="tours"></section>
+
+  <template id="tourTemplate">
+    <article class="tour" data-tour-id="">
+      <div class="tour-image">
+        <div class="tour-title"></div>
+
+        <div class="tour-row">
+          <div class="tour-meta">
+            <span class="tour-price"></span>
+            <span class="tour-nextdate"></span>
+            <span class="tour-seats"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tour-divider">
+        <div class="tour-divider-line"></div>
+
+        <span class="tour-read">Read</span>
+
+        <button class="tour-toggle" type="button" aria-expanded="false">
+          <img src="images/TTLFAVIcon.png" alt="Expand tour" />
+        </button>
+
+        <span class="tour-read">More</span>
+
+        <div class="tour-divider-line"></div>
+      </div>
+
+      <div class="tour-details" hidden>
+        <div class="tour-description"></div>
+
+        <div class="tour-booking-area">
+          <div class="tour-calendar">
+            <div class="cal-header">
+              <button type="button" class="cal-nav cal-prev" aria-label="Previous month">◀</button>
+              <div class="cal-month"></div>
+              <button type="button" class="cal-nav cal-next" aria-label="Next month">▶</button>
+            </div>
+
+            <div class="cal-weekdays">
+              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            </div>
+
+            <div class="cal-grid"></div>
+          </div>
+
+          <div class="tour-workspace">
+            <div class="slots-msg">Select a date.</div>
+            <div class="slots-list"></div>
+
+            <div class="booking-wrap" hidden>
+              <div class="booking-title">Your booking</div>
+              <div class="booking-summary"></div>
+
+              <input class="booking-field booking-name" type="text" placeholder="Full name" autocomplete="name" />
+              <input class="booking-field booking-email" type="email" placeholder="Email" autocomplete="email" />
+              <input class="booking-field booking-phone" type="tel" placeholder="Phone" autocomplete="tel" />
+              <input class="booking-field booking-qty" type="number" min="1" value="1" placeholder="Passengers" />
+
+              <button type="button" class="booking-btn">REQUEST BOOKING</button>
+              <div class="booking-msg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-text">© Tour The Lakes</div>
     </div>
+  </footer>
 
-    <p>If something doesn’t look right, email <strong>info@tourthelakes.com</strong> and quote your booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
-  `;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      onValue,
+      push,
+      set,
+      runTransaction,
+      serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
-  modal.appendChild(closeBtn);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-}
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP",
+    };
 
-// ---------- booking submit ----------
-async function submitBooking(state){
-  const els = bookingEls(state);
-  if (!els.wrap) return;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  if (!state.selectedDateKey || !state.selectedSlot || !state.selectedSlot.time){
-    if (els.msg) els.msg.textContent = "Select a date and time slot first.";
-    return;
-  }
+    const toursEl = document.getElementById("tours");
+    const tpl = document.getElementById("tourTemplate");
 
-  const name = (els.name?.value || "").trim();
-  const email = (els.email?.value || "").trim();
-  const phone = (els.phone?.value || "").trim();
-  const qty = parseInt(els.qty?.value || "", 10);
+    // ---------- shared helpers ----------
+    const CELL_COUNT = 42;
 
-  if (!name){ if (els.msg) els.msg.textContent = "Enter your full name."; return; }
-  if (!email){ if (els.msg) els.msg.textContent = "Enter your email."; return; }
-  if (!qty || qty < 1){ if (els.msg) els.msg.textContent = "Enter a valid passenger quantity."; return; }
+    function pad2(n) { return String(n).padStart(2, "0"); }
+    function toKeyYYYYMMDD(y, m0, d) { return `${y}-${pad2(m0 + 1)}-${pad2(d)}`; }
 
-  if (els.btn) els.btn.disabled = true;
-  if (els.msg) els.msg.textContent = "Submitting...";
+    function monthLabel(y, m0) {
+      return new Date(y, m0, 1).toLocaleString(undefined, { month: "long", year: "numeric" });
+    }
+    function firstDayIndexMonFirst(y, m0) {
+      const js = new Date(y, m0, 1).getDay(); // Sun=0..Sat=6
+      return (js + 6) % 7; // Mon=0..Sun=6
+    }
+    function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
 
-  const tourId = state.tourId;
-  const dateKey = state.selectedDateKey;
-  const time = state.selectedSlot.time;
-
-  const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
-
-  try {
-    // 1) reduce capacity (transaction)
-    const tx = await runTransaction(capRef, (current) => {
-      const cur = Number(current);
-      if (!Number.isFinite(cur)) return current; // if missing/invalid, do nothing
-      if (cur < qty) return;                     // abort
-      return cur - qty;
-    });
-
-    if (!tx.committed){
-      if (els.msg) els.msg.textContent = "Not enough places remaining for that time slot.";
-      return;
+    function parseSlotDateTime(dateKey, timeStr) {
+      const [y, m, d] = String(dateKey || "").split("-").map(Number);
+      const [hh, mm] = String(timeStr || "").split(":").map(Number);
+      if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
+      return new Date(y, m - 1, d, hh, mm, 0, 0);
     }
 
-    // 2) write booking record
-    const bookingRef = push(ref(db, `bookings/${tourId}`));
-    await set(bookingRef, {
-      tourId,
-      tourTitle: state.articleEl.querySelector(".tour-title")?.textContent || state.tourId,
-      dateKey,
-      time,
-      qty,
-      name,
-      email,
-      phone,
-      price: Number(state.selectedSlot.price) || 0,
-      createdAt: serverTimestamp(),
-      status: "new",
-    });
+    function formatGBP(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "";
+      return `£${n.toFixed(2)}`;
+    }
 
-    const bookingKey = bookingRef.key || "";
-    const bookingRefShort = bookingKey.slice(-7);
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
 
-    openBookingSuccessModal({
-      ref: bookingRefShort,
-      qty,
-      tour: state.articleEl.querySelector(".tour-title")?.textContent || state.tourId,
-      date: dateKey,
-      time,
-      price: formatGBP(Number(state.selectedSlot.price) || 0),
-      name,
-      email,
-      phone
-    });
+    function findNextUpcomingSlot(datesObj) {
+      if (!datesObj || typeof datesObj !== "object") return null;
 
-    if (els.msg) els.msg.textContent = "";
-  } catch (err) {
+      const now = new Date();
+      let best = null;
 
-    // if booking write fails after capacity change, add it back
-    try {
-      await runTransaction(capRef, (current) => {
-        const cur = Number(current);
-        if (!Number.isFinite(cur)) return current;
-        return cur + qty;
+      for (const [dateKey, dateNode] of Object.entries(datesObj)) {
+        const timesObj = dateNode?.times;
+        if (!timesObj || typeof timesObj !== "object") continue;
+
+        for (const [timeStr, slot] of Object.entries(timesObj)) {
+          const dt = parseSlotDateTime(dateKey, timeStr);
+          if (!dt) continue;
+          if (dt.getTime() < now.getTime()) continue;
+
+          if (!best || dt.getTime() < best.dt.getTime()) {
+            best = {
+              dateKey,
+              timeStr,
+              dt,
+              capacity: slot?.capacity ?? null,
+              price: slot?.price ?? null,
+            };
+          }
+        }
+      }
+      return best;
+    }
+
+    // ---------- cleanup / state ----------
+    const tourDatesUnsubs = new Map(); // tourId -> unsub
+    const tourCalStates = new Map();   // tourId -> state
+
+    function detach(fn) {
+      if (typeof fn === "function") {
+        try { fn(); } catch {}
+      }
+      return null;
+    }
+
+    function cleanupTourDatesListeners() {
+      for (const unsub of tourDatesUnsubs.values()) detach(unsub);
+      tourDatesUnsubs.clear();
+    }
+
+    function detachTourCalendarListeners(state) {
+      state.unsubDates = detach(state.unsubDates);
+      state.unsubTimes = detach(state.unsubTimes);
+    }
+
+    function clearTours() {
+      cleanupTourDatesListeners();
+      for (const state of tourCalStates.values()) detachTourCalendarListeners(state);
+      tourCalStates.clear();
+      toursEl.innerHTML = "";
+    }
+
+    // ---------- booking UI helpers ----------
+    function bookingEls(state) {
+      const root = state.articleEl.querySelector(".tour-details");
+      return {
+        wrap: root?.querySelector(".booking-wrap"),
+        summary: root?.querySelector(".booking-summary"),
+        name: root?.querySelector(".booking-name"),
+        email: root?.querySelector(".booking-email"),
+        phone: root?.querySelector(".booking-phone"),
+        qty: root?.querySelector(".booking-qty"),
+        btn: root?.querySelector(".booking-btn"),
+        msg: root?.querySelector(".booking-msg"),
+      };
+    }
+
+    function setBookingMsg(state, text) {
+      const els = bookingEls(state);
+      if (els.msg) els.msg.textContent = String(text || "");
+    }
+
+    function hideBooking(state) {
+      const els = bookingEls(state);
+      if (!els.wrap) return;
+      els.wrap.hidden = true;
+      setBookingMsg(state, "");
+    }
+
+    function showBooking(state) {
+      const els = bookingEls(state);
+      if (!els.wrap) return;
+
+      const slot = state.selectedSlot;
+      if (!state.selectedDateKey || !slot || !slot.time) {
+        hideBooking(state);
+        return;
+      }
+
+      els.wrap.hidden = false;
+      setBookingMsg(state, "");
+
+      const cap = Number(slot.capacity);
+      const price = Number(slot.price);
+
+      const capText = Number.isFinite(cap) ? `${cap} places remaining` : "places unknown";
+      const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+      if (els.summary) {
+        els.summary.textContent =
+          `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText}` : "");
+      }
+
+      if (els.qty) {
+        els.qty.value = "1";
+        els.qty.min = "1";
+        if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
+        else els.qty.removeAttribute("max");
+      }
+    }
+
+    // ---------- modal ----------
+    function ensureBookingModalStyles() {
+      if (document.getElementById("ttl-booking-modal-styles")) return;
+
+      const style = document.createElement("style");
+      style.id = "ttl-booking-modal-styles";
+      style.textContent = `
+        .ttl-modal-overlay{
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.65);
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+        .ttl-modal{
+          width: 100%;
+          max-width: 680px;
+          border: 1px solid #b86b2a;
+          background: #2b2b2b;
+          color: rgba(255,255,255,0.92);
+          padding: 16px;
+          position: relative;
+          box-sizing: border-box;
+        }
+        .ttl-modal-close{
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          border: 1px solid #b86b2a;
+          background: #2b2b2b;
+          color: #b86b2a;
+          cursor: pointer;
+          font-weight: 700;
+          line-height: 1;
+        }
+        .ttl-modal h2{
+          margin: 0 0 10px 0;
+          color: #b86b2a;
+          padding-right: 44px;
+          font-size: 18px;
+        }
+        .ttl-modal p{
+          margin: 0 0 10px 0;
+          font-size: 14px;
+          line-height: 1.5;
+          color: rgba(255,255,255,0.92);
+        }
+        .ttl-box{
+          border: 1px solid #b86b2a;
+          padding: 12px;
+          margin: 12px 0;
+        }
+        .ttl-no-scroll{
+          overflow: hidden !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function openBookingSuccessModal(data) {
+      ensureBookingModalStyles();
+
+      document.documentElement.classList.add("ttl-no-scroll");
+      document.body.classList.add("ttl-no-scroll");
+
+      const overlay = document.createElement("div");
+      overlay.className = "ttl-modal-overlay";
+
+      const modal = document.createElement("div");
+      modal.className = "ttl-modal";
+
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "ttl-modal-close";
+      closeBtn.type = "button";
+      closeBtn.textContent = "×";
+
+      function close() {
+        overlay.remove();
+        document.documentElement.classList.remove("ttl-no-scroll");
+        document.body.classList.remove("ttl-no-scroll");
+      }
+
+      closeBtn.addEventListener("click", close);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close();
       });
-    } catch {}
 
-    if (els.msg) els.msg.textContent = `Error: ${err?.message || err}`;
-  } finally {
-    if (els.btn) els.btn.disabled = false;
-  }
-}
+      modal.innerHTML = `
+        <h2>Booking Confirmed</h2>
 
-// ---------- public calendar + slots ----------
-function ensureCalendarGrid(gridEl){
-  const CELL_COUNT = 42;
-  if (gridEl.children.length === CELL_COUNT) return;
+        <p>Thank you for booking your tour. Your booking reference is: <strong>${escapeHtml(data.ref)}</strong></p>
+        <p>When contacting us, please quote your booking reference.</p>
+        <p>We can confirm that you have reserved ${escapeHtml(data.qty)} passenger(s) and this confirms your place on the tour.</p>
 
-  gridEl.innerHTML = "";
-  for (let i = 0; i < CELL_COUNT; i++){
-    const cell = document.createElement("div");
-    cell.className = "cal-cell is-empty";
-    cell.dataset.key = "";
-    cell.textContent = "";
-    gridEl.appendChild(cell);
-  }
-}
+        <div class="ttl-box">
+          <p><strong>Tour:</strong> ${escapeHtml(data.tour)}</p>
+          <p><strong>Date & Time:</strong> ${escapeHtml(data.date)} at ${escapeHtml(data.time)}</p>
+          <p><strong>Passengers:</strong> ${escapeHtml(data.qty)}</p>
+          <p><strong>Price:</strong> ${escapeHtml(data.price)}</p>
+        </div>
 
-function renderCalendarUI(state){
-  ensureCalendarGrid(state.gridEl);
+        <p><strong>What’s Next?</strong></p>
+        <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know. You will also receive a text message containing this link.</p>
 
-  state.monthEl.textContent = monthLabel(state.viewYear, state.viewMonth);
+        <p><strong>Please confirm your details:</strong></p>
 
-  const startIdx = firstDayIndexMonFirst(state.viewYear, state.viewMonth);
-  const dim = daysInMonth(state.viewYear, state.viewMonth);
+        <div class="ttl-box">
+          <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
+        </div>
 
-  for (let i = 0; i < 42; i++){
-    const cell = state.gridEl.children[i];
-    cell.className = "cal-cell is-empty";
-    cell.dataset.key = "";
-    cell.textContent = "";
+        <p>If something doesn’t look right, email <strong>info@tourthelakes.com</strong> and quote your booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
+      `;
 
-    const dayNum = i - startIdx + 1;
-    if (dayNum < 1 || dayNum > dim) continue;
+      modal.appendChild(closeBtn);
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+    }
 
-    const key = toKeyYYYYMMDD(state.viewYear, state.viewMonth, dayNum);
-    cell.dataset.key = key;
-    cell.textContent = String(dayNum);
-    cell.classList.remove("is-empty");
+    // ---------- booking submit ----------
+    async function submitBooking(state) {
+      const els = bookingEls(state);
+      if (!els.wrap) return;
 
-    if (state.savedDates.has(key)) cell.classList.add("has-data");
-    if (state.selectedDateKey === key) cell.classList.add("selected");
-  }
-}
+      if (els.btn?.disabled) return; // guard against double-click
 
-function clearSlots(state, msg){
-  state.slotsListEl.innerHTML = "";
-  state.slotsMsgEl.textContent = msg || "Select a date.";
-  state.selectedTime = "";
-  state.selectedSlot = null;
-  hideBooking(state);
-}
+      if (!state.selectedDateKey || !state.selectedSlot || !state.selectedSlot.time) {
+        setBookingMsg(state, "Select a date and time slot first.");
+        return;
+      }
 
-function renderSlots(state, timesObj){
-  state.slotsListEl.innerHTML = "";
+      const name = (els.name?.value || "").trim();
+      const email = (els.email?.value || "").trim();
+      const phone = (els.phone?.value || "").trim();
+      const qty = parseInt(els.qty?.value || "", 10);
 
-  if (!timesObj || typeof timesObj !== "object"){
-    clearSlots(state, "No times available for this date.");
-    return;
-  }
+      if (!name) { setBookingMsg(state, "Enter your full name."); return; }
+      if (!email) { setBookingMsg(state, "Enter your email."); return; }
+      if (!qty || qty < 1) { setBookingMsg(state, "Enter a valid passenger quantity."); return; }
 
-  const times = Object.keys(timesObj).sort();
-  if (!times.length){
-    clearSlots(state, "No times available for this date.");
-    return;
-  }
+      const tourId = state.tourId;
+      const dateKey = state.selectedDateKey;
+      const time = state.selectedSlot.time;
 
-  state.slotsMsgEl.textContent = `Available times for ${state.selectedDateKey}:`;
+      const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
 
-  for (const time of times){
-    const slot = timesObj[time] || {};
-    const cap = Number(slot.capacity);
-    const price = Number(slot.price);
+      try {
+        if (els.btn) els.btn.disabled = true;
+        setBookingMsg(state, "Submitting...");
 
-    const capText = Number.isFinite(cap) ? `${cap}` : "";
-    const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+        // 1) reduce capacity (transaction)
+        const tx = await runTransaction(capRef, (current) => {
+          const cur = Number(current);
+          if (!Number.isFinite(cur)) return current; // missing/invalid capacity => no-op
+          if (cur < qty) return;                     // abort
+          return cur - qty;
+        });
 
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "slot-btn has-data";
-    btn.dataset.time = time;
+        if (!tx.committed) {
+          setBookingMsg(state, "Not enough places remaining for that time slot.");
+          return;
+        }
 
-    btn.textContent =
-      `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
-      `${priceText ? " — " + priceText : ""}`;
+        // 2) write booking record
+        const bookingRef = push(ref(db, `bookings/${tourId}`));
 
-    if (Number.isFinite(cap) && cap <= 0) btn.disabled = true;
+        const tourTitle =
+          state.articleEl.querySelector(".tour-title")?.textContent?.trim() || state.tourId;
 
-    if (state.selectedTime === time) btn.classList.add("selected");
+        const slotPrice = Number(state.selectedSlot.price) || 0;
 
-    btn.addEventListener("click", () => {
-      if (btn.disabled) return;
+        await set(bookingRef, {
+          tourId,
+          tourTitle,
+          dateKey,
+          time,
+          qty,
+          name,
+          email,
+          phone,
+          price: slotPrice,
 
-      state.selectedTime = time;
-      state.selectedSlot = {
-        time,
-        capacity: slot.capacity,
-        price: slot.price,
+          // keep your existing field
+          createdAt: serverTimestamp(),
+
+          // extra (safe) fields to help admin ordering/audit (does not change front-end behaviour)
+          createdAtMs: Date.now(),
+          bookingStatus: "active",
+          paymentStatus: "outstanding",
+
+          status: "new",
+        });
+
+        const bookingKey = bookingRef.key || "";
+        const bookingRefShort = bookingKey.slice(-7);
+
+        openBookingSuccessModal({
+          ref: bookingRefShort,
+          qty,
+          tour: tourTitle,
+          date: dateKey,
+          time,
+          price: formatGBP(slotPrice),
+          name,
+          email,
+          phone,
+        });
+
+        // keep the UI stable after success
+        setBookingMsg(state, "");
+      } catch (err) {
+        // if booking write fails after capacity change, add it back
+        try {
+          await runTransaction(capRef, (current) => {
+            const cur = Number(current);
+            if (!Number.isFinite(cur)) return current;
+            return cur + qty;
+          });
+        } catch {}
+
+        setBookingMsg(state, `Error: ${err?.message || err}`);
+      } finally {
+        if (els.btn) els.btn.disabled = false;
+      }
+    }
+
+    // ---------- calendar + slots ----------
+    function ensureCalendarGrid(gridEl) {
+      if (gridEl.children.length === CELL_COUNT) return;
+
+      gridEl.innerHTML = "";
+      for (let i = 0; i < CELL_COUNT; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cal-cell is-empty";
+        cell.dataset.key = "";
+        cell.textContent = "";
+        gridEl.appendChild(cell);
+      }
+    }
+
+    function renderCalendarUI(state) {
+      ensureCalendarGrid(state.gridEl);
+
+      state.monthEl.textContent = monthLabel(state.viewYear, state.viewMonth);
+
+      const startIdx = firstDayIndexMonFirst(state.viewYear, state.viewMonth);
+      const dim = daysInMonth(state.viewYear, state.viewMonth);
+
+      for (let i = 0; i < CELL_COUNT; i++) {
+        const cell = state.gridEl.children[i];
+        cell.className = "cal-cell is-empty";
+        cell.dataset.key = "";
+        cell.textContent = "";
+
+        const dayNum = i - startIdx + 1;
+        if (dayNum < 1 || dayNum > dim) continue;
+
+        const key = toKeyYYYYMMDD(state.viewYear, state.viewMonth, dayNum);
+        cell.dataset.key = key;
+        cell.textContent = String(dayNum);
+        cell.classList.remove("is-empty");
+
+        if (state.savedDates.has(key)) cell.classList.add("has-data");
+        if (state.selectedDateKey === key) cell.classList.add("selected");
+      }
+    }
+
+    function clearSlots(state, msg) {
+      state.slotsListEl.innerHTML = "";
+      state.slotsMsgEl.textContent = msg || "Select a date.";
+      state.selectedTime = "";
+      state.selectedSlot = null;
+      hideBooking(state);
+    }
+
+    function renderSlots(state, timesObj) {
+      state.slotsListEl.innerHTML = "";
+
+      if (!timesObj || typeof timesObj !== "object") {
+        clearSlots(state, "No times available for this date.");
+        return;
+      }
+
+      const times = Object.keys(timesObj).sort();
+      if (!times.length) {
+        clearSlots(state, "No times available for this date.");
+        return;
+      }
+
+      state.slotsMsgEl.textContent = `Available times for ${state.selectedDateKey}:`;
+
+      for (const time of times) {
+        const slot = timesObj[time] || {};
+        const cap = Number(slot.capacity);
+        const price = Number(slot.price);
+
+        const capText = Number.isFinite(cap) ? `${cap}` : "";
+        const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "slot-btn has-data";
+        btn.dataset.time = time;
+
+        btn.textContent =
+          `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
+          `${priceText ? " — " + priceText : ""}`;
+
+        if (Number.isFinite(cap) && cap <= 0) btn.disabled = true;
+        if (state.selectedTime === time) btn.classList.add("selected");
+
+        btn.addEventListener("click", () => {
+          if (btn.disabled) return;
+
+          state.selectedTime = time;
+          state.selectedSlot = { time, capacity: slot.capacity, price: slot.price };
+
+          state.slotsListEl.querySelectorAll(".slot-btn.selected")
+            .forEach(x => x.classList.remove("selected"));
+          btn.classList.add("selected");
+
+          showBooking(state);
+        });
+
+        state.slotsListEl.appendChild(btn);
+      }
+    }
+
+    function attachDatesListener(state) {
+      state.unsubDates = detach(state.unsubDates);
+      state.savedDates = new Set();
+
+      const datesRef = ref(db, `tours/${state.tourId}/dates`);
+      state.unsubDates = onValue(datesRef, (snap) => {
+        const val = snap.val();
+        state.savedDates = new Set();
+        if (val && typeof val === "object") {
+          for (const k of Object.keys(val)) state.savedDates.add(k);
+        }
+
+        renderCalendarUI(state);
+
+        if (state.selectedDateKey && !state.savedDates.has(state.selectedDateKey)) {
+          state.selectedDateKey = "";
+          clearSlots(state, "Select a date.");
+          renderCalendarUI(state);
+        }
+      });
+    }
+
+    function attachTimesListenerForDate(state) {
+      state.unsubTimes = detach(state.unsubTimes);
+
+      if (!state.selectedDateKey) {
+        clearSlots(state, "Select a date.");
+        return;
+      }
+
+      state.slotsMsgEl.textContent = "Loading times...";
+
+      const timesRef = ref(db, `tours/${state.tourId}/dates/${state.selectedDateKey}/times`);
+      state.unsubTimes = onValue(timesRef, (snap) => {
+        renderSlots(state, snap.val());
+      });
+    }
+
+    function initTourCalendar(tourId, articleEl) {
+      if (tourCalStates.has(tourId)) return;
+
+      const detailsEl = articleEl.querySelector(".tour-details");
+      const calWrap = detailsEl?.querySelector(".tour-calendar");
+      if (!detailsEl || !calWrap) return;
+
+      const monthEl = calWrap.querySelector(".cal-month");
+      const gridEl = calWrap.querySelector(".cal-grid");
+      const prevBtn = calWrap.querySelector(".cal-prev");
+      const nextBtn = calWrap.querySelector(".cal-next");
+
+      const slotsMsgEl = detailsEl.querySelector(".slots-msg");
+      const slotsListEl = detailsEl.querySelector(".slots-list");
+
+      const now = new Date();
+
+      const state = {
+        tourId,
+        articleEl,
+        monthEl,
+        gridEl,
+        prevBtn,
+        nextBtn,
+        slotsMsgEl,
+        slotsListEl,
+
+        viewYear: now.getFullYear(),
+        viewMonth: now.getMonth(),
+
+        savedDates: new Set(),
+        selectedDateKey: "",
+        selectedTime: "",
+        selectedSlot: null,
+
+        unsubDates: null,
+        unsubTimes: null,
+
+        bookingBound: false,
       };
 
-      state.slotsListEl.querySelectorAll(".slot-btn.selected")
-        .forEach(x => x.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      showBooking(state);
-    });
-
-    state.slotsListEl.appendChild(btn);
-  }
-}
-
-function attachDatesListener(state){
-  if (typeof state.unsubDates === "function"){
-    try { state.unsubDates(); } catch {}
-  }
-  state.unsubDates = null;
-
-  state.savedDates = new Set();
-
-  const datesRef = ref(db, `tours/${state.tourId}/dates`);
-  state.unsubDates = onValue(datesRef, (snap) => {
-    const val = snap.val();
-    state.savedDates = new Set();
-    if (val && typeof val === "object"){
-      for (const k of Object.keys(val)) state.savedDates.add(k);
-    }
-
-    renderCalendarUI(state);
-
-    if (state.selectedDateKey && !state.savedDates.has(state.selectedDateKey)){
-      state.selectedDateKey = "";
+      ensureCalendarGrid(gridEl);
+      renderCalendarUI(state);
       clearSlots(state, "Select a date.");
-      renderCalendarUI(state);
-    }
-  });
-}
+      attachDatesListener(state);
 
-function attachTimesListenerForDate(state){
-  if (typeof state.unsubTimes === "function"){
-    try { state.unsubTimes(); } catch {}
-  }
-  state.unsubTimes = null;
+      // bind booking once per tour
+      if (!state.bookingBound) {
+        const els = bookingEls(state);
+        if (els.btn) els.btn.addEventListener("click", () => submitBooking(state));
+        hideBooking(state);
+        state.bookingBound = true;
+      }
 
-  if (!state.selectedDateKey){
-    clearSlots(state, "Select a date.");
-    return;
-  }
+      prevBtn.addEventListener("click", () => {
+        state.viewMonth -= 1;
+        if (state.viewMonth < 0) { state.viewMonth = 11; state.viewYear -= 1; }
+        renderCalendarUI(state);
+      });
 
-  state.slotsMsgEl.textContent = "Loading times...";
+      nextBtn.addEventListener("click", () => {
+        state.viewMonth += 1;
+        if (state.viewMonth > 11) { state.viewMonth = 0; state.viewYear += 1; }
+        renderCalendarUI(state);
+      });
 
-  const timesRef = ref(db, `tours/${state.tourId}/dates/${state.selectedDateKey}/times`);
-  state.unsubTimes = onValue(timesRef, (snap) => {
-    renderSlots(state, snap.val());
-  });
-}
+      gridEl.addEventListener("click", (e) => {
+        const cell = e.target.closest(".cal-cell");
+        if (!cell) return;
 
-function initTourCalendar(tourId, articleEl){
-  if (tourCalStates.has(tourId)) return;
+        const key = cell.dataset.key;
+        if (!key) return;
 
-  const detailsEl = articleEl.querySelector(".tour-details");
-  const calWrap = detailsEl.querySelector(".tour-calendar");
+        state.selectedDateKey = key;
+        state.selectedTime = "";
+        state.selectedSlot = null;
+        hideBooking(state);
 
-  const monthEl = calWrap.querySelector(".cal-month");
-  const gridEl = calWrap.querySelector(".cal-grid");
-  const prevBtn = calWrap.querySelector(".cal-prev");
-  const nextBtn = calWrap.querySelector(".cal-next");
+        gridEl.querySelectorAll(".cal-cell.selected").forEach(c => c.classList.remove("selected"));
+        cell.classList.add("selected");
 
-  const slotsMsgEl = detailsEl.querySelector(".slots-msg");
-  const slotsListEl = detailsEl.querySelector(".slots-list");
+        if (!state.savedDates.has(key)) {
+          clearSlots(state, `No availability on ${key}. Select another date.`);
+          renderCalendarUI(state);
+          return;
+        }
 
-  const now = new Date();
+        attachTimesListenerForDate(state);
+      });
 
-  const state = {
-    tourId,
-    articleEl,
-    monthEl,
-    gridEl,
-    prevBtn,
-    nextBtn,
-    slotsMsgEl,
-    slotsListEl,
-
-    viewYear: now.getFullYear(),
-    viewMonth: now.getMonth(),
-
-    savedDates: new Set(),
-    selectedDateKey: "",
-    selectedTime: "",
-    selectedSlot: null,
-
-    unsubDates: null,
-    unsubTimes: null,
-
-    bookingBound: false,
-  };
-
-  ensureCalendarGrid(gridEl);
-  renderCalendarUI(state);
-  clearSlots(state, "Select a date.");
-  attachDatesListener(state);
-
-  // bind booking button ONCE per tour
-  if (!state.bookingBound){
-    const els = bookingEls(state);
-    if (els.btn){
-      els.btn.addEventListener("click", () => submitBooking(state));
-    }
-    hideBooking(state);
-    state.bookingBound = true;
-  }
-
-  prevBtn.addEventListener("click", () => {
-    state.viewMonth -= 1;
-    if (state.viewMonth < 0){
-      state.viewMonth = 11;
-      state.viewYear -= 1;
-    }
-    renderCalendarUI(state);
-  });
-
-  nextBtn.addEventListener("click", () => {
-    state.viewMonth += 1;
-    if (state.viewMonth > 11){
-      state.viewMonth = 0;
-      state.viewYear += 1;
-    }
-    renderCalendarUI(state);
-  });
-
-  gridEl.addEventListener("click", (e) => {
-    const cell = e.target.closest(".cal-cell");
-    if (!cell) return;
-
-    const key = cell.dataset.key;
-    if (!key) return;
-
-    // these lines belong HERE
-    state.selectedDateKey = key;
-    state.selectedTime = "";
-    state.selectedSlot = null;
-    hideBooking(state);
-
-    gridEl.querySelectorAll(".cal-cell.selected").forEach(c => c.classList.remove("selected"));
-    cell.classList.add("selected");
-
-    if (!state.savedDates.has(key)){
-      clearSlots(state, `No availability on ${key}. Select another date.`);
-      renderCalendarUI(state);
-      return;
+      tourCalStates.set(tourId, state);
     }
 
-    attachTimesListenerForDate(state);
-  });
+    // ---------- top line "next available" ----------
+    function attachTourDatesListener(tourId, articleEl) {
+      const priceEl = articleEl.querySelector(".tour-price");
+      const nextEl = articleEl.querySelector(".tour-nextdate");
+      const seatsEl = articleEl.querySelector(".tour-seats");
 
-  tourCalStates.set(tourId, state);
-}
-
-// ---------- top line "next available" ----------
-function attachTourDatesListener(tourId, articleEl){
-  const priceEl = articleEl.querySelector(".tour-price");
-  const nextEl = articleEl.querySelector(".tour-nextdate");
-  const seatsEl = articleEl.querySelector(".tour-seats");
-
-  if (priceEl) priceEl.textContent = "";
-  if (nextEl) nextEl.textContent = "";
-  if (seatsEl) seatsEl.textContent = "";
-
-  const datesRef = ref(db, `tours/${tourId}/dates`);
-  const unsub = onValue(datesRef, (snap) => {
-    const datesObj = snap.val();
-    const next = findNextUpcomingSlot(datesObj);
-
-    if (!next){
       if (priceEl) priceEl.textContent = "";
       if (nextEl) nextEl.textContent = "";
       if (seatsEl) seatsEl.textContent = "";
-      return;
+
+      const datesRef = ref(db, `tours/${tourId}/dates`);
+      const unsub = onValue(datesRef, (snap) => {
+        const datesObj = snap.val();
+        const next = findNextUpcomingSlot(datesObj);
+
+        if (!next) {
+          if (priceEl) priceEl.textContent = "";
+          if (nextEl) nextEl.textContent = "";
+          if (seatsEl) seatsEl.textContent = "";
+          return;
+        }
+
+        const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
+        const priceText = formatGBP(next.price);
+
+        const datePart = next.dt.toLocaleDateString(undefined, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+
+        const capNum = Number(next.capacity);
+        const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+
+        const sentence =
+          `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
+          (capText ? ` and we currently have ${capText} places left` : "") +
+          (priceText ? ` at the price of ${priceText}.` : ".") +
+          ` Read More to find out and book.`;
+
+        if (nextEl) nextEl.textContent = sentence;
+        if (priceEl) priceEl.textContent = "";
+        if (seatsEl) seatsEl.textContent = "";
+      });
+
+      tourDatesUnsubs.set(tourId, unsub);
     }
 
-    const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
-    const priceText = formatGBP(next.price);
+    // ---------- render tours ----------
+    function renderTours(toursObj) {
+      clearTours();
+      if (!toursObj || typeof toursObj !== "object") return;
 
-    const datePart = next.dt.toLocaleDateString(undefined, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
+      for (const [tourId, tour] of Object.entries(toursObj)) {
+        if (!tour || tour.isLive !== true) continue;
+
+        const node = tpl.content.cloneNode(true);
+
+        const article = node.querySelector(".tour");
+        const titleEl = node.querySelector(".tour-title");
+        const descEl = node.querySelector(".tour-description");
+        const imageWrap = node.querySelector(".tour-image");
+
+        article.dataset.tourId = tourId;
+        titleEl.textContent = tour.title || tourId;
+
+        // Description: stored as HTML created in admin
+        descEl.innerHTML = tour.description || "";
+        if (!tour.description) descEl.style.display = "none";
+
+        if (tour.imageUrl) {
+          const img = document.createElement("img");
+          img.src = tour.imageUrl;
+          img.alt = tour.title || "Tour image";
+          imageWrap.appendChild(img);
+        }
+
+        toursEl.appendChild(node);
+
+        // IMPORTANT: article reference remains valid after fragment is appended
+        attachTourDatesListener(tourId, article);
+        initTourCalendar(tourId, article);
+      }
+    }
+
+    // Listen to /tours
+    onValue(ref(db, "tours"), (snapshot) => {
+      renderTours(snapshot.val());
     });
 
-    const capNum = Number(next.capacity);
-    const capText = Number.isFinite(capNum) ? `${capNum}` : "";
+    // Toggle open/close (event delegation)
+    document.addEventListener("click", (e) => {
+      const toggle = e.target.closest(".tour-toggle");
+      if (!toggle) return;
 
-    const sentence =
-      `Our next available ${title} is on ${datePart} at ${next.timeStr}` +
-      (capText ? ` and we currently have ${capText} places left` : "") +
-      (priceText ? ` at the price of ${priceText}.` : ".") +
-      ` Read More to find out and book.`;
+      const tour = toggle.closest(".tour");
+      if (!tour) return;
 
-    if (nextEl) nextEl.textContent = sentence;
-    if (priceEl) priceEl.textContent = "";
-    if (seatsEl) seatsEl.textContent = "";
-  });
+      const details = tour.querySelector(".tour-details");
+      if (!details) return;
 
-  tourDatesUnsubs.set(tourId, unsub);
-}
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+      details.hidden = isOpen;
+    });
 
-// ---------- render tours ----------
-function renderTours(toursObj){
-  clearTours();
-  if (!toursObj) return;
-
-  for (const [tourId, tour] of Object.entries(toursObj)){
-    if (!tour || tour.isLive !== true) continue;
-
-    const node = tpl.content.cloneNode(true);
-
-    const article = node.querySelector(".tour");
-    article.dataset.tourId = tourId;
-
-    node.querySelector(".tour-title").textContent = tour.title || tourId;
-
-    const desc = node.querySelector(".tour-description");
-    desc.innerHTML = tour.description || "";
-    if (!tour.description) desc.style.display = "none";
-
-    const imageWrap = node.querySelector(".tour-image");
-    if (tour.imageUrl){
-      const img = document.createElement("img");
-      img.src = tour.imageUrl;
-      img.alt = tour.title || "Tour image";
-      imageWrap.appendChild(img);
-    }
-
-    toursEl.appendChild(node);
-
-    const insertedArticle = toursEl.querySelector(`.tour[data-tour-id="${tourId}"]`);
-    if (insertedArticle){
-      attachTourDatesListener(tourId, insertedArticle);
-      initTourCalendar(tourId, insertedArticle);
-    }
-  }
-}
-
-// Listen to /tours
-onValue(ref(db, "tours"), (snapshot) => {
-  renderTours(snapshot.val());
-});
-
-// Toggle open/close
-document.addEventListener("click", (e) => {
-  const toggle = e.target.closest(".tour-toggle");
-  if (!toggle) return;
-
-  const tour = toggle.closest(".tour");
-  if (!tour) return;
-
-  const details = tour.querySelector(".tour-details");
-  if (!details) return;
-
-  const isOpen = toggle.getAttribute("aria-expanded") === "true";
-  toggle.setAttribute("aria-expanded", String(!isOpen));
-  details.hidden = isOpen;
-});
-
-void db;
-        </script>
-
+    void db;
+  </script>
 </body>
 </html>
