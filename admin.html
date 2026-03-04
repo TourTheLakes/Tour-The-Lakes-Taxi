@@ -7,47 +7,20 @@
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
 
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #2b2b2b;
-    }
-
-    .site-header {
-      width: 100%;
-      border-bottom: 1px solid #b86b2a;
-    }
-
-    .header-inner {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-    }
-
-    .brand {
-      color: rgba(255,255,255,0.92);
-      font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 0.2px;
-    }
-
+    html, body { margin: 0; padding: 0; height: 100%; background-color: #2b2b2b; }
     *, *::before, *::after { box-sizing: border-box; }
 
+    .site-header { width: 100%; border-bottom: 1px solid #b86b2a; }
+    .header-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
+    .brand { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+
     .admin-wrap { padding: 0 5%; }
+    .admin-section-title { color: rgba(255,255,255,0.92); font: 400 28px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; text-align: center; margin: 30px 0; }
+    .admin-subtitle { margin: 30px 0 12px 0; color: rgba(255,255,255,0.92); font: 400 20px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
-    .admin-section-title {
-      color: rgba(255,255,255,0.92);
-      font: 400 28px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      text-align: center;
-      margin: 30px 0;
-    }
-
-    .admin-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .admin-stack { display: flex; flex-direction: column; gap: 16px; }
+    .admin-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .admin-actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
 
     .admin-field {
       width: 100%;
@@ -57,28 +30,9 @@
       padding: 12px;
       font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-
     .admin-textarea { resize: vertical; }
 
-.it-item {
-  border: 1px solid #b86b2a;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.it-row { display: flex; gap: 10px; }
-.it-row .admin-field { flex: 1 1 auto; min-width: 0; } 
-.it-row .admin-btn { width: auto; flex: 0 0 auto; }    
-
-    .admin-check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: rgba(255,255,255,0.92);
-      font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+    .admin-check { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.92); font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
     .admin-btn {
       width: 100%;
@@ -89,53 +43,25 @@
       cursor: pointer;
       font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
+    .admin-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    .admin-msg {
-      color: rgba(255,255,255,0.6);
-      font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+    .admin-msg { color: rgba(255,255,255,0.6); font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .admin-msg.ok { color: rgba(120, 255, 200, 0.7); }
+    .admin-msg.bad { color: rgba(255, 140, 140, 0.8); }
+    .admin-hint { color: rgba(255,255,255,0.5); font-size: 13px; line-height: 1.35; }
 
-    .admin-subtitle {
-      margin: 30px 0 12px 0;
-      color: rgba(255,255,255,0.92);
-      font: 400 20px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+    /* Itinerary editor */
+    .it-item { border: 1px solid #b86b2a; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .it-row { display: flex; gap: 10px; }
+    .it-row .admin-field { flex: 1 1 auto; min-width: 0; }
+    .it-row .admin-btn { width: auto; flex: 0 0 auto; }
 
-    .admin-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
+    /* Calendar */
+    .admin-calendar-section { max-width: 900px; margin: 40px auto; }
+    .admin-schedule-section { max-width: 900px; margin: 40px auto; }
+    #scheduleMsg { margin-bottom: 16px; }
 
-    .admin-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
-
-    .admin-calendar-section {
-      max-width: 900px;
-      margin: 40px auto;
-    }
-
-    .admin-schedule-section {
-      max-width: 900px;
-      margin: 40px auto;
-    }
-
-    #scheduleMsg {
-      margin-bottom: 16px;
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .calendar-header button {
       border: 1px solid #b86b2a;
       background: #2b2b2b;
@@ -144,30 +70,11 @@
       cursor: pointer;
       font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
+    .calendar-month { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
 
-    .calendar-month {
-      color: rgba(255,255,255,0.92);
-      font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 0.2px;
-    }
-
-    .calendar-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: repeat(6, 1fr);
-    }
-
-    .calendar-weekdays div {
-      text-align: center;
-      font-weight: 600;
-      padding: 10px 0;
-      color: rgba(255,255,255,0.92);
-    }
+    .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); }
+    .calendar-weekdays div { text-align: center; font-weight: 600; padding: 10px 0; color: rgba(255,255,255,0.92); }
 
     .calendar-cell {
       border: 1px solid #444;
@@ -180,55 +87,25 @@
       cursor: pointer;
       user-select: none;
     }
+    .calendar-cell.is-empty { opacity: 0.25; cursor: default; }
+    .calendar-cell.selected { border: 2px solid #b86b2a; }
+    .calendar-cell.has-data { background: rgba(184,107,42,0.15); }
+    .calendar-cell:not(.is-empty):hover { background: rgba(255,255,255,0.05); }
 
-    .calendar-cell.is-empty {
-      opacity: 0.25;
-      cursor: default;
+    /* Live bookings spacing */
+    .live-wrap {
+      margin: 26px 0 10px 0;
+      padding: 14px 0 6px 0;
+      border-bottom: 1px solid rgba(184,107,42,0.35);
     }
+    #liveBookingsMsg { margin-bottom: 12px; }
+    #liveBookingsList { display: flex; flex-direction: column; gap: 14px; }
+    #liveBookingsList > div { padding: 14px; }
 
-    .calendar-cell.selected {
-      border: 2px solid #b86b2a;
-    }
-
-    .calendar-cell.has-data {
-      background: rgba(184,107,42,0.15);
-    }
-
-    .calendar-cell:not(.is-empty):hover {
-      background: rgba(255,255,255,0.05);
-    }
-
-    #liveBookingsMsg{
-  margin-bottom: 12px;
-}
-
-#liveBookingsList{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-#liveBookingsList > div{
-  padding: 14px;
-}
-
-    .site-footer {
-      width: 100%;
-      border-top: 1px solid #b86b2a;
-    }
-
-    .footer-inner {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-    }
-
-    .footer-text {
-      color: rgba(255,255,255,0.6);
-      font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 0.2px;
-    }
+    /* Footer */
+    .site-footer { width: 100%; border-top: 1px solid #b86b2a; }
+    .footer-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
+    .footer-text { color: rgba(255,255,255,0.6); font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
   </style>
 </head>
 
@@ -242,9 +119,14 @@
   <main class="admin-main">
     <div class="admin-wrap">
 
-      <div class="admin-subtitle" style="margin: 20px 0 12px 0;">Live bookings feed</div>
+      <div class="live-wrap">
+        <div class="admin-subtitle" style="margin: 0 0 12px 0;">Live bookings feed</div>
         <div class="admin-msg" id="liveBookingsMsg">Loading…</div>
-          <div id="liveBookingsList" class="admin-list" style="margin-bottom: 30px;"></div>
+        <div class="admin-hint" style="margin: -4px 0 12px 0;">
+          Read-only. Shows the most recent bookings across all tours.
+        </div>
+        <div id="liveBookingsList" class="admin-list" style="margin-bottom: 10px;"></div>
+      </div>
 
       <div class="admin-section-title">Create Tour</div>
 
@@ -252,28 +134,24 @@
         <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
         <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
 
-        
-    <!-- Structured Tour Description Editor -->
-<div id="tourDescEditor" class="admin-stack" style="gap:12px;">
+        <!-- Structured Tour Description Editor -->
+        <div id="tourDescEditor" class="admin-stack" style="gap:12px;">
+          <div class="admin-msg">Product Title:</div>
+          <input id="descProductTitle" type="text" class="admin-field" placeholder="" />
 
-  <div class="admin-msg">Product Title:</div>
-  <input id="descProductTitle" type="text" class="admin-field" placeholder="" />
+          <div class="admin-msg">Overview:</div>
+          <textarea id="descOverview" rows="5" class="admin-field admin-textarea" placeholder=""></textarea>
 
-  <div class="admin-msg">Overview:</div>
-  <textarea id="descOverview" rows="5" class="admin-field admin-textarea" placeholder=""></textarea>
+          <div class="admin-msg">Meeting Point:</div>
+          <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea" placeholder=""></textarea>
 
-  <div class="admin-msg">Meeting Point:</div>
-  <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea" placeholder=""></textarea>
+          <div class="admin-msg">Itinerary:</div>
+          <div id="itineraryList" class="admin-stack" style="gap:12px;"></div>
+          <button id="addItineraryItem" type="button" class="admin-btn">ADD MORE</button>
+        </div>
 
-  <div class="admin-msg">Itinerary:</div>
-  <div id="itineraryList" class="admin-stack" style="gap:12px;"></div>
-
-  <button id="addItineraryItem" type="button" class="admin-btn">ADD MORE</button>
-
-</div>
-
-<!-- This is what actually gets saved to Firebase (generated automatically) -->
-<textarea id="tourDescription" hidden></textarea>
+        <!-- This is what actually gets saved to Firebase (generated automatically) -->
+        <textarea id="tourDescription" hidden></textarea>
 
         <label class="admin-check">
           <input id="tourLive" type="checkbox" />
@@ -285,6 +163,9 @@
       </div>
 
       <div class="admin-subtitle">Existing Tours</div>
+      <div class="admin-hint" style="margin-top:-6px;">
+        Select a tour to amend, manage dates/times, and view bookings for a selected date.
+      </div>
       <div id="tourList" class="admin-list"></div>
 
       <div class="admin-actions">
@@ -307,43 +188,49 @@
         <div class="calendar-grid" id="calendarGrid"></div>
       </div>
 
-      <!-- Schedule (below calendar) -->
-<div class="admin-schedule-section">
-  <div class="admin-subtitle">Manage Times & Capacity</div>
+      <!-- Schedule + bookings -->
+      <div class="admin-schedule-section">
+        <div class="admin-subtitle">Manage Times & Capacity</div>
 
-  <div class="admin-msg" id="scheduleMsg">
-    Select a tour, then click a date in the calendar.
-  </div>
+        <div class="admin-msg" id="scheduleMsg">Select a tour, then click a date in the calendar.</div>
 
-  <div class="admin-stack" id="scheduleControls" hidden>
-    <input id="selectedDate" class="admin-field" type="text" readonly />
-    <input id="tourTime" class="admin-field" type="time" />
-    <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
-    <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
+        <div class="admin-stack" id="scheduleControls" hidden>
+          <input id="selectedDate" class="admin-field" type="text" readonly />
+          <input id="tourTime" class="admin-field" type="time" />
+          <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
+          <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
 
-    <button id="confirmSchedule" type="button" class="admin-btn">
-      CONFIRM
-    </button>
+          <button id="confirmSchedule" type="button" class="admin-btn">CONFIRM</button>
 
-    <div class="admin-msg" id="confirmHelp">
-  Tip: CONFIRM adds a NEW time slot. To edit an existing slot, use UPDATE CAPACITY / UPDATE TIME on the row below.
-</div>
+          <div class="admin-msg" id="confirmHelp">
+            Tip: CONFIRM adds a NEW time slot. To edit an existing slot, use UPDATE CAPACITY / UPDATE TIME on the row below.
+          </div>
+          <div class="admin-hint">
+            Slot safety rules enforced:
+            <br>• You cannot DELETE or RENAME a time slot if it has active bookings.
+            <br>• Capacity changes are allowed (use carefully).
+          </div>
 
-    <div id="timesListWrap" class="admin-stack">
-  <div class="admin-msg" id="timesListMsg">No date selected.</div>
-  <div id="timesList" class="admin-list"></div>
-   </div>
+          <div id="timesListWrap" class="admin-stack">
+            <div class="admin-msg" id="timesListMsg">No date selected.</div>
+            <div id="timesList" class="admin-list"></div>
+          </div>
 
-    <div id="bookingsWrap" class="admin-stack" style="margin-top: 20px;">
-  <div class="admin-subtitle" style="margin: 10px 0 0 0;">Bookings for selected date</div>
-  <div class="admin-msg" id="bookingsMsg">No date selected.</div>
-  <div id="bookingsList" class="admin-list"></div>
-</div>
-    
-  </div>
-</div>
+          <div id="bookingsWrap" class="admin-stack" style="margin-top: 22px;">
+            <div class="admin-subtitle" style="margin: 10px 0 0 0;">Bookings for selected date</div>
+            <div class="admin-msg" id="bookingsMsg">No date selected.</div>
+            <div class="admin-hint" style="margin-top:-6px;">
+              Booking safety rules enforced:
+              <br>• You cannot amend PRICE once PAID.
+              <br>• You cannot amend PASSENGERS once PAID.
+              <br>• Marking PAID requires payment date/time.
+              <br>• Deleting returns seats to capacity automatically.
+            </div>
+            <div id="bookingsList" class="admin-list"></div>
+          </div>
+        </div>
+      </div>
 
-      
     </div>
   </main>
 
@@ -355,27 +242,26 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  set,
-  update,
-  onValue,
-  remove,
-  runTransaction,
-  query,
-  orderByChild,
-  equalTo,
-  limitToLast,
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-  
+  import {
+    getDatabase,
+    ref,
+    set,
+    update,
+    onValue,
+    remove,
+    runTransaction,
+    query,
+    orderByChild,
+    equalTo,
+    get,
+    serverTimestamp,
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
   import {
     getStorage,
     ref as sRef,
     uploadBytes,
     getDownloadURL,
   } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
-  
   import {
     getAuth,
     onAuthStateChanged,
@@ -402,7 +288,7 @@ import {
   const storage = getStorage(app);
   const auth = getAuth(app);
 
-  // --- Simple auth bar (injected, so you don't need to change HTML) ---
+  // --- Auth bar injection ---
   const adminMain = document.querySelector(".admin-main");
   if (adminMain) adminMain.style.display = "none";
 
@@ -443,11 +329,8 @@ import {
   bar.appendChild(btnLogout);
 
   const header = document.querySelector(".site-header");
-  if (header && header.parentNode) {
-    header.parentNode.insertBefore(bar, header.nextSibling);
-  } else {
-    document.body.insertBefore(bar, document.body.firstChild);
-  }
+  if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+  else document.body.insertBefore(bar, document.body.firstChild);
 
   btnLogin.addEventListener("click", async () => {
     msg.textContent = "Signing in…";
@@ -459,9 +342,7 @@ import {
     }
   });
 
-  btnLogout.addEventListener("click", async () => {
-    await signOut(auth);
-  });
+  btnLogout.addEventListener("click", async () => { await signOut(auth); });
 
   let booted = false;
 
@@ -491,24 +372,44 @@ import {
 
     if (!booted) {
       booted = true;
-      bootAdminApp(); // <-- your existing admin code runs only now
+      bootAdminApp(user);
     }
   });
 
   // =========================
-  // YOUR EXISTING ADMIN LOGIC
+  // ADMIN APP
   // =========================
-  function bootAdminApp() {
+  function bootAdminApp(user) {
+    const adminEmail = String(user?.email || "").toLowerCase();
 
-    function slugifyTitle(input) {
-      return String(input || "")
-        .trim()
-        .toLowerCase()
-        .replace(/['"]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+    // ---- UI helpers ----
+    function setMsg(el, text, tone) {
+      if (!el) return;
+      el.classList.remove("ok", "bad");
+      if (tone === "ok") el.classList.add("ok");
+      if (tone === "bad") el.classList.add("bad");
+      el.textContent = String(text || "");
     }
 
+    function safeStr(v){ return String(v ?? ""); }
+
+    function fmtGBP(n){
+      const v = Number(n);
+      if (!Number.isFinite(v)) return "£0.00";
+      return `£${v.toFixed(2)}`;
+    }
+
+    function isPaidBooking(b){
+      return String(b?.paymentStatus || "").toLowerCase() === "paid";
+    }
+
+    function bookingActive(b){
+      // for future: allow cancelled/no_show etc.
+      const s = String(b?.bookingStatus || "active").toLowerCase();
+      return s === "active";
+    }
+
+    // ---- DOM ----
     const titleEl = document.getElementById("tourTitle");
     const imgFileEl = document.getElementById("tourImageFile");
     const liveEl = document.getElementById("tourLive");
@@ -519,13 +420,70 @@ import {
     const deleteBtn = document.getElementById("deleteTour");
     const descEl = document.getElementById("tourDescription");
 
-    // ===== Tour Description Editor (structured -> hidden textarea) =====
+    // Live feed
+    const liveBookingsMsgEl = document.getElementById("liveBookingsMsg");
+    const liveBookingsListEl = document.getElementById("liveBookingsList");
+    let unsubscribeLiveBookings = null;
+
+    // Schedule
+    let selectedDateKey = "";
+    const selectedDateEl = document.getElementById("selectedDate");
+    const scheduleMsgEl = document.getElementById("scheduleMsg");
+    const scheduleControlsEl = document.getElementById("scheduleControls");
+    const tourTimeEl = document.getElementById("tourTime");
+    const tourCapacityEl = document.getElementById("tourCapacity");
+    const tourPriceEl = document.getElementById("tourPrice");
+    const confirmScheduleBtn = document.getElementById("confirmSchedule");
+    const timesListMsgEl = document.getElementById("timesListMsg");
+    const timesListEl = document.getElementById("timesList");
+    let unsubscribeTimes = null;
+
+    // Bookings for selected date
+    const bookingsMsgEl = document.getElementById("bookingsMsg");
+    const bookingsListEl = document.getElementById("bookingsList");
+    let unsubscribeBookings = null;
+
+    // Calendar
+    const calPrevBtn = document.getElementById("calPrev");
+    const calNextBtn = document.getElementById("calNext");
+    const calMonthEl = document.getElementById("calMonth");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const CELL_COUNT = 42;
+    let viewYear = new Date().getFullYear();
+    let viewMonth = new Date().getMonth();
+    let savedDates = new Set();
+    let unsubscribeDates = null;
+
+    let selectedTourId = "";
+    let selectedTourData = null;
+
+    // ---- shared helpers ----
+    function pad2(n) { return String(n).padStart(2, "0"); }
+    function toKeyYYYYMMDD(y, m0, d) { return `${y}-${pad2(m0 + 1)}-${pad2(d)}`; }
+    function monthLabel(y, m0) { return new Date(y, m0, 1).toLocaleString(undefined, { month: "long", year: "numeric" }); }
+    function firstDayIndexMonFirst(y, m0) { return (new Date(y, m0, 1).getDay() + 6) % 7; }
+    function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
+
+    function slugifyTitle(input) {
+      return String(input || "")
+        .trim()
+        .toLowerCase()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function detach(fnRef){
+      if (typeof fnRef === "function") { try { fnRef(); } catch {} }
+      return null;
+    }
+
+    // ---- Itinerary editor (unchanged logic, tidied) ----
     const descProductTitleEl = document.getElementById("descProductTitle");
     const descOverviewEl = document.getElementById("descOverview");
     const descMeetingPointEl = document.getElementById("descMeetingPoint");
     const itineraryListEl = document.getElementById("itineraryList");
     const addItineraryBtn = document.getElementById("addItineraryItem");
-
     let itineraryItems = [];
 
     function escHtml(s) {
@@ -536,14 +494,39 @@ import {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
     }
+    function nl2br(s) { return escHtml(s).replace(/\r?\n/g, "<br>"); }
 
-    function nl2br(s) {
-      return escHtml(s).replace(/\r?\n/g, "<br>");
+    function buildDescriptionHtml() {
+      const pt = descProductTitleEl.value.trim();
+      const ov = descOverviewEl.value.trim();
+      const mp = descMeetingPointEl.value.trim();
+
+      const items = itineraryItems
+        .map((x) => ({ title: String(x.title || "").trim(), body: String(x.body || "").trim() }))
+        .filter((x) => x.title || x.body);
+
+      let html = "";
+      if (pt) html += `<div class="tsec"><div class="tsec-h">Product Title</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
+      if (ov) html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
+      if (mp) html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
+
+      if (items.length) {
+        html += `<div class="tsec"><div class="tsec-h">Itinerary</div><div class="tsec-b">`;
+        for (const it of items) {
+          html += `<div class="tit-item">`;
+          if (it.title) html += `<div class="tit-title">${nl2br(it.title)}</div>`;
+          if (it.body) html += `<div class="tit-body">${nl2br(it.body)}</div>`;
+          html += `</div>`;
+        }
+        html += `</div></div>`;
+      }
+      return html;
     }
+
+    function syncEditorToHiddenTextarea() { descEl.value = buildDescriptionHtml(); }
 
     function renderItineraryEditor() {
       itineraryListEl.innerHTML = "";
-
       itineraryItems.forEach((item, idx) => {
         const wrap = document.createElement("div");
         wrap.className = "it-item";
@@ -554,14 +537,12 @@ import {
         const title = document.createElement("input");
         title.type = "text";
         title.className = "admin-field";
-        title.placeholder = "";
         title.value = item.title || "";
 
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.className = "admin-btn";
         removeBtn.textContent = "REMOVE";
-        removeBtn.style.flex = "0 0 auto";
 
         row.appendChild(title);
         row.appendChild(removeBtn);
@@ -569,24 +550,11 @@ import {
         const body = document.createElement("textarea");
         body.rows = 4;
         body.className = "admin-field admin-textarea";
-        body.placeholder = "";
         body.value = item.body || "";
 
-        title.addEventListener("input", () => {
-          itineraryItems[idx].title = title.value;
-          syncEditorToHiddenTextarea();
-        });
-
-        body.addEventListener("input", () => {
-          itineraryItems[idx].body = body.value;
-          syncEditorToHiddenTextarea();
-        });
-
-        removeBtn.addEventListener("click", () => {
-          itineraryItems.splice(idx, 1);
-          renderItineraryEditor();
-          syncEditorToHiddenTextarea();
-        });
+        title.addEventListener("input", () => { itineraryItems[idx].title = title.value; syncEditorToHiddenTextarea(); });
+        body.addEventListener("input", () => { itineraryItems[idx].body = body.value; syncEditorToHiddenTextarea(); });
+        removeBtn.addEventListener("click", () => { itineraryItems.splice(idx, 1); renderItineraryEditor(); syncEditorToHiddenTextarea(); });
 
         wrap.appendChild(row);
         wrap.appendChild(body);
@@ -600,50 +568,6 @@ import {
       syncEditorToHiddenTextarea();
     }
 
-    addItineraryBtn.addEventListener("click", addItineraryBlank);
-
-    function buildDescriptionHtml() {
-      const pt = descProductTitleEl.value.trim();
-      const ov = descOverviewEl.value.trim();
-      const mp = descMeetingPointEl.value.trim();
-
-      const items = itineraryItems
-        .map((x) => ({
-          title: String(x.title || "").trim(),
-          body: String(x.body || "").trim(),
-        }))
-        .filter((x) => x.title || x.body);
-
-      let html = "";
-
-      if (pt) {
-        html += `<div class="tsec"><div class="tsec-h">Product Title</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
-      }
-      if (ov) {
-        html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
-      }
-      if (mp) {
-        html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
-      }
-
-      if (items.length) {
-        html += `<div class="tsec"><div class="tsec-h">Itinerary</div><div class="tsec-b">`;
-        for (const it of items) {
-          html += `<div class="tit-item">`;
-          if (it.title) html += `<div class="tit-title">${nl2br(it.title)}</div>`;
-          if (it.body) html += `<div class="tit-body">${nl2br(it.body)}</div>`;
-          html += `</div>`;
-        }
-        html += `</div></div>`;
-      }
-
-      return html;
-    }
-
-    function syncEditorToHiddenTextarea() {
-      descEl.value = buildDescriptionHtml();
-    }
-
     function loadEditorFromHtml(htmlString) {
       descProductTitleEl.value = "";
       descOverviewEl.value = "";
@@ -651,15 +575,10 @@ import {
       itineraryItems = [];
 
       const raw = String(htmlString || "").trim();
-      if (!raw) {
-        renderItineraryEditor();
-        syncEditorToHiddenTextarea();
-        return;
-      }
+      if (!raw) { renderItineraryEditor(); syncEditorToHiddenTextarea(); return; }
 
       const doc = new DOMParser().parseFromString(raw, "text/html");
       const sections = Array.from(doc.querySelectorAll(".tsec"));
-
       if (!sections.length) {
         descOverviewEl.value = raw;
         renderItineraryEditor();
@@ -691,43 +610,24 @@ import {
       syncEditorToHiddenTextarea();
     }
 
-    [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => {
-      el.addEventListener("input", syncEditorToHiddenTextarea);
-    });
-
+    addItineraryBtn.addEventListener("click", addItineraryBlank);
+    [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => el.addEventListener("input", syncEditorToHiddenTextarea));
     renderItineraryEditor();
 
-    // ===== Live bookings feed (read-only) =====
-    const liveBookingsMsgEl = document.getElementById("liveBookingsMsg");
-    const liveBookingsListEl = document.getElementById("liveBookingsList");
-
-    let unsubscribeLiveBookings = null;
-
-    function detachLiveBookings(){
-      if (typeof unsubscribeLiveBookings === "function"){
-        try { unsubscribeLiveBookings(); } catch {}
-      }
-      unsubscribeLiveBookings = null;
-    }
-
-    function clearLiveBookingsUI(msg){
+    // ---- Live bookings feed (read-only, across all tours) ----
+    function detachLiveBookings(){ unsubscribeLiveBookings = detach(unsubscribeLiveBookings); }
+    function clearLiveBookingsUI(text){
       if (liveBookingsListEl) liveBookingsListEl.innerHTML = "";
-      if (liveBookingsMsgEl) liveBookingsMsgEl.textContent = msg || "";
+      setMsg(liveBookingsMsgEl, text || "", null);
     }
-
-    function safeStr(v){ return String(v ?? ""); }
 
     function renderLiveBookings(items){
       if (!liveBookingsListEl) return;
 
       liveBookingsListEl.innerHTML = "";
+      if (!items.length) { clearLiveBookingsUI("No bookings yet."); return; }
 
-      if (!items.length){
-        clearLiveBookingsUI("No bookings yet.");
-        return;
-      }
-
-      if (liveBookingsMsgEl) liveBookingsMsgEl.textContent = `Showing latest ${items.length} booking(s)`;
+      setMsg(liveBookingsMsgEl, `Showing latest ${items.length} booking(s)`, null);
 
       for (const it of items){
         const b = it.b || {};
@@ -736,7 +636,6 @@ import {
 
         const row = document.createElement("div");
         row.style.border = "1px solid #b86b2a";
-        row.style.padding = "10px";
         row.style.background = "#2b2b2b";
         row.style.color = "rgba(255,255,255,0.92)";
         row.style.display = "flex";
@@ -756,7 +655,8 @@ import {
         line3.className = "admin-msg";
         const qty = Number(b.qty || 0);
         const price = Number(b.price || 0);
-        line3.textContent = `${qty ? qty + " pax" : ""}${Number.isFinite(price) ? " • £" + price.toFixed(2) : ""}${b.paymentStatus ? " • " + safeStr(b.paymentStatus) : ""}`;
+        const pay = String(b.paymentStatus || "outstanding").toLowerCase();
+        line3.textContent = `${qty ? qty + " pax" : ""} • ${fmtGBP(price)} • ${pay === "paid" ? "PAID" : "OUTSTANDING"}`;
         row.appendChild(line3);
 
         liveBookingsListEl.appendChild(row);
@@ -765,442 +665,38 @@ import {
 
     function attachLiveBookingsFeed(){
       detachLiveBookings();
-
-      if (!liveBookingsListEl) return;
-
-      // Pull all tours' latest bookings by listening to /bookings (flatten client-side)
-      // Keeps it simple and works with your current structure: bookings/{tourId}/{bookingId}
       const rootRef = ref(db, "bookings");
 
       unsubscribeLiveBookings = onValue(rootRef, (snap) => {
         const root = snap.val();
-
-        if (!root || typeof root !== "object"){
-          renderLiveBookings([]);
-          return;
-        }
+        if (!root || typeof root !== "object"){ renderLiveBookings([]); return; }
 
         const all = [];
 
         for (const [tourId, tourBookings] of Object.entries(root)){
           if (!tourBookings || typeof tourBookings !== "object") continue;
-
           for (const [bookingId, b] of Object.entries(tourBookings)){
             if (!b || typeof b !== "object") continue;
-
-            // createdAt is serverTimestamp -> may be number/object depending on timing
-            // Use a best-effort numeric sort key.
+            // best-effort sort key
             let sortKey = 0;
-            const ca = b.createdAt;
-            if (typeof ca === "number") sortKey = ca;
-            else if (typeof ca === "string" && /^\d+$/.test(ca)) sortKey = Number(ca);
-
+            if (typeof b.createdAtMs === "number") sortKey = b.createdAtMs;
+            else if (typeof b.createdAt === "number") sortKey = b.createdAt;
             all.push({ tourId, bookingId, b, sortKey });
           }
         }
 
-        // newest first (fallback: bookingId order)
         all.sort((a, c) => {
           if (c.sortKey !== a.sortKey) return c.sortKey - a.sortKey;
           return String(c.bookingId).localeCompare(String(a.bookingId));
         });
 
-        // show latest 50
         renderLiveBookings(all.slice(0, 50));
       });
     }
 
-    // start feed
     attachLiveBookingsFeed();
 
-    // ===== Schedule state =====
-    let selectedDateKey = "";
-    const selectedDateEl = document.getElementById("selectedDate");
-    const scheduleMsgEl = document.getElementById("scheduleMsg");
-    const scheduleControlsEl = document.getElementById("scheduleControls");
-    const tourTimeEl = document.getElementById("tourTime");
-    const tourCapacityEl = document.getElementById("tourCapacity");
-    const tourPriceEl = document.getElementById("tourPrice");
-    const confirmScheduleBtn = document.getElementById("confirmSchedule");
-    const timesListMsgEl = document.getElementById("timesListMsg");
-    const timesListEl = document.getElementById("timesList");
-
-    let unsubscribeTimes = null;
-
-    // ===== Bookings UI state =====
-    const bookingsMsgEl = document.getElementById("bookingsMsg");
-    const bookingsListEl = document.getElementById("bookingsList");
-    let unsubscribeBookings = null;
-
-    function detachBookingsListener(){
-      if (typeof unsubscribeBookings === "function"){
-        try { unsubscribeBookings(); } catch {}
-      }
-      unsubscribeBookings = null;
-    }
-
-    function clearBookingsUI(msg){
-      if (bookingsListEl) bookingsListEl.innerHTML = "";
-      if (bookingsMsgEl) bookingsMsgEl.textContent = msg || "No date selected.";
-    }
-
-    function fmtPrice(n){
-      const v = Number(n);
-      if (!Number.isFinite(v)) return "£0.00";
-      return `£${v.toFixed(2)}`;
-    }
-
-    function normalizePayStatus(b){
-      const s = String(b?.paymentStatus || b?.status || "outstanding").toLowerCase();
-      if (s === "paid" || s === "received") return "paid";
-      return "outstanding";
-    }
-
-    async function adjustCapacityForBookingChange({ tourId, dateKey, time, delta }){
-      // delta > 0 means booking needs MORE seats (capacity must go DOWN)
-      // delta < 0 means booking needs FEWER seats (capacity goes UP)
-      const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
-
-      const tx = await runTransaction(capRef, (current) => {
-        const cur = Number(current);
-        if (!Number.isFinite(cur)) return current;
-
-        if (delta > 0){
-          if (cur < delta) return;     // abort if not enough seats
-          return cur - delta;
-        }
-
-        if (delta < 0){
-          return cur + Math.abs(delta);
-        }
-
-        return cur;
-      });
-
-      return tx?.committed === true;
-    }
-
-    async function deleteBookingAndReturnCapacity({ tourId, bookingId, dateKey, time, qty }){
-      // return capacity first (safe), then delete booking
-      await adjustCapacityForBookingChange({ tourId, dateKey, time, delta: -Math.abs(qty || 0) });
-      await remove(ref(db, `bookings/${tourId}/${bookingId}`));
-    }
-
-    function renderBookingsList(bookingsObj){
-      if (!bookingsListEl) return;
-      bookingsListEl.innerHTML = "";
-
-      if (!bookingsObj || typeof bookingsObj !== "object"){
-        clearBookingsUI("No bookings for this date.");
-        return;
-      }
-
-      const entries = Object.entries(bookingsObj).map(([id, b]) => ({ id, b }));
-      if (!entries.length){
-        clearBookingsUI("No bookings for this date.");
-        return;
-      }
-
-      // sort by time then createdAt (fallback)
-      entries.sort((a, c) => {
-        const ta = String(a.b?.time || "");
-        const tc = String(c.b?.time || "");
-        if (ta < tc) return -1;
-        if (ta > tc) return 1;
-        const ca = a.b?.createdAt || 0;
-        const cc = c.b?.createdAt || 0;
-        return String(ca).localeCompare(String(cc));
-      });
-
-      if (bookingsMsgEl) bookingsMsgEl.textContent = `Bookings for ${selectedDateKey}: ${entries.length}`;
-
-      for (const { id: bookingId, b } of entries){
-        const name = String(b?.name || "");
-        const email = String(b?.email || "");
-        const phone = String(b?.phone || "");
-        const time = String(b?.time || "");
-        const qty = Number(b?.qty || 0);
-        const price = Number(b?.price || 0);
-        const payStatus = normalizePayStatus(b);
-        const paidAt = String(b?.paidAt || ""); // we will store datetime-local string
-
-        const refShort = String(bookingId).slice(-7);
-
-        const card = document.createElement("div");
-        card.style.border = "1px solid #b86b2a";
-        card.style.padding = "12px";
-        card.style.background = "#2b2b2b";
-        card.style.color = "rgba(255,255,255,0.92)";
-        card.style.display = "flex";
-        card.style.flexDirection = "column";
-        card.style.gap = "10px";
-
-        const top = document.createElement("div");
-        top.textContent = `${time} — ${name} — ${qty} pax — ${fmtPrice(price)} — Ref: ${refShort}`;
-        card.appendChild(top);
-
-        const detail = document.createElement("div");
-        detail.className = "admin-msg";
-        detail.textContent = `${email}${phone ? " • " + phone : ""}`;
-        card.appendChild(detail);
-
-        // row: qty + update
-        const rowQty = document.createElement("div");
-        rowQty.style.display = "flex";
-        rowQty.style.gap = "8px";
-
-        const qtyInput = document.createElement("input");
-        qtyInput.type = "number";
-        qtyInput.min = "1";
-        qtyInput.className = "admin-field";
-        qtyInput.style.flex = "1";
-        qtyInput.style.padding = "10px";
-        qtyInput.value = String(qty || 1);
-
-        const btnQty = document.createElement("button");
-        btnQty.type = "button";
-        btnQty.className = "admin-btn";
-        btnQty.style.flex = "1";
-        btnQty.textContent = "UPDATE PASSENGERS";
-
-        rowQty.appendChild(qtyInput);
-        rowQty.appendChild(btnQty);
-        card.appendChild(rowQty);
-
-        // row: price + update
-        const rowPrice = document.createElement("div");
-        rowPrice.style.display = "flex";
-        rowPrice.style.gap = "8px";
-
-        const priceInput = document.createElement("input");
-        priceInput.type = "number";
-        priceInput.min = "0";
-        priceInput.step = "0.01";
-        priceInput.className = "admin-field";
-        priceInput.style.flex = "1";
-        priceInput.style.padding = "10px";
-        priceInput.value = Number.isFinite(price) ? String(price) : "0";
-
-        const btnPrice = document.createElement("button");
-        btnPrice.type = "button";
-        btnPrice.className = "admin-btn";
-        btnPrice.style.flex = "1";
-        btnPrice.textContent = "UPDATE PRICE";
-
-        rowPrice.appendChild(priceInput);
-        rowPrice.appendChild(btnPrice);
-        card.appendChild(rowPrice);
-
-        // row: payment status + paid datetime
-        const rowPay = document.createElement("div");
-        rowPay.style.display = "flex";
-        rowPay.style.gap = "8px";
-        rowPay.style.alignItems = "center";
-
-        const paySelect = document.createElement("select");
-        paySelect.className = "admin-field";
-        paySelect.style.flex = "1";
-        paySelect.style.padding = "10px";
-        paySelect.innerHTML = `
-          <option value="outstanding">Payment outstanding</option>
-          <option value="paid">Payment received</option>
-        `;
-        paySelect.value = payStatus;
-
-        const paidAtInput = document.createElement("input");
-        paidAtInput.type = "datetime-local";
-        paidAtInput.className = "admin-field";
-        paidAtInput.style.flex = "1";
-        paidAtInput.style.padding = "10px";
-        paidAtInput.value = paidAt || "";
-        paidAtInput.disabled = (paySelect.value !== "paid");
-
-        const btnPay = document.createElement("button");
-        btnPay.type = "button";
-        btnPay.className = "admin-btn";
-        btnPay.style.flex = "1";
-        btnPay.textContent = "CONFIRM PAYMENT STATUS";
-
-        rowPay.appendChild(paySelect);
-        rowPay.appendChild(paidAtInput);
-        rowPay.appendChild(btnPay);
-        card.appendChild(rowPay);
-
-        // row: delete
-        const btnDel = document.createElement("button");
-        btnDel.type = "button";
-        btnDel.className = "admin-btn";
-        btnDel.textContent = "DELETE BOOKING";
-        card.appendChild(btnDel);
-
-        // interactions
-        paySelect.addEventListener("change", () => {
-          const isPaid = paySelect.value === "paid";
-          paidAtInput.disabled = !isPaid;
-          if (!isPaid) paidAtInput.value = "";
-        });
-
-        btnPrice.addEventListener("click", async () => {
-          const newPrice = parseFloat(priceInput.value);
-          if (Number.isNaN(newPrice) || newPrice < 0){
-            if (bookingsMsgEl) bookingsMsgEl.textContent = "Enter a valid price (>= 0).";
-            return;
-          }
-          const ok = confirm(`Update price for Ref ${refShort} to £${newPrice.toFixed(2)}?`);
-          if (!ok) return;
-
-          try {
-            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), { price: newPrice });
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated price for Ref ${refShort}.`;
-          } catch (err) {
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
-          }
-        });
-
-        btnQty.addEventListener("click", async () => {
-          const newQty = parseInt(qtyInput.value, 10);
-          if (!newQty || newQty < 1){
-            if (bookingsMsgEl) bookingsMsgEl.textContent = "Enter a valid passenger quantity (>= 1).";
-            return;
-          }
-
-          const oldQty = Number(qty || 0);
-          if (newQty === oldQty){
-            if (bookingsMsgEl) bookingsMsgEl.textContent = "Passenger quantity unchanged.";
-            return;
-          }
-
-          const ok = confirm(`Change passengers for Ref ${refShort} from ${oldQty} to ${newQty}?`);
-          if (!ok) return;
-
-          const delta = newQty - oldQty; // + means needs more seats; - means return seats
-
-          try {
-            const committed = await adjustCapacityForBookingChange({
-              tourId: selectedTourId,
-              dateKey: selectedDateKey,
-              time,
-              delta
-            });
-
-            if (!committed){
-              if (bookingsMsgEl) bookingsMsgEl.textContent = "Not enough places remaining to increase passengers.";
-              return;
-            }
-
-            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), { qty: newQty });
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated passengers for Ref ${refShort}.`;
-          } catch (err) {
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
-          }
-        });
-
-        btnPay.addEventListener("click", async () => {
-          const newStatus = paySelect.value;
-
-          if (newStatus === "paid"){
-            if (!paidAtInput.value){
-              if (bookingsMsgEl) bookingsMsgEl.textContent = "Payment received requires a payment date and time.";
-              return;
-            }
-          }
-
-          const ok = confirm(`Confirm payment status for Ref ${refShort}: ${newStatus.toUpperCase()}?`);
-          if (!ok) return;
-
-          try {
-            if (newStatus === "paid"){
-              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-                paymentStatus: "paid",
-                paidAt: paidAtInput.value
-              });
-            } else {
-              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-                paymentStatus: "outstanding",
-                paidAt: ""
-              });
-            }
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated payment status for Ref ${refShort}.`;
-          } catch (err) {
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
-          }
-        });
-
-        btnDel.addEventListener("click", async () => {
-          const ok = confirm(`Delete booking Ref ${refShort}? This will return ${qty} seat(s) to capacity.`);
-          if (!ok) return;
-
-          try {
-            await deleteBookingAndReturnCapacity({
-              tourId: selectedTourId,
-              bookingId,
-              dateKey: selectedDateKey,
-              time,
-              qty: qty || 0
-            });
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Deleted booking Ref ${refShort}.`;
-          } catch (err) {
-            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
-          }
-        });
-
-        bookingsListEl.appendChild(card);
-      }
-    }
-
-    function attachBookingsListenerForSelectedDate(){
-      detachBookingsListener();
-
-      if (!selectedTourId || !selectedDateKey){
-        clearBookingsUI("No date selected.");
-        return;
-      }
-
-      if (bookingsMsgEl) bookingsMsgEl.textContent = "Loading bookings...";
-
-      const q = query(
-        ref(db, `bookings/${selectedTourId}`),
-        orderByChild("dateKey"),
-        equalTo(selectedDateKey)
-      );
-
-      unsubscribeBookings = onValue(q, (snap) => {
-        renderBookingsList(snap.val());
-      });
-    }
-
-    function hardRefresh() {
-      window.location.reload();
-    }
-
-    let selectedTourId = "";
-    let selectedTourData = null;
-
-    // ===== Calendar state =====
-    const calPrevBtn = document.getElementById("calPrev");
-    const calNextBtn = document.getElementById("calNext");
-    const calMonthEl = document.getElementById("calMonth");
-    const calendarGrid = document.getElementById("calendarGrid");
-    const CELL_COUNT = 42;
-
-    let viewYear = new Date().getFullYear();
-    let viewMonth = new Date().getMonth();
-
-    let savedDates = new Set();
-    let unsubscribeDates = null;
-
-    function pad2(n) { return String(n).padStart(2, "0"); }
-    function toKeyYYYYMMDD(y, m0, d) { return `${y}-${pad2(m0 + 1)}-${pad2(d)}`; }
-    function monthLabel(y, m0) {
-      const dt = new Date(y, m0, 1);
-      return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
-    }
-    function firstDayIndexMonFirst(y, m0) {
-      const js = new Date(y, m0, 1).getDay();
-      return (js + 6) % 7;
-    }
-    function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
-
+    // ---- Calendar rendering ----
     function ensureGridCells() {
       if (calendarGrid.children.length === CELL_COUNT) return;
       calendarGrid.innerHTML = "";
@@ -1240,60 +736,368 @@ import {
     }
 
     function attachDatesListenerForTour(tourId) {
-      if (typeof unsubscribeDates === "function") {
-        unsubscribeDates();
-        unsubscribeDates = null;
-      }
-
+      unsubscribeDates = detach(unsubscribeDates);
       savedDates = new Set();
 
-      if (!tourId) {
-        renderCalendar();
-        return;
-      }
+      if (!tourId) { renderCalendar(); return; }
 
       const datesRef = ref(db, `tours/${tourId}/dates`);
       unsubscribeDates = onValue(datesRef, (snap) => {
         const val = snap.val();
         savedDates = new Set();
-        if (val && typeof val === "object") {
-          for (const k of Object.keys(val)) savedDates.add(k);
-        }
+        if (val && typeof val === "object") for (const k of Object.keys(val)) savedDates.add(k);
         renderCalendar();
       });
     }
 
-    function clearTimesUI() {
-      if (timesListEl) timesListEl.innerHTML = "";
-      if (timesListMsgEl) timesListMsgEl.textContent = "No date selected.";
+    // ---- Times + Bookings listeners ----
+    function detachTimesListener(){ unsubscribeTimes = detach(unsubscribeTimes); }
+    function detachBookingsListener(){ unsubscribeBookings = detach(unsubscribeBookings); }
+
+    function clearTimesUI(){ if (timesListEl) timesListEl.innerHTML = ""; setMsg(timesListMsgEl, "No date selected.", null); }
+    function clearBookingsUI(text){ if (bookingsListEl) bookingsListEl.innerHTML = ""; setMsg(bookingsMsgEl, text || "No date selected.", null); }
+
+    function hardResetDateSelection(){
+      selectedDateKey = "";
+      if (selectedDateEl) selectedDateEl.value = "";
+      if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+      setMsg(scheduleMsgEl, "Select a tour, then click a date in the calendar.", null);
+      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+      detachTimesListener();
+      detachBookingsListener();
+      clearTimesUI();
+      clearBookingsUI("No date selected.");
     }
 
-    function detachTimesListener() {
-      if (typeof unsubscribeTimes === "function") {
-        unsubscribeTimes();
-        unsubscribeTimes = null;
+    function attachTimesListenerForSelectedDate() {
+      detachTimesListener();
+      if (!selectedTourId || !selectedDateKey) { clearTimesUI(); return; }
+
+      setMsg(timesListMsgEl, "Loading times...", null);
+
+      const timesRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times`);
+      unsubscribeTimes = onValue(timesRef, (snap) => renderTimesList(snap.val()));
+    }
+
+    function attachBookingsListenerForSelectedDate(){
+      detachBookingsListener();
+      if (!selectedTourId || !selectedDateKey) { clearBookingsUI("No date selected."); return; }
+
+      setMsg(bookingsMsgEl, "Loading bookings...", null);
+
+      const q = query(ref(db, `bookings/${selectedTourId}`), orderByChild("dateKey"), equalTo(selectedDateKey));
+      unsubscribeBookings = onValue(q, (snap) => renderBookingsList(snap.val()));
+    }
+
+    // ---- Capacity adjustment (bulletproof seat maths) ----
+    async function adjustCapacity({ tourId, dateKey, time, delta }) {
+      // delta > 0 => booking needs MORE seats => capacity must go DOWN by delta
+      // delta < 0 => booking needs FEWER seats => capacity goes UP by abs(delta)
+      const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
+
+      const tx = await runTransaction(capRef, (current) => {
+        const cur = Number(current);
+        if (!Number.isFinite(cur)) return current;
+
+        if (delta > 0) {
+          if (cur < delta) return; // abort
+          return cur - delta;
+        }
+        if (delta < 0) {
+          return cur + Math.abs(delta);
+        }
+        return cur;
+      });
+
+      return tx?.committed === true;
+    }
+
+    async function slotHasActiveBookings({ tourId, dateKey, time }) {
+      // Query by dateKey then filter by time + active
+      const q = query(ref(db, `bookings/${tourId}`), orderByChild("dateKey"), equalTo(dateKey));
+      const snap = await get(q);
+      const val = snap.val();
+      if (!val || typeof val !== "object") return false;
+
+      for (const b of Object.values(val)) {
+        if (!b || typeof b !== "object") continue;
+        if (!bookingActive(b)) continue;
+        if (String(b.time || "") === String(time || "")) return true;
+      }
+      return false;
+    }
+
+    // ---- Bookings UI ----
+    function renderBookingsList(bookingsObj){
+      if (!bookingsListEl) return;
+      bookingsListEl.innerHTML = "";
+
+      if (!bookingsObj || typeof bookingsObj !== "object") {
+        clearBookingsUI("No bookings for this date.");
+        return;
+      }
+
+      const entries = Object.entries(bookingsObj).map(([id, b]) => ({ id, b }));
+      if (!entries.length) { clearBookingsUI("No bookings for this date."); return; }
+
+      // sort by time then created
+      entries.sort((a, c) => {
+        const ta = String(a.b?.time || "");
+        const tc = String(c.b?.time || "");
+        if (ta < tc) return -1;
+        if (ta > tc) return 1;
+        const ca = Number(a.b?.createdAtMs || 0);
+        const cc = Number(c.b?.createdAtMs || 0);
+        return ca - cc;
+      });
+
+      setMsg(bookingsMsgEl, `Bookings for ${selectedDateKey}: ${entries.length}`, null);
+
+      for (const { id: bookingId, b } of entries){
+        const time = String(b?.time || "");
+        const qty = Number(b?.qty || 0);
+        const price = Number(b?.price || 0);
+        const paid = isPaidBooking(b);
+        const active = bookingActive(b);
+
+        const refShort = String(bookingId).slice(-7);
+
+        const card = document.createElement("div");
+        card.style.border = "1px solid #b86b2a";
+        card.style.padding = "12px";
+        card.style.background = "#2b2b2b";
+        card.style.color = "rgba(255,255,255,0.92)";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.gap = "10px";
+
+        const top = document.createElement("div");
+        top.textContent = `${time} — ${safeStr(b?.name)} — ${qty} pax — ${fmtGBP(price)} — Ref: ${refShort}`;
+        card.appendChild(top);
+
+        const line = document.createElement("div");
+        line.className = "admin-msg";
+        line.textContent = `${safeStr(b?.email)}${b?.phone ? " • " + safeStr(b.phone) : ""} • ${paid ? "PAID" : "OUTSTANDING"}${active ? "" : " • NOT ACTIVE"}`;
+        card.appendChild(line);
+
+        // PASSENGERS (LOCKED ON PAID)
+        const rowQty = document.createElement("div");
+        rowQty.style.display = "flex";
+        rowQty.style.gap = "8px";
+
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.min = "1";
+        qtyInput.className = "admin-field";
+        qtyInput.style.flex = "1";
+        qtyInput.style.padding = "10px";
+        qtyInput.value = String(qty || 1);
+        qtyInput.disabled = paid;
+
+        const btnQty = document.createElement("button");
+        btnQty.type = "button";
+        btnQty.className = "admin-btn";
+        btnQty.style.flex = "1";
+        btnQty.textContent = paid ? "PASSENGERS LOCKED (PAID)" : "UPDATE PASSENGERS";
+        btnQty.disabled = paid;
+
+        rowQty.appendChild(qtyInput);
+        rowQty.appendChild(btnQty);
+        card.appendChild(rowQty);
+
+        // PRICE (LOCKED ON PAID)
+        const rowPrice = document.createElement("div");
+        rowPrice.style.display = "flex";
+        rowPrice.style.gap = "8px";
+
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "0";
+        priceInput.step = "0.01";
+        priceInput.className = "admin-field";
+        priceInput.style.flex = "1";
+        priceInput.style.padding = "10px";
+        priceInput.value = Number.isFinite(price) ? String(price) : "0";
+        priceInput.disabled = paid;
+
+        const btnPrice = document.createElement("button");
+        btnPrice.type = "button";
+        btnPrice.className = "admin-btn";
+        btnPrice.style.flex = "1";
+        btnPrice.textContent = paid ? "PRICE LOCKED (PAID)" : "UPDATE PRICE";
+        btnPrice.disabled = paid;
+
+        rowPrice.appendChild(priceInput);
+        rowPrice.appendChild(btnPrice);
+        card.appendChild(rowPrice);
+
+        // PAYMENT STATUS
+        const rowPay = document.createElement("div");
+        rowPay.style.display = "flex";
+        rowPay.style.gap = "8px";
+        rowPay.style.alignItems = "center";
+
+        const paySelect = document.createElement("select");
+        paySelect.className = "admin-field";
+        paySelect.style.flex = "1";
+        paySelect.style.padding = "10px";
+        paySelect.innerHTML = `
+          <option value="outstanding">Payment outstanding</option>
+          <option value="paid">Payment received</option>
+        `;
+        paySelect.value = paid ? "paid" : "outstanding";
+
+        const paidAtInput = document.createElement("input");
+        paidAtInput.type = "datetime-local";
+        paidAtInput.className = "admin-field";
+        paidAtInput.style.flex = "1";
+        paidAtInput.style.padding = "10px";
+        paidAtInput.value = String(b?.paidAt || "");
+        paidAtInput.disabled = (paySelect.value !== "paid");
+
+        const btnPay = document.createElement("button");
+        btnPay.type = "button";
+        btnPay.className = "admin-btn";
+        btnPay.style.flex = "1";
+        btnPay.textContent = "CONFIRM PAYMENT STATUS";
+
+        rowPay.appendChild(paySelect);
+        rowPay.appendChild(paidAtInput);
+        rowPay.appendChild(btnPay);
+        card.appendChild(rowPay);
+
+        // DELETE (ALWAYS ALLOWED, RETURNS CAPACITY)
+        const btnDel = document.createElement("button");
+        btnDel.type = "button";
+        btnDel.className = "admin-btn";
+        btnDel.textContent = "DELETE BOOKING (RETURNS SEATS)";
+        card.appendChild(btnDel);
+
+        // Handlers
+        paySelect.addEventListener("change", () => {
+          const wantsPaid = paySelect.value === "paid";
+          paidAtInput.disabled = !wantsPaid;
+          if (!wantsPaid) paidAtInput.value = "";
+        });
+
+        btnQty.addEventListener("click", async () => {
+          const newQty = parseInt(qtyInput.value, 10);
+          if (!newQty || newQty < 1) { setMsg(bookingsMsgEl, "Enter a valid passenger quantity (>= 1).", "bad"); return; }
+
+          const oldQty = Number(qty || 0);
+          if (newQty === oldQty) { setMsg(bookingsMsgEl, "Passenger quantity unchanged.", null); return; }
+
+          const ok = confirm(`Change passengers Ref ${refShort}: ${oldQty} → ${newQty}?`);
+          if (!ok) return;
+
+          const delta = newQty - oldQty;
+
+          try {
+            const committed = await adjustCapacity({ tourId: selectedTourId, dateKey: selectedDateKey, time, delta });
+            if (!committed) { setMsg(bookingsMsgEl, "Not enough places remaining to increase passengers.", "bad"); return; }
+
+            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+              qty: newQty,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
+            });
+            setMsg(bookingsMsgEl, `Updated passengers for Ref ${refShort}.`, "ok");
+          } catch (err) {
+            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
+          }
+        });
+
+        btnPrice.addEventListener("click", async () => {
+          const newPrice = parseFloat(priceInput.value);
+          if (Number.isNaN(newPrice) || newPrice < 0) { setMsg(bookingsMsgEl, "Enter a valid price (>= 0).", "bad"); return; }
+
+          const ok = confirm(`Update price Ref ${refShort} to £${newPrice.toFixed(2)}?`);
+          if (!ok) return;
+
+          try {
+            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+              price: newPrice,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
+            });
+            setMsg(bookingsMsgEl, `Updated price for Ref ${refShort}.`, "ok");
+          } catch (err) {
+            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
+          }
+        });
+
+        btnPay.addEventListener("click", async () => {
+          const newStatus = paySelect.value;
+
+          if (newStatus === "paid" && !paidAtInput.value) {
+            setMsg(bookingsMsgEl, "Payment received requires a payment date and time.", "bad");
+            return;
+          }
+
+          const ok = confirm(`Confirm payment status Ref ${refShort}: ${newStatus.toUpperCase()}?`);
+          if (!ok) return;
+
+          try {
+            if (newStatus === "paid") {
+              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+                paymentStatus: "paid",
+                paidAt: paidAtInput.value,
+                paidBy: adminEmail,
+                updatedAt: serverTimestamp(),
+                updatedBy: adminEmail,
+              });
+              setMsg(bookingsMsgEl, `Marked PAID for Ref ${refShort}.`, "ok");
+            } else {
+              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+                paymentStatus: "outstanding",
+                paidAt: "",
+                paidBy: "",
+                updatedAt: serverTimestamp(),
+                updatedBy: adminEmail,
+              });
+              setMsg(bookingsMsgEl, `Marked OUTSTANDING for Ref ${refShort}.`, "ok");
+            }
+          } catch (err) {
+            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
+          }
+        });
+
+        btnDel.addEventListener("click", async () => {
+          const warnPaid = paid ? "THIS BOOKING IS PAID. Ensure you have handled refund/offline reconciliation before deleting.\n\n" : "";
+          const ok = confirm(`${warnPaid}Delete booking Ref ${refShort}?\nThis will return ${qty} seat(s) to capacity.`);
+          if (!ok) return;
+
+          try {
+            // Return seats first, then delete booking
+            await adjustCapacity({ tourId: selectedTourId, dateKey: selectedDateKey, time, delta: -Math.abs(qty || 0) });
+            await remove(ref(db, `bookings/${selectedTourId}/${bookingId}`));
+            setMsg(bookingsMsgEl, `Deleted booking Ref ${refShort}.`, "ok");
+          } catch (err) {
+            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
+          }
+        });
+
+        bookingsListEl.appendChild(card);
       }
     }
 
+    // ---- Times UI with slot protection rules ----
     function renderTimesList(timesObj) {
       if (!timesListEl) return;
-
       timesListEl.innerHTML = "";
 
-      if (!timesObj || typeof timesObj !== "object") {
-        if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
-        return;
-      }
+      if (!timesObj || typeof timesObj !== "object") { setMsg(timesListMsgEl, "No times saved for this date yet.", null); return; }
 
       const times = Object.keys(timesObj).sort();
-      if (!times.length) {
-        if (timesListMsgEl) timesListMsgEl.textContent = "No times saved for this date yet.";
-        return;
-      }
+      if (!times.length) { setMsg(timesListMsgEl, "No times saved for this date yet.", null); return; }
 
-      if (timesListMsgEl) timesListMsgEl.textContent = `Saved times for ${selectedDateKey}:`;
+      setMsg(timesListMsgEl, `Saved times for ${selectedDateKey}:`, null);
 
       for (const time of times) {
+        const slotNode = timesObj?.[time] || {};
+        const cap = slotNode?.capacity ?? "";
+        const price = slotNode?.price ?? "";
+
         const row = document.createElement("div");
         row.style.border = "1px solid #b86b2a";
         row.style.padding = "10px";
@@ -1303,11 +1107,8 @@ import {
         row.style.flexDirection = "column";
         row.style.gap = "8px";
 
-        const cap = timesObj?.[time]?.capacity ?? "";
-        const price = timesObj?.[time]?.price ?? "";
-
         const top = document.createElement("div");
-        top.textContent = `${time} — capacity: ${cap} — £${price !== "" ? Number(price).toFixed(2) : "0.00"}`;
+        top.textContent = `${time} — capacity: ${cap} — ${fmtGBP(price)}`;
         row.appendChild(top);
 
         const controls = document.createElement("div");
@@ -1315,6 +1116,7 @@ import {
         controls.style.flexDirection = "column";
         controls.style.gap = "8px";
 
+        // row1: capacity + update/delete
         const row1 = document.createElement("div");
         row1.style.display = "flex";
         row1.style.gap = "8px";
@@ -1322,7 +1124,7 @@ import {
         const capInput = document.createElement("input");
         capInput.type = "number";
         capInput.min = "1";
-        capInput.value = String(cap || "");
+        capInput.value = String(cap ?? "");
         capInput.className = "admin-field";
         capInput.style.padding = "10px";
         capInput.style.flex = "1";
@@ -1343,6 +1145,7 @@ import {
         row1.appendChild(saveCapBtn);
         row1.appendChild(delBtn);
 
+        // row2: change time + update time
         const row2 = document.createElement("div");
         row2.style.display = "flex";
         row2.style.gap = "8px";
@@ -1363,6 +1166,7 @@ import {
         row2.appendChild(timeInput);
         row2.appendChild(saveTimeBtn);
 
+        // row3: price + update
         const row3 = document.createElement("div");
         row3.style.display = "flex";
         row3.style.gap = "8px";
@@ -1371,7 +1175,7 @@ import {
         priceInput.type = "number";
         priceInput.min = "0";
         priceInput.step = "0.01";
-        priceInput.value = price === "" ? "" : String(price);
+        priceInput.value = (price === "" || price === null || typeof price === "undefined") ? "" : String(price);
         priceInput.className = "admin-field";
         priceInput.style.padding = "10px";
         priceInput.style.flex = "1";
@@ -1388,85 +1192,98 @@ import {
         controls.appendChild(row1);
         controls.appendChild(row2);
         controls.appendChild(row3);
-
         row.appendChild(controls);
 
+        // handlers
         saveCapBtn.addEventListener("click", async () => {
           const newCap = parseInt(capInput.value, 10);
-          if (!newCap || newCap < 1) {
-            if (timesListMsgEl) timesListMsgEl.textContent = "Enter a valid capacity (>= 1).";
-            return;
-          }
+          if (!newCap || newCap < 1) { setMsg(timesListMsgEl, "Enter a valid capacity (>= 1).", "bad"); return; }
+
+          const ok = confirm(`Update capacity for ${time} on ${selectedDateKey} to ${newCap}?`);
+          if (!ok) return;
 
           try {
             await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
               capacity: newCap,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
             });
-            if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} to capacity ${newCap}.`;
+            setMsg(timesListMsgEl, `Updated ${time} capacity to ${newCap}.`, "ok");
           } catch (err) {
-            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
           }
         });
 
         savePriceBtn.addEventListener("click", async () => {
           const newPrice = parseFloat(priceInput.value);
-          if (Number.isNaN(newPrice) || newPrice < 0) {
-            if (timesListMsgEl) timesListMsgEl.textContent = "Enter valid price (>= 0).";
-            return;
-          }
+          if (Number.isNaN(newPrice) || newPrice < 0) { setMsg(timesListMsgEl, "Enter valid price (>= 0).", "bad"); return; }
+
+          const ok = confirm(`Update slot price for ${time} on ${selectedDateKey} to £${newPrice.toFixed(2)}?`);
+          if (!ok) return;
 
           try {
             await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
               price: newPrice,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
             });
-            if (timesListMsgEl) timesListMsgEl.textContent = `Updated ${time} price to £${newPrice.toFixed(2)}.`;
+            setMsg(timesListMsgEl, `Updated ${time} price to £${newPrice.toFixed(2)}.`, "ok");
           } catch (err) {
-            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
           }
         });
 
         delBtn.addEventListener("click", async () => {
-          const ok = confirm(`Delete time slot ${time} for ${selectedDateKey}?`);
+          const ok = confirm(`Delete time slot ${time} for ${selectedDateKey}?\nThis is blocked if the slot has active bookings.`);
           if (!ok) return;
 
           try {
+            const hasBookings = await slotHasActiveBookings({ tourId: selectedTourId, dateKey: selectedDateKey, time });
+            if (hasBookings) {
+              setMsg(timesListMsgEl, `Blocked: ${time} has active bookings. Delete/cancel bookings first.`, "bad");
+              return;
+            }
+
             await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
-            if (timesListMsgEl) timesListMsgEl.textContent = `Deleted ${time}.`;
+            setMsg(timesListMsgEl, `Deleted time slot ${time}.`, "ok");
           } catch (err) {
-            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
           }
         });
 
         saveTimeBtn.addEventListener("click", async () => {
           const newTime = timeInput.value;
-          if (!newTime) {
-            if (timesListMsgEl) timesListMsgEl.textContent = "Select a valid time.";
-            return;
-          }
-          if (newTime === time) {
-            if (timesListMsgEl) timesListMsgEl.textContent = "Time unchanged.";
-            return;
-          }
-
+          if (!newTime) { setMsg(timesListMsgEl, "Select a valid time.", "bad"); return; }
+          if (newTime === time) { setMsg(timesListMsgEl, "Time unchanged.", null); return; }
           if (timesObj && Object.prototype.hasOwnProperty.call(timesObj, newTime)) {
-            if (timesListMsgEl) timesListMsgEl.textContent = `That time (${newTime}) already exists.`;
+            setMsg(timesListMsgEl, `That time (${newTime}) already exists.`, "bad");
             return;
           }
 
-          const ok = confirm(`Change time ${time} → ${newTime} for ${selectedDateKey}?`);
+          const ok = confirm(`Rename slot time ${time} → ${newTime} for ${selectedDateKey}?\nThis is blocked if the slot has active bookings.`);
           if (!ok) return;
 
           try {
+            const hasBookings = await slotHasActiveBookings({ tourId: selectedTourId, dateKey: selectedDateKey, time });
+            if (hasBookings) {
+              setMsg(timesListMsgEl, `Blocked: ${time} has active bookings. You cannot rename this slot.`, "bad");
+              return;
+            }
+
             const oldRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
             const newRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${newTime}`);
 
             const oldData = timesObj && timesObj[time] ? timesObj[time] : { capacity: 1, price: 0 };
-            await set(newRef, oldData);
+            await set(newRef, {
+              ...oldData,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
+            });
             await remove(oldRef);
 
-            if (timesListMsgEl) timesListMsgEl.textContent = `Updated time ${time} → ${newTime}.`;
+            setMsg(timesListMsgEl, `Updated time ${time} → ${newTime}.`, "ok");
           } catch (err) {
-            if (timesListMsgEl) timesListMsgEl.textContent = `Error: ${err?.message || err}`;
+            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
           }
         });
 
@@ -1474,23 +1291,8 @@ import {
       }
     }
 
-    function attachTimesListenerForSelectedDate() {
-      detachTimesListener();
-
-      if (!selectedTourId || !selectedDateKey) {
-        clearTimesUI();
-        return;
-      }
-
-      if (timesListMsgEl) timesListMsgEl.textContent = "Loading times...";
-
-      const timesRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times`);
-      unsubscribeTimes = onValue(timesRef, (snap) => {
-        renderTimesList(snap.val());
-      });
-    }
-
-    calendarGrid.addEventListener("click", async (e) => {
+    // ---- Calendar clicks ----
+    calendarGrid.addEventListener("click", (e) => {
       const cell = e.target.closest(".calendar-cell");
       if (!cell) return;
 
@@ -1498,14 +1300,14 @@ import {
       if (!key) return;
 
       if (!selectedTourId) {
-        msgEl.textContent = "Select a tour first (then pick dates).";
+        setMsg(msgEl, "Select a tour first (then pick dates).", "bad");
         return;
       }
 
       selectedDateKey = key;
       if (selectedDateEl) selectedDateEl.value = key;
       if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-      if (scheduleMsgEl) scheduleMsgEl.textContent = `Selected date: ${key}`;
+      setMsg(scheduleMsgEl, `Selected date: ${key}`, null);
 
       calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
       cell.classList.add("selected");
@@ -1516,24 +1318,19 @@ import {
 
     calPrevBtn.addEventListener("click", () => {
       viewMonth -= 1;
-      if (viewMonth < 0) {
-        viewMonth = 11;
-        viewYear -= 1;
-      }
+      if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
       renderCalendar();
     });
 
     calNextBtn.addEventListener("click", () => {
       viewMonth += 1;
-      if (viewMonth > 11) {
-        viewMonth = 0;
-        viewYear += 1;
-      }
+      if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
       renderCalendar();
     });
 
     renderCalendar();
 
+    // ---- Tours list + select ----
     onValue(ref(db, "tours"), (snapshot) => {
       const tours = snapshot.val();
       tourListEl.innerHTML = "";
@@ -1554,24 +1351,14 @@ import {
           selectedTourId = tourId;
           selectedTourData = tour || null;
 
-          selectedDateKey = "";
-          if (selectedDateEl) selectedDateEl.value = "";
-          if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-          if (scheduleMsgEl) scheduleMsgEl.textContent = "Select a tour, then click a date in the calendar.";
-
-          calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
-
-          detachTimesListener();
-          clearTimesUI();
-          detachBookingsListener();
-          clearBookingsUI("No date selected.");
+          hardResetDateSelection();
 
           titleEl.value = tour?.title || "";
           liveEl.checked = !!tour?.isLive;
           descEl.value = tour?.description || "";
           loadEditorFromHtml(descEl.value);
 
-          msgEl.textContent = `Selected: ${tourId}`;
+          setMsg(msgEl, `Selected: ${tourId}`, "ok");
 
           attachDatesListenerForTour(tourId);
         });
@@ -1580,21 +1367,16 @@ import {
       }
     });
 
+    // ---- Tour CRUD ----
     amendBtn.addEventListener("click", async () => {
-      if (!selectedTourId) {
-        msgEl.textContent = "Select a tour first.";
-        return;
-      }
+      if (!selectedTourId) { setMsg(msgEl, "Select a tour first.", "bad"); return; }
 
       const title = titleEl.value.trim();
       const isLive = !!liveEl.checked;
       syncEditorToHiddenTextarea();
       const description = descEl.value.trim();
 
-      if (!title) {
-        msgEl.textContent = "Title required.";
-        return;
-      }
+      if (!title) { setMsg(msgEl, "Title required.", "bad"); return; }
 
       const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
 
@@ -1605,7 +1387,6 @@ import {
           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
           const stamp = Date.now();
           const path = `tours/${selectedTourId}/images/${stamp}-${safeName}`;
-
           const storageRef = sRef(storage, path);
           await uploadBytes(storageRef, file);
           imageUrl = await getDownloadURL(storageRef);
@@ -1616,130 +1397,118 @@ import {
           imageUrl,
           isLive,
           description,
+          updatedAt: serverTimestamp(),
+          updatedBy: adminEmail,
         });
 
-        msgEl.textContent = `Amended: tours/${selectedTourId}`;
-        hardRefresh();
+        setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
       } catch (err) {
-        msgEl.textContent = `Error: ${err?.message || err}`;
+        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
 
     deleteBtn.addEventListener("click", async () => {
-      if (!selectedTourId) {
-        msgEl.textContent = "Select a tour first.";
-        return;
-      }
+      if (!selectedTourId) { setMsg(msgEl, "Select a tour first.", "bad"); return; }
 
-      const ok = confirm(`Delete tour "${selectedTourId}" from database?`);
+      const ok = confirm(
+        `Delete tour "${selectedTourId}"?\n\nThis deletes tour details and schedule.\nBookings are stored under /bookings/${selectedTourId} and will remain unless you delete them separately.`
+      );
       if (!ok) return;
 
       try {
         await remove(ref(db, `tours/${selectedTourId}`));
-        msgEl.textContent = `Deleted: tours/${selectedTourId}`;
-        hardRefresh();
-
+        setMsg(msgEl, `Deleted: tours/${selectedTourId}`, "ok");
         selectedTourId = "";
         selectedTourData = null;
         titleEl.value = "";
         liveEl.checked = false;
+        hardResetDateSelection();
       } catch (err) {
-        msgEl.textContent = `Error: ${err?.message || err}`;
+        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
 
     saveBtn.addEventListener("click", async () => {
-      if (selectedTourId) {
-        msgEl.textContent = "Use AMEND to update an existing tour.";
-        return;
-      }
+      if (selectedTourId) { setMsg(msgEl, "Use AMEND to update an existing tour.", "bad"); return; }
 
       const title = titleEl.value.trim();
       const isLive = !!liveEl.checked;
       syncEditorToHiddenTextarea();
       const description = descEl.value.trim();
 
-      if (!title) {
-        msgEl.textContent = "Title required.";
-        return;
-      }
+      if (!title) { setMsg(msgEl, "Title required.", "bad"); return; }
 
       const tourId = slugifyTitle(title);
-      if (!tourId) {
-        msgEl.textContent = "Invalid title.";
-        return;
-      }
+      if (!tourId) { setMsg(msgEl, "Invalid title.", "bad"); return; }
 
       const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
-      let imageUrl = selectedTourData?.imageUrl || "";
+      let imageUrl = "";
 
       try {
         if (file) {
           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
           const stamp = Date.now();
           const path = `tours/${tourId}/images/${stamp}-${safeName}`;
-
           const storageRef = sRef(storage, path);
           await uploadBytes(storageRef, file);
           imageUrl = await getDownloadURL(storageRef);
         }
 
-        const tourData = { title, imageUrl, isLive, description };
-        await update(ref(db, `tours/${tourId}`), tourData);
+        await update(ref(db, `tours/${tourId}`), {
+          title,
+          imageUrl,
+          isLive,
+          description,
+          createdAt: serverTimestamp(),
+          createdBy: adminEmail,
+          updatedAt: serverTimestamp(),
+          updatedBy: adminEmail,
+        });
 
-        msgEl.textContent = `Saved: tours/${tourId}`;
-        hardRefresh();
+        setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
+        // keep page stable; no reload needed
       } catch (err) {
-        msgEl.textContent = `Error: ${err?.message || err}`;
+        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
 
+    // ---- Confirm schedule (new slot) ----
     confirmScheduleBtn.addEventListener("click", async () => {
-      if (!selectedTourId) {
-        scheduleMsgEl.textContent = "Select a tour first.";
-        return;
-      }
-      if (!selectedDateKey) {
-        scheduleMsgEl.textContent = "Select a date first.";
-        return;
-      }
+      if (!selectedTourId) { setMsg(scheduleMsgEl, "Select a tour first.", "bad"); return; }
+      if (!selectedDateKey) { setMsg(scheduleMsgEl, "Select a date first.", "bad"); return; }
 
       const time = tourTimeEl.value;
       const capacity = parseInt(tourCapacityEl.value, 10);
       const price = parseFloat(tourPriceEl.value);
 
-      if (!time) {
-        scheduleMsgEl.textContent = "Select a time.";
-        return;
-      }
-      if (!capacity || capacity < 1) {
-        scheduleMsgEl.textContent = "Enter valid capacity.";
-        return;
-      }
-      if (Number.isNaN(price) || price < 0) {
-        scheduleMsgEl.textContent = "Enter valid price (>= 0).";
-        return;
-      }
+      if (!time) { setMsg(scheduleMsgEl, "Select a time.", "bad"); return; }
+      if (!capacity || capacity < 1) { setMsg(scheduleMsgEl, "Enter valid capacity.", "bad"); return; }
+      if (Number.isNaN(price) || price < 0) { setMsg(scheduleMsgEl, "Enter valid price (>= 0).", "bad"); return; }
 
       try {
         await set(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
           capacity,
           price,
+          createdAt: serverTimestamp(),
+          createdBy: adminEmail,
+          updatedAt: serverTimestamp(),
+          updatedBy: adminEmail,
         });
 
-        scheduleMsgEl.textContent = `Saved ${time} (${capacity} spaces) at £${price.toFixed(2)}.`;
+        setMsg(scheduleMsgEl, `Saved ${time} (${capacity} spaces) at £${price.toFixed(2)}.`, "ok");
 
         tourTimeEl.value = "";
         tourCapacityEl.value = "";
         tourPriceEl.value = "";
       } catch (err) {
-        scheduleMsgEl.textContent = `Error: ${err?.message || err}`;
+        setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
 
+    // Done
     void db;
   }
-                                </script>
-  
+</script>
+
 </body>
 </html>
