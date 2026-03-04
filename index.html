@@ -932,6 +932,7 @@ async function submitBooking(state){
     const bookingRef = push(ref(db, `bookings/${tourId}`));
     await set(bookingRef, {
       tourId,
+      tourTitle: state.articleEl.querySelector(".tour-title")?.textContent || state.tourId,
       dateKey,
       time,
       qty,
