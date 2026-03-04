@@ -315,6 +315,12 @@
   <div class="admin-msg" id="timesListMsg">No date selected.</div>
   <div id="timesList" class="admin-list"></div>
    </div>
+
+    <div id="bookingsWrap" class="admin-stack" style="margin-top: 20px;">
+  <div class="admin-subtitle" style="margin: 10px 0 0 0;">Bookings for selected date</div>
+  <div class="admin-msg" id="bookingsMsg">No date selected.</div>
+  <div id="bookingsList" class="admin-list"></div>
+</div>
     
   </div>
 </div>
@@ -331,20 +337,26 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import {
-    getDatabase,
-    ref,
-    set,
-    update,
-    onValue,
-    remove,
-  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue,
+  remove,
+  runTransaction,
+  query,
+  orderByChild,
+  equalTo,
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  
   import {
     getStorage,
     ref as sRef,
     uploadBytes,
     getDownloadURL,
   } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
+  
   import {
     getAuth,
     onAuthStateChanged,
@@ -679,6 +691,348 @@
     const timesListEl = document.getElementById("timesList");
 
     let unsubscribeTimes = null;
+
+    // ===== Bookings UI state =====
+    const bookingsMsgEl = document.getElementById("bookingsMsg");
+    const bookingsListEl = document.getElementById("bookingsList");
+    let unsubscribeBookings = null;
+
+    function detachBookingsListener(){
+      if (typeof unsubscribeBookings === "function"){
+        try { unsubscribeBookings(); } catch {}
+      }
+      unsubscribeBookings = null;
+    }
+
+    function clearBookingsUI(msg){
+      if (bookingsListEl) bookingsListEl.innerHTML = "";
+      if (bookingsMsgEl) bookingsMsgEl.textContent = msg || "No date selected.";
+    }
+
+    function fmtPrice(n){
+      const v = Number(n);
+      if (!Number.isFinite(v)) return "£0.00";
+      return `£${v.toFixed(2)}`;
+    }
+
+    function normalizePayStatus(b){
+      const s = String(b?.paymentStatus || b?.status || "outstanding").toLowerCase();
+      if (s === "paid" || s === "received") return "paid";
+      return "outstanding";
+    }
+
+    async function adjustCapacityForBookingChange({ tourId, dateKey, time, delta }){
+      // delta > 0 means booking needs MORE seats (capacity must go DOWN)
+      // delta < 0 means booking needs FEWER seats (capacity goes UP)
+      const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
+
+      const tx = await runTransaction(capRef, (current) => {
+        const cur = Number(current);
+        if (!Number.isFinite(cur)) return current;
+
+        if (delta > 0){
+          if (cur < delta) return;     // abort if not enough seats
+          return cur - delta;
+        }
+
+        if (delta < 0){
+          return cur + Math.abs(delta);
+        }
+
+        return cur;
+      });
+
+      return tx?.committed === true;
+    }
+
+    async function deleteBookingAndReturnCapacity({ tourId, bookingId, dateKey, time, qty }){
+      // return capacity first (safe), then delete booking
+      await adjustCapacityForBookingChange({ tourId, dateKey, time, delta: -Math.abs(qty || 0) });
+      await remove(ref(db, `bookings/${tourId}/${bookingId}`));
+    }
+
+    function renderBookingsList(bookingsObj){
+      if (!bookingsListEl) return;
+      bookingsListEl.innerHTML = "";
+
+      if (!bookingsObj || typeof bookingsObj !== "object"){
+        clearBookingsUI("No bookings for this date.");
+        return;
+      }
+
+      const entries = Object.entries(bookingsObj).map(([id, b]) => ({ id, b }));
+      if (!entries.length){
+        clearBookingsUI("No bookings for this date.");
+        return;
+      }
+
+      // sort by time then createdAt (fallback)
+      entries.sort((a, c) => {
+        const ta = String(a.b?.time || "");
+        const tc = String(c.b?.time || "");
+        if (ta < tc) return -1;
+        if (ta > tc) return 1;
+        const ca = a.b?.createdAt || 0;
+        const cc = c.b?.createdAt || 0;
+        return String(ca).localeCompare(String(cc));
+      });
+
+      if (bookingsMsgEl) bookingsMsgEl.textContent = `Bookings for ${selectedDateKey}: ${entries.length}`;
+
+      for (const { id: bookingId, b } of entries){
+        const name = String(b?.name || "");
+        const email = String(b?.email || "");
+        const phone = String(b?.phone || "");
+        const time = String(b?.time || "");
+        const qty = Number(b?.qty || 0);
+        const price = Number(b?.price || 0);
+        const payStatus = normalizePayStatus(b);
+        const paidAt = String(b?.paidAt || ""); // we will store datetime-local string
+
+        const refShort = String(bookingId).slice(-7);
+
+        const card = document.createElement("div");
+        card.style.border = "1px solid #b86b2a";
+        card.style.padding = "12px";
+        card.style.background = "#2b2b2b";
+        card.style.color = "rgba(255,255,255,0.92)";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.gap = "10px";
+
+        const top = document.createElement("div");
+        top.textContent = `${time} — ${name} — ${qty} pax — ${fmtPrice(price)} — Ref: ${refShort}`;
+        card.appendChild(top);
+
+        const detail = document.createElement("div");
+        detail.className = "admin-msg";
+        detail.textContent = `${email}${phone ? " • " + phone : ""}`;
+        card.appendChild(detail);
+
+        // row: qty + update
+        const rowQty = document.createElement("div");
+        rowQty.style.display = "flex";
+        rowQty.style.gap = "8px";
+
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.min = "1";
+        qtyInput.className = "admin-field";
+        qtyInput.style.flex = "1";
+        qtyInput.style.padding = "10px";
+        qtyInput.value = String(qty || 1);
+
+        const btnQty = document.createElement("button");
+        btnQty.type = "button";
+        btnQty.className = "admin-btn";
+        btnQty.style.flex = "1";
+        btnQty.textContent = "UPDATE PASSENGERS";
+
+        rowQty.appendChild(qtyInput);
+        rowQty.appendChild(btnQty);
+        card.appendChild(rowQty);
+
+        // row: price + update
+        const rowPrice = document.createElement("div");
+        rowPrice.style.display = "flex";
+        rowPrice.style.gap = "8px";
+
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "0";
+        priceInput.step = "0.01";
+        priceInput.className = "admin-field";
+        priceInput.style.flex = "1";
+        priceInput.style.padding = "10px";
+        priceInput.value = Number.isFinite(price) ? String(price) : "0";
+
+        const btnPrice = document.createElement("button");
+        btnPrice.type = "button";
+        btnPrice.className = "admin-btn";
+        btnPrice.style.flex = "1";
+        btnPrice.textContent = "UPDATE PRICE";
+
+        rowPrice.appendChild(priceInput);
+        rowPrice.appendChild(btnPrice);
+        card.appendChild(rowPrice);
+
+        // row: payment status + paid datetime
+        const rowPay = document.createElement("div");
+        rowPay.style.display = "flex";
+        rowPay.style.gap = "8px";
+        rowPay.style.alignItems = "center";
+
+        const paySelect = document.createElement("select");
+        paySelect.className = "admin-field";
+        paySelect.style.flex = "1";
+        paySelect.style.padding = "10px";
+        paySelect.innerHTML = `
+          <option value="outstanding">Payment outstanding</option>
+          <option value="paid">Payment received</option>
+        `;
+        paySelect.value = payStatus;
+
+        const paidAtInput = document.createElement("input");
+        paidAtInput.type = "datetime-local";
+        paidAtInput.className = "admin-field";
+        paidAtInput.style.flex = "1";
+        paidAtInput.style.padding = "10px";
+        paidAtInput.value = paidAt || "";
+        paidAtInput.disabled = (paySelect.value !== "paid");
+
+        const btnPay = document.createElement("button");
+        btnPay.type = "button";
+        btnPay.className = "admin-btn";
+        btnPay.style.flex = "1";
+        btnPay.textContent = "CONFIRM PAYMENT STATUS";
+
+        rowPay.appendChild(paySelect);
+        rowPay.appendChild(paidAtInput);
+        rowPay.appendChild(btnPay);
+        card.appendChild(rowPay);
+
+        // row: delete
+        const btnDel = document.createElement("button");
+        btnDel.type = "button";
+        btnDel.className = "admin-btn";
+        btnDel.textContent = "DELETE BOOKING";
+        card.appendChild(btnDel);
+
+        // interactions
+        paySelect.addEventListener("change", () => {
+          const isPaid = paySelect.value === "paid";
+          paidAtInput.disabled = !isPaid;
+          if (!isPaid) paidAtInput.value = "";
+        });
+
+        btnPrice.addEventListener("click", async () => {
+          const newPrice = parseFloat(priceInput.value);
+          if (Number.isNaN(newPrice) || newPrice < 0){
+            if (bookingsMsgEl) bookingsMsgEl.textContent = "Enter a valid price (>= 0).";
+            return;
+          }
+          const ok = confirm(`Update price for Ref ${refShort} to £${newPrice.toFixed(2)}?`);
+          if (!ok) return;
+
+          try {
+            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), { price: newPrice });
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated price for Ref ${refShort}.`;
+          } catch (err) {
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        btnQty.addEventListener("click", async () => {
+          const newQty = parseInt(qtyInput.value, 10);
+          if (!newQty || newQty < 1){
+            if (bookingsMsgEl) bookingsMsgEl.textContent = "Enter a valid passenger quantity (>= 1).";
+            return;
+          }
+
+          const oldQty = Number(qty || 0);
+          if (newQty === oldQty){
+            if (bookingsMsgEl) bookingsMsgEl.textContent = "Passenger quantity unchanged.";
+            return;
+          }
+
+          const ok = confirm(`Change passengers for Ref ${refShort} from ${oldQty} to ${newQty}?`);
+          if (!ok) return;
+
+          const delta = newQty - oldQty; // + means needs more seats; - means return seats
+
+          try {
+            const committed = await adjustCapacityForBookingChange({
+              tourId: selectedTourId,
+              dateKey: selectedDateKey,
+              time,
+              delta
+            });
+
+            if (!committed){
+              if (bookingsMsgEl) bookingsMsgEl.textContent = "Not enough places remaining to increase passengers.";
+              return;
+            }
+
+            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), { qty: newQty });
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated passengers for Ref ${refShort}.`;
+          } catch (err) {
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        btnPay.addEventListener("click", async () => {
+          const newStatus = paySelect.value;
+
+          if (newStatus === "paid"){
+            if (!paidAtInput.value){
+              if (bookingsMsgEl) bookingsMsgEl.textContent = "Payment received requires a payment date and time.";
+              return;
+            }
+          }
+
+          const ok = confirm(`Confirm payment status for Ref ${refShort}: ${newStatus.toUpperCase()}?`);
+          if (!ok) return;
+
+          try {
+            if (newStatus === "paid"){
+              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+                paymentStatus: "paid",
+                paidAt: paidAtInput.value
+              });
+            } else {
+              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
+                paymentStatus: "outstanding",
+                paidAt: ""
+              });
+            }
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Updated payment status for Ref ${refShort}.`;
+          } catch (err) {
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        btnDel.addEventListener("click", async () => {
+          const ok = confirm(`Delete booking Ref ${refShort}? This will return ${qty} seat(s) to capacity.`);
+          if (!ok) return;
+
+          try {
+            await deleteBookingAndReturnCapacity({
+              tourId: selectedTourId,
+              bookingId,
+              dateKey: selectedDateKey,
+              time,
+              qty: qty || 0
+            });
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Deleted booking Ref ${refShort}.`;
+          } catch (err) {
+            if (bookingsMsgEl) bookingsMsgEl.textContent = `Error: ${err?.message || err}`;
+          }
+        });
+
+        bookingsListEl.appendChild(card);
+      }
+    }
+
+    function attachBookingsListenerForSelectedDate(){
+      detachBookingsListener();
+
+      if (!selectedTourId || !selectedDateKey){
+        clearBookingsUI("No date selected.");
+        return;
+      }
+
+      if (bookingsMsgEl) bookingsMsgEl.textContent = "Loading bookings...";
+
+      const q = query(
+        ref(db, `bookings/${selectedTourId}`),
+        orderByChild("dateKey"),
+        equalTo(selectedDateKey)
+      );
+
+      unsubscribeBookings = onValue(q, (snap) => {
+        renderBookingsList(snap.val());
+      });
+    }
 
     function hardRefresh() {
       window.location.reload();
@@ -1022,6 +1376,7 @@
       cell.classList.add("selected");
 
       attachTimesListenerForSelectedDate();
+      attachBookingsListenerForSelectedDate();
     });
 
     calPrevBtn.addEventListener("click", () => {
@@ -1073,6 +1428,8 @@
 
           detachTimesListener();
           clearTimesUI();
+          detachBookingsListener();
+          clearBookingsUI("No date selected.");
 
           titleEl.value = tour?.title || "";
           liveEl.checked = !!tour?.isLive;
