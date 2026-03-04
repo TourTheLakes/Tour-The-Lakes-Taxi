@@ -381,6 +381,9 @@
   // =========================
   function bootAdminApp(user) {
     const adminEmail = String(user?.email || "").toLowerCase();
+      function hardRefresh() {
+        window.location.reload(true);
+         }
 
     // ---- UI helpers ----
     function setMsg(el, text, tone) {
@@ -1402,6 +1405,7 @@
         });
 
         setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
+        hardRefresh();
       } catch (err) {
         setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
@@ -1418,6 +1422,7 @@
       try {
         await remove(ref(db, `tours/${selectedTourId}`));
         setMsg(msgEl, `Deleted: tours/${selectedTourId}`, "ok");
+        hardRefresh();
         selectedTourId = "";
         selectedTourData = null;
         titleEl.value = "";
@@ -1466,6 +1471,7 @@
         });
 
         setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
+        hardRefresh();
         // keep page stable; no reload needed
       } catch (err) {
         setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
