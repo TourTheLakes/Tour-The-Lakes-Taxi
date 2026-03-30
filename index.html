@@ -145,6 +145,14 @@
       letter-spacing: 0.2px;
     }
 
+    .tour-nextdate a {
+  color: #b86b2a;
+  text-decoration: none;
+}
+.tour-nextdate a:hover {
+  text-decoration: underline;
+}
+
     /* ===== Public calendar (match admin look) ===== */
     .tour-booking-area { max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; }
     .tour-calendar { margin-top: 18px; border: 1px solid #b86b2a; padding: 14px; background: #2b2b2b; }
@@ -1015,12 +1023,14 @@
         const datesObj = snap.val();
         const next = findNextUpcomingSlot(datesObj);
 
-        if (!next) {
-          if (priceEl) priceEl.textContent = "";
-          if (nextEl) nextEl.textContent = "";
-          if (seatsEl) seatsEl.textContent = "";
-          return;
-        }
+       if (!next) {
+  if (priceEl) priceEl.textContent = "";
+  if (nextEl) {
+    nextEl.innerHTML = `Restricted availability, please get in touch to <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> for more details.`;
+  }
+  if (seatsEl) seatsEl.textContent = "";
+  return;
+}
 
         const title = articleEl.querySelector(".tour-title")?.textContent?.trim() || "tour";
         const priceText = formatGBP(next.price);
