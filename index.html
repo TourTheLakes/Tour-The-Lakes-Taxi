@@ -162,6 +162,19 @@
     }
     .tour-toggle img { display: block; width: 20px; height: 20px; border-bottom: none; }
 
+    .tour.is-open .tour-divider {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #2b2b2b;
+      padding: 12px 0;
+      margin: 0 0 20px 0;
+    }
+
+    .tour.is-open .tour-toggle {
+      background: #2b2b2b;
+    }
+
     .tour-details {
       max-width: 900px;
       margin: 0 auto;
@@ -312,12 +325,36 @@
     }
 
     @media screen and (max-width: 600px) {
-      .hero-wrapper h1 { top: 32%; font-size: 36px; }
-      .hero-wrapper p { top: 50%; font-size: 18px; }
-      .tour-image .tour-title { font-size: 36px; }
-      .tour-row { top: 40%; }
-      .tour-meta { font-size: 13px; line-height: 1.25; }
+      .hero-wrapper h1 {
+        top: 32%;
+        font-size: clamp(24px, 7.2vw, 36px);
+        white-space: nowrap;
+      }
+
+      .hero-wrapper p {
+        top: 50%;
+        font-size: 18px;
+      }
+
+      .tour-image .tour-title {
+        font-size: 36px;
+      }
+
+      .tour-row {
+        top: 40%;
+      }
+
+      .tour-meta {
+        font-size: 13px;
+        line-height: 1.25;
+      }
+
+      .tour.is-open .tour-divider {
+        top: 0;
+        padding: 10px 0;
+      }
     }
+    
   </style>
 </head>
 
@@ -355,13 +392,13 @@
       <div class="tour-divider">
         <div class="tour-divider-line"></div>
 
-        <span class="tour-read">Read</span>
+        <span class="tour-read tour-read-left">Read</span>
 
-        <button class="tour-toggle" type="button" aria-expanded="false">
-          <img src="images/TTLFAVIcon.png" alt="Expand tour" />
+        <button class="tour-toggle" type="button" aria-expanded="false" aria-label="Read more">
+          <img src="images/TTLFAVIcon.png" alt="" aria-hidden="true" />
         </button>
 
-        <span class="tour-read">More</span>
+        <span class="tour-read tour-read-state">More</span>
 
         <div class="tour-divider-line"></div>
       </div>
@@ -1165,9 +1202,19 @@
       const details = tour.querySelector(".tour-details");
       if (!details) return;
 
+      const stateText = tour.querySelector(".tour-read-state");
       const isOpen = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!isOpen));
-      details.hidden = isOpen;
+      const willOpen = !isOpen;
+
+      toggle.setAttribute("aria-expanded", String(willOpen));
+      toggle.setAttribute("aria-label", willOpen ? "Read less" : "Read more");
+
+      details.hidden = !willOpen;
+      tour.classList.toggle("is-open", willOpen);
+
+      if (stateText) {
+        stateText.textContent = willOpen ? "Less" : "More";
+      }
     });
 
     void db;
