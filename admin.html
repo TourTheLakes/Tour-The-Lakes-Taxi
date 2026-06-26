@@ -129,7 +129,8 @@
         <div id="liveBookingsList" class="admin-list" style="margin-bottom: 10px;"></div>
       </div>
 
-      <div class="admin-section-title">Create Tour</div>
+      <div class="admin-section-title" id="editorTitle">Create Tour</div>
+      <div class="admin-msg" id="editorModeMsg">No tour selected. You are creating a new tour.</div>
 
       <div class="admin-stack">
         <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
@@ -159,19 +160,20 @@
           <span>Live</span>
         </label>
 
-        <button id="saveTour" type="button" class="admin-btn admin-btn-full">SAVE</button>
         <div id="adminMsg" class="admin-msg"></div>
       </div>
 
       <div class="admin-subtitle">Existing Tours</div>
       <div class="admin-hint" style="margin-top:-6px;">
-        Select a tour to amend, manage dates/times, and view bookings for a selected date.
+        Select a tour to amend it, or use the calendar below to view saved dates across all tours.
       </div>
       <div id="tourList" class="admin-list"></div>
 
       <div class="admin-actions">
-        <button id="amendTour" type="button" class="admin-btn">AMEND</button>
-        <button id="deleteTour" type="button" class="admin-btn">DELETE</button>
+        <button id="newTour" type="button" class="admin-btn">NEW / CLEAR SELECTION</button>
+        <button id="saveTour" type="button" class="admin-btn admin-btn-full">SAVE NEW TOUR</button>
+        <button id="amendTour" type="button" class="admin-btn" hidden>AMEND SELECTED TOUR</button>
+        <button id="deleteTour" type="button" class="admin-btn" hidden>DELETE SELECTED TOUR</button>
       </div>
 
       <!-- Calendar -->
@@ -187,13 +189,20 @@
         </div>
 
         <div class="calendar-grid" id="calendarGrid"></div>
+
+        <div class="admin-stack" id="dateOverviewWrap" style="margin-top:16px;">
+          <div class="admin-msg" id="dateOverviewMsg">
+            Calendar overview shows all saved tour dates. Select a date to see what it holds.
+          </div>
+          <div id="dateOverviewList" class="admin-list" style="margin-bottom:0;"></div>
+        </div>
       </div>
 
       <!-- Schedule + bookings -->
       <div class="admin-schedule-section">
         <div class="admin-subtitle">Manage Times & Capacity</div>
 
-        <div class="admin-msg" id="scheduleMsg">Select a tour, then click a date in the calendar.</div>
+        <div class="admin-msg" id="scheduleMsg">Select a date to view what it holds, or select a tour to manage its times and bookings.</div>
 
         <div class="admin-stack" id="scheduleControls" hidden>
           <input id="selectedDate" class="admin-field" type="text" readonly />
@@ -422,7 +431,28 @@
     const tourListEl = document.getElementById("tourList");
     const amendBtn = document.getElementById("amendTour");
     const deleteBtn = document.getElementById("deleteTour");
+    const newTourBtn = document.getElementById("newTour");
+    const editorTitleEl = document.getElementById("editorTitle");
+    const editorModeMsgEl = document.getElementById("editorModeMsg");
     const descEl = document.getElementById("tourDescription");
+
+    function setEditorMode(mode, tourId = "") {
+      const editing = mode === "edit";
+
+      if (editorTitleEl) {
+        editorTitleEl.textContent = editing ? "Amend Tour" : "Create Tour";
+      }
+
+      if (editorModeMsgEl) {
+        editorModeMsgEl.textContent = editing
+          ? `Selected tour: ${tourId}. Changes here will amend the existing tour.`
+          : "No tour selected. You are creating a new tour.";
+      }
+
+      if (saveBtn) saveBtn.hidden = editing;
+      if (amendBtn) amendBtn.hidden = !editing;
+      if (deleteBtn) deleteBtn.hidden = !editing;
+    }
 
     // Live feed
     const liveBookingsMsgEl = document.getElementById("liveBookingsMsg");
@@ -452,6 +482,9 @@
     const calNextBtn = document.getElementById("calNext");
     const calMonthEl = document.getElementById("calMonth");
     const calendarGrid = document.getElementById("calendarGrid");
+    const dateOverviewMsgEl = document.getElementById("dateOverviewMsg");
+    const dateOverviewListEl = document.getElementById("dateOverviewList");
+
     const CELL_COUNT = 42;
     let viewYear = new Date().getFullYear();
     let viewMonth = new Date().getMonth();
@@ -460,6 +493,9 @@
 
     let selectedTourId = "";
     let selectedTourData = null;
+
+    let allToursCache = {};
+    let allDatesIndex = new Map();
 
     // ---- shared helpers ----
     function pad2(n) { return String(n).padStart(2, "0"); }
@@ -617,6 +653,7 @@
     addItineraryBtn.addEventListener("click", addItineraryBlank);
     [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => el.addEventListener("input", syncEditorToHiddenTextarea));
     renderItineraryEditor();
+    setEditorMode("create");
 
     // ---- Live bookings feed (read-only, across all tours) ----
     function detachLiveBookings(){ unsubscribeLiveBookings = detach(unsubscribeLiveBookings); }
@@ -713,6 +750,39 @@
       }
     }
 
+    function rebuildAllDatesIndex(tours) {
+      const index = new Map();
+
+      if (!tours || typeof tours !== "object") return index;
+
+      for (const [tourId, tour] of Object.entries(tours)) {
+        const dates = tour?.dates;
+        if (!dates || typeof dates !== "object") continue;
+
+        for (const [dateKey, dateNode] of Object.entries(dates)) {
+          const timesObj = dateNode?.times || {};
+          const times = Object.keys(timesObj).sort();
+
+          if (!index.has(dateKey)) index.set(dateKey, []);
+
+          index.get(dateKey).push({
+            tourId,
+            title: tour?.title || tourId,
+            isLive: !!tour?.isLive,
+            times,
+            timesObj,
+          });
+        }
+      }
+
+      return index;
+    }
+
+    function useAllTourCalendarOverview() {
+      savedDates = new Set(allDatesIndex.keys());
+      renderCalendar();
+    }
+
     function renderCalendar() {
       ensureGridCells();
       calMonthEl.textContent = monthLabel(viewYear, viewMonth);
@@ -761,16 +831,94 @@
     function clearTimesUI(){ if (timesListEl) timesListEl.innerHTML = ""; setMsg(timesListMsgEl, "No date selected.", null); }
     function clearBookingsUI(text){ if (bookingsListEl) bookingsListEl.innerHTML = ""; setMsg(bookingsMsgEl, text || "No date selected.", null); }
 
+    function clearDateOverview(text) {
+      if (dateOverviewListEl) dateOverviewListEl.innerHTML = "";
+      setMsg(dateOverviewMsgEl, text || "Select a date to see what it holds.", null);
+    }
+
+    function renderDateOverview(dateKey) {
+      if (!dateOverviewListEl) return;
+
+      dateOverviewListEl.innerHTML = "";
+
+      const entries = allDatesIndex.get(dateKey) || [];
+
+      if (!entries.length) {
+        clearDateOverview(`No tour data saved on ${dateKey}.`);
+        return;
+      }
+
+      setMsg(dateOverviewMsgEl, `${dateKey} contains ${entries.length} tour record(s):`, null);
+
+      for (const item of entries) {
+        const row = document.createElement("div");
+        row.style.border = "1px solid #b86b2a";
+        row.style.padding = "10px";
+        row.style.background = "#2b2b2b";
+        row.style.color = "rgba(255,255,255,0.92)";
+        row.style.display = "flex";
+        row.style.flexDirection = "column";
+        row.style.gap = "8px";
+
+        const title = document.createElement("div");
+        title.textContent = `${item.title} ${item.isLive ? "(live)" : "(not live)"}`;
+        row.appendChild(title);
+
+        const details = document.createElement("div");
+        details.className = "admin-msg";
+        details.textContent = item.times.length
+          ? `Times: ${item.times.join(", ")}`
+          : "Date exists but no saved times found.";
+        row.appendChild(details);
+
+        const manageBtn = document.createElement("button");
+        manageBtn.type = "button";
+        manageBtn.className = "admin-btn";
+        manageBtn.textContent = "MANAGE THIS TOUR / DATE";
+        manageBtn.addEventListener("click", () => {
+          selectTour(item.tourId, allToursCache[item.tourId], { keepDate: dateKey });
+        });
+
+        row.appendChild(manageBtn);
+        dateOverviewListEl.appendChild(row);
+      }
+    }
+
     function hardResetDateSelection(){
       selectedDateKey = "";
       if (selectedDateEl) selectedDateEl.value = "";
       if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-      setMsg(scheduleMsgEl, "Select a tour, then click a date in the calendar.", null);
+      setMsg(scheduleMsgEl, "Select a date to view what it holds, or select a tour to manage its times and bookings.", null);
       calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
       detachTimesListener();
       detachBookingsListener();
       clearTimesUI();
       clearBookingsUI("No date selected.");
+    }
+
+    function clearTourEditor() {
+      selectedTourId = "";
+      selectedTourData = null;
+
+      titleEl.value = "";
+      imgFileEl.value = "";
+      liveEl.checked = false;
+      descEl.value = "";
+
+      descProductTitleEl.value = "";
+      descOverviewEl.value = "";
+      descMeetingPointEl.value = "";
+      itineraryItems = [];
+      renderItineraryEditor();
+      syncEditorToHiddenTextarea();
+
+      hardResetDateSelection();
+      unsubscribeDates = detach(unsubscribeDates);
+      useAllTourCalendarOverview();
+      clearDateOverview("Calendar overview shows all saved tour dates. Select a date to see what it holds.");
+
+      setEditorMode("create");
+      setMsg(msgEl, "Create mode. No tour selected.", null);
     }
 
     function attachTimesListenerForSelectedDate() {
@@ -1303,18 +1451,30 @@
       const key = cell.dataset.key;
       if (!key) return;
 
+      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
+      cell.classList.add("selected");
+
+      selectedDateKey = key;
+
       if (!selectedTourId) {
-        setMsg(msgEl, "Select a tour first (then pick dates).", "bad");
+        if (selectedDateEl) selectedDateEl.value = "";
+        if (scheduleControlsEl) scheduleControlsEl.hidden = true;
+
+        detachTimesListener();
+        detachBookingsListener();
+        clearTimesUI();
+        clearBookingsUI("Select a tour/date to view bookings.");
+
+        renderDateOverview(key);
+        setMsg(scheduleMsgEl, "Select a tour from the date overview to manage times and bookings.", null);
         return;
       }
 
-      selectedDateKey = key;
       if (selectedDateEl) selectedDateEl.value = key;
       if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-      setMsg(scheduleMsgEl, `Selected date: ${key}`, null);
 
-      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
-      cell.classList.add("selected");
+      clearDateOverview(`Managing ${selectedTourData?.title || selectedTourId} on ${key}.`);
+      setMsg(scheduleMsgEl, `Selected date: ${key}`, null);
 
       attachTimesListenerForSelectedDate();
       attachBookingsListenerForSelectedDate();
@@ -1334,11 +1494,52 @@
 
     renderCalendar();
 
+    function selectTour(tourId, tour, options = {}) {
+      selectedTourId = tourId;
+      selectedTourData = tour || null;
+
+      hardResetDateSelection();
+
+      titleEl.value = tour?.title || "";
+      imgFileEl.value = "";
+      liveEl.checked = !!tour?.isLive;
+      descEl.value = tour?.description || "";
+      loadEditorFromHtml(descEl.value);
+
+      setEditorMode("edit", tourId);
+      setMsg(msgEl, `Selected: ${tourId}`, "ok");
+
+      attachDatesListenerForTour(tourId);
+
+      const keepDate = options.keepDate || "";
+      if (keepDate) {
+        selectedDateKey = keepDate;
+        if (selectedDateEl) selectedDateEl.value = keepDate;
+        if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+        setMsg(scheduleMsgEl, `Selected date: ${keepDate}`, null);
+        attachTimesListenerForSelectedDate();
+        attachBookingsListenerForSelectedDate();
+      }
+        }
+
+    if (newTourBtn) {
+      newTourBtn.addEventListener("click", clearTourEditor);
+    }
+
     // ---- Tours list + select ----
     onValue(ref(db, "tours"), (snapshot) => {
-      const tours = snapshot.val();
+      const tours = snapshot.val() || {};
+
+      allToursCache = tours;
+      allDatesIndex = rebuildAllDatesIndex(tours);
+
       tourListEl.innerHTML = "";
-      if (!tours) return;
+
+      if (!Object.keys(tours).length) {
+        useAllTourCalendarOverview();
+        clearDateOverview("No tours saved yet.");
+        return;
+      }
 
       for (const [tourId, tour] of Object.entries(tours)) {
         const row = document.createElement("button");
@@ -1352,22 +1553,14 @@
         row.style.textAlign = "left";
 
         row.addEventListener("click", () => {
-          selectedTourId = tourId;
-          selectedTourData = tour || null;
-
-          hardResetDateSelection();
-
-          titleEl.value = tour?.title || "";
-          liveEl.checked = !!tour?.isLive;
-          descEl.value = tour?.description || "";
-          loadEditorFromHtml(descEl.value);
-
-          setMsg(msgEl, `Selected: ${tourId}`, "ok");
-
-          attachDatesListenerForTour(tourId);
+          selectTour(tourId, tour);
         });
 
         tourListEl.appendChild(row);
+      }
+
+      if (!selectedTourId) {
+        useAllTourCalendarOverview();
       }
     });
 
@@ -1406,7 +1599,14 @@
         });
 
         setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
-        hardRefresh();
+        selectedTourData = {
+          ...(selectedTourData || {}),
+          title,
+          imageUrl,
+          isLive,
+          description,
+        };
+        setEditorMode("edit", selectedTourId);
       } catch (err) {
         setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
@@ -1423,12 +1623,7 @@
       try {
         await remove(ref(db, `tours/${selectedTourId}`));
         setMsg(msgEl, `Deleted: tours/${selectedTourId}`, "ok");
-        hardRefresh();
-        selectedTourId = "";
-        selectedTourData = null;
-        titleEl.value = "";
-        liveEl.checked = false;
-        hardResetDateSelection();
+        clearTourEditor();
       } catch (err) {
         setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
@@ -1478,8 +1673,15 @@
         });
 
         setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
-        hardRefresh();
-        // keep page stable; no reload needed
+        selectedTourId = tourId;
+        selectedTourData = {
+          title,
+          imageUrl,
+          isLive,
+          description,
+        };
+        setEditorMode("edit", tourId);
+        setMsg(msgEl, `Saved: tours/${tourId}. You are now editing this tour.`, "ok");
       } catch (err) {
         setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
       }
@@ -1498,8 +1700,16 @@
       if (!capacity || capacity < 1) { setMsg(scheduleMsgEl, "Enter valid capacity.", "bad"); return; }
       if (Number.isNaN(price) || price < 0) { setMsg(scheduleMsgEl, "Enter valid price (>= 0).", "bad"); return; }
 
+      const slotRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
+
       try {
-        await set(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
+        const existingSnap = await get(slotRef);
+        if (existingSnap.exists()) {
+          setMsg(scheduleMsgEl, `A slot already exists at ${time}. Use UPDATE CAPACITY / UPDATE TIME on the existing row.`, "bad");
+          return;
+        }
+
+        await set(slotRef, {
           capacity,
           price,
           createdAt: serverTimestamp(),
