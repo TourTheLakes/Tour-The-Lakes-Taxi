@@ -510,7 +510,7 @@
         .filter((x) => x.title || x.body);
 
       let html = "";
-      if (pt) html += `<div class="tsec"><div class="tsec-h">Product Title</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
+      if (pt) html += `<div class="tsec"><div class="tsec-h">Tour</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
       if (ov) html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
       if (mp) html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
 
@@ -595,7 +595,7 @@
         const bEl = sec.querySelector(".tsec-b");
         const b = bEl ? bEl.textContent.trim() : "";
 
-        if (h === "Product Title") descProductTitleEl.value = b;
+        if (h === "Product Title" || h === "Tour") descProductTitleEl.value = b;
         if (h === "Overview") descOverviewEl.value = b;
         if (h === "Meeting Point") descMeetingPointEl.value = b;
 
