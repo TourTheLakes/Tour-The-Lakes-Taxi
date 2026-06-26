@@ -702,7 +702,7 @@
         </div>
 
         <p><strong>What’s Next?</strong></p>
-        <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know. You will also receive a text message containing this link.</p>
+        <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know.</p>
 
         <p><strong>Please confirm your details:</strong></p>
 
@@ -1135,7 +1135,9 @@
         if (tour.imageUrl) {
           const img = document.createElement("img");
           img.src = tour.imageUrl;
-          img.alt = tour.title || "Tour image";
+          img.alt = tour.title
+            ? `${tour.title} with Tour The Lakes in the Lake District`
+            : "Lake District tour with Tour The Lakes";
           imageWrap.appendChild(img);
         }
 
