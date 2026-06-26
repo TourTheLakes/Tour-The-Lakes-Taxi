@@ -432,7 +432,7 @@
               <input class="booking-field booking-name" type="text" placeholder="Full name" autocomplete="name" />
               <input class="booking-field booking-email" type="email" placeholder="Email" autocomplete="email" />
               <input class="booking-field booking-phone" type="tel" placeholder="Phone" autocomplete="tel" />
-              <input class="booking-field booking-qty" type="number" min="1" value="1" placeholder="Passengers" />
+              <input class="booking-field booking-qty" type="number" min="1" placeholder="Passengers" />
 
               <button type="button" class="booking-btn">REQUEST BOOKING</button>
               <div class="booking-msg"></div>
@@ -624,11 +624,12 @@
       }
 
       if (els.qty) {
-        els.qty.value = "1";
-        els.qty.min = "1";
-        if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
-        else els.qty.removeAttribute("max");
-      }
+  els.qty.value = "";
+  els.qty.placeholder = "Passengers";
+  els.qty.min = "1";
+  if (Number.isFinite(cap) && cap >= 1) els.qty.max = String(cap);
+  else els.qty.removeAttribute("max");
+}
     }
 
     // ---------- modal ----------
