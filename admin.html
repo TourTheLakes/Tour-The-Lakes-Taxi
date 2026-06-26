@@ -1447,18 +1447,24 @@
       const tourId = slugifyTitle(title);
       if (!tourId) { setMsg(msgEl, "Invalid title.", "bad"); return; }
 
+      const existingSnap = await get(ref(db, `tours/${tourId}`));
+      if (existingSnap.exists()) {
+        setMsg(msgEl, "A tour with this title already exists. Select it and use AMEND.", "bad");
+        return;
+      }
+
       const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
+      if (!file) { setMsg(msgEl, "Tour image required.", "bad"); return; }
+
       let imageUrl = "";
 
       try {
-        if (file) {
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const stamp = Date.now();
-          const path = `tours/${tourId}/images/${stamp}-${safeName}`;
-          const storageRef = sRef(storage, path);
-          await uploadBytes(storageRef, file);
-          imageUrl = await getDownloadURL(storageRef);
-        }
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const stamp = Date.now();
+        const path = `tours/${tourId}/images/${stamp}-${safeName}`;
+        const storageRef = sRef(storage, path);
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
 
         await update(ref(db, `tours/${tourId}`), {
           title,
