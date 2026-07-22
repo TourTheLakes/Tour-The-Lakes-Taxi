@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <title>Lake District Tours from Windermere | Tour The Lakes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes.">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://tourthelakes.com/">
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
+  <link rel="apple-touch-icon" href="images/TTLFAVIcon.png" />
+
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Lake District Tours from Windermere | Tour The Lakes" />
+  <meta property="og:description" content="Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes." />
+  <meta property="og:url" content="https://tourthelakes.com/" />
+  <meta property="og:site_name" content="Tour The Lakes" />
+  <meta property="og:image" content="https://tourthelakes.com/images/DSC_0092.JPG.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:alt" content="Lake District tour view near Windermere" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Lake District Tours from Windermere | Tour The Lakes" />
+  <meta name="twitter:description" content="Private Lake District tours from Windermere Railway Station with Tour The Lakes." />
+  <meta name="twitter:image" content="https://tourthelakes.com/images/DSC_0092.JPG.jpg" />
+  <meta name="twitter:image:alt" content="Lake District tour view near Windermere" />
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-W6JY1LZXTP"></script>
   <script>
@@ -17,42 +34,62 @@
     gtag('config', 'G-W6JY1LZXTP');
   </script>
 
-<script type="application/ld+json">
+<script type="application/ld+json" id="ttl-site-schema">
 {
   "@context": "https://schema.org",
-  "@type": "TourOperator",
-  "name": "Tour The Lakes",
-  "url": "https://tourthelakes.com/",
-  "image": "https://tourthelakes.com/images/DSC_0092.JPG.jpg",
-  "email": "info@tourthelakes.com",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Windermere",
-    "addressRegion": "Cumbria",
-    "addressCountry": "GB"
-  },
-  "areaServed": [
+  "@graph": [
     {
-      "@type": "Place",
-      "name": "Windermere"
+      "@type": "WebPage",
+      "@id": "https://tourthelakes.com/#webpage",
+      "url": "https://tourthelakes.com/",
+      "name": "Lake District Tours from Windermere | Tour The Lakes",
+      "description": "Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes.",
+      "isPartOf": { "@id": "https://tourthelakes.com/#website" },
+      "about": { "@id": "https://tourthelakes.com/#tour-operator" },
+      "primaryImageOfPage": { "@id": "https://tourthelakes.com/#primary-image" },
+      "inLanguage": "en-GB"
     },
     {
-      "@type": "Place",
-      "name": "Lake District"
-    }
-  ],
-  "openingHoursSpecification": [
+      "@type": "WebSite",
+      "@id": "https://tourthelakes.com/#website",
+      "url": "https://tourthelakes.com/",
+      "name": "Tour The Lakes",
+      "publisher": { "@id": "https://tourthelakes.com/#tour-operator" },
+      "inLanguage": "en-GB"
+    },
     {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday"
+      "@type": "ImageObject",
+      "@id": "https://tourthelakes.com/#primary-image",
+      "url": "https://tourthelakes.com/images/DSC_0092.JPG.jpg",
+      "contentUrl": "https://tourthelakes.com/images/DSC_0092.JPG.jpg",
+      "caption": "Lake District tour view near Windermere",
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "TourOperator",
+      "@id": "https://tourthelakes.com/#tour-operator",
+      "name": "Tour The Lakes",
+      "url": "https://tourthelakes.com/",
+      "image": { "@id": "https://tourthelakes.com/#primary-image" },
+      "email": "info@tourthelakes.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Windermere",
+        "addressRegion": "Cumbria",
+        "addressCountry": "GB"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Windermere" },
+        { "@type": "Place", "name": "Lake District" }
       ],
-      "opens": "10:00",
-      "closes": "14:00"
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "10:00",
+          "closes": "14:00"
+        }
+      ]
     }
   ]
 }
@@ -68,6 +105,18 @@
       overflow-x: hidden;
     }
     *, *::before, *::after { box-sizing: border-box; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     .site-header { width: 100%; }
     .header-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
@@ -184,6 +233,13 @@
     }
 
     .tour-description { white-space: pre-wrap; }
+    .tour-facts { margin-bottom: 24px; }
+    .tour-facts[hidden] { display: none; }
+    .tour-fact { color: rgba(255,255,255,0.92); line-height: 1.5; margin-bottom: 6px; }
+    .tour-fact:last-child { margin-bottom: 0; }
+    .tour-fact-label { color: #b86b2a; font-weight: 600; }
+    .tour-extra-sections:empty { display: none; }
+    .tour-extra-sections .tsec-b { white-space: pre-wrap; }
     .tsec { margin-bottom: 24px; }
     .tsec-h { color: #b86b2a; font-weight: 600; font-size: 20px; margin-bottom: 8px; }
     .tsec-b { color: rgba(255,255,255,0.92); line-height: 1.5; }
@@ -366,14 +422,14 @@
   </header>
 
   <div class="hero-wrapper">
-    <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" />
+    <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" fetchpriority="high" decoding="async" />
     <h1>Explore the Lake District</h1>
     <p>Sightseeing with a difference</p>
   </div>
 
   <div class="hero-gap"></div>
 
-  <section id="tours"></section>
+  <section id="tours" aria-label="Available Lake District tours"></section>
 
   <template id="tourTemplate">
     <article class="tour" data-tour-id="">
@@ -403,14 +459,16 @@
         <div class="tour-divider-line"></div>
       </div>
 
-      <div class="tour-details" hidden>
+      <div class="tour-details" hidden aria-hidden="true">
+        <div class="tour-facts" hidden></div>
         <div class="tour-description"></div>
+        <div class="tour-extra-sections"></div>
 
         <div class="tour-booking-area">
-          <div class="tour-calendar">
+          <div class="tour-calendar" role="group" aria-label="Tour availability calendar">
             <div class="cal-header">
               <button type="button" class="cal-nav cal-prev" aria-label="Previous month">◀</button>
-              <div class="cal-month"></div>
+              <div class="cal-month" aria-live="polite"></div>
               <button type="button" class="cal-nav cal-next" aria-label="Next month">▶</button>
             </div>
 
@@ -418,24 +476,31 @@
               <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
             </div>
 
-            <div class="cal-grid"></div>
+            <div class="cal-grid" role="grid" aria-label="Choose a tour date"></div>
           </div>
 
           <div class="tour-workspace">
-            <div class="slots-msg">Select a date.</div>
+            <div class="slots-msg" aria-live="polite">Select a date.</div>
             <div class="slots-list"></div>
 
             <div class="booking-wrap" hidden>
               <div class="booking-title">Your booking</div>
-              <div class="booking-summary"></div>
+              <div class="booking-summary" aria-live="polite"></div>
 
+              <label class="sr-only booking-name-label">Full name</label>
               <input class="booking-field booking-name" type="text" placeholder="Full name" autocomplete="name" />
-              <input class="booking-field booking-email" type="email" placeholder="Email" autocomplete="email" />
-              <input class="booking-field booking-phone" type="tel" placeholder="Phone" autocomplete="tel" />
-              <input class="booking-field booking-qty" type="number" min="1" placeholder="Passengers" />
+
+              <label class="sr-only booking-email-label">Email</label>
+              <input class="booking-field booking-email" type="email" placeholder="Email" autocomplete="email" inputmode="email" />
+
+              <label class="sr-only booking-phone-label">Phone</label>
+              <input class="booking-field booking-phone" type="tel" placeholder="Phone" autocomplete="tel" inputmode="tel" />
+
+              <label class="sr-only booking-qty-label">Passengers</label>
+              <input class="booking-field booking-qty" type="number" min="1" step="1" placeholder="Passengers" inputmode="numeric" />
 
               <button type="button" class="booking-btn">REQUEST BOOKING</button>
-              <div class="booking-msg"></div>
+              <div class="booking-msg" role="status" aria-live="polite"></div>
             </div>
           </div>
         </div>
@@ -515,6 +580,146 @@
         .replaceAll("'", "&#39;");
     }
 
+    function slugify(value) {
+      return String(value || "tour")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "tour";
+    }
+
+    function plainTextFromHtml(html) {
+      const holder = document.createElement("div");
+      holder.innerHTML = String(html || "");
+      return (holder.textContent || "").replace(/\s+/g, " ").trim();
+    }
+
+    function firstUsefulValue(...values) {
+      for (const value of values) {
+        const clean = String(value ?? "").trim();
+        if (clean) return clean;
+      }
+      return "";
+    }
+
+    function renderTourFacts(articleEl, tour) {
+      const factsEl = articleEl.querySelector(".tour-facts");
+      if (!factsEl) return;
+
+      const facts = [
+        ["Duration", firstUsefulValue(tour?.duration)],
+        ["Tour type", firstUsefulValue(tour?.tourType, "Small-group sightseeing tour")],
+        ["Departure", firstUsefulValue(tour?.departurePoint, tour?.meetingPoint, "Windermere Railway Station")],
+      ].filter(([, value]) => value);
+
+      factsEl.innerHTML = "";
+      for (const [label, value] of facts) {
+        const row = document.createElement("div");
+        row.className = "tour-fact";
+
+        const labelEl = document.createElement("span");
+        labelEl.className = "tour-fact-label";
+        labelEl.textContent = `${label}: `;
+
+        const valueEl = document.createElement("span");
+        valueEl.textContent = value;
+
+        row.append(labelEl, valueEl);
+        factsEl.appendChild(row);
+      }
+
+      factsEl.hidden = facts.length === 0;
+    }
+
+    function appendTourExtraSection(container, heading, value) {
+      const clean = String(value ?? "").trim();
+      if (!clean) return;
+
+      const section = document.createElement("section");
+      section.className = "tsec";
+
+      const title = document.createElement("h3");
+      title.className = "tsec-h";
+      title.textContent = heading;
+
+      const body = document.createElement("div");
+      body.className = "tsec-b";
+      body.textContent = clean;
+
+      section.append(title, body);
+      container.appendChild(section);
+    }
+
+    function renderTourExtraSections(articleEl, tour) {
+      const container = articleEl.querySelector(".tour-extra-sections");
+      if (!container) return;
+      container.innerHTML = "";
+
+      appendTourExtraSection(container, "At a Glance", tour?.shortSummary);
+      appendTourExtraSection(container, "What Is Included", tour?.included);
+      appendTourExtraSection(container, "What Is Not Included", tour?.notIncluded);
+      appendTourExtraSection(container, "Accessibility", tour?.accessibility);
+      appendTourExtraSection(container, "Additional Information", tour?.additionalInformation);
+    }
+
+    function removeGeneratedTourSchema() {
+      document.getElementById("ttl-tour-schema")?.remove();
+    }
+
+    function buildTourSchema(toursObj) {
+      const items = [];
+
+      for (const [tourId, tour] of Object.entries(toursObj || {})) {
+        if (!tour || tour.isLive !== true) continue;
+
+        const title = firstUsefulValue(tour.title, tourId);
+        const description = firstUsefulValue(
+          tour.shortSummary,
+          plainTextFromHtml(tour.description)
+        );
+        const next = findNextUpcomingSlot(tour.dates);
+        const url = `https://tourthelakes.com/#tour-${slugify(tourId)}`;
+
+        const item = {
+          "@type": "TouristTrip",
+          "@id": `${url}-schema`,
+          "name": title,
+          "url": url,
+          "provider": { "@id": "https://tourthelakes.com/#tour-operator" },
+          "touristType": firstUsefulValue(tour.tourType, "Sightseeing visitors"),
+        };
+
+        if (description) item.description = description;
+        if (tour.imageUrl) item.image = tour.imageUrl;
+
+        if (next && Number.isFinite(Number(next.price))) {
+          item.offers = {
+            "@type": "Offer",
+            "url": url,
+            "priceCurrency": "GBP",
+            "price": Number(next.price).toFixed(2),
+            "availability": Number(next.capacity) > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/SoldOut",
+            "validFrom": next.dt.toISOString(),
+          };
+        }
+
+        items.push(item);
+      }
+
+      if (!items.length) return;
+
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.id = "ttl-tour-schema";
+      script.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": items,
+      });
+      document.head.appendChild(script);
+    }
+
     function findNextUpcomingSlot(datesObj) {
       if (!datesObj || typeof datesObj !== "object") return null;
 
@@ -570,6 +775,7 @@
       for (const state of tourCalStates.values()) detachTourCalendarListeners(state);
       tourCalStates.clear();
       toursEl.innerHTML = "";
+      removeGeneratedTourSchema();
     }
 
     // ---------- booking UI helpers ----------
@@ -619,8 +825,19 @@
       const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
 
       if (els.summary) {
+        const details = [];
+        if (state.tourData?.duration) details.push(state.tourData.duration);
+        details.push(firstUsefulValue(
+          state.tourData?.departurePoint,
+          state.tourData?.meetingPoint,
+          "Windermere Railway Station"
+        ));
+
+        const detailText = details.filter(Boolean).join(" — ");
         els.summary.textContent =
-          `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText}` : "");
+          `${state.selectedDateKey} at ${slot.time} — ${capText}` +
+          (priceText ? ` — ${priceText} per passenger` : "") +
+          (detailText ? ` — ${detailText}` : "");
       }
 
       if (els.qty) {
@@ -737,6 +954,8 @@
           <p><strong>Date & Time:</strong> ${escapeHtml(data.date)} at ${escapeHtml(data.time)}</p>
           <p><strong>Passengers:</strong> ${escapeHtml(data.qty)}</p>
           <p><strong>Price per passenger:</strong> ${escapeHtml(data.price)}</p>
+          ${data.duration ? `<p><strong>Duration:</strong> ${escapeHtml(data.duration)}</p>` : ""}
+          ${data.departurePoint ? `<p><strong>Departure:</strong> ${escapeHtml(data.departurePoint)}</p>` : ""}
         </div>
 
         <p><strong>What’s Next?</strong></p>
@@ -750,7 +969,7 @@
           <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
         </div>
 
-        <p>If something doesn’t look right, email <strong>info@tourthelakes.com</strong> and quote your booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
+        <p>If something doesn’t look right, email <a href="mailto:info@tourthelakes.com"><strong>info@tourthelakes.com</strong></a> and quote your booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
       `;
 
       modal.appendChild(closeBtn);
@@ -820,6 +1039,14 @@
           email,
           phone,
           price: slotPrice,
+          duration: firstUsefulValue(state.tourData?.duration),
+          departurePoint: firstUsefulValue(
+            state.tourData?.departurePoint,
+            state.tourData?.meetingPoint,
+            "Windermere Railway Station"
+          ),
+          tourType: firstUsefulValue(state.tourData?.tourType, "Small-group sightseeing tour"),
+          shortSummary: firstUsefulValue(state.tourData?.shortSummary),
 
           // keep your existing field
           createdAt: serverTimestamp(),
@@ -845,6 +1072,12 @@
           name,
           email,
           phone,
+          duration: firstUsefulValue(state.tourData?.duration),
+          departurePoint: firstUsefulValue(
+            state.tourData?.departurePoint,
+            state.tourData?.meetingPoint,
+            "Windermere Railway Station"
+          ),
         });
 
         // keep the UI stable after success
@@ -873,6 +1106,8 @@
       for (let i = 0; i < CELL_COUNT; i++) {
         const cell = document.createElement("div");
         cell.className = "cal-cell is-empty";
+        cell.setAttribute("role", "gridcell");
+        cell.setAttribute("aria-selected", "false");
         cell.dataset.key = "";
         cell.textContent = "";
         gridEl.appendChild(cell);
@@ -892,6 +1127,8 @@
         cell.className = "cal-cell is-empty";
         cell.dataset.key = "";
         cell.textContent = "";
+        cell.setAttribute("aria-selected", "false");
+        cell.removeAttribute("aria-label");
 
         const dayNum = i - startIdx + 1;
         if (dayNum < 1 || dayNum > dim) continue;
@@ -900,9 +1137,13 @@
         cell.dataset.key = key;
         cell.textContent = String(dayNum);
         cell.classList.remove("is-empty");
+        cell.setAttribute("aria-label", key);
 
         if (state.savedDates.has(key)) cell.classList.add("has-data");
-        if (state.selectedDateKey === key) cell.classList.add("selected");
+        if (state.selectedDateKey === key) {
+          cell.classList.add("selected");
+          cell.setAttribute("aria-selected", "true");
+        }
       }
     }
 
@@ -947,8 +1188,16 @@
           `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
           `${priceText ? " — " + priceText : ""}`;
 
-        if (Number.isFinite(cap) && cap <= 0) btn.disabled = true;
-        if (state.selectedTime === time) btn.classList.add("selected");
+        if (Number.isFinite(cap) && cap <= 0) {
+          btn.disabled = true;
+          btn.setAttribute("aria-label", `${time}, sold out`);
+        }
+        if (state.selectedTime === time) {
+          btn.classList.add("selected");
+          btn.setAttribute("aria-pressed", "true");
+        } else {
+          btn.setAttribute("aria-pressed", "false");
+        }
 
         btn.addEventListener("click", () => {
           if (btn.disabled) return;
@@ -957,8 +1206,12 @@
           state.selectedSlot = { time, capacity: slot.capacity, price: slot.price };
 
           state.slotsListEl.querySelectorAll(".slot-btn.selected")
-            .forEach(x => x.classList.remove("selected"));
+            .forEach(x => {
+              x.classList.remove("selected");
+              x.setAttribute("aria-pressed", "false");
+            });
           btn.classList.add("selected");
+          btn.setAttribute("aria-pressed", "true");
 
           showBooking(state);
         });
@@ -1005,7 +1258,7 @@
       });
     }
 
-    function initTourCalendar(tourId, articleEl) {
+    function initTourCalendar(tourId, articleEl, tourData) {
       if (tourCalStates.has(tourId)) return;
 
       const detailsEl = articleEl.querySelector(".tour-details");
@@ -1025,6 +1278,7 @@
       const state = {
         tourId,
         articleEl,
+        tourData: tourData || {},
         monthEl,
         gridEl,
         prevBtn,
@@ -1083,8 +1337,12 @@
         state.selectedSlot = null;
         hideBooking(state);
 
-        gridEl.querySelectorAll(".cal-cell.selected").forEach(c => c.classList.remove("selected"));
+        gridEl.querySelectorAll(".cal-cell.selected").forEach(c => {
+          c.classList.remove("selected");
+          c.setAttribute("aria-selected", "false");
+        });
         cell.classList.add("selected");
+        cell.setAttribute("aria-selected", "true");
 
         if (!state.savedDates.has(key)) {
           clearSlots(state, `No availability on ${key}. Select another date.`);
@@ -1163,19 +1421,55 @@
         const descEl = node.querySelector(".tour-description");
         const imageWrap = node.querySelector(".tour-image");
 
+        const tourSlug = slugify(tourId);
+        const detailsId = `tour-details-${tourSlug}`;
+        const toggleEl = node.querySelector(".tour-toggle");
+        const detailsEl = node.querySelector(".tour-details");
+
         article.dataset.tourId = tourId;
+        article.id = `tour-${tourSlug}`;
         titleEl.textContent = tour.title || tourId;
+
+        if (toggleEl && detailsEl) {
+          toggleEl.setAttribute("aria-controls", detailsId);
+          detailsEl.id = detailsId;
+        }
+
+        const bookingFields = [
+          [".booking-name", ".booking-name-label", "name"],
+          [".booking-email", ".booking-email-label", "email"],
+          [".booking-phone", ".booking-phone-label", "phone"],
+          [".booking-qty", ".booking-qty-label", "passengers"],
+        ];
+        for (const [inputSelector, labelSelector, fieldName] of bookingFields) {
+          const input = node.querySelector(inputSelector);
+          const label = node.querySelector(labelSelector);
+          if (!input || !label) continue;
+          const fieldId = `${fieldName}-${tourSlug}`;
+          input.id = fieldId;
+          label.htmlFor = fieldId;
+        }
 
         // Description: stored as HTML created in admin
         descEl.innerHTML = tour.description || "";
         if (!tour.description) descEl.style.display = "none";
 
+        renderTourFacts(article, tour);
+        renderTourExtraSections(article, tour);
+
         if (tour.imageUrl) {
           const img = document.createElement("img");
           img.src = tour.imageUrl;
-          img.alt = tour.title
-            ? `${tour.title} with Tour The Lakes in the Lake District`
-            : "Lake District tour with Tour The Lakes";
+          img.loading = "lazy";
+          img.decoding = "async";
+          img.alt = firstUsefulValue(
+            tour.imageAlt,
+            tour.title
+              ? `${tour.title} with Tour The Lakes in the Lake District`
+              : "Lake District tour with Tour The Lakes"
+          );
+          if (Number.isFinite(Number(tour.imageWidth))) img.width = Number(tour.imageWidth);
+          if (Number.isFinite(Number(tour.imageHeight))) img.height = Number(tour.imageHeight);
           imageWrap.appendChild(img);
         }
 
@@ -1183,8 +1477,10 @@
 
         // IMPORTANT: article reference remains valid after fragment is appended
         attachTourDatesListener(tourId, article);
-        initTourCalendar(tourId, article);
+        initTourCalendar(tourId, article, tour);
       }
+
+      buildTourSchema(toursObj);
     }
 
     // Listen to /tours
@@ -1211,6 +1507,7 @@
       toggle.setAttribute("aria-label", willOpen ? "Read less" : "Read more");
 
       details.hidden = !willOpen;
+      details.setAttribute("aria-hidden", String(!willOpen));
       tour.classList.toggle("is-open", willOpen);
 
       if (stateText) {
