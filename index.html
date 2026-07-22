@@ -126,45 +126,15 @@
       color: rgba(255,255,255,0.92);
     }
 
-    .header-review-row {
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-    }
-
-    .review-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.92);
-      text-decoration: none;
-      font: 500 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      white-space: nowrap;
-    }
-
-    .review-stars {
-      color: #b86b2a;
-      letter-spacing: 1px;
-    }
-
-    .review-arrow {
-      color: #b86b2a;
-      font-size: 20px;
-      line-height: 1;
-    }
-
     .header-inner {
       min-height: 126px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(180px, 320px) minmax(0, 1fr);
-      align-items: end;
-      gap: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 8px 16px 16px;
     }
 
     .header-brand {
-      grid-column: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -193,129 +163,6 @@
       font: 600 clamp(21px, 3vw, 38px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       letter-spacing: 0.2px;
       white-space: nowrap;
-    }
-
-    .header-nav-button {
-      border: 0;
-      background: transparent;
-      color: rgba(255,255,255,0.92);
-      padding: 12px 4px;
-      cursor: pointer;
-      font: 600 clamp(13px, 1.5vw, 19px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      white-space: nowrap;
-    }
-
-    .header-nav-button:hover,
-    .header-nav-button[aria-expanded="true"] {
-      color: #b86b2a;
-    }
-
-    .header-nav-private {
-      grid-column: 1;
-      justify-self: end;
-    }
-
-    .header-nav-public {
-      grid-column: 3;
-      justify-self: start;
-    }
-
-    .header-dropdown {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      z-index: 90;
-      background: #2b2b2b;
-      border-top: 1px solid #b86b2a;
-      border-bottom: 2px solid #b86b2a;
-      box-shadow: 0 14px 24px rgba(0,0,0,0.35);
-    }
-
-    .header-dropdown[hidden] { display: none; }
-
-    .header-dropdown-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .header-dropdown-title {
-      margin: 0 0 8px;
-      color: #b86b2a;
-      font-size: 22px;
-    }
-
-    .header-dropdown-copy {
-      margin: 0 0 16px;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.5;
-    }
-
-    .private-service-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .private-service {
-      border: 1px solid #b86b2a;
-      padding: 12px;
-      color: rgba(255,255,255,0.92);
-      line-height: 1.4;
-    }
-
-    .header-contact-link {
-      display: inline-block;
-      color: #b86b2a;
-      text-decoration: none;
-      border: 1px solid #b86b2a;
-      padding: 10px 14px;
-    }
-
-    .public-tour-menu {
-      max-height: min(58vh, 520px);
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      border-top: 1px solid #444;
-    }
-
-    .public-tour-menu-item {
-      width: 100%;
-      display: block;
-      border: 0;
-      border-bottom: 1px solid #444;
-      background: transparent;
-      color: rgba(255,255,255,0.92);
-      text-align: left;
-      padding: 14px 4px;
-      cursor: pointer;
-    }
-
-    .public-tour-menu-item:hover,
-    .public-tour-menu-item:focus-visible {
-      background: rgba(184,107,42,0.12);
-      outline: none;
-    }
-
-    .public-tour-menu-name {
-      display: block;
-      color: #b86b2a;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .public-tour-menu-summary {
-      display: block;
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .public-tour-menu-empty {
-      padding: 14px 4px;
-      color: rgba(255,255,255,0.65);
     }
 
     img { width: 100%; display: block; }
@@ -611,32 +458,8 @@
 </head>
 
 <body>
-  <header class="site-header" id="siteHeader">
-    <div class="header-review-row">
-      <a
-        class="review-link"
-        href="https://www.tripadvisor.co.uk/Attraction_Review-g186330-d26630767-Reviews-Tour_The_Lakes-Windermere_Lake_District_Cumbria_England.html"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Read Tour The Lakes reviews on Tripadvisor"
-      >
-        <span class="review-stars" aria-hidden="true">★★★★★</span>
-        <span>Read our reviews</span>
-        <span class="review-arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
-
+  <header class="site-header">
     <div class="header-inner">
-      <button
-        class="header-nav-button header-nav-private"
-        id="privateToursButton"
-        type="button"
-        aria-expanded="false"
-        aria-controls="privateToursDropdown"
-      >
-        ← Private Tours
-      </button>
-
       <div class="header-brand">
         <img
           class="header-logo"
@@ -649,42 +472,7 @@
         <div class="header-established">EST. 2023</div>
         <div class="brand">Tour The Lakes</div>
       </div>
-
-      <button
-        class="header-nav-button header-nav-public"
-        id="publicToursButton"
-        type="button"
-        aria-expanded="false"
-        aria-controls="publicToursDropdown"
-      >
-        Public Tours →
-      </button>
     </div>
-
-    <section class="header-dropdown" id="privateToursDropdown" hidden aria-labelledby="privateToursButton">
-      <div class="header-dropdown-inner">
-        <h2 class="header-dropdown-title">Private Tours and Travel</h2>
-        <p class="header-dropdown-copy">
-          Arrange a private Lake District sightseeing tour, a bespoke day out or an airport transfer aboard one of our comfortable 15-seat minibuses. Routes and timings can be tailored around your group and travel plans.
-        </p>
-        <div class="private-service-list">
-          <div class="private-service"><strong>Private sightseeing</strong><br />Lake District routes planned around your group.</div>
-          <div class="private-service"><strong>Bespoke days out</strong><br />Flexible trips for families, friends and organised groups.</div>
-          <div class="private-service"><strong>Airport transfers</strong><br />Pre-arranged group transport to and from regional airports.</div>
-        </div>
-        <a class="header-contact-link" href="mailto:info@tourthelakes.com?subject=Private%20tour%20or%20transfer%20enquiry">Enquire by email</a>
-      </div>
-    </section>
-
-    <section class="header-dropdown" id="publicToursDropdown" hidden aria-labelledby="publicToursButton">
-      <div class="header-dropdown-inner">
-        <h2 class="header-dropdown-title">Public Tours</h2>
-        <p class="header-dropdown-copy">Choose a scheduled public tour below to view its full route information, availability, times and booking calendar.</p>
-        <div class="public-tour-menu" id="publicTourMenu" aria-live="polite">
-          <div class="public-tour-menu-empty">Loading public tours...</div>
-        </div>
-      </div>
-    </section>
   </header>
 
   <div class="hero-wrapper">
@@ -808,48 +596,6 @@
 
     const toursEl = document.getElementById("tours");
     const tpl = document.getElementById("tourTemplate");
-
-    const siteHeader = document.getElementById("siteHeader");
-    const privateToursButton = document.getElementById("privateToursButton");
-    const publicToursButton = document.getElementById("publicToursButton");
-    const privateToursDropdown = document.getElementById("privateToursDropdown");
-    const publicToursDropdown = document.getElementById("publicToursDropdown");
-    const publicTourMenu = document.getElementById("publicTourMenu");
-
-    function closeHeaderDropdowns() {
-      privateToursDropdown.hidden = true;
-      publicToursDropdown.hidden = true;
-      privateToursButton.setAttribute("aria-expanded", "false");
-      publicToursButton.setAttribute("aria-expanded", "false");
-    }
-
-    function toggleHeaderDropdown(button, panel) {
-      const willOpen = panel.hidden;
-      closeHeaderDropdowns();
-      if (willOpen) {
-        panel.hidden = false;
-        button.setAttribute("aria-expanded", "true");
-      }
-    }
-
-    privateToursButton.addEventListener("click", () => {
-      toggleHeaderDropdown(privateToursButton, privateToursDropdown);
-    });
-
-    publicToursButton.addEventListener("click", () => {
-      toggleHeaderDropdown(publicToursButton, publicToursDropdown);
-    });
-
-    document.addEventListener("click", (event) => {
-      if (!siteHeader.contains(event.target)) closeHeaderDropdowns();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closeHeaderDropdowns();
-        publicToursButton.focus();
-      }
-    });
 
     // ---------- shared helpers ----------
     const CELL_COUNT = 42;
@@ -1714,73 +1460,10 @@
       tourDatesUnsubs.set(tourId, unsub);
     }
 
-    function renderPublicToursMenu(toursObj) {
-      if (!publicTourMenu) return;
-      publicTourMenu.innerHTML = "";
-
-      const liveTours = Object.entries(toursObj || {})
-        .filter(([, tour]) => tour && tour.isLive === true);
-
-      if (liveTours.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "public-tour-menu-empty";
-        empty.textContent = "Public tour information is being updated. Please check again shortly.";
-        publicTourMenu.appendChild(empty);
-        return;
-      }
-
-      for (const [tourId, tour] of liveTours) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "public-tour-menu-item";
-
-        const name = document.createElement("span");
-        name.className = "public-tour-menu-name";
-        name.textContent = tour.title || tourId;
-
-        const summary = document.createElement("span");
-        summary.className = "public-tour-menu-summary";
-        summary.textContent = firstUsefulValue(
-          tour.shortSummary,
-          plainTextFromHtml(tour.description).slice(0, 150),
-          "View route information, availability and booking options."
-        );
-
-        button.append(name, summary);
-        button.addEventListener("click", () => {
-          closeHeaderDropdowns();
-
-          const article = document.getElementById(`tour-${slugify(tourId)}`);
-          if (!article) return;
-
-          const toggle = article.querySelector(".tour-toggle");
-          const details = article.querySelector(".tour-details");
-          const stateText = article.querySelector(".tour-read-state");
-
-          if (toggle && details && toggle.getAttribute("aria-expanded") !== "true") {
-            toggle.setAttribute("aria-expanded", "true");
-            toggle.setAttribute("aria-label", "Read less");
-            details.hidden = false;
-            details.setAttribute("aria-hidden", "false");
-            article.classList.add("is-open");
-            if (stateText) stateText.textContent = "Less";
-          }
-
-          article.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-
-        publicTourMenu.appendChild(button);
-      }
-    }
-
     // ---------- render tours ----------
     function renderTours(toursObj) {
       clearTours();
-      renderPublicToursMenu(toursObj);
-      if (!toursObj || typeof toursObj !== "object") {
-        buildTourSchema({});
-        return;
-      }
+      if (!toursObj || typeof toursObj !== "object") return;
 
       for (const [tourId, tour] of Object.entries(toursObj)) {
         if (!tour || tour.isLive !== true) continue;
