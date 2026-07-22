@@ -830,7 +830,9 @@ img { width: 100%; display: block; }
 
   <div class="hero-gap"></div>
 
-  <section id="tours" aria-label="Available Lake District tours"></section>
+  <section id="public-tours" class="folder-page" aria-label="Public Lake District tours" hidden>
+    <div id="tours"></div>
+  </section>
 
   <template id="tourTemplate">
     <article class="tour" data-tour-id="">
@@ -984,8 +986,32 @@ img { width: 100%; display: block; }
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    const publicToursPage = document.getElementById("public-tours");
     const toursEl = document.getElementById("tours");
     const tpl = document.getElementById("tourTemplate");
+
+    function showPublicToursFolder() {
+      if (!publicToursPage) return;
+
+      const hash = window.location.hash;
+      const showPublicTours = hash === "#public-tours" || hash.startsWith("#tour-");
+
+      publicToursPage.hidden = !showPublicTours;
+
+      if (!showPublicTours) return;
+
+      requestAnimationFrame(() => {
+        if (hash.startsWith("#tour-")) {
+          document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+          return;
+        }
+
+        publicToursPage.scrollIntoView({ block: "start" });
+      });
+    }
+
+    window.addEventListener("hashchange", showPublicToursFolder);
+    showPublicToursFolder();
 
     // ---------- shared helpers ----------
     const CELL_COUNT = 42;
@@ -1925,6 +1951,7 @@ img { width: 100%; display: block; }
       }
 
       buildTourSchema(toursObj);
+      showPublicToursFolder();
     }
 
     // Listen to /tours
