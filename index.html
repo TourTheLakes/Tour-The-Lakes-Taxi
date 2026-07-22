@@ -159,11 +159,15 @@
 }
 
     .brand {
-      color: rgba(255,255,255,0.92);
-      font: 600 clamp(21px, 3vw, 38px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-    }
+     color: rgba(255,255,255,0.92);
+     font: 600 clamp(21px, 3vw, 38px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+     letter-spacing: 0.2px;
+     white-space: nowrap;
+     }
+
+     .brand-menu {
+      display: none;
+     }
 
     img { width: 100%; display: block; }
 
@@ -509,37 +513,112 @@
 }
 
 .brand {
+  position: relative;
+  width: 170px;
+  height: 24px;
   transform-origin: center;
-  animation: mobile-brand-wobble 4s ease-in-out infinite;
 }
 
-@keyframes mobile-brand-wobble {
+.brand-home,
+.brand-menu {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+}
+
+.brand-home {
+  color: rgba(255,255,255,0.92);
+  animation: mobile-brand-home 8s ease-in-out infinite;
+}
+
+.brand-menu {
+  color: #b86b2a;
+  animation: mobile-brand-menu 8s ease-in-out infinite;
+}
+
+@keyframes mobile-brand-home {
   0%,
-  78%,
-  100% {
+  24% {
+    opacity: 1;
     transform: rotate(0deg) scale(1);
   }
 
-  81% {
+  27% {
     transform: rotate(-2deg) scale(1.03);
   }
 
-  84% {
+  30% {
     transform: rotate(2deg) scale(1.03);
   }
 
-  87% {
+  33% {
     transform: rotate(-1.5deg) scale(1.02);
   }
 
-  90% {
-    transform: rotate(1.5deg) scale(1.02);
+  36% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
   }
 
-  93% {
+  43%,
+  72% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  79% {
+    opacity: 1;
+    transform: rotate(-2deg) scale(1.03);
+  }
+
+  82% {
+    transform: rotate(2deg) scale(1.03);
+  }
+
+  85%,
+  100% {
+    opacity: 1;
     transform: rotate(0deg) scale(1);
   }
 }
+
+@keyframes mobile-brand-menu {
+  0%,
+  36% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  43% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  54% {
+    transform: rotate(-2deg) scale(1.05);
+  }
+
+  57% {
+    transform: rotate(2deg) scale(1.05);
+  }
+
+  60% {
+    transform: rotate(-1.5deg) scale(1.03);
+  }
+
+  63% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  72%,
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
 }
     
   </style>
@@ -558,7 +637,10 @@
           decoding="async"
         />
         <div class="header-established">EST. 2023</div>
-        <div class="brand">Tour The Lakes</div>
+        <div class="brand">
+         <span class="brand-home">Tour The Lakes</span>
+          <span class="brand-menu">Menu</span>
+        </div>
       </div>
     </div>
   </header>
