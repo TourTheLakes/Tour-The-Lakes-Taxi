@@ -504,9 +504,42 @@
   }
 
   .tour-booking-area {
-    padding-left: 0;
-    padding-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.brand {
+  transform-origin: center;
+  animation: mobile-brand-wobble 4s ease-in-out infinite;
+}
+
+@keyframes mobile-brand-wobble {
+  0%,
+  78%,
+  100% {
+    transform: rotate(0deg) scale(1);
   }
+
+  81% {
+    transform: rotate(-2deg) scale(1.03);
+  }
+
+  84% {
+    transform: rotate(2deg) scale(1.03);
+  }
+
+  87% {
+    transform: rotate(-1.5deg) scale(1.02);
+  }
+
+  90% {
+    transform: rotate(1.5deg) scale(1.02);
+  }
+
+  93% {
+    transform: rotate(0deg) scale(1);
+  }
+}
 }
     
   </style>
