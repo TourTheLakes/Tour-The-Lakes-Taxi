@@ -145,10 +145,11 @@
       min-width: 0;
     }
 
-    .header-brand {
-     text-decoration: none;
-     color: inherit;
-    }
+    .header-home-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
 
     .header-logo {
   width: 62px;
@@ -699,7 +700,8 @@ img { width: 100%; display: block; }
     <a href="#public-tours">Public Tours</a>
   </nav>
 
-  <a href="/" class="header-brand" aria-label="Return to homepage">
+  <div class="header-brand">
+  <a href="/" class="header-home-link" aria-label="Return to homepage">
     <img
       class="header-logo"
       src="images/TTL%20Vinyl%20Logo.png"
@@ -708,12 +710,15 @@ img { width: 100%; display: block; }
       height="2048"
       decoding="async"
     />
-    <div class="header-established">EST. 2023</div>
-    <div class="brand">
-      <span class="brand-home">Tour The Lakes</span>
-      <span class="brand-menu">Menu</span>
-    </div>
   </a>
+
+  <div class="header-established">EST. 2023</div>
+
+  <div class="brand">
+    <span class="brand-home">Tour The Lakes</span>
+    <span class="brand-menu">Menu</span>
+  </div>
+</div>
 
   <nav class="header-nav header-nav-right" aria-label="Secondary navigation">
     <a href="#executive-travel">Executive Travel</a>
