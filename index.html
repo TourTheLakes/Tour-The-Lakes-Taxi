@@ -231,27 +231,35 @@
     }
 
     .tour-divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 40px 0 20px 0;
-    }
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  margin: 40px 0 20px 0;
+}
+
+    .tour-divider-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+    
     .tour-divider-line { flex: 1; height: 1px; background: #b86b2a; }
     .tour-read, .tour-more {
-      font-size: 14px;
-      font-weight: 400;
-      color: rgba(255,255,255,0.6);
-      margin: 0 8px;
-      letter-spacing: 0.5px;
-    }
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
     .tour-toggle {
-      background: #2b2b2b;
-      border: 1px solid #b86b2a;
-      border-radius: 50%;
-      padding: 8px;
-      margin: 0 12px;
-      cursor: pointer;
-    }
+  background: #2b2b2b;
+  border: 1px solid #b86b2a;
+  border-radius: 50%;
+  padding: 8px;
+  margin: 0 16px;
+  cursor: pointer;
+}
     .tour-toggle img { display: block; width: 20px; height: 20px; border-bottom: none; }
 
     .tour.is-open .tour-divider {
@@ -500,18 +508,20 @@
       </div>
 
       <div class="tour-divider">
-        <div class="tour-divider-line"></div>
+  <div class="tour-divider-line"></div>
 
-        <span class="tour-read tour-read-left">Read</span>
+  <div class="tour-divider-control">
+    <span class="tour-read tour-read-left">Read</span>
 
-        <button class="tour-toggle" type="button" aria-expanded="false" aria-label="Read more">
-          <img src="images/TTLFAVIcon.png" alt="" aria-hidden="true" />
-        </button>
+    <button class="tour-toggle" type="button" aria-expanded="false" aria-label="Read more">
+      <img src="images/TTLFAVIcon.png" alt="" aria-hidden="true" />
+    </button>
 
-        <span class="tour-read tour-read-state">More</span>
+    <span class="tour-read tour-read-state">More</span>
+  </div>
 
-        <div class="tour-divider-line"></div>
-      </div>
+  <div class="tour-divider-line"></div>
+</div>
 
       <div class="tour-details" hidden aria-hidden="true">
         <div class="tour-facts" hidden></div>
