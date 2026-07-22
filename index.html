@@ -924,6 +924,8 @@ img { width: 100%; display: block; }
     const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
     const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
     const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+    const homeHero = document.querySelector(".hero-wrapper");
+    const homeHeroGap = document.querySelector(".hero-gap");
 
     function setMobileMenu(open) {
       if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
@@ -996,6 +998,8 @@ img { width: 100%; display: block; }
       const hash = window.location.hash;
       const showPublicTours = hash === "#public-tours" || hash.startsWith("#tour-");
 
+      if (homeHero) homeHero.hidden = showPublicTours;
+      if (homeHeroGap) homeHeroGap.hidden = showPublicTours;
       publicToursPage.hidden = !showPublicTours;
 
       if (!showPublicTours) return;
