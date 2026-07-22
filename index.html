@@ -166,10 +166,54 @@
      }
 
      .brand-menu {
-      display: none;
-     }
+  display: none;
+}
 
-    img { width: 100%; display: block; }
+.header-nav {
+  display: none;
+}
+
+@media screen and (min-width: 601px) {
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: clamp(28px, 4vw, 70px);
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(22px, 3vw, 48px);
+    min-width: 0;
+  }
+
+  .header-nav-left {
+    justify-content: flex-end;
+  }
+
+  .header-nav-right {
+    justify-content: flex-start;
+  }
+
+  .header-nav a {
+    color: rgba(255,255,255,0.92);
+    font: 500 clamp(12px, 1.35vw, 16px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .header-nav a:hover,
+  .header-nav a:focus-visible {
+    color: #b86b2a;
+  }
+}
+
+img { width: 100%; display: block; }
 
     .hero-wrapper {
       position: relative;
@@ -643,22 +687,32 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <div class="header-brand">
-        <img
-          class="header-logo"
-          src="images/TTL%20Vinyl%20Logo.png"
-          alt="Tour The Lakes logo"
-          width="2048"
-          height="2048"
-          decoding="async"
-        />
-        <div class="header-established">EST. 2023</div>
-        <div class="brand">
-         <span class="brand-home">Tour The Lakes</span>
-          <span class="brand-menu">Menu</span>
-        </div>
-      </div>
+  <nav class="header-nav header-nav-left" aria-label="Primary navigation">
+    <a href="#private-tours">Private Tours</a>
+    <a href="#public-tours">Public Tours</a>
+  </nav>
+
+  <div class="header-brand">
+    <img
+      class="header-logo"
+      src="images/TTL%20Vinyl%20Logo.png"
+      alt="Tour The Lakes logo"
+      width="2048"
+      height="2048"
+      decoding="async"
+    />
+    <div class="header-established">EST. 2023</div>
+    <div class="brand">
+      <span class="brand-home">Tour The Lakes</span>
+      <span class="brand-menu">Menu</span>
     </div>
+  </div>
+
+  <nav class="header-nav header-nav-right" aria-label="Secondary navigation">
+    <a href="#executive-travel">Executive Travel</a>
+    <a href="#reviews">Reviews</a>
+  </nav>
+</div>
   </header>
 
   <div class="hero-wrapper">
