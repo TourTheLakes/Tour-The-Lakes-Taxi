@@ -1018,13 +1018,17 @@ img { width: 100%; display: block; }
       if (!showPublicTours) return;
 
       requestAnimationFrame(() => {
-        if (hash.startsWith("#tour-")) {
-          document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
-          return;
-        }
+  if (hash.startsWith("#tour-")) {
+    document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+    return;
+  }
 
-        publicToursPage.scrollIntoView({ block: "start" });
-      });
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "auto"
+  });
+});
     }
 
     window.addEventListener("hashchange", showPublicToursFolder);
