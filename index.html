@@ -181,6 +181,20 @@
   display: none;
 }
 
+.brand-toggle {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: default;
+}
+
+.mobile-navigation {
+  display: none;
+}
+
 @media screen and (min-width: 601px) {
   .header-inner {
     display: grid;
@@ -551,6 +565,71 @@ img { width: 100%; display: block; }
     }
 
     @media screen and (max-width: 600px) {
+  .header-inner {
+    transition: padding-bottom 0.35s ease;
+  }
+
+  .brand-toggle {
+    display: block;
+    cursor: pointer;
+    color: inherit;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .brand-toggle:focus-visible {
+    outline: 1px solid #b86b2a;
+    outline-offset: 6px;
+  }
+
+  .mobile-navigation {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    padding: 0 24px;
+    background: #2b2b2b;
+    transition:
+      max-height 0.4s ease,
+      opacity 0.25s ease,
+      padding 0.4s ease,
+      visibility 0s linear 0.4s;
+  }
+
+  .site-header.mobile-menu-open .mobile-navigation {
+    max-height: 260px;
+    opacity: 1;
+    visibility: visible;
+    padding-top: 14px;
+    padding-bottom: 20px;
+    transition:
+      max-height 0.4s ease,
+      opacity 0.25s ease 0.1s,
+      padding 0.4s ease,
+      visibility 0s linear 0s;
+  }
+
+  .mobile-navigation a {
+    display: block;
+    padding: 12px 8px;
+    color: rgba(255,255,255,0.92);
+    font: 500 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.2px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .mobile-navigation a + a {
+    border-top: 1px solid rgba(184,107,42,0.35);
+  }
+
+  .mobile-navigation a:active,
+  .mobile-navigation a:focus-visible {
+    color: #b86b2a;
+  }
+
   .hero-wrapper h1 {
     top: 32%;
     font-size: clamp(24px, 7.2vw, 36px);
@@ -714,17 +793,35 @@ img { width: 100%; display: block; }
 
   <div class="header-established">EST. 2023</div>
 
-  <div class="brand">
-    <span class="brand-home">Tour The Lakes</span>
-    <span class="brand-menu">Menu</span>
-  </div>
+  <button
+  class="brand brand-toggle"
+  type="button"
+  aria-expanded="false"
+  aria-controls="mobile-navigation"
+  aria-label="Open menu"
+>
+  <span class="brand-home">Tour The Lakes</span>
+  <span class="brand-menu">Menu</span>
+</button>
 </div>
 
   <nav class="header-nav header-nav-right" aria-label="Secondary navigation">
     <a href="#executive-travel">Executive Travel</a>
     <a href="#private-hire">Private Hire</a>
-  </nav>
+    </nav>
 </div>
+
+<nav
+  id="mobile-navigation"
+  class="mobile-navigation"
+  aria-label="Mobile navigation"
+  aria-hidden="true"
+>
+  <a href="#private-tours">Private Tours</a>
+  <a href="#public-tours">Public Tours</a>
+  <a href="#executive-travel">Executive Travel</a>
+  <a href="#private-hire">Private Hire</a>
+</nav>
   </header>
 
   <div class="hero-wrapper">
@@ -821,6 +918,49 @@ img { width: 100%; display: block; }
   </footer>
 
   <script type="module">
+    const siteHeader = document.querySelector(".site-header");
+    const mobileMenuToggle = document.querySelector(".brand-toggle");
+    const mobileNavigation = document.getElementById("mobile-navigation");
+    const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
+    const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
+    const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+
+    function setMobileMenu(open) {
+      if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
+
+      siteHeader.classList.toggle("mobile-menu-open", open);
+      mobileMenuToggle.setAttribute("aria-expanded", String(open));
+      mobileMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      mobileNavigation.setAttribute("aria-hidden", String(!open));
+
+      if (mobileBrandHome) {
+        mobileBrandHome.textContent = open ? "Menu" : "Tour The Lakes";
+      }
+
+      if (mobileBrandMenu) {
+        mobileBrandMenu.textContent = open ? "Close" : "Menu";
+      }
+    }
+
+    mobileMenuToggle?.addEventListener("click", () => {
+      if (!mobileBreakpoint.matches) return;
+
+      const open = mobileMenuToggle.getAttribute("aria-expanded") === "true";
+      setMobileMenu(!open);
+    });
+
+    mobileNavigation?.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        setMobileMenu(false);
+      });
+    });
+
+    mobileBreakpoint.addEventListener("change", (event) => {
+      if (!event.matches) {
+        setMobileMenu(false);
+      }
+    });
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
     import {
       getDatabase,
