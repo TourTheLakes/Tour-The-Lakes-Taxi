@@ -289,7 +289,12 @@
       color: rgba(255,255,255,0.92);
     }
 
-    .tour-description { white-space: pre-wrap; }
+    .tour-description {
+      white-space: pre-wrap;
+      text-align: justify;
+      text-align-last: left;
+     }
+    
     .tour-facts { margin-bottom: 24px; }
     .tour-facts[hidden] { display: none; }
     .tour-fact { color: rgba(255,255,255,0.92); line-height: 1.5; margin-bottom: 6px; }
@@ -299,10 +304,23 @@
     .tour-extra-sections .tsec-b { white-space: pre-wrap; }
     .tsec { margin-bottom: 24px; }
     .tsec-h { color: #b86b2a; font-weight: 600; font-size: 20px; margin-bottom: 8px; }
-    .tsec-b { color: rgba(255,255,255,0.92); line-height: 1.5; }
+
+    .tsec-b {
+      color: rgba(255,255,255,0.92);
+      line-height: 1.5;
+      text-align: justify;
+      text-align-last: left;
+    }
+    
     .tit-item { margin-bottom: 18px; }
     .tit-title { color: #b86b2a; font-weight: 600; margin-bottom: 6px; }
-    .tit-body { color: rgba(255,255,255,0.92); line-height: 1.5; }
+
+    .tit-body {
+     color: rgba(255,255,255,0.92);
+     line-height: 1.5;
+     text-align: justify;
+     text-align-last: left;
+    }
 
     .tour-row {
       position: absolute;
