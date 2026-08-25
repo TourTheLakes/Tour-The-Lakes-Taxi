@@ -310,6 +310,31 @@ img { width: 100%; display: block; }
   z-index: 1;
 }
 
+    .private-tours-intro {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  border-top: 2px solid #b86b2a;
+  border-bottom: 2px solid #b86b2a;
+}
+
+.private-tours-intro img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.private-tours-intro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  z-index: 1;
+}
+
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
     .tour-image::after {
@@ -592,6 +617,10 @@ img { width: 100%; display: block; }
       .public-tours-intro {
     height: 380px;
   }
+
+   .private-tours-intro {
+  height: 380px;
+ }
 }
 
     @media screen and (min-width: 1024px) {
@@ -600,10 +629,16 @@ img { width: 100%; display: block; }
       .hero-wrapper p { top: 50%; }
 
       .tour-image img { max-height: 300px; object-fit: cover; }
+      
       .tour-row { top: 46%; }
+      
       .public-tours-intro {
         height: 650px;
       }
+
+      .private-tours-intro {
+       height: 650px;
+         }
     }
 
     @media screen and (max-width: 600px) {
@@ -686,6 +721,10 @@ img { width: 100%; display: block; }
       .public-tours-intro {
     height: 230px;
   }
+
+      .private-tours-intro {
+  height: 230px;
+}
 
   .tour-image .tour-title {
     font-size: 36px;
@@ -880,6 +919,18 @@ img { width: 100%; display: block; }
 
   <div class="hero-gap"></div>
 
+  <section id="private-tours" class="folder-page" aria-label="Private Lake District tours" hidden>
+    <div class="private-tours-intro">
+      <img
+        src="images/Patterdale%20Private%20Tours%20Hero.png"
+        alt="Private Lake District tour with Tour The Lakes beside Ullswater"
+        decoding="async"
+      />
+    </div>
+
+    <div class="folder-gap"></div>
+  </section>
+
   <section id="public-tours" class="folder-page" aria-label="Public Lake District tours" hidden>
   <div class="public-tours-intro">
     <img
@@ -1048,35 +1099,46 @@ img { width: 100%; display: block; }
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    const privateToursPage = document.getElementById("private-tours");
     const publicToursPage = document.getElementById("public-tours");
     const toursEl = document.getElementById("tours");
     const tpl = document.getElementById("tourTemplate");
 
     function showPublicToursFolder() {
-      if (!publicToursPage) return;
+  if (!publicToursPage || !privateToursPage) return;
 
-      const hash = window.location.hash;
-      const showPublicTours = hash === "#public-tours" || hash.startsWith("#tour-");
+  const hash = window.location.hash;
 
-      if (homeHero) homeHero.hidden = showPublicTours;
-      if (homeHeroGap) homeHeroGap.hidden = showPublicTours;
-      publicToursPage.hidden = !showPublicTours;
+  const showPublicTours =
+    hash === "#public-tours" || hash.startsWith("#tour-");
 
-      if (!showPublicTours) return;
+  const showPrivateTours =
+    hash === "#private-tours";
 
-      requestAnimationFrame(() => {
-  if (hash.startsWith("#tour-")) {
-    document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
-    return;
-  }
+  const showFolderPage =
+    showPublicTours || showPrivateTours;
 
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "auto"
-  });
-});
+  if (homeHero) homeHero.hidden = showFolderPage;
+  if (homeHeroGap) homeHeroGap.hidden = showFolderPage;
+
+  publicToursPage.hidden = !showPublicTours;
+  privateToursPage.hidden = !showPrivateTours;
+
+  if (!showFolderPage) return;
+
+  requestAnimationFrame(() => {
+    if (hash.startsWith("#tour-")) {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+      return;
     }
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto"
+    });
+  });
+}
 
     window.addEventListener("hashchange", showPublicToursFolder);
     showPublicToursFolder();
