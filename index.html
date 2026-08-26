@@ -335,18 +335,33 @@ img { width: 100%; display: block; }
   z-index: 1;
 }
 
-    .executive-travel-intro,
-    .private-hire-intro {
+.executive-travel-intro,
+.private-hire-intro {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  border-top: 2px solid #b86b2a;
+  border-bottom: 2px solid #b86b2a;
+}
 
-position: relative; width: 100%; height: 240px; overflow: hidden;
-border-top: 2px solid #b86b2a; border-bottom: 2px solid #b86b2a; }
+.executive-travel-intro img,
+.private-hire-intro img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
 
-.executive-travel-intro img, .private-hire-intro img { width: 100%;
-height: 100%; object-fit: cover; object-position: center center; }
-
-.executive-travel-intro::after, .private-hire-intro::after { content:
-""; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55);
-pointer-events: none; z-index: 1; }
+.executive-travel-intro::after,
+.private-hire-intro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  z-index: 1;
+}
 
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
@@ -635,7 +650,10 @@ pointer-events: none; z-index: 1; }
   height: 380px;
  }
 
-      .executive-travel-intro, .private-hire-intro { height: 380px; }
+   .executive-travel-intro,
+   .private-hire-intro {
+  height: 380px;
+ }
 }
 
     @media screen and (min-width: 1024px) {
@@ -658,7 +676,7 @@ pointer-events: none; z-index: 1; }
       .executive-travel-intro,
       .private-hire-intro {
        height: 650px;
-      }
+         }
     }
 
     @media screen and (max-width: 600px) {
@@ -748,8 +766,8 @@ pointer-events: none; z-index: 1; }
 
       .executive-travel-intro,
       .private-hire-intro {
-
-height: 230px; }
+  height: 230px;
+}
 
   .tour-image .tour-title {
     font-size: 36px;
@@ -878,9 +896,9 @@ height: 230px; }
   }
 }
     
+  
   }
-
-  </style>
+</style>
 </head>
 
 <body>
@@ -936,13 +954,11 @@ height: 230px; }
 </nav>
   </header>
 
+  <div class="folder-gap"></div>
+
   <div class="hero-wrapper">
-    <img
-      src="images/DSC_0092.JPG.jpg"
-      alt="Lake District tour view near Windermere"
-      decoding="async"
-    />
-    <h1>Discover the Lakes</h1>
+    <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" fetchpriority="high" decoding="async" />
+    <h1>Explore the Lake District</h1>
     <p>Sightseeing with a difference</p>
   </div>
 
@@ -960,21 +976,7 @@ height: 230px; }
     <div class="folder-gap"></div>
   </section>
 
-  <section id="public-tours" class="folder-page" aria-label="Public Lake District tours" hidden>
-    <div class="public-tours-intro">
-      <img
-        src="images/Kirkstone%20Pass%20Hero.png"
-        alt="Tour The Lakes vehicle on a scenic Lake District route"
-        decoding="async"
-      />
-    </div>
-
-    <div class="folder-gap"></div>
-
-    <div id="tours"></div>
-  </section>
-
-  <section id="executive-travel" class="folder-page" aria-label="Executive travel" hidden>
+  <section id="executive-travel" class="folder-page" aria-label="Executive travel in the Lake District" hidden>
     <div class="executive-travel-intro">
       <img
         src="images/Beech%20Wood%20Hotel%20730Ld.png"
@@ -986,7 +988,7 @@ height: 230px; }
     <div class="folder-gap"></div>
   </section>
 
-  <section id="private-hire" class="folder-page" aria-label="Private hire" hidden>
+  <section id="private-hire" class="folder-page" aria-label="Private hire in the Lake District" hidden>
     <div class="private-hire-intro">
       <img
         src="images/Beech%20Wood%20Hotel%20730Ld.png"
@@ -997,6 +999,20 @@ height: 230px; }
 
     <div class="folder-gap"></div>
   </section>
+
+  <section id="public-tours" class="folder-page" aria-label="Public Lake District tours" hidden>
+  <div class="public-tours-intro">
+    <img
+      src="images/Kirkstone%20Pass%20Hero.png"
+      alt="Tour The Lakes vehicle on a scenic Lake District route"
+      decoding="async"
+    />
+  </div>
+
+  <div class="folder-gap"></div>
+
+  <div id="tours"></div>
+</section>
 
   <template id="tourTemplate">
     <article class="tour" data-tour-id="">
@@ -1160,41 +1176,56 @@ height: 230px; }
     const tpl = document.getElementById("tourTemplate");
 
     function showPublicToursFolder() {
-      if (!publicToursPage || !privateToursPage || !executiveTravelPage || !privateHirePage) return;
+  if (
+    !publicToursPage ||
+    !privateToursPage ||
+    !executiveTravelPage ||
+    !privateHirePage
+  ) return;
 
-      const hash = window.location.hash;
+  const hash = window.location.hash;
 
-      const showPublicTours = hash === "#public-tours" || hash.startsWith("#tour-");
-      const showPrivateTours = hash === "#private-tours";
-      const showExecutiveTravel = hash === "#executive-travel";
-      const showPrivateHire = hash === "#private-hire";
+  const showPublicTours =
+    hash === "#public-tours" || hash.startsWith("#tour-");
 
-      const showFolderPage =
-        showPublicTours || showPrivateTours || showExecutiveTravel || showPrivateHire;
+  const showPrivateTours =
+    hash === "#private-tours";
 
-      if (homeHero) homeHero.hidden = showFolderPage;
-      if (homeHeroGap) homeHeroGap.hidden = showFolderPage;
+  const showExecutiveTravel =
+    hash === "#executive-travel";
 
-      publicToursPage.hidden = !showPublicTours;
-      privateToursPage.hidden = !showPrivateTours;
-      executiveTravelPage.hidden = !showExecutiveTravel;
-      privateHirePage.hidden = !showPrivateHire;
+  const showPrivateHire =
+    hash === "#private-hire";
 
-      if (!showFolderPage) return;
+  const showFolderPage =
+    showPublicTours ||
+    showPrivateTours ||
+    showExecutiveTravel ||
+    showPrivateHire;
 
-      requestAnimationFrame(() => {
-        if (hash.startsWith("#tour-")) {
-          document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
-          return;
-        }
+  if (homeHero) homeHero.hidden = showFolderPage;
+  if (homeHeroGap) homeHeroGap.hidden = showFolderPage;
 
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "auto"
-        });
-      });
+  publicToursPage.hidden = !showPublicTours;
+  privateToursPage.hidden = !showPrivateTours;
+  executiveTravelPage.hidden = !showExecutiveTravel;
+  privateHirePage.hidden = !showPrivateHire;
+
+  if (!showFolderPage) return;
+
+  requestAnimationFrame(() => {
+    if (hash.startsWith("#tour-")) {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+      return;
     }
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto"
+    });
+  });
+}
 
     window.addEventListener("hashchange", showPublicToursFolder);
     showPublicToursFolder();
