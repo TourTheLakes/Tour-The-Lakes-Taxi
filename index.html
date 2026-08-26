@@ -345,7 +345,7 @@ border-top: 2px solid #b86b2a; border-bottom: 2px solid #b86b2a; }
 height: 100%; object-fit: cover; object-position: center center; }
 
 .executive-travel-intro::after, .private-hire-intro::after { content:
-““; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55);
+""; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55);
 pointer-events: none; z-index: 1; }
 
     .tour-image { position: relative; overflow: hidden; }
@@ -878,6 +878,8 @@ height: 230px; }
   }
 }
     
+  }
+
   </style>
 </head>
 
@@ -934,38 +936,17 @@ height: 230px; }
 </nav>
   </header>
 
-  <img
-        src="images/Patterdale%20Private%20Tours%20Hero.png"
-        alt="Private Lake District tour with Tour The Lakes beside Ullswater"
-        decoding="async"
-      />
-    </div>
-
-    <div class="folder-gap"></div>
-
-      <img
-        src="images/Beech%20Wood%20Hotel%20730Ld.png"
-        alt="Tour The Lakes executive travel vehicle at a Lake District country house hotel"
-        decoding="async"
-      />
-    </div>
-
-    <div class="folder-gap"></div>
-
-      <img
-        src="images/Beech%20Wood%20Hotel%20730Ld.png"
-        alt="Tour The Lakes private hire vehicle at a Lake District country house hotel"
-        decoding="async"
-      />
-    </div>
-
-    <div class="folder-gap"></div>
-
+  <div class="hero-wrapper">
     <img
-      src="images/Kirkstone%20Pass%20Hero.png"
-      alt="Tour The Lakes vehicle on a scenic Lake District route"
+      src="images/DSC_0092.JPG.jpg"
+      alt="Lake District tour view near Windermere"
       decoding="async"
     />
+    <h1>Discover the Lakes</h1>
+    <p>Sightseeing with a difference</p>
+  </div>
+
+  <div class="hero-gap"></div>
 
   <section id="private-tours" class="folder-page" aria-label="Private Lake District tours" hidden>
     <div class="private-tours-intro">
@@ -980,18 +961,42 @@ height: 230px; }
   </section>
 
   <section id="public-tours" class="folder-page" aria-label="Public Lake District tours" hidden>
-  <div class="public-tours-intro">
-    <img
-      src="images/Kirkstone%20Pass%20Hero.png"
-      alt="Tour The Lakes vehicle on a scenic Lake District route"
-      decoding="async"
-    />
-  </div>
+    <div class="public-tours-intro">
+      <img
+        src="images/Kirkstone%20Pass%20Hero.png"
+        alt="Tour The Lakes vehicle on a scenic Lake District route"
+        decoding="async"
+      />
+    </div>
 
-  <div class="folder-gap"></div>
+    <div class="folder-gap"></div>
 
-  <div id="tours"></div>
-</section>
+    <div id="tours"></div>
+  </section>
+
+  <section id="executive-travel" class="folder-page" aria-label="Executive travel" hidden>
+    <div class="executive-travel-intro">
+      <img
+        src="images/Beech%20Wood%20Hotel%20730Ld.png"
+        alt="Tour The Lakes executive travel vehicle at a Lake District country house hotel"
+        decoding="async"
+      />
+    </div>
+
+    <div class="folder-gap"></div>
+  </section>
+
+  <section id="private-hire" class="folder-page" aria-label="Private hire" hidden>
+    <div class="private-hire-intro">
+      <img
+        src="images/Beech%20Wood%20Hotel%20730Ld.png"
+        alt="Tour The Lakes private hire vehicle at a Lake District country house hotel"
+        decoding="async"
+      />
+    </div>
+
+    <div class="folder-gap"></div>
+  </section>
 
   <template id="tourTemplate">
     <article class="tour" data-tour-id="">
@@ -1147,52 +1152,49 @@ height: 230px; }
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const privateToursPage = document.getElementById(“private-tours”);
-    const publicToursPage = document.getElementById(“public-tours”);
-    const executiveTravelPage = document.getElementById(“executive-travel”);
-    const privateHirePage = document.getElementById(“private-hire”);
-    const toursEl = document.getElementById(“tours”);
-    const tpl = document.getElementById(“tourTemplate”);
+    const privateToursPage = document.getElementById("private-tours");
+    const publicToursPage = document.getElementById("public-tours");
+    const executiveTravelPage = document.getElementById("executive-travel");
+    const privateHirePage = document.getElementById("private-hire");
+    const toursEl = document.getElementById("tours");
+    const tpl = document.getElementById("tourTemplate");
 
-    function showPublicToursFolder() { if ( !publicToursPage ||
-!privateToursPage || !executiveTravelPage || !privateHirePage ) return;
+    function showPublicToursFolder() {
+      if (!publicToursPage || !privateToursPage || !executiveTravelPage || !privateHirePage) return;
 
-const hash = window.location.hash;
+      const hash = window.location.hash;
 
-const showPublicTours = hash === “#public-tours” ||
-hash.startsWith(“#tour-”);
+      const showPublicTours = hash === "#public-tours" || hash.startsWith("#tour-");
+      const showPrivateTours = hash === "#private-tours";
+      const showExecutiveTravel = hash === "#executive-travel";
+      const showPrivateHire = hash === "#private-hire";
 
-const showPrivateTours = hash === “#private-tours”;
+      const showFolderPage =
+        showPublicTours || showPrivateTours || showExecutiveTravel || showPrivateHire;
 
-const showExecutiveTravel = hash === “#executive-travel”;
+      if (homeHero) homeHero.hidden = showFolderPage;
+      if (homeHeroGap) homeHeroGap.hidden = showFolderPage;
 
-const showPrivateHire = hash === “#private-hire”;
+      publicToursPage.hidden = !showPublicTours;
+      privateToursPage.hidden = !showPrivateTours;
+      executiveTravelPage.hidden = !showExecutiveTravel;
+      privateHirePage.hidden = !showPrivateHire;
 
-const showFolderPage = showPublicTours || showPrivateTours ||
-showExecutiveTravel || showPrivateHire;
+      if (!showFolderPage) return;
 
-if (homeHero) homeHero.hidden = showFolderPage; if (homeHeroGap)
-homeHeroGap.hidden = showFolderPage;
+      requestAnimationFrame(() => {
+        if (hash.startsWith("#tour-")) {
+          document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+          return;
+        }
 
-publicToursPage.hidden = !showPublicTours; privateToursPage.hidden =
-!showPrivateTours; executiveTravelPage.hidden = !showExecutiveTravel;
-privateHirePage.hidden = !showPrivateHire;
-
-if (!showFolderPage) return;
-
-requestAnimationFrame(() => { if (hash.startsWith(“#tour-”)) {
-document.getElementById(hash.slice(1))?.scrollIntoView({ block: “start”
-}); return; }
-
-window.scrollTo({ top: 0, left: 0, behavior: “auto” }); }); }
-
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "auto"
-    });
-  });
-}
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto"
+        });
+      });
+    }
 
     window.addEventListener("hashchange", showPublicToursFolder);
     showPublicToursFolder();
