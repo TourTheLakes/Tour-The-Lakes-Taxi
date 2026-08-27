@@ -1322,6 +1322,26 @@ img { width: 100%; display: block; }
     window.addEventListener("hashchange", showPublicToursFolder);
     showPublicToursFolder();
 
+    // Keep folder navigation deterministic even when the user clicks
+    // the link for the section that is already active.
+    document.querySelectorAll(
+      'a[href="#private-tours"], a[href="#public-tours"], a[href="#executive-travel"], a[href="#private-hire"]'
+    ).forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const targetHash = link.getAttribute("href");
+        if (!targetHash) return;
+
+        // If this is a genuine hash change, let the existing hashchange
+        // routing system handle it normally.
+        if (window.location.hash !== targetHash) return;
+
+        // Same-hash click: stop the browser's native anchor jump and
+        // re-apply the existing folder routing/positioning ourselves.
+        event.preventDefault();
+        showPublicToursFolder();
+      });
+    });
+
     // ---------- shared helpers ----------
     const CELL_COUNT = 42;
 
@@ -2260,7 +2280,6 @@ img { width: 100%; display: block; }
       }
 
       buildTourSchema(toursObj);
-      showPublicToursFolder();
     }
 
     // Listen to /tours
