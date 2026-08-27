@@ -363,6 +363,38 @@ img { width: 100%; display: block; }
   z-index: 1;
 }
 
+/* ===== Folder hero text overlays ===== */
+.folder-intro-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  left: 0;
+  right: 0;
+  color: rgba(255,255,255,0.92);
+}
+
+.folder-intro-title {
+  margin: 0 0 20px 0;
+  color: #b86b2a;
+  text-align: center;
+  font: 600 58px/1.05 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.folder-intro-description {
+  margin: 0;
+  color: rgba(255,255,255,0.92);
+  font: 600 18px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
     .tour-image::after {
@@ -654,6 +686,20 @@ img { width: 100%; display: block; }
    .private-hire-intro {
   height: 380px;
  }
+
+  .folder-intro-content {
+    padding: 24px 28px;
+  }
+
+  .folder-intro-title {
+    margin-bottom: 16px;
+    font-size: 46px;
+  }
+
+  .folder-intro-description {
+    font-size: 16px;
+    line-height: 1.4;
+  }
 }
 
     @media screen and (min-width: 1024px) {
@@ -677,6 +723,21 @@ img { width: 100%; display: block; }
       .private-hire-intro {
        height: 650px;
          }
+
+      .folder-intro-content {
+        max-width: 1000px;
+        padding: 40px 28px;
+      }
+
+      .folder-intro-title {
+        margin-bottom: 24px;
+        font-size: 58px;
+      }
+
+      .folder-intro-description {
+        font-size: 20px;
+        line-height: 1.5;
+      }
     }
 
     @media screen and (max-width: 600px) {
@@ -768,6 +829,21 @@ img { width: 100%; display: block; }
       .private-hire-intro {
   height: 230px;
 }
+
+  .folder-intro-content {
+    padding: 12px 16px;
+  }
+
+  .folder-intro-title {
+    margin-bottom: 10px;
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1;
+  }
+
+  .folder-intro-description {
+    font-size: clamp(11px, 2.9vw, 13px);
+    line-height: 1.32;
+  }
 
   .tour-image .tour-title {
     font-size: 36px;
@@ -971,6 +1047,10 @@ img { width: 100%; display: block; }
         alt="Private Lake District tour with Tour The Lakes beside Ullswater"
         decoding="async"
       />
+          <div class="folder-intro-content">
+        <h1 class="folder-intro-title">Private Tours</h1>
+        <p class="folder-intro-description">Discover the Lake District entirely at your own pace with a private tour designed around you. With exclusive use of the vehicle and your own driver for the journey, you can explore the places that interest you most, spend longer where you wish, and experience the Lakes without being tied to the itinerary or timetable of a scheduled tour.</p>
+      </div>
     </div>
 
     <div class="folder-gap"></div>
@@ -983,6 +1063,10 @@ img { width: 100%; display: block; }
         alt="Tour The Lakes executive travel vehicle at a Lake District country house hotel"
         decoding="async"
       />
+          <div class="folder-intro-content">
+        <h1 class="folder-intro-title">Executive Travel</h1>
+        <p class="folder-intro-description">Travel throughout the Lake District in comfort with our executive travel service, offering a discreet and professional experience for both business and leisure. Whether travelling to a hotel, restaurant, special event or an important appointment, enjoy the convenience of a private vehicle and dedicated driver, with every journey arranged around your individual requirements.</p>
+      </div>
     </div>
 
     <div class="folder-gap"></div>
@@ -995,6 +1079,10 @@ img { width: 100%; display: block; }
         alt="Tour The Lakes private hire vehicle at a Lake District country house hotel"
         decoding="async"
       />
+          <div class="folder-intro-content">
+        <h1 class="folder-intro-title">Private Hire</h1>
+        <p class="folder-intro-description">Travel across the Lake District and beyond with our private hire service, providing comfortable and reliable transport tailored to your journey. From airport and railway transfers to weddings, events, evenings out and longer-distance travel, enjoy the convenience of a private vehicle and dedicated driver, with your journey arranged around where you need to be and when you need to be there.</p>
+      </div>
     </div>
 
     <div class="folder-gap"></div>
@@ -1007,7 +1095,11 @@ img { width: 100%; display: block; }
       alt="Tour The Lakes vehicle on a scenic Lake District route"
       decoding="async"
     />
-  </div>
+        <div class="folder-intro-content">
+        <h1 class="folder-intro-title">Public Tours</h1>
+        <p class="folder-intro-description">Discover the Lake District on one of our scheduled small-group tours, carefully planned to showcase some of the region’s most memorable scenery, villages and attractions. Travel in comfort with an experienced driver, enjoy time to explore at each stop, and experience a full day in the Lakes without having to worry about planning the route, parking or getting from place to place.</p>
+      </div>
+    </div>
 
   <div class="folder-gap"></div>
 
