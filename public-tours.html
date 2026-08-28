@@ -1855,6 +1855,14 @@ img { width: 100%; display: block; }
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // Public Tours rendering targets.
+    const toursEl = document.getElementById("tours");
+    const tpl = document.getElementById("tourTemplate");
+
+    if (!toursEl || !tpl) {
+      console.error("Public Tours could not initialise: #tours or #tourTemplate is missing.");
+    }
+
     // ---------- shared helpers ----------
     const CELL_COUNT = 42;
 
