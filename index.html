@@ -520,21 +520,14 @@ img { width: 100%; display: block; }
 
 
 /* ===== Private Tours completion: pricing + contact ===== */
-.private-tour-pricing {
+.private-tour-pricing,
+.private-tour-contact {
   width: min(1000px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 30px 0;
-  border-top: 1px solid #b86b2a;
-  border-bottom: 1px solid #b86b2a;
-  text-align: center;
 }
 
-.private-tour-pricing h2,
-.private-tour-contact h2 {
-  margin: 0 0 14px;
-  color: #b86b2a;
+.private-tour-pricing {
   text-align: center;
-  font: 600 34px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .private-tour-price {
@@ -575,39 +568,55 @@ img { width: 100%; display: block; }
   text-align-last: left;
 }
 
-.private-tour-contact {
-  width: min(1000px, calc(100% - 40px));
-  margin: 0 auto;
-  text-align: center;
-}
-
 .private-tour-contact-intro {
-  margin-bottom: 26px;
+  margin-bottom: 0;
 }
 
-.private-tour-cta-row {
+.private-tour-contact-strips {
+  width: 100%;
+}
+
+.private-tour-contact-strip {
+  position: relative;
+  width: 100%;
+  min-height: 58px;
   display: flex;
-  gap: 14px;
-  justify-content: center;
-  margin: 28px 0;
-}
-
-.private-tour-cta {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 260px;
-  padding: 14px 18px;
-  border: 1px solid #b86b2a;
-  background: #2b2b2b;
-  color: #b86b2a;
+  overflow: hidden;
+  isolation: isolate;
+  border-top: 2px solid #b86b2a;
+  border-bottom: 2px solid #b86b2a;
+  background:
+    radial-gradient(circle at 18% 50%, rgba(109, 142, 91, 0.30) 0, rgba(109, 142, 91, 0.08) 25%, transparent 48%),
+    radial-gradient(circle at 82% 50%, rgba(68, 101, 61, 0.34) 0, rgba(68, 101, 61, 0.08) 28%, transparent 50%),
+    linear-gradient(110deg, #182019 0%, #273126 27%, #1c261e 50%, #303b2b 73%, #171f19 100%);
+  color: #c87934;
   text-decoration: none;
-  font: 600 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: center;
+  font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.2px;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,0.55),
+    0 0 12px rgba(184,107,42,0.14);
 }
 
-.private-tour-cta:hover,
-.private-tour-cta:focus-visible {
-  background: rgba(184,107,42,0.12);
+.private-tour-contact-strip + .private-tour-contact-strip {
+  margin-top: 14px;
+}
+
+.private-tour-contact-strip::after {
+  content: "";
+  position: absolute;
+  inset: 5px 0;
+  border-top: 1px solid rgba(184,107,42,0.18);
+  border-bottom: 1px solid rgba(184,107,42,0.18);
+  pointer-events: none;
+}
+
+.private-tour-contact-strip:hover,
+.private-tour-contact-strip:focus-visible {
+  filter: brightness(1.08);
 }
 
 .private-tour-contact-note {
@@ -952,17 +961,17 @@ img { width: 100%; display: block; }
     width: min(940px, calc(100% - 56px));
   }
 
-  .private-tour-pricing h2,
-  .private-tour-contact h2 {
-    font-size: 32px;
-  }
-
   .private-tour-pricing-line,
   .private-tour-pricing-copy,
   .private-tour-contact-intro,
   .private-tour-contact-note {
     font-size: 19px;
     line-height: 1.42;
+  }
+
+  .private-tour-contact-strip {
+    min-height: 54px;
+    font-size: 16px;
   }
 }
 
@@ -1180,16 +1189,6 @@ img { width: 100%; display: block; }
     width: calc(100% - 32px);
   }
 
-  .private-tour-pricing {
-    padding: 24px 0;
-  }
-
-  .private-tour-pricing h2,
-  .private-tour-contact h2 {
-    font-size: clamp(24px, 6.4vw, 30px);
-    line-height: 1.08;
-  }
-
   .private-tour-price {
     font-size: clamp(34px, 9.2vw, 42px);
   }
@@ -1211,15 +1210,13 @@ img { width: 100%; display: block; }
     line-height: 1.4;
   }
 
-  .private-tour-cta-row {
-    flex-direction: column;
-    gap: 10px;
-    margin: 24px 0;
+  .private-tour-contact-strip {
+    min-height: 48px;
+    font-size: clamp(14px, 3.8vw, 16px);
   }
 
-  .private-tour-cta {
-    width: 100%;
-    min-width: 0;
+  .private-tour-contact-strip + .private-tour-contact-strip {
+    margin-top: 10px;
   }
 
   .tour-image .tour-title {
@@ -1468,8 +1465,13 @@ img { width: 100%; display: block; }
 
     <div class="folder-gap"></div>
 
+    <div class="private-tour-statement-strip" aria-labelledby="private-tour-price-heading">
+      <h2 id="private-tour-price-heading" class="private-tour-statement-title">Private Tours From</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
     <section class="private-tour-pricing" aria-labelledby="private-tour-price-heading">
-      <h2 id="private-tour-price-heading">Private Tours From</h2>
       <div class="private-tour-price">£35.50 <span>per person*</span></div>
       <p class="private-tour-pricing-line">Half-day and full-day private tours · Up to 7 passengers</p>
       <p class="private-tour-pricing-copy">Enjoy exclusive use of your vehicle and driver throughout your tour, with the day arranged around your group rather than a fixed public itinerary.</p>
@@ -1478,15 +1480,26 @@ img { width: 100%; display: block; }
 
     <div class="folder-gap"></div>
 
+    <div class="private-tour-statement-strip" aria-labelledby="private-tour-contact-heading">
+      <h2 id="private-tour-contact-heading" class="private-tour-statement-title">Plan Yours</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
     <section class="private-tour-contact" aria-labelledby="private-tour-contact-heading">
-      <h2 id="private-tour-contact-heading">Start Planning Your Tour</h2>
       <p class="private-tour-contact-intro">You don't need to have everything worked out before getting in touch. Tell us when you would like to travel, how many people will be joining us and anything you already know you would like to see or do. We can take it from there.</p>
+    </section>
 
-      <div class="private-tour-cta-row" aria-label="Private tour contact options">
-        <a class="private-tour-cta" href="mailto:info@tourthelakes.com">Email: info@tourthelakes.com</a>
-        <a class="private-tour-cta" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
-      </div>
+    <div class="folder-gap"></div>
 
+    <div class="private-tour-contact-strips" aria-label="Private tour contact options">
+      <a class="private-tour-contact-strip" href="mailto:info@tourthelakes.com">Email: info@tourthelakes.com</a>
+      <a class="private-tour-contact-strip" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <section class="private-tour-contact" aria-label="Private tour contact information">
       <p class="private-tour-contact-note">We are happy to take telephone calls when available. However, much of our working day is spent out delivering tours, so email or WhatsApp is the best way to contact us. Send us a message and we will be in touch to discuss your plans and the options available.</p>
     </section>
 
