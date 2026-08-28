@@ -518,6 +518,104 @@ img { width: 100%; display: block; }
   margin-bottom: 0;
 }
 
+
+/* ===== Private Tours completion: pricing + contact ===== */
+.private-tour-pricing {
+  width: min(1000px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 30px 0;
+  border-top: 1px solid #b86b2a;
+  border-bottom: 1px solid #b86b2a;
+  text-align: center;
+}
+
+.private-tour-pricing h2,
+.private-tour-contact h2 {
+  margin: 0 0 14px;
+  color: #b86b2a;
+  text-align: center;
+  font: 600 34px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.private-tour-price {
+  margin: 0 0 10px;
+  color: #b86b2a;
+  font: 600 46px/1.05 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.private-tour-price span {
+  color: rgba(255,255,255,0.92);
+  font-size: 20px;
+}
+
+.private-tour-pricing-line {
+  margin: 0 0 24px;
+  color: rgba(255,255,255,0.92);
+  font: 600 18px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: center;
+}
+
+.private-tour-pricing-copy,
+.private-tour-contact-intro,
+.private-tour-contact-note {
+  margin: 0 auto 22px;
+  max-width: 1000px;
+  color: rgba(255,255,255,0.92);
+  font: 600 18px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.private-tour-smallprint {
+  margin: 0 auto;
+  max-width: 1000px;
+  color: rgba(255,255,255,0.58);
+  font: 400 12px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.private-tour-contact {
+  width: min(1000px, calc(100% - 40px));
+  margin: 0 auto;
+  text-align: center;
+}
+
+.private-tour-contact-intro {
+  margin-bottom: 26px;
+}
+
+.private-tour-cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin: 28px 0;
+}
+
+.private-tour-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 260px;
+  padding: 14px 18px;
+  border: 1px solid #b86b2a;
+  background: #2b2b2b;
+  color: #b86b2a;
+  text-decoration: none;
+  font: 600 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.private-tour-cta:hover,
+.private-tour-cta:focus-visible {
+  background: rgba(184,107,42,0.12);
+}
+
+.private-tour-contact-note {
+  margin-bottom: 0;
+  color: rgba(255,255,255,0.72);
+  font-weight: 500;
+}
+
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
     .tour-image::after {
@@ -848,6 +946,24 @@ img { width: 100%; display: block; }
     font-size: 19px;
     line-height: 1.42;
   }
+
+  .private-tour-pricing,
+  .private-tour-contact {
+    width: min(940px, calc(100% - 56px));
+  }
+
+  .private-tour-pricing h2,
+  .private-tour-contact h2 {
+    font-size: 32px;
+  }
+
+  .private-tour-pricing-line,
+  .private-tour-pricing-copy,
+  .private-tour-contact-intro,
+  .private-tour-contact-note {
+    font-size: 19px;
+    line-height: 1.42;
+  }
 }
 
     @media screen and (min-width: 1024px) {
@@ -897,6 +1013,19 @@ img { width: 100%; display: block; }
       }
 
       .private-tour-information p {
+        font-size: 20px;
+        line-height: 1.5;
+      }
+
+      .private-tour-pricing,
+      .private-tour-contact {
+        width: min(1000px, calc(100% - 72px));
+      }
+
+      .private-tour-pricing-line,
+      .private-tour-pricing-copy,
+      .private-tour-contact-intro,
+      .private-tour-contact-note {
         font-size: 20px;
         line-height: 1.5;
       }
@@ -1044,6 +1173,53 @@ img { width: 100%; display: block; }
     font-size: clamp(13px, 3.4vw, 15px);
     line-height: 1.34;
     margin-bottom: 20px;
+  }
+
+  .private-tour-pricing,
+  .private-tour-contact {
+    width: calc(100% - 32px);
+  }
+
+  .private-tour-pricing {
+    padding: 24px 0;
+  }
+
+  .private-tour-pricing h2,
+  .private-tour-contact h2 {
+    font-size: clamp(24px, 6.4vw, 30px);
+    line-height: 1.08;
+  }
+
+  .private-tour-price {
+    font-size: clamp(34px, 9.2vw, 42px);
+  }
+
+  .private-tour-price span {
+    font-size: clamp(14px, 3.8vw, 17px);
+  }
+
+  .private-tour-pricing-line,
+  .private-tour-pricing-copy,
+  .private-tour-contact-intro,
+  .private-tour-contact-note {
+    font-size: clamp(13px, 3.4vw, 15px);
+    line-height: 1.34;
+  }
+
+  .private-tour-smallprint {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .private-tour-cta-row {
+    flex-direction: column;
+    gap: 10px;
+    margin: 24px 0;
+  }
+
+  .private-tour-cta {
+    width: 100%;
+    min-width: 0;
   }
 
   .tour-image .tour-title {
@@ -1277,6 +1453,42 @@ img { width: 100%; display: block; }
     <div class="private-tour-statement-strip" aria-labelledby="private-tour-tailor-title">
       <h2 id="private-tour-tailor-title" class="private-tour-statement-title">Tailor Made</h2>
     </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-information" aria-label="Tailor-made private tour planning">
+      <div class="private-tour-information-inner">
+        <p>Using our knowledge of the Lake District, we will take care of the practical details behind your day. We will consider the route, travelling times, suitable stops and how best to use the time you have available, while making sure there is actually time to enjoy the places you have come to see.</p>
+
+        <p>Your itinerary does not have to be decided before you contact us either. Tell us as much or as little as you already know. If you have a list of places you absolutely want to visit, we can build around them. If you simply know the sort of Lake District experience you are looking for, leave the finer details to us.</p>
+
+        <p>And because the vehicle is exclusively yours, your day has far greater freedom than a scheduled tour. Where practical, there is room to spend longer somewhere you particularly enjoy, change the emphasis of the day, or adapt the journey as you explore.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <section class="private-tour-pricing" aria-labelledby="private-tour-price-heading">
+      <h2 id="private-tour-price-heading">Private Tours From</h2>
+      <div class="private-tour-price">£35.50 <span>per person*</span></div>
+      <p class="private-tour-pricing-line">Half-day and full-day private tours · Up to 7 passengers</p>
+      <p class="private-tour-pricing-copy">Enjoy exclusive use of your vehicle and driver throughout your tour, with the day arranged around your group rather than a fixed public itinerary.</p>
+      <p class="private-tour-smallprint">*£35.50 per person is based on a family of six travelling on a half-day private tour. Prices vary according to your requirements, group size and duration.</p>
+    </section>
+
+    <div class="folder-gap"></div>
+
+    <section class="private-tour-contact" aria-labelledby="private-tour-contact-heading">
+      <h2 id="private-tour-contact-heading">Start Planning Your Tour</h2>
+      <p class="private-tour-contact-intro">You don't need to have everything worked out before getting in touch. Tell us when you would like to travel, how many people will be joining us and anything you already know you would like to see or do. We can take it from there.</p>
+
+      <div class="private-tour-cta-row" aria-label="Private tour contact options">
+        <a class="private-tour-cta" href="mailto:info@tourthelakes.com">Email: info@tourthelakes.com</a>
+        <a class="private-tour-cta" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
+      </div>
+
+      <p class="private-tour-contact-note">We are happy to take telephone calls when available. However, much of our working day is spent out delivering tours, so email or WhatsApp is the best way to contact us. Send us a message and we will be in touch to discuss your plans and the options available.</p>
+    </section>
 
     <div class="folder-gap"></div>
   </section>
