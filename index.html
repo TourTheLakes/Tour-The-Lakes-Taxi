@@ -625,6 +625,28 @@ img { width: 100%; display: block; }
   font-weight: 500;
 }
 
+
+/* ===== Public Tours Explore block ===== */
+.public-tour-information {
+  width: 100%;
+  background: #2b2b2b;
+  color: rgba(255,255,255,0.92);
+}
+
+.public-tour-information-inner {
+  width: min(1000px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 4px 0 6px;
+}
+
+.public-tour-information p {
+  margin: 0;
+  color: rgba(255,255,255,0.92);
+  font: 600 18px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
     .tour-image::after {
@@ -973,6 +995,15 @@ img { width: 100%; display: block; }
     min-height: 54px;
     font-size: 16px;
   }
+
+  .public-tour-information-inner {
+    width: min(940px, calc(100% - 56px));
+  }
+
+  .public-tour-information p {
+    font-size: 19px;
+    line-height: 1.42;
+  }
 }
 
     @media screen and (min-width: 1024px) {
@@ -1035,6 +1066,15 @@ img { width: 100%; display: block; }
       .private-tour-pricing-copy,
       .private-tour-contact-intro,
       .private-tour-contact-note {
+        font-size: 20px;
+        line-height: 1.5;
+      }
+
+      .public-tour-information-inner {
+        width: min(1000px, calc(100% - 72px));
+      }
+
+      .public-tour-information p {
         font-size: 20px;
         line-height: 1.5;
       }
@@ -1217,6 +1257,15 @@ img { width: 100%; display: block; }
 
   .private-tour-contact-strip + .private-tour-contact-strip {
     margin-top: 10px;
+  }
+
+  .public-tour-information-inner {
+    width: calc(100% - 32px);
+  }
+
+  .public-tour-information p {
+    font-size: clamp(13px, 3.4vw, 15px);
+    line-height: 1.34;
   }
 
   .tour-image .tour-title {
@@ -1453,7 +1502,7 @@ img { width: 100%; display: block; }
 
     <div class="folder-gap"></div>
 
-    <div class="private-tour-information" aria-label="Tailor-made private tour planning">
+    <div class="private-tour-information" aria-label="Tailor made private tour planning">
       <div class="private-tour-information-inner">
         <p>Using our knowledge of the Lake District, we will take care of the practical details behind your day. We will consider the route, travelling times, suitable stops and how best to use the time you have available, while making sure there is actually time to enjoy the places you have come to see.</p>
 
@@ -1473,9 +1522,9 @@ img { width: 100%; display: block; }
 
     <section class="private-tour-pricing" aria-labelledby="private-tour-price-heading">
       <div class="private-tour-price">£35.50 <span>per person*</span></div>
-      <p class="private-tour-pricing-line">Half-day and full-day private tours · Up to 7 passengers</p>
+      <p class="private-tour-pricing-line">Half-day and full day private tours · Up to 7 passengers</p>
       <p class="private-tour-pricing-copy">Enjoy exclusive use of your vehicle and driver throughout your tour, with the day arranged around your group rather than a fixed public itinerary.</p>
-      <p class="private-tour-smallprint">*£35.50 per person is based on a family of six travelling on a half-day private tour. Prices vary according to your requirements, group size and duration.</p>
+      <p class="private-tour-smallprint">*£35.50 per person is based on a family of six travelling on a half day private tour. Prices vary according to your requirements, group size and duration.</p>
     </section>
 
     <div class="folder-gap"></div>
@@ -1531,7 +1580,7 @@ img { width: 100%; display: block; }
       />
           <div class="folder-intro-content">
         <h1 class="folder-intro-title">Private Hire</h1>
-        <p class="folder-intro-description">Travel across the Lake District and beyond with our private hire service, providing comfortable and reliable transport tailored to your journey. From airport and railway transfers to weddings, events, evenings out and longer-distance travel, enjoy the convenience of a private vehicle and dedicated driver, with your journey arranged around where you need to be and when you need to be there.</p>
+        <p class="folder-intro-description">Travel across the Lake District and beyond with our private hire service, providing comfortable and reliable transport tailored to your journey. From airport and railway transfers to weddings, events, evenings out and longer distance travel, enjoy the convenience of a private vehicle and dedicated driver, with your journey arranged around where you need to be and when you need to be there.</p>
       </div>
     </div>
 
@@ -1547,9 +1596,23 @@ img { width: 100%; display: block; }
     />
         <div class="folder-intro-content">
         <h1 class="folder-intro-title">Public Tours</h1>
-        <p class="folder-intro-description">Discover the Lake District on one of our scheduled small-group tours, carefully planned to showcase some of the region’s most memorable scenery, villages and attractions. Travel in comfort with an experienced driver, enjoy time to explore at each stop, and experience a full day in the Lakes without having to worry about planning the route, parking or getting from place to place.</p>
+        <p class="folder-intro-description">Discover the Lake District on one of our scheduled small group tours, carefully planned to showcase some of the region’s most memorable scenery, villages and attractions. Travel in comfort with an experienced driver, enjoy time to explore at each stop, and experience a full day in the Lakes without having to worry about planning the route, parking or getting from place to place.</p>
       </div>
     </div>
+
+  <div class="folder-gap"></div>
+
+  <div class="private-tour-statement-strip" aria-labelledby="public-tour-explore-title">
+    <h2 id="public-tour-explore-title" class="private-tour-statement-title">Explore</h2>
+  </div>
+
+  <div class="folder-gap"></div>
+
+  <div class="public-tour-information" aria-label="Public tour availability and booking information">
+    <div class="public-tour-information-inner">
+      <p>Explore our public tours below. Each tour shows the next available departure, with further dates, full tour information and booking options available through Read More.</p>
+    </div>
+  </div>
 
   <div class="folder-gap"></div>
 
