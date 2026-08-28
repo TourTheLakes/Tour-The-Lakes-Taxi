@@ -2,9 +2,9 @@
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
-  <title>Lake District Tours from Windermere | Tour The Lakes</title>
+  <title>Lake District Tours & Private Hire | Tour The Lakes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes.">
+  <meta name="description" content="Book Lake District private and public tours from Windermere, plus executive travel, wedding transport and private hire with Tour The Lakes. Book direct.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://tourthelakes.com/">
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
@@ -12,8 +12,8 @@
 
   <meta property="og:locale" content="en_GB" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Lake District Tours from Windermere | Tour The Lakes" />
-  <meta property="og:description" content="Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes." />
+  <meta property="og:title" content="Lake District Tours & Private Hire | Tour The Lakes" />
+  <meta property="og:description" content="Private and public Lake District tours from Windermere, executive travel, wedding transport and private hire with Tour The Lakes." />
   <meta property="og:url" content="https://tourthelakes.com/" />
   <meta property="og:site_name" content="Tour The Lakes" />
   <meta property="og:image" content="https://tourthelakes.com/images/DSC_0092.JPG.jpg" />
@@ -21,8 +21,8 @@
   <meta property="og:image:alt" content="Lake District tour view near Windermere" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Lake District Tours from Windermere | Tour The Lakes" />
-  <meta name="twitter:description" content="Private Lake District tours from Windermere Railway Station with Tour The Lakes." />
+  <meta name="twitter:title" content="Lake District Tours & Private Hire | Tour The Lakes" />
+  <meta name="twitter:description" content="Lake District private and public tours, executive travel, wedding transport and private hire from Windermere." />
   <meta name="twitter:image" content="https://tourthelakes.com/images/DSC_0092.JPG.jpg" />
   <meta name="twitter:image:alt" content="Lake District tour view near Windermere" />
 
@@ -42,8 +42,8 @@
       "@type": "WebPage",
       "@id": "https://tourthelakes.com/#webpage",
       "url": "https://tourthelakes.com/",
-      "name": "Lake District Tours from Windermere | Tour The Lakes",
-      "description": "Private Lake District tours from Windermere Railway Station. Discover scenic routes, carefully planned sightseeing tours and easy online booking with Tour The Lakes.",
+      "name": "Lake District Tours & Private Hire | Tour The Lakes",
+      "description": "Private and public Lake District tours from Windermere, executive travel, wedding transport and private hire with Tour The Lakes.",
       "isPartOf": { "@id": "https://tourthelakes.com/#website" },
       "about": { "@id": "https://tourthelakes.com/#tour-operator" },
       "primaryImageOfPage": { "@id": "https://tourthelakes.com/#primary-image" },
@@ -88,6 +88,50 @@
           "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
           "opens": "10:00",
           "closes": "14:00"
+        }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "info@tourthelakes.com",
+        "availableLanguage": "English"
+      },
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Private Lake District Tours",
+            "description": "Private sightseeing tours of the Lake District from Windermere for groups of up to seven passengers.",
+            "areaServed": "Lake District"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Public Lake District Tours",
+            "description": "Scheduled Lake District sightseeing tours with online availability and booking.",
+            "areaServed": "Lake District"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Executive Travel",
+            "description": "Executive car travel for hotels, restaurants, business, leisure and special occasions in the Lake District and beyond.",
+            "areaServed": "Cumbria"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Private Hire and Wedding Transport",
+            "description": "Private hire, airport and railway transfers, wedding transport, event travel and longer distance journeys for up to seven passengers.",
+            "areaServed": "Cumbria"
+          }
         }
       ]
     }
@@ -647,6 +691,102 @@ img { width: 100%; display: block; }
   text-align-last: left;
 }
 
+
+/* ===== Home + Executive Travel + Private Hire content ===== */
+.service-information {
+  width: 100%;
+  background: #2b2b2b;
+  color: rgba(255,255,255,0.92);
+}
+
+.service-information-inner {
+  width: min(1000px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 4px 0 6px;
+}
+
+.service-information-lead {
+  margin: 0 0 28px;
+  color: rgba(255,255,255,0.92);
+  text-align: center;
+  font: 600 20px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.service-information p {
+  margin: 0 0 24px;
+  color: rgba(255,255,255,0.92);
+  font: 600 18px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.service-information p:last-child {
+  margin-bottom: 0;
+}
+
+.service-note {
+  color: rgba(255,255,255,0.70) !important;
+  font-weight: 500 !important;
+}
+
+.home-service-links {
+  width: 100%;
+}
+
+.home-service-links .private-tour-contact-strip + .private-tour-contact-strip {
+  margin-top: 14px;
+}
+
+.site-footer {
+  width: 100%;
+  border-top: 2px solid #b86b2a;
+  background: #2b2b2b;
+}
+
+.footer-inner {
+  min-height: 150px;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1.35fr;
+  gap: 36px;
+  align-items: center;
+  padding: 28px 0;
+}
+
+.footer-block {
+  min-width: 0;
+}
+
+.footer-title {
+  margin: 0 0 9px;
+  color: #b86b2a;
+  font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.footer-text,
+.footer-link {
+  color: rgba(255,255,255,0.68);
+  font: 500 14px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.1px;
+}
+
+.footer-link {
+  display: block;
+  color: rgba(255,255,255,0.78);
+  text-decoration: none;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: #b86b2a;
+}
+
+.footer-copyright {
+  color: rgba(255,255,255,0.48);
+  font: 400 13px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
     .tour-image { position: relative; overflow: hidden; }
     .tour-image img { max-height: 200px; object-fit: cover; position: relative; z-index: 0; }
     .tour-image::after {
@@ -908,9 +1048,6 @@ img { width: 100%; display: block; }
       font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    .site-footer { width: 100%; border-top: 2px solid #b86b2a; }
-    .footer-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
-    .footer-text { color: rgba(255,255,255,0.6); font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
 
 
     @media screen and (min-width: 601px) and (max-width: 1023px) {
@@ -1004,6 +1141,25 @@ img { width: 100%; display: block; }
     font-size: 19px;
     line-height: 1.42;
   }
+
+  .service-information-inner {
+    width: min(940px, calc(100% - 56px));
+  }
+
+  .service-information-lead {
+    font-size: 21px;
+    margin-bottom: 26px;
+  }
+
+  .service-information p {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+
+  .footer-inner {
+    width: min(940px, calc(100% - 56px));
+    gap: 24px;
+  }
 }
 
     @media screen and (min-width: 1024px) {
@@ -1075,6 +1231,20 @@ img { width: 100%; display: block; }
       }
 
       .public-tour-information p {
+        font-size: 20px;
+        line-height: 1.5;
+      }
+
+      .service-information-inner {
+        width: min(1000px, calc(100% - 72px));
+      }
+
+      .service-information-lead {
+        font-size: 22px;
+        margin-bottom: 30px;
+      }
+
+      .service-information p {
         font-size: 20px;
         line-height: 1.5;
       }
@@ -1266,6 +1436,43 @@ img { width: 100%; display: block; }
   .public-tour-information p {
     font-size: clamp(13px, 3.4vw, 15px);
     line-height: 1.34;
+  }
+
+  .service-information-inner {
+    width: calc(100% - 32px);
+  }
+
+  .service-information-lead {
+    font-size: clamp(16px, 4.4vw, 19px);
+    line-height: 1.3;
+    margin-bottom: 22px;
+  }
+
+  .service-information p {
+    font-size: clamp(13px, 3.4vw, 15px);
+    line-height: 1.34;
+    margin-bottom: 20px;
+  }
+
+  .home-service-links .private-tour-contact-strip + .private-tour-contact-strip {
+    margin-top: 10px;
+  }
+
+  .footer-inner {
+    width: calc(100% - 32px);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 0 32px;
+  }
+
+  .footer-title {
+    font-size: 15px;
+  }
+
+  .footer-text,
+  .footer-link {
+    font-size: 13px;
   }
 
   .tour-image .tour-title {
@@ -1461,7 +1668,68 @@ img { width: 100%; display: block; }
     <p>Sightseeing with a difference</p>
   </div>
 
-  
+  <div class="hero-gap"></div>
+
+  <section id="home-content" aria-label="Tour The Lakes services">
+
+    <div class="private-tour-statement-strip" aria-labelledby="home-welcome-title">
+      <h2 id="home-welcome-title" class="private-tour-statement-title">Tour The Lakes</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Tour The Lakes introduction">
+      <div class="service-information-inner">
+        <div class="service-information-lead">Lake District tours and private travel from Windermere</div>
+
+        <p>Tour The Lakes provides private Lake District tours, scheduled public tours, executive travel and private hire from Windermere and across the Lakes. Whether you are here to explore the scenery, travelling to a hotel or restaurant, planning a special occasion or simply need dependable transport, we arrange the journey around what you actually need.</p>
+
+        <p>Our aim is straightforward: comfortable vehicles, knowledgeable local planning and a service that feels personal rather than processed. From a full day exploring the Lake District to a single important journey, you deal directly with us and we work to make the travel itself part of a good day.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="home-direct-title">
+      <h2 id="home-direct-title" class="private-tour-statement-title">Book Direct</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Direct booking information">
+      <div class="service-information-inner">
+        <p>For the best available prices on tours sold by Tour The Lakes, we recommend booking directly with us. Some of our tours are also advertised through third party travel websites, where the selling price can be higher. Booking direct also means you are dealing with Tour The Lakes from the outset for your availability, questions and arrangements.</p>
+
+        <p>If you have already booked one of our tours through a third party and would prefer to book directly, contact us before cancelling or changing anything. We can explain the options available, while any existing booking remains subject to the terms of the company through which it was made.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="home-services-title">
+      <h2 id="home-services-title" class="private-tour-statement-title">Choose Your Journey</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Tour The Lakes travel services">
+      <div class="service-information-inner">
+        <p>Choose a private tour when you want the Lake District arranged around your own group, or browse our public tours for scheduled departures and online booking. Executive Travel is designed for hotels, restaurants, business, leisure and special occasions, while Private Hire covers transfers, events, weddings and longer journeys for groups of up to seven passengers.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <nav class="home-service-links" aria-label="Explore Tour The Lakes services">
+      <a class="private-tour-contact-strip" href="#private-tours">Private Tours</a>
+      <a class="private-tour-contact-strip" href="#public-tours">Public Tours</a>
+      <a class="private-tour-contact-strip" href="#executive-travel">Executive Travel</a>
+      <a class="private-tour-contact-strip" href="#private-hire">Private Hire</a>
+    </nav>
+
+    <div class="folder-gap"></div>
+
+  </section>
 
   <section id="private-tours" class="folder-page" aria-label="Private Lake District tours" hidden>
     <div class="private-tours-intro">
@@ -1559,13 +1827,68 @@ img { width: 100%; display: block; }
     <div class="executive-travel-intro">
       <img
         src="images/Beech%20Wood%20Hotel%20730Ld.png"
-        alt="Tour The Lakes executive travel vehicle at a Lake District country house hotel"
+        alt="BMW 7 Series executive travel in the Lake District with Tour The Lakes"
         decoding="async"
       />
-          <div class="folder-intro-content">
+      <div class="folder-intro-content">
         <h1 class="folder-intro-title">Executive Travel</h1>
-        <p class="folder-intro-description">Travel throughout the Lake District in comfort with our executive travel service, offering a discreet and professional experience for both business and leisure. Whether travelling to a hotel, restaurant, special event or an important appointment, enjoy the convenience of a private vehicle and dedicated driver, with every journey arranged around your individual requirements.</p>
+        <p class="folder-intro-description">Travel through the Lake District in comfort with a dedicated executive car and driver. From hotels, restaurants and business appointments to special occasions and important journeys, our executive travel service is arranged around your timings, your destination and the standard of journey you expect.</p>
       </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="exec-arrive-title">
+      <h2 id="exec-arrive-title" class="private-tour-statement-title">Arrive Well</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Lake District executive car service">
+      <div class="service-information-inner">
+        <div class="service-information-lead">Executive travel for business, leisure and special occasions</div>
+
+        <p>Some journeys deserve more than simply getting from one place to another. Our BMW 7 Series executive saloon offers a quiet, comfortable and discreet way to travel through the Lake District, whether you are heading to a country house hotel, a restaurant, an event, a meeting or the next part of a longer itinerary.</p>
+
+        <p>The service works particularly well for individuals, couples and smaller parties who value privacy, space and a professional journey. Collection times, destinations and any planned stops are discussed with you in advance so the day runs around your arrangements rather than forcing your arrangements around the transport.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="exec-made-title">
+      <h2 id="exec-made-title" class="private-tour-statement-title">Made Around You</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Tailored executive journeys">
+      <div class="service-information-inner">
+        <p>Executive Travel can be arranged for a single transfer, a return journey, an evening out, a series of appointments or travel that forms part of a wider day in the Lakes. If you are combining hotels, restaurants, attractions or events, tell us the plan and we will work through the timings with you.</p>
+
+        <p>We do not publish a one size fits all executive tariff because these journeys can vary considerably in distance, waiting time and requirements. Instead, we quote the journey you actually want. That means you can discuss the detail with us before confirming and know exactly what has been arranged.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="exec-quote-title">
+      <h2 id="exec-quote-title" class="private-tour-statement-title">Request A Quote</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Executive travel enquiry">
+      <div class="service-information-inner">
+        <p>Send us your collection point, destination, preferred date and time, number of passengers and anything else that matters to the journey. We will come back to you with the options available and a price for the travel requested.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-contact-strips" aria-label="Executive travel contact options">
+      <a class="private-tour-contact-strip" href="mailto:info@tourthelakes.com?subject=Executive%20Travel%20Enquiry">Email Executive Travel</a>
+      <a class="private-tour-contact-strip" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
     </div>
 
     <div class="folder-gap"></div>
@@ -1575,13 +1898,86 @@ img { width: 100%; display: block; }
     <div class="private-hire-intro">
       <img
         src="images/Castle%20Stores%20730Li.png"
-        alt="Tour The Lakes private hire vehicle at a Lake District country house hotel"
+        alt="Private hire and wedding transport in the Lake District with Tour The Lakes"
         decoding="async"
       />
-          <div class="folder-intro-content">
+      <div class="folder-intro-content">
         <h1 class="folder-intro-title">Private Hire</h1>
-        <p class="folder-intro-description">Travel across the Lake District and beyond with our private hire service, providing comfortable and reliable transport tailored to your journey. From airport and railway transfers to weddings, events, evenings out and longer distance travel, enjoy the convenience of a private vehicle and dedicated driver, with your journey arranged around where you need to be and when you need to be there.</p>
+        <p class="folder-intro-description">Travel across the Lake District and beyond with private hire arranged around your journey. From airport and railway transfers to hotels, weddings, events, evenings out and longer distance travel, we provide comfortable transport with a dedicated driver for individuals, families and groups of up to seven passengers.</p>
       </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="ph-journey-title">
+      <h2 id="ph-journey-title" class="private-tour-statement-title">Your Journey</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Lake District private hire service">
+      <div class="service-information-inner">
+        <div class="service-information-lead">Private hire for up to 7 passengers</div>
+
+        <p>Private Hire gives you the flexibility to arrange transport around where you need to be and when you need to be there. We can cover local Lake District journeys, hotel and restaurant transfers, railway stations, airports, evenings out, family travel, events and longer distance trips beyond Cumbria.</p>
+
+        <p>For smaller parties we can offer executive car travel, while groups can travel together in our spacious passenger vehicle for up to seven passengers. Tell us who is travelling, what the journey involves and any timings that matter, and we will advise which option best suits the booking and availability.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="ph-transfer-title">
+      <h2 id="ph-transfer-title" class="private-tour-statement-title">Transfers And Events</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Airport railway hotel and event transfers">
+      <div class="service-information-inner">
+        <p>When the journey is part of a bigger plan, reliability matters. We can arrange collection for railway and airport connections, hotel arrivals and departures, restaurant reservations, celebrations, concerts, days out and private events. Return travel can be planned at the same time, avoiding the need to organise another vehicle later in the day.</p>
+
+        <p>For visitors to the Lake District, this is also a practical option when you want to move between accommodation, attractions and onward transport without hiring a car or relying on several separate bookings.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="ph-wedding-title">
+      <h2 id="ph-wedding-title" class="private-tour-statement-title">Wedding Travel</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Lake District wedding transport">
+      <div class="service-information-inner">
+        <p>Your wedding transport should feel calm, polished and properly planned. Tour The Lakes can arrange wedding travel across the Lake District for the couple, family members, the bridal party and guests, with an executive car available for smaller parties and private hire for groups of up to seven passengers.</p>
+
+        <p>Whether you need transport to a country house venue, hotel, ceremony, reception, restaurant or accommodation afterwards, we can work through the timings with you before the day. Multiple journeys, guest movements and return travel can all be discussed as part of the same enquiry, subject to vehicle availability.</p>
+
+        <p>If presentation, timings or a particular sequence of collections matters to you, tell us. Wedding travel is quoted individually so we can build the transport around the day you are actually planning rather than force it into a standard package.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-statement-strip" aria-labelledby="ph-book-title">
+      <h2 id="ph-book-title" class="private-tour-statement-title">Book Your Journey</h2>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="service-information" aria-label="Private hire enquiry">
+      <div class="service-information-inner">
+        <p>Send us your date, collection point, destination, preferred times, number of passengers and the type of journey you are planning. For weddings or events, include as much of the schedule as you already know. We will come back to you with availability and a quotation.</p>
+      </div>
+    </div>
+
+    <div class="folder-gap"></div>
+
+    <div class="private-tour-contact-strips" aria-label="Private hire contact options">
+      <a class="private-tour-contact-strip" href="mailto:info@tourthelakes.com?subject=Private%20Hire%20Enquiry">Email Private Hire</a>
+      <a class="private-tour-contact-strip" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
     </div>
 
     <div class="folder-gap"></div>
@@ -1698,7 +2094,23 @@ img { width: 100%; display: block; }
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-text">© Tour The Lakes</div>
+      <div class="footer-block">
+        <div class="footer-title">Tour The Lakes</div>
+        <div class="footer-text">Lake District tours, executive travel and private hire from Windermere.</div>
+        <div class="footer-copyright">© Tour The Lakes</div>
+      </div>
+
+      <div class="footer-block">
+        <div class="footer-title">Office Enquiries</div>
+        <div class="footer-text">Monday to Friday · 10:00 to 14:00</div>
+        <div class="footer-text">For all enquiries, email or WhatsApp is recommended.</div>
+      </div>
+
+      <div class="footer-block">
+        <div class="footer-title">Contact</div>
+        <a class="footer-link" href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+        <a class="footer-link" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
+      </div>
     </div>
   </footer>
 
@@ -1711,6 +2123,7 @@ img { width: 100%; display: block; }
     const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
     const homeHero = document.querySelector(".hero-wrapper");
     const homeHeroGap = document.querySelector(".hero-gap");
+    const homeContent = document.getElementById("home-content");
 
     function setMobileMenu(open) {
       if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
@@ -1810,6 +2223,7 @@ img { width: 100%; display: block; }
 
   if (homeHero) homeHero.hidden = showFolderPage;
   if (homeHeroGap) homeHeroGap.hidden = showFolderPage;
+  if (homeContent) homeContent.hidden = showFolderPage;
 
   publicToursPage.hidden = !showPublicTours;
   privateToursPage.hidden = !showPrivateTours;
