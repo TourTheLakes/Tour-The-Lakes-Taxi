@@ -1675,7 +1675,7 @@ img { width: 100%; display: block; }
 
   <div class="public-tour-information" aria-label="Public tour availability and booking information">
     <div class="public-tour-information-inner">
-      <p>Explore our public tours below. Each tour shows the next available departure, with further dates, full tour information and booking options available through 'Read More'.</p>
+      <p>Explore our public tours below. Each tour shows the next available departure, with further dates, full tour information and booking options available through Read More.</p>
     </div>
   </div>
 
@@ -2229,6 +2229,41 @@ img { width: 100%; display: block; }
         }
         .ttl-no-scroll{
           overflow: hidden !important;
+        }
+
+        /* Phones only: allow long booking confirmations to scroll naturally. */
+        @media screen and (max-width: 600px){
+          .ttl-modal-overlay{
+            align-items: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            padding: 10px;
+          }
+
+          .ttl-modal{
+            width: 100%;
+            max-width: none;
+            min-height: auto;
+            margin: 0;
+            padding: 54px 14px 18px;
+          }
+
+          .ttl-modal-close{
+            position: fixed;
+            top: max(10px, env(safe-area-inset-top));
+            right: 10px;
+            width: 44px;
+            height: 44px;
+            z-index: 100001;
+            font-size: 22px;
+          }
+
+          .ttl-modal h2{
+            padding-right: 0;
+          }
         }
       `;
       document.head.appendChild(style);
