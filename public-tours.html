@@ -2217,59 +2217,183 @@ img { width: 100%; display: block; }
         .ttl-modal-overlay{
           position: fixed;
           inset: 0;
-          background: rgba(0,0,0,0.65);
+          background: rgba(0,0,0,0.74);
           z-index: 99999;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 20px;
+          backdrop-filter: blur(2px);
         }
         .ttl-modal{
           width: 100%;
-          max-width: 680px;
-          border: 1px solid #b86b2a;
-          background: #2b2b2b;
-          color: rgba(255,255,255,0.92);
-          padding: 16px;
+          max-width: 760px;
+          max-height: calc(100vh - 40px);
+          overflow-y: auto;
+          border: 2px solid #b86b2a;
+          background-color: #f3ead8;
+          background-image:
+            linear-gradient(rgba(243,234,216,0.91), rgba(243,234,216,0.91)),
+            url("images/Web Paper BG.png");
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+          color: #2b2b2b;
           position: relative;
           box-sizing: border-box;
+          box-shadow: 0 18px 55px rgba(0,0,0,0.48);
+        }
+        .ttl-modal-header{
+          position: relative;
+          padding: 28px 74px 24px 28px;
+          border-bottom: 2px solid #b86b2a;
+          background-color: #2b2b2b;
+          background-image:
+            linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)),
+            url("images/Web Paper 5.png");
+          background-size: cover;
+          background-position: center top;
+          background-repeat: no-repeat;
         }
         .ttl-modal-close{
           position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 34px;
-          height: 34px;
+          top: 18px;
+          right: 18px;
+          width: 42px;
+          height: 42px;
           border-radius: 50%;
           border: 1px solid #b86b2a;
-          background: #2b2b2b;
+          background: rgba(43,43,43,0.72);
           color: #b86b2a;
           cursor: pointer;
-          font-weight: 700;
-          line-height: 1;
+          font: 600 22px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+        .ttl-modal-close:hover,
+        .ttl-modal-close:focus-visible{
+          background: #b86b2a;
+          color: rgba(255,255,255,0.92);
+          outline: none;
         }
         .ttl-modal h2{
-          margin: 0 0 10px 0;
+          margin: 0 0 7px;
           color: #b86b2a;
-          padding-right: 44px;
-          font-size: 18px;
+          font: 600 clamp(25px, 4vw, 34px)/1.08 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+        .ttl-confirmation-kicker{
+          margin: 0 !important;
+          color: rgba(255,255,255,0.78) !important;
+          font: 500 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+        }
+        .ttl-modal-body{
+          padding: 26px 28px 30px;
         }
         .ttl-modal p{
-          margin: 0 0 10px 0;
-          font-size: 14px;
-          line-height: 1.5;
-          color: rgba(255,255,255,0.92);
+          margin: 0 0 14px;
+          font: 500 15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+          color: #2b2b2b;
+        }
+        .ttl-reference{
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          gap: 18px;
+          margin: 0 0 24px;
+          padding: 15px 18px;
+          border-top: 1px solid #b86b2a;
+          border-bottom: 1px solid #b86b2a;
+          background: rgba(184,107,42,0.08);
+        }
+        .ttl-reference-label{
+          color: rgba(43,43,43,0.68);
+          font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+        }
+        .ttl-reference-value{
+          color: #b86b2a;
+          font: 700 21px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+          letter-spacing: 0.5px;
+          overflow-wrap: anywhere;
+        }
+        .ttl-section{
+          margin: 22px 0 0;
+        }
+        .ttl-section-title{
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 0 0 12px;
+          color: #b86b2a;
+          font: 600 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+        .ttl-section-title::after{
+          content: "";
+          flex: 1;
+          height: 1px;
+          background: rgba(184,107,42,0.48);
         }
         .ttl-box{
-          border: 1px solid #b86b2a;
-          padding: 12px;
-          margin: 12px 0;
+          border: 1px solid rgba(184,107,42,0.72);
+          background: rgba(255,255,255,0.14);
+          padding: 4px 18px;
+          margin: 0;
+        }
+        .ttl-detail-row{
+          display: grid;
+          grid-template-columns: minmax(135px, 0.42fr) 1fr;
+          gap: 18px;
+          padding: 11px 0;
+          border-bottom: 1px solid rgba(184,107,42,0.22);
+        }
+        .ttl-detail-row:last-child{
+          border-bottom: 0;
+        }
+        .ttl-detail-label{
+          color: rgba(43,43,43,0.68);
+          font-weight: 600;
+        }
+        .ttl-detail-value{
+          color: #2b2b2b;
+          font-weight: 600;
+          overflow-wrap: anywhere;
+        }
+        .ttl-next-step{
+          margin: 24px 0 0;
+          padding: 18px;
+          border-left: 3px solid #b86b2a;
+          background: rgba(184,107,42,0.09);
+        }
+        .ttl-next-step strong{
+          display: block;
+          margin-bottom: 6px;
+          color: #b86b2a;
+          font-size: 17px;
+        }
+        .ttl-next-step p{
+          margin: 0;
+        }
+        .ttl-contact-note{
+          margin: 24px 0 0 !important;
+          padding-top: 18px;
+          border-top: 1px solid rgba(184,107,42,0.48);
+          color: rgba(43,43,43,0.76) !important;
+          font-size: 14px !important;
+        }
+        .ttl-modal a{
+          color: #b86b2a;
+          text-decoration: none;
+          font-weight: 600;
+          border-bottom: 1px solid rgba(184,107,42,0.55);
+        }
+        .ttl-modal a:hover,
+        .ttl-modal a:focus-visible{
+          color: #8f4f1d;
+          border-bottom-color: #8f4f1d;
         }
         .ttl-no-scroll{
           overflow: hidden !important;
         }
 
-        /* Phones only: allow long booking confirmations to scroll naturally. */
         @media screen and (max-width: 600px){
           .ttl-modal-overlay{
             align-items: flex-start;
@@ -2280,27 +2404,36 @@ img { width: 100%; display: block; }
             overscroll-behavior: contain;
             padding: 10px;
           }
-
           .ttl-modal{
             width: 100%;
             max-width: none;
-            min-height: auto;
+            max-height: none;
             margin: 0;
-            padding: 54px 14px 18px;
           }
-
+          .ttl-modal-header{
+            padding: 24px 64px 20px 18px;
+          }
+          .ttl-modal-body{
+            padding: 20px 18px 24px;
+          }
           .ttl-modal-close{
-            position: fixed;
-            top: max(10px, env(safe-area-inset-top));
-            right: 10px;
-            width: 44px;
-            height: 44px;
-            z-index: 100001;
-            font-size: 22px;
+            top: 14px;
+            right: 14px;
+            width: 42px;
+            height: 42px;
           }
-
-          .ttl-modal h2{
-            padding-right: 0;
+          .ttl-reference{
+            grid-template-columns: 1fr;
+            gap: 5px;
+            padding: 13px 14px;
+          }
+          .ttl-detail-row{
+            grid-template-columns: 1fr;
+            gap: 3px;
+            padding: 10px 0;
+          }
+          .ttl-box{
+            padding: 4px 14px;
           }
         }
       `;
@@ -2336,33 +2469,47 @@ img { width: 100%; display: block; }
       });
 
       modal.innerHTML = `
-        <h2>Booking Confirmed</h2>
-
-        <p>Thank you for booking your tour. Your booking reference is: <strong>${escapeHtml(data.ref)}</strong></p>
-        <p>When contacting us, please quote your booking reference.</p>
-        <p>We can confirm that you have reserved ${escapeHtml(data.qty)} passenger(s) and this confirms your place on the tour.</p>
-
-        <div class="ttl-box">
-          <p><strong>Tour:</strong> ${escapeHtml(data.tour)}</p>
-          <p><strong>Date & Time:</strong> ${escapeHtml(data.date)} at ${escapeHtml(data.time)}</p>
-          <p><strong>Passengers:</strong> ${escapeHtml(data.qty)}</p>
-          <p><strong>Price per passenger:</strong> ${escapeHtml(data.price)}</p>
-          ${data.duration ? `<p><strong>Duration:</strong> ${escapeHtml(data.duration)}</p>` : ""}
-          ${data.departurePoint ? `<p><strong>Departure:</strong> ${escapeHtml(data.departurePoint)}</p>` : ""}
+        <div class="ttl-modal-header">
+          <h2>Booking Confirmed</h2>
+          <p class="ttl-confirmation-kicker">Your place on the tour has been reserved.</p>
         </div>
 
-        <p><strong>What’s Next?</strong></p>
-        <p>You will receive an email within the next 24 hours containing a payment link and everything you need to know.</p>
+        <div class="ttl-modal-body">
+          <div class="ttl-reference">
+            <span class="ttl-reference-label">Booking reference</span>
+            <span class="ttl-reference-value">${escapeHtml(data.ref)}</span>
+          </div>
 
-        <p><strong>Please confirm your details:</strong></p>
+          <p>Thank you for booking with Tour The Lakes. We can confirm that you have reserved ${escapeHtml(data.qty)} passenger(s).</p>
 
-        <div class="ttl-box">
-          <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
-          <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
+          <section class="ttl-section" aria-label="Tour details">
+            <h3 class="ttl-section-title">Your Tour</h3>
+            <div class="ttl-box">
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Tour</span><span class="ttl-detail-value">${escapeHtml(data.tour)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Date &amp; Time</span><span class="ttl-detail-value">${escapeHtml(data.date)} at ${escapeHtml(data.time)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Passengers</span><span class="ttl-detail-value">${escapeHtml(data.qty)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Price per passenger</span><span class="ttl-detail-value">${escapeHtml(data.price)}</span></div>
+              ${data.duration ? `<div class="ttl-detail-row"><span class="ttl-detail-label">Duration</span><span class="ttl-detail-value">${escapeHtml(data.duration)}</span></div>` : ""}
+              ${data.departurePoint ? `<div class="ttl-detail-row"><span class="ttl-detail-label">Departure</span><span class="ttl-detail-value">${escapeHtml(data.departurePoint)}</span></div>` : ""}
+            </div>
+          </section>
+
+          <div class="ttl-next-step">
+            <strong>What happens next?</strong>
+            <p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>
+          </div>
+
+          <section class="ttl-section" aria-label="Passenger contact details">
+            <h3 class="ttl-section-title">Your Details</h3>
+            <div class="ttl-box">
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Name</span><span class="ttl-detail-value">${escapeHtml(data.name)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Email</span><span class="ttl-detail-value">${escapeHtml(data.email)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label">Phone</span><span class="ttl-detail-value">${escapeHtml(data.phone)}</span></div>
+            </div>
+          </section>
+
+          <p class="ttl-contact-note">If anything above is incorrect, email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> and quote booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
         </div>
-
-        <p>If something doesn’t look right, email <a href="mailto:info@tourthelakes.com"><strong>info@tourthelakes.com</strong></a> and quote your booking reference <strong>${escapeHtml(data.ref)}</strong>.</p>
       `;
 
       modal.appendChild(closeBtn);
