@@ -8,105 +8,260 @@
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
 
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; background-color: #2b2b2b; }
-    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --ink: #2b2b2b;
+      --orange: #b86b2a;
+      --paper: #f3ead8;
+      --white: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.62);
+      --line: rgba(184,107,42,0.42);
+    }
 
-    .site-header { width: 100%; }
-    .header-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
-    .brand { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background-color: var(--ink);
+      background-image:
+        linear-gradient(rgba(43,43,43,0.88), rgba(43,43,43,0.88)),
+        url("images/Web Paper BG.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--white);
+      overflow-x: hidden;
+    }
 
-    .admin-wrap { padding: 0 5%; }
-    .admin-section-title { color: rgba(255,255,255,0.92); font: 400 28px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; text-align: center; margin: 30px 0; }
-    .admin-subtitle { margin: 30px 0 12px 0; color: rgba(255,255,255,0.92); font: 400 20px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    button, input, textarea, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
 
-    .admin-stack { display: flex; flex-direction: column; gap: 16px; }
-    .admin-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-    .admin-actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .site-header {
+      width: 100%;
+      background-color: var(--ink);
+      background-image:
+        linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      border-bottom: 2px solid var(--orange);
+    }
+    .header-inner {
+      min-height: 104px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px clamp(20px,5vw,72px) 22px;
+    }
+    .brand { font-size: clamp(24px,4vw,42px); font-weight: 650; letter-spacing: -0.8px; }
+    .brand-sub { color: var(--orange); font-size: 13px; font-weight: 700; letter-spacing: 2.2px; text-transform: uppercase; padding-bottom: 4px; }
 
+    .admin-main { width: 100%; }
+    .admin-wrap { width: 100%; }
+
+    .admin-nav {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: rgba(43,43,43,0.94);
+      border-bottom: 2px solid var(--orange);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .admin-nav button {
+      min-height: 58px;
+      border: 0;
+      border-right: 1px solid rgba(184,107,42,0.32);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: .4px;
+    }
+    .admin-nav button:last-child { border-right: 0; }
+    .admin-nav button.is-active { color: var(--white); background: rgba(184,107,42,0.16); }
+    .admin-nav button.is-active::after {
+      content: "";
+      display: block;
+      width: 34px;
+      height: 2px;
+      margin: 8px auto -10px;
+      background: var(--orange);
+    }
+
+    .admin-panel { display: none; width: 100%; }
+    .admin-panel.is-active { display: block; }
+    .admin-section {
+      width: 100%;
+      padding: 42px clamp(20px,5vw,72px) 48px;
+      border-bottom: 2px solid var(--orange);
+    }
+    .admin-section:last-child { border-bottom: 0; }
+    .admin-content { width: min(1120px, 100%); margin: 0 auto; }
+
+    .eyebrow { color: var(--orange); text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 800; margin-bottom: 10px; }
+    .admin-section-title { color: var(--white); font-size: clamp(30px,5vw,52px); line-height: 1.02; font-weight: 620; letter-spacing: -1.4px; margin: 0 0 14px; }
+    .admin-subtitle { margin: 34px 0 12px; color: var(--white); font-size: 21px; line-height: 1.15; font-weight: 650; }
+    .admin-lead { max-width: 760px; color: var(--muted); font-size: 15px; line-height: 1.55; margin: 0 0 28px; }
+    .admin-msg { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .admin-msg.ok { color: #8fe0b9; }
+    .admin-msg.bad { color: #ff9a9a; }
+    .admin-hint { color: rgba(255,255,255,0.48); font-size: 13px; line-height: 1.5; }
+
+    .admin-stack { display: flex; flex-direction: column; gap: 18px; }
+    .admin-list { display: flex; flex-direction: column; gap: 0; margin: 0; }
+    .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 7px; }
+    .field-label { color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: 1px; text-transform: uppercase; }
     .admin-field {
       width: 100%;
-      border: 1px solid #b86b2a;
-      background: #2b2b2b;
-      color: rgba(255,255,255,0.92);
-      padding: 12px;
-      font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      border: 0;
+      border-bottom: 1px solid rgba(184,107,42,0.62);
+      border-radius: 0;
+      outline: none;
+      background: rgba(255,255,255,0.045);
+      color: var(--white);
+      padding: 14px 12px;
+      font-size: 16px;
+      line-height: 1.3;
     }
-    .admin-textarea { resize: vertical; }
+    .admin-field:focus { border-bottom-color: var(--orange); background: rgba(255,255,255,0.075); }
+    .admin-field::placeholder { color: rgba(255,255,255,0.35); }
+    .admin-textarea { resize: vertical; min-height: 112px; }
+    input[type="file"]::file-selector-button { border: 0; background: var(--orange); color: #fff; padding: 8px 12px; margin-right: 12px; cursor: pointer; }
 
-    .admin-check { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.92); font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .admin-check { display: flex; align-items: center; gap: 12px; color: var(--white); font-size: 16px; cursor: pointer; }
+    .admin-check input { accent-color: var(--orange); width: 20px; height: 20px; }
 
     .admin-btn {
-      width: 100%;
-      border: 1px solid #b86b2a;
-      background: #2b2b2b;
-      color: #b86b2a;
-      padding: 12px;
+      width: auto;
+      min-width: 150px;
+      border: 0;
+      border-bottom: 2px solid var(--orange);
+      border-radius: 0;
+      background: rgba(184,107,42,0.12);
+      color: var(--white);
+      padding: 13px 18px;
       cursor: pointer;
-      font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 750;
+      letter-spacing: .45px;
+      text-transform: uppercase;
     }
-    .admin-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .admin-btn:hover { background: rgba(184,107,42,0.24); }
+    .admin-btn:disabled { opacity: .32; cursor: not-allowed; }
+    .admin-btn.primary { background: var(--orange); color: #fff; }
+    .admin-btn.danger { border-bottom-color: #b75a50; background: rgba(183,90,80,.10); }
+    .admin-btn.quiet { border-bottom-color: rgba(255,255,255,.24); background: rgba(255,255,255,.04); }
 
-    .admin-msg { color: rgba(255,255,255,0.6); font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    .admin-msg.ok { color: rgba(120, 255, 200, 0.7); }
-    .admin-msg.bad { color: rgba(255, 140, 140, 0.8); }
-    .admin-hint { color: rgba(255,255,255,0.5); font-size: 13px; line-height: 1.35; }
+    .workflow-note {
+      border-left: 3px solid var(--orange);
+      padding: 12px 0 12px 18px;
+      margin: 18px 0 28px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
-    /* Itinerary editor */
-    .it-item { border: 1px solid #b86b2a; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .it-item { padding: 16px 0 22px; border: 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
     .it-row { display: flex; gap: 10px; }
     .it-row .admin-field { flex: 1 1 auto; min-width: 0; }
-    .it-row .admin-btn { width: auto; flex: 0 0 auto; }
+    .it-row .admin-btn { width: auto; flex: 0 0 auto; min-width: 110px; }
 
-    /* Calendar */
-    .admin-calendar-section { max-width: 900px; margin: 40px auto; }
-    .admin-schedule-section { max-width: 900px; margin: 40px auto; }
-    #scheduleMsg { margin-bottom: 16px; }
-
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .calendar-header button {
-      border: 1px solid #b86b2a;
-      background: #2b2b2b;
-      color: #b86b2a;
-      padding: 8px 12px;
+    .tour-picker { margin-top: 26px; }
+    #tourList > button {
+      width: 100%;
+      border: 0 !important;
+      border-bottom: 1px solid var(--line) !important;
+      background: transparent !important;
+      color: var(--white) !important;
+      padding: 17px 4px !important;
+      text-align: left !important;
+      font-size: 17px;
       cursor: pointer;
-      font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .calendar-month { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+    #tourList > button:hover { padding-left: 12px !important; background: rgba(184,107,42,.08) !important; }
 
-    .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); }
-    .calendar-weekdays div { text-align: center; font-weight: 600; padding: 10px 0; color: rgba(255,255,255,0.92); }
-
+    .calendar-header { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; margin: 22px 0 12px; }
+    .calendar-header button { border: 0; background: transparent; color: var(--orange); padding: 12px; cursor: pointer; font-size: 20px; }
+    .calendar-month { text-align: center; color: var(--white); font-size: 19px; font-weight: 700; }
+    .calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .calendar-grid { grid-template-rows: repeat(6, minmax(58px, 1fr)); }
+    .calendar-weekdays div { text-align: center; font-weight: 700; padding: 10px 0; color: var(--muted); font-size: 12px; text-transform: uppercase; }
     .calendar-cell {
-      border: 1px solid #444;
-      min-height: 56px;
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+      min-height: 62px;
       display: flex;
       align-items: flex-start;
       justify-content: flex-end;
-      padding: 6px;
-      color: rgba(255,255,255,0.8);
+      padding: 9px;
+      color: var(--muted);
       cursor: pointer;
       user-select: none;
     }
-    .calendar-cell.is-empty { opacity: 0.25; cursor: default; }
-    .calendar-cell.selected { border: 2px solid #b86b2a; }
-    .calendar-cell.has-data { background: rgba(184,107,42,0.15); }
-    .calendar-cell:not(.is-empty):hover { background: rgba(255,255,255,0.05); }
+    .calendar-cell.is-empty { opacity: .18; cursor: default; }
+    .calendar-cell.selected { background: var(--orange); color: #fff; }
+    .calendar-cell.has-data:not(.selected) { background: rgba(184,107,42,.16); color: var(--white); }
+    .calendar-cell:not(.is-empty):hover { background: rgba(255,255,255,.07); }
 
-    /* Live bookings spacing */
-    .live-wrap {
-      margin: 26px 0 10px 0;
-      padding: 14px 0 6px 0;
-      border-bottom: 1px solid rgba(184,107,42,0.35);
+    #liveBookingsList > div,
+    #dateOverviewList > div,
+    #timesList > div,
+    #bookingsList > div {
+      border: 0 !important;
+      border-bottom: 1px solid var(--line) !important;
+      background: transparent !important;
+      padding: 18px 0 !important;
     }
-    #liveBookingsMsg { margin-bottom: 12px; }
-    #liveBookingsList { display: flex; flex-direction: column; gap: 14px; }
-    #liveBookingsList > div { padding: 14px; }
+    #liveBookingsList > div:first-child,
+    #dateOverviewList > div:first-child,
+    #timesList > div:first-child,
+    #bookingsList > div:first-child { border-top: 1px solid var(--line) !important; }
 
-    /* Footer */
-    .site-footer { width: 100%; border-top: 2px solid #b86b2a; }
-    .footer-inner { height: 64px; display: flex; align-items: center; padding: 0 16px; }
-    .footer-text { color: rgba(255,255,255,0.6); font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+    #timesList .admin-btn, #bookingsList .admin-btn, #dateOverviewList .admin-btn { min-width: 0; }
+    #timesList .admin-field, #bookingsList .admin-field { background: rgba(255,255,255,.045) !important; }
+
+    .quick-status {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(184,107,42,.34);
+      margin-top: 28px;
+    }
+    .quick-status > div { background: rgba(43,43,43,.96); padding: 18px; }
+    .quick-status strong { display: block; color: var(--orange); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+    .quick-status span { color: var(--white); font-size: 14px; }
+
+    .site-footer {
+      width: 100%;
+      border-top: 2px solid var(--orange);
+      background-color: var(--ink);
+      background-image: linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),url("images/Web Paper 5.png");
+      background-size: cover;
+      background-position: center top;
+    }
+    .footer-inner { min-height: 72px; display: flex; align-items: center; padding: 0 clamp(20px,5vw,72px); }
+    .footer-text { color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 720px) {
+      .header-inner { min-height: 88px; align-items: center; }
+      .brand-sub { display: none; }
+      .admin-nav button { min-height: 54px; font-size: 12px; }
+      .admin-section { padding-top: 32px; padding-bottom: 38px; }
+      .quick-status { grid-template-columns: 1fr; }
+      .it-row { flex-direction: column; }
+      .it-row .admin-btn { width: 100%; }
+      .admin-actions { flex-direction: column; }
+      .admin-actions .admin-btn { width: 100%; }
+      #timesList [style*="display: flex"], #bookingsList [style*="display: flex"] { flex-wrap: wrap; }
+      #timesList .admin-field, #timesList .admin-btn, #bookingsList .admin-field, #bookingsList .admin-btn { flex: 1 1 100% !important; width: 100% !important; }
+      .calendar-grid { grid-template-rows: repeat(6, minmax(48px, 1fr)); }
+      .calendar-cell { min-height: 50px; padding: 7px; }
+    }
   </style>
 </head>
 
@@ -114,141 +269,207 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">Tour The Lakes</div>
+      <div class="brand-sub">Operations Admin</div>
     </div>
   </header>
 
   <main class="admin-main">
     <div class="admin-wrap">
+      <nav class="admin-nav" aria-label="Admin areas">
+        <button type="button" class="is-active" data-admin-panel="bookingsPanel">Bookings</button>
+        <button type="button" data-admin-panel="toursPanel">Tours</button>
+        <button type="button" data-admin-panel="schedulePanel">Schedule</button>
+      </nav>
 
-      <div class="live-wrap">
-        <div class="admin-subtitle" style="margin: 0 0 12px 0;">Live bookings feed</div>
-        <div class="admin-msg" id="liveBookingsMsg">Loading…</div>
-        <div class="admin-hint" style="margin: -4px 0 12px 0;">
-          Read-only. Shows the most recent bookings across all tours.
-        </div>
-        <div id="liveBookingsList" class="admin-list" style="margin-bottom: 10px;"></div>
-      </div>
-
-      <div class="admin-section-title" id="editorTitle">Create Tour</div>
-      <div class="admin-msg" id="editorModeMsg">No tour selected. You are creating a new tour.</div>
-
-      <div class="admin-stack">
-        <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
-        <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
-
-        <!-- Structured Tour Description Editor -->
-        <div id="tourDescEditor" class="admin-stack" style="gap:12px;">
-          <div class="admin-msg">Product Title:</div>
-          <input id="descProductTitle" type="text" class="admin-field" placeholder="" />
-
-          <div class="admin-msg">Overview:</div>
-          <textarea id="descOverview" rows="5" class="admin-field admin-textarea" placeholder=""></textarea>
-
-          <div class="admin-msg">Meeting Point:</div>
-          <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea" placeholder=""></textarea>
-
-          <div class="admin-msg">Itinerary:</div>
-          <div id="itineraryList" class="admin-stack" style="gap:12px;"></div>
-          <button id="addItineraryItem" type="button" class="admin-btn">ADD MORE</button>
-        </div>
-
-        <!-- This is what actually gets saved to Firebase (generated automatically) -->
-        <textarea id="tourDescription" hidden></textarea>
-
-        <label class="admin-check">
-          <input id="tourLive" type="checkbox" />
-          <span>Live</span>
-        </label>
-
-        <div id="adminMsg" class="admin-msg"></div>
-      </div>
-
-      <div class="admin-subtitle">Existing Tours</div>
-      <div class="admin-hint" style="margin-top:-6px;">
-        Select a tour to amend it, or use the calendar below to view saved dates across all tours.
-      </div>
-      <div id="tourList" class="admin-list"></div>
-
-      <div class="admin-actions">
-        <button id="newTour" type="button" class="admin-btn">NEW / CLEAR SELECTION</button>
-        <button id="saveTour" type="button" class="admin-btn admin-btn-full">SAVE NEW TOUR</button>
-        <button id="amendTour" type="button" class="admin-btn" hidden>AMEND SELECTED TOUR</button>
-        <button id="deleteTour" type="button" class="admin-btn" hidden>DELETE SELECTED TOUR</button>
-      </div>
-
-      <!-- Calendar -->
-      <div class="admin-calendar-section">
-        <div class="calendar-header">
-          <button id="calPrev" type="button">◀</button>
-          <div id="calMonth" class="calendar-month"></div>
-          <button id="calNext" type="button">▶</button>
-        </div>
-
-        <div class="calendar-weekdays">
-          <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-        </div>
-
-        <div class="calendar-grid" id="calendarGrid"></div>
-
-        <div class="admin-stack" id="dateOverviewWrap" style="margin-top:16px;">
-          <div class="admin-msg" id="dateOverviewMsg">
-            Calendar overview shows all saved tour dates. Select a date to see what it holds.
+      <section id="bookingsPanel" class="admin-panel is-active">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Live operations</div>
+            <h1 class="admin-section-title">Bookings</h1>
+            <p class="admin-lead">The newest bookings across every tour appear here automatically. This feed is read-only; choose Schedule when you need to amend a booking.</p>
+            <div class="admin-msg" id="liveBookingsMsg">Loading…</div>
+            <div id="liveBookingsList" class="admin-list" style="margin-top:16px;"></div>
           </div>
-          <div id="dateOverviewList" class="admin-list" style="margin-bottom:0;"></div>
         </div>
-      </div>
+      </section>
 
-      <!-- Schedule + bookings -->
-      <div class="admin-schedule-section">
-        <div class="admin-subtitle">Manage Times & Capacity</div>
+      <section id="toursPanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Tour product</div>
+            <h1 class="admin-section-title" id="editorTitle">Create Tour</h1>
+            <div class="workflow-note" id="editorModeMsg">No tour selected. You are creating a new tour.</div>
 
-        <div class="admin-msg" id="scheduleMsg">Select a date to view what it holds, or select a tour to manage its times and bookings.</div>
+            <div class="admin-stack">
+              <div class="field-group">
+                <label class="field-label" for="tourTitle">Tour title</label>
+                <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
+              </div>
 
-        <div class="admin-stack" id="scheduleControls" hidden>
-          <input id="selectedDate" class="admin-field" type="text" readonly />
-          <input id="tourTime" class="admin-field" type="time" />
-          <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
-          <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
+              <div class="field-group">
+                <label class="field-label" for="tourImageFile">Tour image</label>
+                <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
+              </div>
 
-          <button id="confirmSchedule" type="button" class="admin-btn">CONFIRM</button>
+              <div id="tourDescEditor" class="admin-stack">
+                <div class="field-group">
+                  <label class="field-label" for="descProductTitle">Product title</label>
+                  <input id="descProductTitle" type="text" class="admin-field" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="descOverview">Overview</label>
+                  <textarea id="descOverview" rows="5" class="admin-field admin-textarea"></textarea>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="descMeetingPoint">Meeting point</label>
+                  <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea"></textarea>
+                </div>
 
-          <div class="admin-msg" id="confirmHelp">
-            Tip: CONFIRM adds a NEW time slot. To edit an existing slot, use UPDATE CAPACITY / UPDATE TIME on the row below.
-          </div>
-          <div class="admin-hint">
-            Slot safety rules enforced:
-            <br>• You cannot DELETE or RENAME a time slot if it has active bookings.
-            <br>• Capacity changes are allowed (use carefully).
-          </div>
+                <div>
+                  <div class="field-label" style="margin-bottom:10px;">Itinerary</div>
+                  <div id="itineraryList" class="admin-stack"></div>
+                  <button id="addItineraryItem" type="button" class="admin-btn quiet" style="margin-top:14px;">Add itinerary stop</button>
+                </div>
+              </div>
 
-          <div id="timesListWrap" class="admin-stack">
-            <div class="admin-msg" id="timesListMsg">No date selected.</div>
-            <div id="timesList" class="admin-list"></div>
-          </div>
+              <textarea id="tourDescription" hidden></textarea>
 
-          <div id="bookingsWrap" class="admin-stack" style="margin-top: 22px;">
-            <div class="admin-subtitle" style="margin: 10px 0 0 0;">Bookings for selected date</div>
-            <div class="admin-msg" id="bookingsMsg">No date selected.</div>
-            <div class="admin-hint" style="margin-top:-6px;">
-              Booking safety rules enforced:
-              <br>• You cannot amend PRICE once PAID.
-              <br>• You cannot amend PASSENGERS once PAID.
-              <br>• Marking PAID requires payment date/time.
-              <br>• Deleting returns seats to capacity automatically.
+              <label class="admin-check">
+                <input id="tourLive" type="checkbox" />
+                <span>Publish this tour live</span>
+              </label>
+
+              <div id="adminMsg" class="admin-msg"></div>
             </div>
-            <div id="bookingsList" class="admin-list"></div>
+
+            <div class="admin-actions">
+              <button id="saveTour" type="button" class="admin-btn primary">Create tour</button>
+              <button id="amendTour" type="button" class="admin-btn primary" hidden>Save tour changes</button>
+              <button id="newTour" type="button" class="admin-btn quiet">Start a new tour</button>
+              <button id="deleteTour" type="button" class="admin-btn danger" hidden>Delete selected tour</button>
+            </div>
           </div>
         </div>
-      </div>
 
+        <div class="admin-section">
+          <div class="admin-content tour-picker">
+            <div class="eyebrow">Choose existing</div>
+            <div class="admin-subtitle" style="margin-top:0;">Existing tours</div>
+            <p class="admin-lead">Select a tour below to load it into the editor above. The same selection carries into Schedule.</p>
+            <div id="tourList" class="admin-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="schedulePanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Dates & availability</div>
+            <h1 class="admin-section-title">Schedule</h1>
+            <p class="admin-lead">Pick a date. If no tour is selected, the calendar shows everything running that day and lets you choose what to manage.</p>
+
+            <div class="calendar-header">
+              <button id="calPrev" type="button" aria-label="Previous month">←</button>
+              <div id="calMonth" class="calendar-month"></div>
+              <button id="calNext" type="button" aria-label="Next month">→</button>
+            </div>
+            <div class="calendar-weekdays">
+              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+
+            <div class="admin-stack" id="dateOverviewWrap" style="margin-top:22px;">
+              <div class="admin-msg" id="dateOverviewMsg">Calendar overview shows all saved tour dates. Select a date to see what it holds.</div>
+              <div id="dateOverviewList" class="admin-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Selected tour & date</div>
+            <div class="admin-subtitle" style="margin-top:0;">Times, capacity & price</div>
+            <div class="workflow-note" id="scheduleMsg">Select a date to view what it holds, or select a tour to manage its times and bookings.</div>
+
+            <div class="admin-stack" id="scheduleControls" hidden>
+              <div class="field-group">
+                <label class="field-label" for="selectedDate">Selected date</label>
+                <input id="selectedDate" class="admin-field" type="text" readonly />
+              </div>
+
+              <div class="quick-status">
+                <div><strong>1</strong><span>Choose a time</span></div>
+                <div><strong>2</strong><span>Set remaining capacity</span></div>
+                <div><strong>3</strong><span>Set passenger price</span></div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="tourTime">New time</label>
+                <input id="tourTime" class="admin-field" type="time" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="tourCapacity">Capacity</label>
+                <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="tourPrice">Price per passenger (£)</label>
+                <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
+              </div>
+
+              <div>
+                <button id="confirmSchedule" type="button" class="admin-btn primary">Add this time</button>
+              </div>
+
+              <div class="admin-hint" id="confirmHelp">Adding creates a new time slot. Existing slots are edited individually below.</div>
+              <div class="admin-hint">A time slot cannot be deleted or renamed while it has active bookings. Capacity can still be changed.</div>
+
+              <div id="timesListWrap" class="admin-stack" style="margin-top:18px;">
+                <div class="admin-subtitle">Existing time slots</div>
+                <div class="admin-msg" id="timesListMsg">No date selected.</div>
+                <div id="timesList" class="admin-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-content">
+            <div id="bookingsWrap" class="admin-stack">
+              <div class="eyebrow">Customer records</div>
+              <div class="admin-subtitle" style="margin-top:0;">Bookings for selected date</div>
+              <div class="admin-msg" id="bookingsMsg">No date selected.</div>
+              <div class="admin-hint">Paid bookings lock passenger quantity and price. Marking a booking paid requires its payment date and time. Deleting a booking returns its seats automatically.</div>
+              <div id="bookingsList" class="admin-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-text">© Tour The Lakes</div>
-    </div>
+    <div class="footer-inner"><div class="footer-text">© Tour The Lakes · Operations Admin</div></div>
   </footer>
+
+  <script>
+    (() => {
+      const buttons = Array.from(document.querySelectorAll("[data-admin-panel]"));
+      const panels = Array.from(document.querySelectorAll(".admin-panel"));
+
+      function showPanel(id) {
+        panels.forEach((panel) => panel.classList.toggle("is-active", panel.id === id));
+        buttons.forEach((button) => button.classList.toggle("is-active", button.dataset.adminPanel === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      buttons.forEach((button) => button.addEventListener("click", () => showPanel(button.dataset.adminPanel)));
+
+      document.addEventListener("click", (event) => {
+        const manage = event.target.closest("#dateOverviewList .admin-btn");
+        if (manage) setTimeout(() => showPanel("schedulePanel"), 0);
+      });
+    })();
+  </script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
