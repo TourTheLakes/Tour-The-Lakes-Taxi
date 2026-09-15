@@ -832,7 +832,11 @@ img { width: 100%; display: block; }
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 30px 0;
+      margin: 0;
+      padding: 30px 0;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 2px solid #b86b2a;
+      background: transparent;
     }
     .tour-divider-line { flex: 1; height: 1px; background: #b86b2a; }
     .tour-read, .tour-more {
@@ -872,50 +876,33 @@ img { width: 100%; display: block; }
     }
 
     .tour.is-open .tour-divider {
-  position: relative;
-  z-index: 20;
-  background-color: transparent;
-  background-image: url("images/Web Paper BG.png");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  margin: 30px 0;
-  box-shadow: none;
-}
+      position: relative;
+      z-index: 20;
+      background: transparent;
+    }
 
     .tour.is-open .tour-divider.is-following {
-  position: fixed;
-  top: 172px;
-  left: 0;
-  right: 0;
-  width: 100%;
-  margin: 0;
-  z-index: 999;
-}
+      position: fixed;
+      top: 172px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      margin: 0;
+      z-index: 999;
+    }
 
     .tour-divider-placeholder {
-  display: none;
-}
+      display: none;
+    }
 
     .tour.is-open .tour-divider-placeholder.is-active {
-  display: block;
-}
+      display: block;
+    }
 
-    .tour.is-open .tour-divider::before {
-  content: none;
-}
-
+    .tour.is-open .tour-divider::before,
     .tour.is-open .tour-divider::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -30px;
-  height: 30px;
-  background: transparent;
-  border-bottom: 2px solid #b86b2a;
-  pointer-events: none;
-}
+      content: none;
+    }
 
     .tour.is-open .tour-toggle {
       background: transparent;
@@ -2919,7 +2906,7 @@ img { width: 100%; display: block; }
         const shouldFollow = dividerRect.top <= FOLLOW_TOP && tourRect.bottom > FOLLOW_TOP + dividerHeight;
 
         if (shouldFollow) {
-          placeholder.style.height = `${divider.offsetHeight + 60}px`;
+          placeholder.style.height = `${divider.offsetHeight}px`;
           placeholder.classList.add("is-active");
           divider.classList.add("is-following");
         } else {
