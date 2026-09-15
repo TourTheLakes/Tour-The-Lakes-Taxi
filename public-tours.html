@@ -2394,7 +2394,7 @@ img { width: 100%; display: block; }
           overflow: hidden !important;
         }
 
-        @media screen and (max-width: 600px){
+        @media screen and (max-width: 1023px){
           .ttl-modal-overlay{
             align-items: flex-start;
             justify-content: center;
@@ -2402,13 +2402,21 @@ img { width: 100%; display: block; }
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
+          }
+          .ttl-modal{
+            max-height: none;
+            overflow-y: visible;
+            margin: 0;
+          }
+        }
+
+        @media screen and (max-width: 600px){
+          .ttl-modal-overlay{
             padding: 10px;
           }
           .ttl-modal{
             width: 100%;
             max-width: none;
-            max-height: none;
-            margin: 0;
           }
           .ttl-modal-header{
             padding: 24px 64px 20px 18px;
