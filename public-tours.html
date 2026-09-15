@@ -838,7 +838,7 @@ img { width: 100%; display: block; }
     .tour-read, .tour-more {
       font-size: 14px;
       font-weight: 400;
-      color: rgba(255,255,255,0.6);
+      color: rgba(43,43,43,0.72);
       margin: 0 8px;
       letter-spacing: 0.5px;
     }
@@ -858,7 +858,7 @@ img { width: 100%; display: block; }
 }
     
     .tour-toggle {
-      background: #2b2b2b;
+      background: transparent;
       border: 1px solid #b86b2a;
       border-radius: 50%;
       padding: 8px;
@@ -871,21 +871,13 @@ img { width: 100%; display: block; }
   position: sticky;
   top: 180px;
   z-index: 20;
-  background: #2b2b2b;
+  background: transparent;
   margin: 30px 0;
-  box-shadow: 0 -10px 0 #2b2b2b;
+  box-shadow: none;
 }
 
     .tour.is-open .tour-divider::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: #2b2b2b;
-  z-index: -1;
-  pointer-events: none;
+  content: none;
 }
 
     .tour.is-open .tour-divider::after {
@@ -895,13 +887,13 @@ img { width: 100%; display: block; }
   right: 0;
   bottom: -30px;
   height: 30px;
-  background: #2b2b2b;
+  background: transparent;
   border-bottom: 2px solid #b86b2a;
   pointer-events: none;
 }
 
     .tour.is-open .tour-toggle {
-      background: #2b2b2b;
+      background: transparent;
     }
 
     .tour-details {
@@ -909,7 +901,7 @@ img { width: 100%; display: block; }
       margin: 0 auto;
       padding: 20px 20px 40px 20px;
       font-weight: 600;
-      color: rgba(255,255,255,0.92);
+      color: #2b2b2b;
     }
 
     .tour-description {
@@ -920,7 +912,7 @@ img { width: 100%; display: block; }
     
     .tour-facts { margin-bottom: 24px; }
     .tour-facts[hidden] { display: none; }
-    .tour-fact { color: rgba(255,255,255,0.92); line-height: 1.5; margin-bottom: 6px; }
+    .tour-fact { color: #2b2b2b; line-height: 1.5; margin-bottom: 6px; }
     .tour-fact:last-child { margin-bottom: 0; }
     .tour-fact-label { color: #b86b2a; font-weight: 600; }
     .tour-extra-sections:empty { display: none; }
@@ -929,7 +921,7 @@ img { width: 100%; display: block; }
     .tsec-h { color: #b86b2a; font-weight: 600; font-size: 20px; margin-bottom: 8px; }
 
     .tsec-b {
-      color: rgba(255,255,255,0.92);
+      color: #2b2b2b;
       line-height: 1.5;
       text-align: justify;
       text-align-last: left;
@@ -939,7 +931,7 @@ img { width: 100%; display: block; }
     .tit-title { color: #b86b2a; font-weight: 600; margin-bottom: 6px; }
 
     .tit-body {
-     color: rgba(255,255,255,0.92);
+     color: #2b2b2b;
      line-height: 1.5;
      text-align: justify;
      text-align-last: left;
@@ -974,42 +966,42 @@ img { width: 100%; display: block; }
 
     /* ===== Public calendar (match admin look) ===== */
     .tour-booking-area { max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; }
-    .tour-calendar { margin-top: 18px; border: 1px solid #b86b2a; padding: 14px; background: #2b2b2b; }
+    .tour-calendar { margin-top: 18px; border: 1px solid #b86b2a; padding: 14px; background: transparent; }
     .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
     .cal-nav {
       border: 1px solid #b86b2a;
-      background: #2b2b2b;
+      background: transparent;
       color: #b86b2a;
       padding: 8px 12px;
       cursor: pointer;
       font: 400 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .cal-month { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
+    .cal-month { color: #2b2b2b; font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.2px; }
 
     .cal-weekdays { display:grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
-    .cal-weekdays div { text-align:center; font-weight:600; padding: 8px 0; color: rgba(255,255,255,0.92); }
+    .cal-weekdays div { text-align:center; font-weight:600; padding: 8px 0; color: #2b2b2b; }
 
     .cal-grid { display:grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 0; }
     .cal-cell {
-      border: 1px solid #444;
+      border: 1px solid rgba(43,43,43,0.28);
       min-height: 52px;
       display:flex;
       align-items:flex-start;
       justify-content:flex-end;
       padding: 6px;
-      color: rgba(255,255,255,0.8);
+      color: rgba(43,43,43,0.82);
       cursor:pointer;
       user-select:none;
     }
     .cal-cell.is-empty { opacity: 0.25; cursor: default; }
     .cal-cell.has-data { background: rgba(184,107,42,0.15); }
-    .cal-cell:not(.is-empty):hover { background: rgba(255,255,255,0.05); }
+    .cal-cell:not(.is-empty):hover { background: rgba(43,43,43,0.06); }
     .cal-cell.selected { border: 2px solid #b86b2a; }
 
     /* ===== Slots list ===== */
     .slots-msg {
       margin: 14px 0 10px 0;
-      color: rgba(255,255,255,0.6);
+      color: rgba(43,43,43,0.72);
       font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     .slots-list { display:flex; flex-direction:column; gap: 10px; }
@@ -1017,8 +1009,8 @@ img { width: 100%; display: block; }
       width: 100%;
       text-align:left;
       border: 1px solid #b86b2a;
-      background: #2b2b2b;
-      color: rgba(255,255,255,0.92);
+      background: transparent;
+      color: #2b2b2b;
       padding: 12px;
       cursor: pointer;
       font: 500 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -1031,10 +1023,10 @@ img { width: 100%; display: block; }
     .tour-nextdate { display: block; white-space: normal; }
     .tour-meta span { white-space: normal; overflow-wrap: anywhere; }
 
-    .booking-wrap { margin-top: 14px; border: 1px solid #b86b2a; background: #2b2b2b; padding: 14px; }
-    .booking-title { color: rgba(255,255,255,0.92); font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin-bottom: 10px; }
+    .booking-wrap { margin-top: 14px; border: 1px solid #b86b2a; background: transparent; padding: 14px; }
+    .booking-title { color: #2b2b2b; font: 600 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin-bottom: 10px; }
     .booking-summary {
-      color: rgba(255,255,255,0.6);
+      color: rgba(43,43,43,0.72);
       font: 400 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       margin-bottom: 12px;
       white-space: normal;
@@ -1042,8 +1034,8 @@ img { width: 100%; display: block; }
     .booking-field {
       width: 100%;
       border: 1px solid #b86b2a;
-      background: #2b2b2b;
-      color: rgba(255,255,255,0.92);
+      background: transparent;
+      color: #2b2b2b;
       padding: 12px;
       margin-bottom: 10px;
       font: 400 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -1052,16 +1044,17 @@ img { width: 100%; display: block; }
     .booking-btn {
       width: 100%;
       border: 1px solid #b86b2a;
-      background: #2b2b2b;
+      background: transparent;
       color: #b86b2a;
       padding: 12px;
       cursor: pointer;
       font: 400 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
+    .booking-field::placeholder { color: rgba(43,43,43,0.58); opacity: 1; }
     .booking-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     .booking-msg {
       margin-top: 10px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(43,43,43,0.72);
       font: 400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
