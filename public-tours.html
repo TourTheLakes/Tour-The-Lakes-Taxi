@@ -867,9 +867,12 @@ img { width: 100%; display: block; }
     }
     .tour-toggle img { display: block; width: 20px; height: 20px; border-bottom: none; }
 
+    .tour {
+      position: relative;
+    }
+
     .tour.is-open .tour-divider {
-  position: sticky;
-  top: 172px;
+  position: relative;
   z-index: 20;
   background-color: transparent;
   background-image: url("images/Web Paper BG.png");
@@ -878,6 +881,24 @@ img { width: 100%; display: block; }
   background-repeat: no-repeat;
   margin: 30px 0;
   box-shadow: none;
+}
+
+    .tour.is-open .tour-divider.is-following {
+  position: fixed;
+  top: 172px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  z-index: 999;
+}
+
+    .tour-divider-placeholder {
+  display: none;
+}
+
+    .tour.is-open .tour-divider-placeholder.is-active {
+  display: block;
 }
 
     .tour.is-open .tour-divider::before {
@@ -2866,6 +2887,51 @@ img { width: 100%; display: block; }
       renderTours(snapshot.val());
     });
 
+    // Keep an opened tour's Read Less control directly beneath the fixed header
+    // until the user reaches the end of that same tour.
+    const FOLLOW_TOP = 172;
+
+    function updateFollowingTourDivider() {
+      document.querySelectorAll(".tour").forEach((tour) => {
+        const divider = tour.querySelector(".tour-divider");
+        if (!divider) return;
+
+        let placeholder = tour.querySelector(".tour-divider-placeholder");
+        if (!placeholder) {
+          placeholder = document.createElement("div");
+          placeholder.className = "tour-divider-placeholder";
+          divider.insertAdjacentElement("afterend", placeholder);
+        }
+
+        if (!tour.classList.contains("is-open")) {
+          divider.classList.remove("is-following");
+          placeholder.classList.remove("is-active");
+          placeholder.style.height = "";
+          return;
+        }
+
+        const wasFollowing = divider.classList.contains("is-following");
+        if (wasFollowing) divider.classList.remove("is-following");
+
+        const dividerRect = divider.getBoundingClientRect();
+        const dividerHeight = divider.offsetHeight;
+        const tourRect = tour.getBoundingClientRect();
+        const shouldFollow = dividerRect.top <= FOLLOW_TOP && tourRect.bottom > FOLLOW_TOP + dividerHeight;
+
+        if (shouldFollow) {
+          placeholder.style.height = `${divider.offsetHeight + 60}px`;
+          placeholder.classList.add("is-active");
+          divider.classList.add("is-following");
+        } else {
+          placeholder.classList.remove("is-active");
+          placeholder.style.height = "";
+        }
+      });
+    }
+
+    window.addEventListener("scroll", updateFollowingTourDivider, { passive: true });
+    window.addEventListener("resize", updateFollowingTourDivider);
+
     // Toggle open/close (event delegation)
     document.addEventListener("click", (e) => {
       const toggle = e.target.closest(".tour-toggle");
@@ -2891,6 +2957,8 @@ img { width: 100%; display: block; }
       if (stateText) {
         stateText.textContent = willOpen ? "Less" : "More";
       }
+
+      requestAnimationFrame(updateFollowingTourDivider);
     });
 
     void db;
