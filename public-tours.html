@@ -1007,7 +1007,16 @@ img { width: 100%; display: block; }
     }
     .cal-cell.is-empty { opacity: 0.25; cursor: default; }
     .cal-cell.has-data { background: rgba(184,107,42,0.15); }
-    .cal-cell:not(.is-empty):hover { background: rgba(43,43,43,0.06); }
+    .cal-cell.is-today {
+      box-shadow: inset 0 0 0 2px rgba(184,107,42,0.48);
+      font-weight: 700;
+    }
+    .cal-cell.is-past {
+      opacity: 0.34;
+      cursor: not-allowed;
+      background: rgba(43,43,43,0.035);
+    }
+    .cal-cell:not(.is-empty):not(.is-past):hover { background: rgba(43,43,43,0.06); }
     .cal-cell.selected { border: 2px solid #b86b2a; }
 
     /* ===== Slots list ===== */
@@ -1916,6 +1925,22 @@ img { width: 100%; display: block; }
       return new Date(y, m - 1, d, hh, mm, 0, 0);
     }
 
+    const PUBLIC_BOOKING_CUTOFF_MS = 48 * 60 * 60 * 1000;
+
+    function localTodayKey() {
+      const now = new Date();
+      return toKeyYYYYMMDD(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function isPastDateKey(dateKey) {
+      return String(dateKey || "") < localTodayKey();
+    }
+
+    function isSlotBookable(dateKey, timeStr, nowMs = Date.now()) {
+      const dt = parseSlotDateTime(dateKey, timeStr);
+      return !!dt && dt.getTime() >= nowMs + PUBLIC_BOOKING_CUTOFF_MS;
+    }
+
     function formatGBP(value) {
       const n = Number(value);
       if (!Number.isFinite(n)) return "";
@@ -2074,7 +2099,7 @@ img { width: 100%; display: block; }
     function findNextUpcomingSlot(datesObj) {
       if (!datesObj || typeof datesObj !== "object") return null;
 
-      const now = new Date();
+      const nowMs = Date.now();
       let best = null;
 
       for (const [dateKey, dateNode] of Object.entries(datesObj)) {
@@ -2084,7 +2109,7 @@ img { width: 100%; display: block; }
         for (const [timeStr, slot] of Object.entries(timesObj)) {
           const dt = parseSlotDateTime(dateKey, timeStr);
           if (!dt) continue;
-          if (dt.getTime() < now.getTime()) continue;
+          if (dt.getTime() < nowMs + PUBLIC_BOOKING_CUTOFF_MS) continue;
 
           if (!best || dt.getTime() < best.dt.getTime()) {
             best = {
@@ -2543,6 +2568,12 @@ img { width: 100%; display: block; }
       const dateKey = state.selectedDateKey;
       const time = state.selectedSlot.time;
 
+      if (!isSlotBookable(dateKey, time)) {
+        hideBooking(state);
+        clearSlots(state, "Online booking closes 48 hours before departure. Please select a later departure.");
+        return;
+      }
+
       const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
 
       try {
@@ -2680,6 +2711,21 @@ img { width: 100%; display: block; }
         cell.classList.remove("is-empty");
         cell.setAttribute("aria-label", key);
 
+        const todayKey = localTodayKey();
+        if (key === todayKey) {
+          cell.classList.add("is-today");
+          cell.setAttribute("aria-current", "date");
+        } else {
+          cell.removeAttribute("aria-current");
+        }
+
+        if (isPastDateKey(key)) {
+          cell.classList.add("is-past");
+          cell.setAttribute("aria-disabled", "true");
+        } else {
+          cell.removeAttribute("aria-disabled");
+        }
+
         if (state.savedDates.has(key)) cell.classList.add("has-data");
         if (state.selectedDateKey === key) {
           cell.classList.add("selected");
@@ -2729,7 +2775,13 @@ img { width: 100%; display: block; }
           `${time} — ${capText ? capText + " places remaining" : "places unknown"}` +
           `${priceText ? " — " + priceText : ""}`;
 
-        if (Number.isFinite(cap) && cap <= 0) {
+        const bookable = isSlotBookable(state.selectedDateKey, time);
+
+        if (!bookable) {
+          btn.disabled = true;
+          btn.textContent += " — online booking closed";
+          btn.setAttribute("aria-label", `${time}, online booking closed`);
+        } else if (Number.isFinite(cap) && cap <= 0) {
           btn.disabled = true;
           btn.setAttribute("aria-label", `${time}, sold out`);
         }
@@ -2872,6 +2924,7 @@ img { width: 100%; display: block; }
 
         const key = cell.dataset.key;
         if (!key) return;
+        if (isPastDateKey(key)) return;
 
         state.selectedDateKey = key;
         state.selectedTime = "";
