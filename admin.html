@@ -926,8 +926,9 @@
         line3.className = "admin-msg";
         const qty = Number(b.qty || 0);
         const price = Number(b.price || 0);
+        const total = qty * price;
         const pay = String(b.paymentStatus || "outstanding").toLowerCase();
-        line3.textContent = `${qty ? qty + " pax" : ""} • ${fmtGBP(price)} • ${pay === "paid" ? "PAID" : "OUTSTANDING"}`;
+        line3.textContent = `${qty ? qty + " pax" : ""} • ${fmtGBP(price)} pp • ${pay === "paid" ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}`;
         row.appendChild(line3);
 
         liveBookingsListEl.appendChild(row);
@@ -1246,6 +1247,7 @@
         const time = String(b?.time || "");
         const qty = Number(b?.qty || 0);
         const price = Number(b?.price || 0);
+        const total = qty * price;
         const paid = isPaidBooking(b);
         const active = bookingActive(b);
 
@@ -1261,12 +1263,12 @@
         card.style.gap = "10px";
 
         const top = document.createElement("div");
-        top.textContent = `${time} — ${safeStr(b?.name)} — ${qty} pax — ${fmtGBP(price)} — Ref: ${refShort}`;
+        top.textContent = `${time} — ${safeStr(b?.name)} — ${qty} pax — ${fmtGBP(price)} pp — Total ${fmtGBP(total)} — Ref: ${refShort}`;
         card.appendChild(top);
 
         const line = document.createElement("div");
         line.className = "admin-msg";
-        line.textContent = `${safeStr(b?.email)}${b?.phone ? " • " + safeStr(b.phone) : ""} • ${paid ? "PAID" : "OUTSTANDING"}${active ? "" : " • NOT ACTIVE"}`;
+        line.textContent = `${safeStr(b?.email)}${b?.phone ? " • " + safeStr(b.phone) : ""} • ${paid ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}${active ? "" : " • NOT ACTIVE"}`;
         card.appendChild(line);
 
         // PASSENGERS (LOCKED ON PAID)
