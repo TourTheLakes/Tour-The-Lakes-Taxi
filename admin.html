@@ -204,6 +204,11 @@
       user-select: none;
     }
     .calendar-cell.is-empty { opacity: .18; cursor: default; }
+    .calendar-cell.is-today {
+      box-shadow: inset 0 0 0 2px rgba(184,107,42,.62);
+      color: var(--white);
+      font-weight: 800;
+    }
     .calendar-cell.selected { background: var(--orange); color: #fff; }
     .calendar-cell.has-data:not(.selected) { background: rgba(184,107,42,.16); color: var(--white); }
     .calendar-cell:not(.is-empty):hover { background: rgba(255,255,255,.07); }
@@ -724,6 +729,10 @@
     function monthLabel(y, m0) { return new Date(y, m0, 1).toLocaleString(undefined, { month: "long", year: "numeric" }); }
     function firstDayIndexMonFirst(y, m0) { return (new Date(y, m0, 1).getDay() + 6) % 7; }
     function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
+    function localTodayKey() {
+      const now = new Date();
+      return toKeyYYYYMMDD(now.getFullYear(), now.getMonth(), now.getDate());
+    }
 
     function slugifyTitle(input) {
       return String(input || "")
@@ -1025,6 +1034,13 @@
         cell.dataset.key = key;
         cell.textContent = String(dayNum);
         cell.classList.remove("is-empty");
+
+        if (key === localTodayKey()) {
+          cell.classList.add("is-today");
+          cell.setAttribute("aria-current", "date");
+        } else {
+          cell.removeAttribute("aria-current");
+        }
 
         if (savedDates.has(key)) cell.classList.add("has-data");
       }
