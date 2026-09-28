@@ -2515,6 +2515,7 @@ img { width: 100%; display: block; }
               <div class="ttl-detail-row"><span class="ttl-detail-label">Date &amp; Time</span><span class="ttl-detail-value">${escapeHtml(data.date)} at ${escapeHtml(data.time)}</span></div>
               <div class="ttl-detail-row"><span class="ttl-detail-label">Passengers</span><span class="ttl-detail-value">${escapeHtml(data.qty)}</span></div>
               <div class="ttl-detail-row"><span class="ttl-detail-label">Price per passenger</span><span class="ttl-detail-value">${escapeHtml(data.price)}</span></div>
+              <div class="ttl-detail-row"><span class="ttl-detail-label"><strong>Total amount due</strong></span><span class="ttl-detail-value"><strong>${escapeHtml(data.total)}</strong></span></div>
               ${data.duration ? `<div class="ttl-detail-row"><span class="ttl-detail-label">Duration</span><span class="ttl-detail-value">${escapeHtml(data.duration)}</span></div>` : ""}
               ${data.departurePoint ? `<div class="ttl-detail-row"><span class="ttl-detail-label">Departure</span><span class="ttl-detail-value">${escapeHtml(data.departurePoint)}</span></div>` : ""}
             </div>
@@ -2641,6 +2642,7 @@ img { width: 100%; display: block; }
           date: dateKey,
           time,
           price: formatGBP(slotPrice),
+          total: formatGBP(slotPrice * qty),
           name,
           email,
           phone,
