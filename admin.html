@@ -63,7 +63,7 @@
     .admin-nav {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       background: rgba(43,43,43,0.94);
       border-bottom: 2px solid var(--orange);
       position: sticky;
@@ -216,7 +216,8 @@
     #liveBookingsList > div,
     #dateOverviewList > div,
     #timesList > div,
-    #bookingsList > div {
+    #bookingsList > div,
+    #driversList > div {
       border: 0 !important;
       border-bottom: 1px solid var(--line) !important;
       background: transparent !important;
@@ -225,7 +226,8 @@
     #liveBookingsList > div:first-child,
     #dateOverviewList > div:first-child,
     #timesList > div:first-child,
-    #bookingsList > div:first-child { border-top: 1px solid var(--line) !important; }
+    #bookingsList > div:first-child,
+    #driversList > div:first-child { border-top: 1px solid var(--line) !important; }
 
     #timesList .admin-btn, #bookingsList .admin-btn, #dateOverviewList .admin-btn { min-width: 0; }
     #timesList .admin-field, #bookingsList .admin-field { background: rgba(255,255,255,.045) !important; }
@@ -284,6 +286,7 @@
         <button type="button" class="is-active" data-admin-panel="bookingsPanel">Bookings</button>
         <button type="button" data-admin-panel="toursPanel">Tours</button>
         <button type="button" data-admin-panel="schedulePanel">Schedule</button>
+        <button type="button" data-admin-panel="driversPanel">Drivers</button>
       </nav>
 
       <section id="bookingsPanel" class="admin-panel is-active">
@@ -449,6 +452,58 @@
           </div>
         </div>
       </section>
+
+      <section id="driversPanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Staff access</div>
+            <h1 class="admin-section-title">Drivers</h1>
+            <p class="admin-lead">Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.</p>
+
+            <div class="admin-stack">
+              <div class="field-group">
+                <label class="field-label" for="driverName">Name</label>
+                <input id="driverName" type="text" class="admin-field" autocomplete="off" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="driverBadgeNo">Badge No</label>
+                <input id="driverBadgeNo" type="text" class="admin-field" autocomplete="off" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="driverBadgeExpiry">Badge Expiry</label>
+                <input id="driverBadgeExpiry" type="date" class="admin-field" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="driverEmail">Email</label>
+                <input id="driverEmail" type="email" class="admin-field" autocomplete="off" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="driverPhone">Phone Number <span style="text-transform:none;letter-spacing:0;font-weight:500;">(optional)</span></label>
+                <input id="driverPhone" type="tel" class="admin-field" autocomplete="off" />
+              </div>
+
+              <div id="driverMsg" class="admin-msg"></div>
+            </div>
+
+            <div class="admin-actions">
+              <button id="saveDriver" type="button" class="admin-btn primary">Create driver</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Driver profiles</div>
+            <div class="admin-subtitle" style="margin-top:0;">Existing drivers</div>
+            <div id="driversListMsg" class="admin-msg">Loading…</div>
+            <div id="driversList" class="admin-list" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -481,6 +536,7 @@
   import {
     getDatabase,
     ref,
+    push,
     set,
     update,
     onValue,
@@ -710,6 +766,17 @@
     const calendarGrid = document.getElementById("calendarGrid");
     const dateOverviewMsgEl = document.getElementById("dateOverviewMsg");
     const dateOverviewListEl = document.getElementById("dateOverviewList");
+
+    // Drivers
+    const driverNameEl = document.getElementById("driverName");
+    const driverBadgeNoEl = document.getElementById("driverBadgeNo");
+    const driverBadgeExpiryEl = document.getElementById("driverBadgeExpiry");
+    const driverEmailEl = document.getElementById("driverEmail");
+    const driverPhoneEl = document.getElementById("driverPhone");
+    const saveDriverBtn = document.getElementById("saveDriver");
+    const driverMsgEl = document.getElementById("driverMsg");
+    const driversListMsgEl = document.getElementById("driversListMsg");
+    const driversListEl = document.getElementById("driversList");
 
     const CELL_COUNT = 42;
     let viewYear = new Date().getFullYear();
@@ -1023,7 +1090,7 @@
 
       for (let i = 0; i < CELL_COUNT; i++) {
         const cell = calendarGrid.children[i];
-        cell.classList.remove("selected", "has-data", "is-empty");
+        cell.classList.remove("selected", "has-data", "is-empty", "is-today");
         cell.dataset.key = "";
         cell.textContent = "";
         cell.classList.add("is-empty");
@@ -1964,6 +2031,96 @@
         tourPriceEl.value = "";
       } catch (err) {
         setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
+      }
+    });
+
+    // ---- Drivers ----
+    function clearDriverForm() {
+      driverNameEl.value = "";
+      driverBadgeNoEl.value = "";
+      driverBadgeExpiryEl.value = "";
+      driverEmailEl.value = "";
+      driverPhoneEl.value = "";
+    }
+
+    function renderDrivers(driversObj) {
+      if (!driversListEl) return;
+      driversListEl.innerHTML = "";
+
+      if (!driversObj || typeof driversObj !== "object") {
+        setMsg(driversListMsgEl, "No driver profiles yet.", null);
+        return;
+      }
+
+      const entries = Object.entries(driversObj)
+        .map(([id, driver]) => ({ id, driver: driver || {} }))
+        .sort((a, b) => safeStr(a.driver.name).localeCompare(safeStr(b.driver.name)));
+
+      setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
+
+      for (const { driver } of entries) {
+        const row = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.textContent = safeStr(driver.name);
+        name.style.color = "rgba(255,255,255,0.92)";
+        name.style.fontSize = "17px";
+        name.style.fontWeight = "650";
+        row.appendChild(name);
+
+        const details = document.createElement("div");
+        details.className = "admin-msg";
+        details.style.marginTop = "6px";
+        details.textContent = `Badge ${safeStr(driver.badgeNo)} • Expires ${safeStr(driver.badgeExpiry)} • ${safeStr(driver.email)}${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
+        row.appendChild(details);
+
+        driversListEl.appendChild(row);
+      }
+    }
+
+    onValue(ref(db, "drivers"), (snap) => {
+      renderDrivers(snap.val());
+    }, (err) => {
+      setMsg(driversListMsgEl, `Error loading drivers: ${err?.message || err}`, "bad");
+    });
+
+    saveDriverBtn.addEventListener("click", async () => {
+      const name = driverNameEl.value.trim();
+      const badgeNo = driverBadgeNoEl.value.trim();
+      const badgeExpiry = driverBadgeExpiryEl.value;
+      const email = driverEmailEl.value.trim().toLowerCase();
+      const phone = driverPhoneEl.value.trim();
+
+      if (!name) { setMsg(driverMsgEl, "Name required.", "bad"); return; }
+      if (!badgeNo) { setMsg(driverMsgEl, "Badge No required.", "bad"); return; }
+      if (!badgeExpiry) { setMsg(driverMsgEl, "Badge Expiry required.", "bad"); return; }
+      if (!email || !driverEmailEl.checkValidity()) { setMsg(driverMsgEl, "Valid email required.", "bad"); return; }
+
+      try {
+        const duplicateEmail = query(ref(db, "drivers"), orderByChild("email"), equalTo(email));
+        const duplicateSnap = await get(duplicateEmail);
+        if (duplicateSnap.exists()) {
+          setMsg(driverMsgEl, "A driver profile already exists for this email address.", "bad");
+          return;
+        }
+
+        const driverRef = push(ref(db, "drivers"));
+        await set(driverRef, {
+          name,
+          badgeNo,
+          badgeExpiry,
+          email,
+          phone,
+          createdAt: serverTimestamp(),
+          createdBy: adminEmail,
+          updatedAt: serverTimestamp(),
+          updatedBy: adminEmail,
+        });
+
+        clearDriverForm();
+        setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
+      } catch (err) {
+        setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
 
