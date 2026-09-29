@@ -185,6 +185,9 @@
     }
     #tourList > button:hover { padding-left: 12px !important; background: rgba(184,107,42,.08) !important; }
 
+    #driversList > div { cursor: pointer; transition: padding-left .15s ease, background .15s ease; }
+    #driversList > div:hover { padding-left: 12px !important; background: rgba(184,107,42,.08) !important; }
+
     .calendar-header { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; margin: 22px 0 12px; }
     .calendar-header button { border: 0; background: transparent; color: var(--orange); padding: 12px; cursor: pointer; font-size: 20px; }
     .calendar-month { text-align: center; color: var(--white); font-size: 19px; font-weight: 700; }
@@ -457,8 +460,8 @@
         <div class="admin-section">
           <div class="admin-content">
             <div class="eyebrow">Staff access</div>
-            <h1 class="admin-section-title">Drivers</h1>
-            <p class="admin-lead">Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.</p>
+            <h1 class="admin-section-title" id="driverEditorTitle">Drivers</h1>
+            <p class="admin-lead" id="driverEditorLead">Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.</p>
 
             <div class="admin-stack">
               <div class="field-group">
@@ -491,6 +494,7 @@
 
             <div class="admin-actions">
               <button id="saveDriver" type="button" class="admin-btn primary">Create driver</button>
+              <button id="cancelDriverEdit" type="button" class="admin-btn quiet" hidden>Back to new driver</button>
             </div>
           </div>
         </div>
@@ -777,6 +781,10 @@
     const driverMsgEl = document.getElementById("driverMsg");
     const driversListMsgEl = document.getElementById("driversListMsg");
     const driversListEl = document.getElementById("driversList");
+    const driverEditorTitleEl = document.getElementById("driverEditorTitle");
+    const driverEditorLeadEl = document.getElementById("driverEditorLead");
+    const cancelDriverEditBtn = document.getElementById("cancelDriverEdit");
+    let selectedDriverId = "";
 
     const CELL_COUNT = 42;
     let viewYear = new Date().getFullYear();
@@ -2035,12 +2043,34 @@
     });
 
     // ---- Drivers ----
+    function setDriverEditorMode(mode, driverId = "") {
+      const editing = mode === "edit";
+      selectedDriverId = editing ? driverId : "";
+      if (driverEditorTitleEl) driverEditorTitleEl.textContent = editing ? "Driver Profile" : "Drivers";
+      if (driverEditorLeadEl) driverEditorLeadEl.textContent = editing
+        ? "Amend this driver profile. The email address is the Google account assigned to this driver."
+        : "Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.";
+      if (saveDriverBtn) saveDriverBtn.textContent = editing ? "Save driver changes" : "Create driver";
+      if (cancelDriverEditBtn) cancelDriverEditBtn.hidden = !editing;
+    }
+
     function clearDriverForm() {
       driverNameEl.value = "";
       driverBadgeNoEl.value = "";
       driverBadgeExpiryEl.value = "";
       driverEmailEl.value = "";
       driverPhoneEl.value = "";
+    }
+
+    function openDriverProfile(id, driver) {
+      setDriverEditorMode("edit", id);
+      driverNameEl.value = safeStr(driver.name);
+      driverBadgeNoEl.value = safeStr(driver.badgeNo);
+      driverBadgeExpiryEl.value = safeStr(driver.badgeExpiry);
+      driverEmailEl.value = safeStr(driver.email);
+      driverPhoneEl.value = safeStr(driver.phone);
+      setMsg(driverMsgEl, `Editing driver: ${safeStr(driver.name)}`, null);
+      document.getElementById("driversPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function renderDrivers(driversObj) {
@@ -2058,8 +2088,11 @@
 
       setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
 
-      for (const { driver } of entries) {
+      for (const { id, driver } of entries) {
         const row = document.createElement("div");
+        row.tabIndex = 0;
+        row.setAttribute("role", "button");
+        row.setAttribute("aria-label", `Open driver profile for ${safeStr(driver.name)}`);
 
         const name = document.createElement("div");
         name.textContent = safeStr(driver.name);
@@ -2074,6 +2107,12 @@
         details.textContent = `Badge ${safeStr(driver.badgeNo)} • Expires ${safeStr(driver.badgeExpiry)} • ${safeStr(driver.email)}${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
         row.appendChild(details);
 
+        const open = () => openDriverProfile(id, driver);
+        row.addEventListener("click", open);
+        row.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); }
+        });
+
         driversListEl.appendChild(row);
       }
     }
@@ -2082,6 +2121,12 @@
       renderDrivers(snap.val());
     }, (err) => {
       setMsg(driversListMsgEl, `Error loading drivers: ${err?.message || err}`, "bad");
+    });
+
+    cancelDriverEditBtn.addEventListener("click", () => {
+      clearDriverForm();
+      setDriverEditorMode("create");
+      setMsg(driverMsgEl, "", null);
     });
 
     saveDriverBtn.addEventListener("click", async () => {
@@ -2099,30 +2144,40 @@
       try {
         const duplicateEmail = query(ref(db, "drivers"), orderByChild("email"), equalTo(email));
         const duplicateSnap = await get(duplicateEmail);
-        if (duplicateSnap.exists()) {
+        let emailUsedByAnotherDriver = false;
+        duplicateSnap.forEach((child) => {
+          if (child.key !== selectedDriverId) emailUsedByAnotherDriver = true;
+        });
+        if (emailUsedByAnotherDriver) {
           setMsg(driverMsgEl, "A driver profile already exists for this email address.", "bad");
           return;
         }
 
-        const driverRef = push(ref(db, "drivers"));
-        await set(driverRef, {
-          name,
-          badgeNo,
-          badgeExpiry,
-          email,
-          phone,
-          createdAt: serverTimestamp(),
-          createdBy: adminEmail,
-          updatedAt: serverTimestamp(),
-          updatedBy: adminEmail,
-        });
-
-        clearDriverForm();
-        setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
+        if (selectedDriverId) {
+          await update(ref(db, `drivers/${selectedDriverId}`), {
+            name, badgeNo, badgeExpiry, email, phone,
+            updatedAt: serverTimestamp(),
+            updatedBy: adminEmail,
+          });
+          setMsg(driverMsgEl, `Driver updated: ${name}`, "ok");
+        } else {
+          const driverRef = push(ref(db, "drivers"));
+          await set(driverRef, {
+            name, badgeNo, badgeExpiry, email, phone,
+            createdAt: serverTimestamp(),
+            createdBy: adminEmail,
+            updatedAt: serverTimestamp(),
+            updatedBy: adminEmail,
+          });
+          clearDriverForm();
+          setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
+        }
       } catch (err) {
         setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
       }
     });
+
+    setDriverEditorMode("create");
 
     // Done
     void db;
