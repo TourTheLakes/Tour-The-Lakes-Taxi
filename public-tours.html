@@ -1753,6 +1753,7 @@ img { width: 100%; display: block; }
       </div>
 
       <div class="tour-details" hidden aria-hidden="true">
+        <div class="tour-at-glance"></div>
         <div class="tour-facts" hidden></div>
         <div class="tour-description"></div>
         <div class="tour-extra-sections"></div>
@@ -1985,7 +1986,13 @@ img { width: 100%; display: block; }
       const factsEl = articleEl.querySelector(".tour-facts");
       if (!factsEl) return;
 
-      const pickupLabels = Object.values(tour?.pickupLocations || {}).map(x => firstUsefulValue(x?.label)).filter(Boolean).join(", ");
+      const pickupLabels = Object.values(tour?.pickupLocations || {}).map(x => {
+        const label = firstUsefulValue(x?.label);
+        const meetingPoint = firstUsefulValue(x?.meetingPoint);
+        if (/windermere railway station/i.test(meetingPoint)) return "Windermere Railway Station";
+        if (/bowness pier/i.test(meetingPoint)) return "Bowness Pier";
+        return label;
+      }).filter(Boolean).join("  •  ");
       const categoryLabels = { "sightseeing": "Sightseeing Tour", "brewery-distillery": "Brewery & Distillery Tour", "special-interest": "Special Interest Tour" };
       const facts = [
         ["Duration", firstUsefulValue(tour?.duration)],
@@ -2012,6 +2019,33 @@ img { width: 100%; display: block; }
       factsEl.hidden = facts.length === 0;
     }
 
+    function renderTourAtGlance(articleEl, tour) {
+      const container = articleEl.querySelector(".tour-at-glance");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const clean = String(tour?.shortSummary ?? "").trim();
+      if (!clean) {
+        container.hidden = true;
+        return;
+      }
+
+      const section = document.createElement("section");
+      section.className = "tsec";
+
+      const title = document.createElement("h3");
+      title.className = "tsec-h";
+      title.textContent = "At a Glance";
+
+      const body = document.createElement("div");
+      body.className = "tsec-b";
+      body.textContent = clean;
+
+      section.append(title, body);
+      container.appendChild(section);
+      container.hidden = false;
+    }
+
     function appendTourExtraSection(container, heading, value) {
       const clean = String(value ?? "").trim();
       if (!clean) return;
@@ -2036,7 +2070,6 @@ img { width: 100%; display: block; }
       if (!container) return;
       container.innerHTML = "";
 
-      appendTourExtraSection(container, "At a Glance", tour?.shortSummary);
       appendTourExtraSection(container, "What Is Included", tour?.included);
       appendTourExtraSection(container, "What Is Not Included", tour?.notIncluded);
       appendTourExtraSection(container, "Accessibility", tour?.accessibility);
@@ -3089,6 +3122,7 @@ img { width: 100%; display: block; }
         descEl.innerHTML = tour.description || "";
         if (!tour.description) descEl.style.display = "none";
 
+        renderTourAtGlance(article, tour);
         renderTourFacts(article, tour);
         renderTourExtraSections(article, tour);
 
