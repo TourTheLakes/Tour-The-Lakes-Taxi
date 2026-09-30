@@ -2113,7 +2113,7 @@ img { width: 100%; display: block; }
       const row=document.createElement("div");row.className="home-result";
       const copy=document.createElement("div");copy.className="home-result-copy";
       const h=document.createElement("h3");h.textContent=first(item.tour.title,item.tourId);copy.appendChild(h);
-      const summary=document.createElement("p");summary.className="home-result-summary";summary.textContent=first(item.tour.shortSummary,`${categoryLabelForTour(item.tour)||"Tour The Lakes tour"}.`);copy.appendChild(summary);
+      const summary=document.createElement("div");summary.className="home-result-summary";summary.textContent=first(item.tour.shortSummary,`${categoryLabelForTour(item.tour)||"Tour The Lakes tour"}.`);copy.appendChild(summary);
 
       const details=document.createElement("div");details.className="home-result-details";
       const detailParts=[
