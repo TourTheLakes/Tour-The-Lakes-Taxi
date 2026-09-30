@@ -328,6 +328,23 @@
 
             <div class="admin-stack">
               <div class="admin-flow-step">
+                <div class="eyebrow">Tour types</div>
+                <h2 class="admin-flow-step-title">Manage tour types</h2>
+                <p class="admin-flow-step-copy">Create the customer-facing tour types used by the homepage finder and assign them to tours below.</p>
+                <div class="admin-grid-two">
+                  <div class="field-group">
+                    <label class="field-label" for="newTourTypeName">New tour type</label>
+                    <input id="newTourTypeName" type="text" placeholder="Photography Tour" class="admin-field" />
+                  </div>
+                  <div class="field-group" style="justify-content:end;">
+                    <button id="addTourType" type="button" class="admin-btn primary">Add tour type</button>
+                  </div>
+                </div>
+                <div id="tourTypeMsg" class="admin-msg" style="margin-top:12px;"></div>
+                <div id="tourTypesList" class="admin-list" style="margin-top:12px;"></div>
+              </div>
+
+              <div class="admin-flow-step">
                 <div class="eyebrow">Step 1</div>
                 <h2 class="admin-flow-step-title">What are we selling?</h2>
                 <p class="admin-flow-step-copy">Give the tour its customer-facing identity first. Category drives the homepage finder. Duration and the short summary are reused anywhere we need a concise description.</p>
@@ -780,6 +797,10 @@
     // ---- DOM ----
     const titleEl = document.getElementById("tourTitle");
     const categoryEl = document.getElementById("tourCategory");
+    const newTourTypeNameEl = document.getElementById("newTourTypeName");
+    const addTourTypeBtn = document.getElementById("addTourType");
+    const tourTypeMsgEl = document.getElementById("tourTypeMsg");
+    const tourTypesListEl = document.getElementById("tourTypesList");
     const durationEl = document.getElementById("tourDuration");
     const shortSummaryEl = document.getElementById("tourShortSummary");
     const homepageSearchableEl = document.getElementById("tourHomepageSearchable");
@@ -796,6 +817,56 @@
     const editorTitleEl = document.getElementById("editorTitle");
     const editorModeMsgEl = document.getElementById("editorModeMsg");
     const descEl = document.getElementById("tourDescription");
+
+    const builtInTourTypes = {
+      "sightseeing": "Sightseeing Tour",
+      "brewery-distillery": "Brewery & Distillery Tour",
+      "special-interest": "Special Interest Tour",
+    };
+    let managedTourTypes = {};
+
+    function tourTypeSlug(name) {
+      return String(name || "").trim().toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+    }
+    function tourTypeLabel(id) {
+      return managedTourTypes[id]?.label || builtInTourTypes[id] || id;
+    }
+    function refreshTourCategorySelect(preferred = "") {
+      const current = preferred || categoryEl.value || "sightseeing";
+      const map = { ...builtInTourTypes };
+      for (const [id, item] of Object.entries(managedTourTypes || {})) if (item?.label) map[id] = item.label;
+      for (const [, tour] of Object.entries(allToursCache || {})) {
+        const id = String(tour?.category || "").trim();
+        if (id) map[id] = String(tour?.categoryLabel || map[id] || id);
+      }
+      categoryEl.innerHTML = "";
+      Object.entries(map).sort((a,b)=>a[1].localeCompare(b[1])).forEach(([id,label])=>{
+        const option=document.createElement("option"); option.value=id; option.textContent=label; categoryEl.appendChild(option);
+      });
+      if (map[current]) categoryEl.value=current;
+      else if (categoryEl.options.length) categoryEl.selectedIndex=0;
+    }
+    function renderTourTypesList() {
+      if (!tourTypesListEl) return;
+      tourTypesListEl.innerHTML = "";
+      const map = { ...builtInTourTypes };
+      for (const [id,item] of Object.entries(managedTourTypes || {})) if(item?.label) map[id]=item.label;
+      for (const [id,label] of Object.entries(map).sort((a,b)=>a[1].localeCompare(b[1]))) {
+        const row=document.createElement("div"); row.style.display="flex"; row.style.alignItems="center"; row.style.gap="12px"; row.style.padding="12px 0"; row.style.borderBottom="1px solid var(--line)";
+        const name=document.createElement("div"); name.style.flex="1"; name.textContent=label; row.appendChild(name);
+        if (managedTourTypes[id]) {
+          const del=document.createElement("button"); del.type="button"; del.className="admin-btn quiet"; del.textContent="Remove";
+          del.addEventListener("click",async()=>{
+            const used=Object.values(allToursCache||{}).some(t=>String(t?.category||"")===id);
+            if(used){setMsg(tourTypeMsgEl,"That tour type is assigned to an existing tour. Reassign that tour first.","bad");return;}
+            if(!confirm(`Remove tour type “${label}”?`))return;
+            try{await remove(ref(db,`tourTypes/${id}`));setMsg(tourTypeMsgEl,`Removed ${label}.`,"ok");}catch(err){setMsg(tourTypeMsgEl,`Error: ${err?.message||err}`,"bad");}
+          });
+          row.appendChild(del);
+        }
+        tourTypesListEl.appendChild(row);
+      }
+    }
 
     function setEditorMode(mode, tourId = "") {
       const editing = mode === "edit";
@@ -1133,8 +1204,19 @@
     addItineraryBtn.addEventListener("click", addItineraryBlank);
     [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => el.addEventListener("input", syncEditorToHiddenTextarea));
     renderItineraryEditor();
-    categoryEl.value = "sightseeing";
+    refreshTourCategorySelect("sightseeing");
     setEditorMode("create");
+
+    onValue(ref(db,"tourTypes"),(snap)=>{ managedTourTypes=snap.val()||{}; refreshTourCategorySelect(categoryEl.value); renderTourTypesList(); });
+    addTourTypeBtn?.addEventListener("click",async()=>{
+      const label=String(newTourTypeNameEl?.value||"").trim();
+      const id=tourTypeSlug(label);
+      if(!label||!id){setMsg(tourTypeMsgEl,"Enter a tour type name.","bad");return;}
+      const exists={...builtInTourTypes,...Object.fromEntries(Object.entries(managedTourTypes||{}).map(([k,v])=>[k,v?.label]))};
+      if(exists[id]){setMsg(tourTypeMsgEl,"That tour type already exists.","bad");return;}
+      try{await set(ref(db,`tourTypes/${id}`),{label,createdAt:serverTimestamp(),createdBy:adminEmail});newTourTypeNameEl.value="";setMsg(tourTypeMsgEl,`Added ${label}.`,"ok");}
+      catch(err){setMsg(tourTypeMsgEl,`Error: ${err?.message||err}`,"bad");}
+    });
 
     // ---- Live bookings feed (read-only, across all tours) ----
     function detachLiveBookings(){ unsubscribeLiveBookings = detach(unsubscribeLiveBookings); }
@@ -1395,7 +1477,7 @@
       selectedTourData = null;
 
       titleEl.value = "";
-      categoryEl.value = "sightseeing";
+      refreshTourCategorySelect("sightseeing");
       durationEl.value = "";
       shortSummaryEl.value = "";
       homepageSearchableEl.checked = false;
@@ -2108,6 +2190,7 @@
 
       const title = titleEl.value.trim();
       const category = categoryEl.value;
+      const categoryLabel = tourTypeLabel(category);
       const duration = durationEl.value.trim();
       const shortSummary = shortSummaryEl.value.trim();
       const homepageSearchable = !!homepageSearchableEl.checked;
@@ -2135,6 +2218,7 @@
         await update(ref(db, `tours/${selectedTourId}`), {
           title,
           category,
+          categoryLabel,
           duration,
           shortSummary,
           homepageSearchable,
@@ -2149,7 +2233,7 @@
         setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
         selectedTourData = {
           ...(selectedTourData || {}),
-          title, category, duration, shortSummary, homepageSearchable, pickupLocations,
+          title, category, categoryLabel, duration, shortSummary, homepageSearchable, pickupLocations,
           imageUrl,
           isLive,
           description,
@@ -2182,6 +2266,7 @@
 
       const title = titleEl.value.trim();
       const category = categoryEl.value;
+      const categoryLabel = tourTypeLabel(category);
       const duration = durationEl.value.trim();
       const shortSummary = shortSummaryEl.value.trim();
       const homepageSearchable = !!homepageSearchableEl.checked;
@@ -2217,6 +2302,7 @@
         await update(ref(db, `tours/${tourId}`), {
           title,
           category,
+          categoryLabel,
           duration,
           shortSummary,
           homepageSearchable,
@@ -2233,7 +2319,7 @@
         setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
         selectedTourId = tourId;
         selectedTourData = {
-          title, category, duration, shortSummary, homepageSearchable, pickupLocations,
+          title, category, categoryLabel, duration, shortSummary, homepageSearchable, pickupLocations,
           imageUrl,
           isLive,
           description,
