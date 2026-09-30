@@ -137,6 +137,18 @@
     .admin-check { display: flex; align-items: center; gap: 12px; color: var(--white); font-size: 16px; cursor: pointer; }
     .admin-check input { accent-color: var(--orange); width: 20px; height: 20px; }
 
+    .admin-flow-step { padding: 26px 0 30px; border-bottom: 1px solid var(--line); }
+    .admin-flow-step:last-child { border-bottom: 0; }
+    .admin-flow-step-title { margin: 0 0 7px; color: var(--white); font-size: 20px; font-weight: 700; }
+    .admin-flow-step-copy { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 780px; }
+    .admin-grid-two { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+    .pickup-editor-row { display: grid; grid-template-columns: minmax(140px,.7fr) minmax(220px,1.5fr) auto; gap: 10px; align-items: end; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .pickup-editor-row .admin-btn { min-width: 110px; }
+    .schedule-pickup-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+    .schedule-pickup-row { display: grid; grid-template-columns: minmax(180px,1fr) 150px; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .schedule-pickup-row label { display:flex; align-items:center; gap:10px; color:var(--white); }
+    .schedule-pickup-row input[type="checkbox"] { accent-color: var(--orange); width:20px; height:20px; }
+
     .admin-btn {
       width: auto;
       min-width: 150px;
@@ -271,6 +283,9 @@
       #timesList .admin-field, #timesList .admin-btn, #bookingsList .admin-field, #bookingsList .admin-btn { flex: 1 1 100% !important; width: 100% !important; }
       .calendar-grid { grid-template-rows: repeat(6, minmax(48px, 1fr)); }
       .calendar-cell { min-height: 50px; padding: 7px; }
+      .admin-grid-two { grid-template-columns: 1fr; }
+      .pickup-editor-row, .schedule-pickup-row { grid-template-columns: 1fr; }
+      .pickup-editor-row .admin-btn { width:100%; }
     }
   </style>
 </head>
@@ -312,44 +327,92 @@
             <div class="workflow-note" id="editorModeMsg">No tour selected. You are creating a new tour.</div>
 
             <div class="admin-stack">
-              <div class="field-group">
-                <label class="field-label" for="tourTitle">Tour title</label>
-                <input id="tourTitle" type="text" placeholder="Tour title" class="admin-field" />
+              <div class="admin-flow-step">
+                <div class="eyebrow">Step 1</div>
+                <h2 class="admin-flow-step-title">What are we selling?</h2>
+                <p class="admin-flow-step-copy">Give the tour its customer-facing identity first. Category drives the homepage finder. Duration and the short summary are reused anywhere we need a concise description.</p>
+
+                <div class="field-group">
+                  <label class="field-label" for="tourTitle">Tour title</label>
+                  <input id="tourTitle" type="text" placeholder="Six Lakes Splendour" class="admin-field" />
+                </div>
+
+                <div class="admin-grid-two" style="margin-top:18px;">
+                  <div class="field-group">
+                    <label class="field-label" for="tourCategory">Tour category</label>
+                    <select id="tourCategory" class="admin-field">
+                      <option value="sightseeing">Sightseeing Tour</option>
+                      <option value="brewery-distillery">Brewery &amp; Distillery Tour</option>
+                      <option value="special-interest">Special Interest Tour</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="tourDuration">Duration</label>
+                    <input id="tourDuration" type="text" placeholder="4 hours" class="admin-field" />
+                  </div>
+                </div>
+
+                <div class="field-group" style="margin-top:18px;">
+                  <label class="field-label" for="tourShortSummary">Short booking description</label>
+                  <textarea id="tourShortSummary" rows="3" class="admin-field admin-textarea" placeholder="A concise description used in booking results and tour summaries."></textarea>
+                </div>
               </div>
 
-              <div class="field-group">
-                <label class="field-label" for="tourImageFile">Tour image</label>
-                <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
+              <div class="admin-flow-step">
+                <div class="eyebrow">Step 2</div>
+                <h2 class="admin-flow-step-title">Where can guests join?</h2>
+                <p class="admin-flow-step-copy">Create the pickup locations this tour is allowed to use. You will choose which of these apply to each individual departure in Schedule.</p>
+                <div id="pickupLocationsEditor"></div>
+                <button id="addPickupLocation" type="button" class="admin-btn quiet" style="margin-top:14px;">Add pickup location</button>
               </div>
 
-              <div id="tourDescEditor" class="admin-stack">
+              <div class="admin-flow-step">
+                <div class="eyebrow">Step 3</div>
+                <h2 class="admin-flow-step-title">Write the tour</h2>
+                <p class="admin-flow-step-copy">This is the fuller information shown to customers when they open the tour. Write it in the order they need it: title, overview, joining notes, then the itinerary.</p>
+
                 <div class="field-group">
-                  <label class="field-label" for="descProductTitle">Product title</label>
-                  <input id="descProductTitle" type="text" class="admin-field" />
-                </div>
-                <div class="field-group">
-                  <label class="field-label" for="descOverview">Overview</label>
-                  <textarea id="descOverview" rows="5" class="admin-field admin-textarea"></textarea>
-                </div>
-                <div class="field-group">
-                  <label class="field-label" for="descMeetingPoint">Meeting point</label>
-                  <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea"></textarea>
+                  <label class="field-label" for="tourImageFile">Tour image</label>
+                  <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
                 </div>
 
-                <div>
-                  <div class="field-label" style="margin-bottom:10px;">Itinerary</div>
-                  <div id="itineraryList" class="admin-stack"></div>
-                  <button id="addItineraryItem" type="button" class="admin-btn quiet" style="margin-top:14px;">Add itinerary stop</button>
+                <div id="tourDescEditor" class="admin-stack" style="margin-top:18px;">
+                  <div class="field-group">
+                    <label class="field-label" for="descProductTitle">Product title</label>
+                    <input id="descProductTitle" type="text" class="admin-field" />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="descOverview">Overview</label>
+                    <textarea id="descOverview" rows="5" class="admin-field admin-textarea"></textarea>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="descMeetingPoint">Joining and meeting point notes</label>
+                    <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea"></textarea>
+                  </div>
+
+                  <div>
+                    <div class="field-label" style="margin-bottom:10px;">Itinerary</div>
+                    <div id="itineraryList" class="admin-stack"></div>
+                    <button id="addItineraryItem" type="button" class="admin-btn quiet" style="margin-top:14px;">Add itinerary stop</button>
+                  </div>
                 </div>
+              </div>
+
+              <div class="admin-flow-step">
+                <div class="eyebrow">Step 4</div>
+                <h2 class="admin-flow-step-title">Publish and booking visibility</h2>
+                <p class="admin-flow-step-copy">Live controls whether the tour is published. Homepage searchable controls whether it can appear in the homepage tour finder once it has bookable departures.</p>
+                <label class="admin-check">
+                  <input id="tourLive" type="checkbox" />
+                  <span>Publish this tour live</span>
+                </label>
+                <label class="admin-check" style="margin-top:14px;">
+                  <input id="tourHomepageSearchable" type="checkbox" />
+                  <span>Include this tour in the homepage booking finder</span>
+                </label>
               </div>
 
               <textarea id="tourDescription" hidden></textarea>
-
-              <label class="admin-check">
-                <input id="tourLive" type="checkbox" />
-                <span>Publish this tour live</span>
-              </label>
-
               <div id="adminMsg" class="admin-msg"></div>
             </div>
 
@@ -409,9 +472,9 @@
               </div>
 
               <div class="quick-status">
-                <div><strong>1</strong><span>Choose a time</span></div>
-                <div><strong>2</strong><span>Set remaining capacity</span></div>
-                <div><strong>3</strong><span>Set passenger price</span></div>
+                <div><strong>1</strong><span>Set departure</span></div>
+                <div><strong>2</strong><span>Capacity &amp; price</span></div>
+                <div><strong>3</strong><span>Choose pickups</span></div>
               </div>
 
               <div class="field-group">
@@ -427,11 +490,17 @@
                 <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
               </div>
 
-              <div>
-                <button id="confirmSchedule" type="button" class="admin-btn primary">Add this time</button>
+              <div class="field-group">
+                <div class="field-label">Pickup points for this departure</div>
+                <div class="admin-hint">Tick every place this vehicle will collect from and set the actual pickup time. All selected pickups share the single capacity above.</div>
+                <div id="schedulePickupList" class="schedule-pickup-list" style="margin-top:10px;"></div>
               </div>
 
-              <div class="admin-hint" id="confirmHelp">Adding creates a new time slot. Existing slots are edited individually below.</div>
+              <div>
+                <button id="confirmSchedule" type="button" class="admin-btn primary">Add this departure</button>
+              </div>
+
+              <div class="admin-hint" id="confirmHelp">Adding creates one physical departure with one shared capacity. Existing departures are edited individually below.</div>
               <div class="admin-hint">A time slot cannot be deleted or renamed while it has active bookings. Capacity can still be changed.</div>
 
               <div id="timesListWrap" class="admin-stack" style="margin-top:18px;">
@@ -710,6 +779,12 @@
 
     // ---- DOM ----
     const titleEl = document.getElementById("tourTitle");
+    const categoryEl = document.getElementById("tourCategory");
+    const durationEl = document.getElementById("tourDuration");
+    const shortSummaryEl = document.getElementById("tourShortSummary");
+    const homepageSearchableEl = document.getElementById("tourHomepageSearchable");
+    const pickupLocationsEditorEl = document.getElementById("pickupLocationsEditor");
+    const addPickupLocationBtn = document.getElementById("addPickupLocation");
     const imgFileEl = document.getElementById("tourImageFile");
     const liveEl = document.getElementById("tourLive");
     const saveBtn = document.getElementById("saveTour");
@@ -753,6 +828,7 @@
     const tourTimeEl = document.getElementById("tourTime");
     const tourCapacityEl = document.getElementById("tourCapacity");
     const tourPriceEl = document.getElementById("tourPrice");
+    const schedulePickupListEl = document.getElementById("schedulePickupList");
     const confirmScheduleBtn = document.getElementById("confirmSchedule");
     const timesListMsgEl = document.getElementById("timesListMsg");
     const timesListEl = document.getElementById("timesList");
@@ -822,6 +898,105 @@
       if (typeof fnRef === "function") { try { fnRef(); } catch {} }
       return null;
     }
+
+    // ---- Tour pickup locations ----
+    let pickupLocationItems = [];
+
+    function slugifyPickup(input) { return slugifyTitle(input); }
+
+    function normalisePickupLocations(value) {
+      if (!value || typeof value !== "object") return [];
+      return Object.entries(value).map(([id, item]) => ({
+        id,
+        label: safeStr(item?.label || id),
+        meetingPoint: safeStr(item?.meetingPoint),
+        enabled: item?.enabled !== false,
+      }));
+    }
+
+    function pickupLocationsObject() {
+      const out = {};
+      for (const item of pickupLocationItems) {
+        const label = safeStr(item.label).trim();
+        const meetingPoint = safeStr(item.meetingPoint).trim();
+        if (!label) continue;
+        let id = slugifyPickup(item.id || label);
+        if (!id) continue;
+        let uniqueId = id;
+        let n = 2;
+        while (out[uniqueId]) uniqueId = `${id}-${n++}`;
+        out[uniqueId] = { label, meetingPoint, enabled: true };
+      }
+      return out;
+    }
+
+    function renderPickupLocationEditor() {
+      if (!pickupLocationsEditorEl) return;
+      pickupLocationsEditorEl.innerHTML = "";
+      if (!pickupLocationItems.length) {
+        const hint = document.createElement("div");
+        hint.className = "admin-hint";
+        hint.textContent = "No pickup locations added yet.";
+        pickupLocationsEditorEl.appendChild(hint);
+        return;
+      }
+      pickupLocationItems.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = "pickup-editor-row";
+        const labelWrap = document.createElement("div"); labelWrap.className = "field-group";
+        const labelLabel = document.createElement("label"); labelLabel.className = "field-label"; labelLabel.textContent = "Pickup area";
+        const labelInput = document.createElement("input"); labelInput.className = "admin-field"; labelInput.value = item.label || ""; labelInput.placeholder = "Windermere";
+        labelWrap.append(labelLabel,labelInput);
+        const pointWrap = document.createElement("div"); pointWrap.className = "field-group";
+        const pointLabel = document.createElement("label"); pointLabel.className = "field-label"; pointLabel.textContent = "Exact meeting point";
+        const pointInput = document.createElement("input"); pointInput.className = "admin-field"; pointInput.value = item.meetingPoint || ""; pointInput.placeholder = "Windermere Railway Station";
+        pointWrap.append(pointLabel,pointInput);
+        const removeBtn = document.createElement("button"); removeBtn.type="button"; removeBtn.className="admin-btn quiet"; removeBtn.textContent="Remove";
+        labelInput.addEventListener("input",()=>{ pickupLocationItems[idx].label=labelInput.value; });
+        pointInput.addEventListener("input",()=>{ pickupLocationItems[idx].meetingPoint=pointInput.value; });
+        removeBtn.addEventListener("click",()=>{ pickupLocationItems.splice(idx,1); renderPickupLocationEditor(); renderSchedulePickupChoices(); });
+        row.append(labelWrap,pointWrap,removeBtn); pickupLocationsEditorEl.appendChild(row);
+      });
+    }
+
+    function addPickupLocationBlank() {
+      pickupLocationItems.push({ id:"", label:"", meetingPoint:"", enabled:true });
+      renderPickupLocationEditor();
+    }
+
+    function renderSchedulePickupChoices(existingPickups = null) {
+      if (!schedulePickupListEl) return;
+      schedulePickupListEl.innerHTML = "";
+      const locations = normalisePickupLocations(selectedTourData?.pickupLocations);
+      if (!locations.length) {
+        const hint = document.createElement("div"); hint.className="admin-hint"; hint.textContent="This tour has no pickup locations yet. Add them in Tours first."; schedulePickupListEl.appendChild(hint); return;
+      }
+      for (const loc of locations) {
+        const row=document.createElement("div"); row.className="schedule-pickup-row"; row.dataset.pickupId=loc.id;
+        const label=document.createElement("label"); const check=document.createElement("input"); check.type="checkbox"; check.className="schedule-pickup-check";
+        const existing=existingPickups?.[loc.id]; check.checked=!!existing;
+        const text=document.createElement("span"); text.textContent=loc.meetingPoint ? `${loc.label} — ${loc.meetingPoint}` : loc.label; label.append(check,text);
+        const time=document.createElement("input"); time.type="time"; time.className="admin-field schedule-pickup-time"; time.value=safeStr(existing?.time || tourTimeEl?.value || ""); time.disabled=!check.checked;
+        check.addEventListener("change",()=>{ time.disabled=!check.checked; if(check.checked && !time.value) time.value=tourTimeEl.value || ""; });
+        row.append(label,time); schedulePickupListEl.appendChild(row);
+      }
+    }
+
+    function collectSchedulePickups(container = schedulePickupListEl) {
+      const out={};
+      if (!container) return out;
+      container.querySelectorAll(".schedule-pickup-row").forEach(row=>{
+        const check=row.querySelector(".schedule-pickup-check"); const time=row.querySelector(".schedule-pickup-time");
+        if (!check?.checked) return;
+        const id=row.dataset.pickupId; if (!id) return;
+        out[id]={ time: safeStr(time?.value).trim() || safeStr(tourTimeEl?.value).trim() };
+      });
+      return out;
+    }
+
+    addPickupLocationBtn?.addEventListener("click", addPickupLocationBlank);
+    tourTimeEl?.addEventListener("change",()=>{ schedulePickupListEl?.querySelectorAll(".schedule-pickup-row").forEach(row=>{ const check=row.querySelector(".schedule-pickup-check"); const time=row.querySelector(".schedule-pickup-time"); if(check?.checked && time && !time.value) time.value=tourTimeEl.value; }); });
+    renderPickupLocationEditor();
 
     // ---- Itinerary editor (unchanged logic, tidied) ----
     const descProductTitleEl = document.getElementById("descProductTitle");
@@ -958,6 +1133,7 @@
     addItineraryBtn.addEventListener("click", addItineraryBlank);
     [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => el.addEventListener("input", syncEditorToHiddenTextarea));
     renderItineraryEditor();
+    categoryEl.value = "sightseeing";
     setEditorMode("create");
 
     // ---- Live bookings feed (read-only, across all tours) ----
@@ -1005,6 +1181,11 @@
         const pay = String(b.paymentStatus || "outstanding").toLowerCase();
         line3.textContent = `${qty ? qty + " pax" : ""} • ${fmtGBP(price)} pp • ${pay === "paid" ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}`;
         row.appendChild(line3);
+
+        const journey = document.createElement("div");
+        journey.className = "admin-msg";
+        journey.textContent = `${b.pickupLabel ? `Pickup: ${safeStr(b.pickupLabel)}${b.pickupTime ? " at " + safeStr(b.pickupTime) : ""}${b.pickupPoint ? " • " + safeStr(b.pickupPoint) : ""}` : "Pickup: legacy/default"}${b.category ? " • " + safeStr(b.category) : ""}${b.bookingSource ? " • Source: " + safeStr(b.bookingSource) : ""}`;
+        row.appendChild(journey);
 
         liveBookingsListEl.appendChild(row);
       }
@@ -1214,6 +1395,12 @@
       selectedTourData = null;
 
       titleEl.value = "";
+      categoryEl.value = "sightseeing";
+      durationEl.value = "";
+      shortSummaryEl.value = "";
+      homepageSearchableEl.checked = false;
+      pickupLocationItems = [];
+      renderPickupLocationEditor();
       imgFileEl.value = "";
       liveEl.checked = false;
       descEl.value = "";
@@ -1345,6 +1532,11 @@
         line.className = "admin-msg";
         line.textContent = `${safeStr(b?.email)}${b?.phone ? " • " + safeStr(b.phone) : ""} • ${paid ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}${active ? "" : " • NOT ACTIVE"}`;
         card.appendChild(line);
+
+        const journey = document.createElement("div");
+        journey.className = "admin-msg";
+        journey.textContent = `${b?.pickupLabel ? `Pickup: ${safeStr(b.pickupLabel)}${b.pickupTime ? " at " + safeStr(b.pickupTime) : ""}${b.pickupPoint ? " • " + safeStr(b.pickupPoint) : ""}` : "Pickup: legacy/default"}${b?.category ? " • " + safeStr(b.category) : ""}${b?.bookingSource ? " • Source: " + safeStr(b.bookingSource) : ""}`;
+        card.appendChild(journey);
 
         // PASSENGERS (LOCKED ON PAID)
         const rowQty = document.createElement("div");
@@ -1574,7 +1766,8 @@
         row.style.gap = "8px";
 
         const top = document.createElement("div");
-        top.textContent = `${time} — capacity: ${cap} — ${fmtGBP(price)}`;
+        const pickupNames = Object.keys(slotNode?.pickups || {}).map(id => selectedTourData?.pickupLocations?.[id]?.label || id);
+        top.textContent = `${time} — capacity: ${cap} — ${fmtGBP(price)}${pickupNames.length ? ` — pickups: ${pickupNames.join(", ")}` : ""}`;
         row.appendChild(top);
 
         const controls = document.createElement("div");
@@ -1655,12 +1848,35 @@
         row3.appendChild(priceInput);
         row3.appendChild(savePriceBtn);
 
+        const pickupEditor = document.createElement("div");
+        pickupEditor.className = "schedule-pickup-list";
+        const locations = normalisePickupLocations(selectedTourData?.pickupLocations);
+        for (const loc of locations) {
+          const pRow=document.createElement("div"); pRow.className="schedule-pickup-row"; pRow.dataset.pickupId=loc.id;
+          const pLabel=document.createElement("label"); const pCheck=document.createElement("input"); pCheck.type="checkbox"; pCheck.className="schedule-pickup-check"; pCheck.checked=!!slotNode?.pickups?.[loc.id];
+          const pText=document.createElement("span"); pText.textContent=loc.meetingPoint ? `${loc.label} — ${loc.meetingPoint}` : loc.label; pLabel.append(pCheck,pText);
+          const pTime=document.createElement("input"); pTime.type="time"; pTime.className="admin-field schedule-pickup-time"; pTime.value=safeStr(slotNode?.pickups?.[loc.id]?.time || time); pTime.disabled=!pCheck.checked;
+          pCheck.addEventListener("change",()=>{pTime.disabled=!pCheck.checked; if(pCheck.checked && !pTime.value) pTime.value=time;});
+          pRow.append(pLabel,pTime); pickupEditor.appendChild(pRow);
+        }
+        const savePickupsBtn=document.createElement("button"); savePickupsBtn.type="button"; savePickupsBtn.className="admin-btn"; savePickupsBtn.textContent="UPDATE PICKUPS";
+
         controls.appendChild(row1);
         controls.appendChild(row2);
         controls.appendChild(row3);
+        if (locations.length) { controls.appendChild(pickupEditor); controls.appendChild(savePickupsBtn); }
         row.appendChild(controls);
 
         // handlers
+        savePickupsBtn.addEventListener("click", async () => {
+          const pickups = collectSchedulePickups(pickupEditor);
+          if (locations.length && !Object.keys(pickups).length) { setMsg(timesListMsgEl, "Choose at least one pickup point.", "bad"); return; }
+          try {
+            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), { pickups, updatedAt: serverTimestamp(), updatedBy: adminEmail });
+            setMsg(timesListMsgEl, `Updated pickups for ${time}.`, "ok");
+          } catch (err) { setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad"); }
+        });
+
         saveCapBtn.addEventListener("click", async () => {
           const newCap = parseInt(capInput.value, 10);
           if (!newCap || newCap < 1) { setMsg(timesListMsgEl, "Enter a valid capacity (>= 1).", "bad"); return; }
@@ -1786,6 +2002,7 @@
 
       if (selectedDateEl) selectedDateEl.value = key;
       if (scheduleControlsEl) scheduleControlsEl.hidden = false;
+      renderSchedulePickupChoices();
 
       clearDateOverview(`Managing ${selectedTourData?.title || selectedTourId} on ${key}.`);
       setMsg(scheduleMsgEl, `Selected date: ${key}`, null);
@@ -1815,6 +2032,12 @@
       hardResetDateSelection();
 
       titleEl.value = tour?.title || "";
+      categoryEl.value = tour?.category || "sightseeing";
+      durationEl.value = tour?.duration || "";
+      shortSummaryEl.value = tour?.shortSummary || "";
+      homepageSearchableEl.checked = tour?.homepageSearchable === true;
+      pickupLocationItems = normalisePickupLocations(tour?.pickupLocations);
+      renderPickupLocationEditor();
       imgFileEl.value = "";
       liveEl.checked = !!tour?.isLive;
       descEl.value = tour?.description || "";
@@ -1824,6 +2047,7 @@
       setMsg(msgEl, `Selected: ${tourId}`, "ok");
 
       attachDatesListenerForTour(tourId);
+      renderSchedulePickupChoices();
 
       const keepDate = options.keepDate || "";
       if (keepDate) {
@@ -1883,6 +2107,11 @@
       if (!selectedTourId) { setMsg(msgEl, "Select a tour first.", "bad"); return; }
 
       const title = titleEl.value.trim();
+      const category = categoryEl.value;
+      const duration = durationEl.value.trim();
+      const shortSummary = shortSummaryEl.value.trim();
+      const homepageSearchable = !!homepageSearchableEl.checked;
+      const pickupLocations = pickupLocationsObject();
       const isLive = !!liveEl.checked;
       syncEditorToHiddenTextarea();
       const description = descEl.value.trim();
@@ -1905,6 +2134,11 @@
 
         await update(ref(db, `tours/${selectedTourId}`), {
           title,
+          category,
+          duration,
+          shortSummary,
+          homepageSearchable,
+          pickupLocations,
           imageUrl,
           isLive,
           description,
@@ -1915,7 +2149,7 @@
         setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
         selectedTourData = {
           ...(selectedTourData || {}),
-          title,
+          title, category, duration, shortSummary, homepageSearchable, pickupLocations,
           imageUrl,
           isLive,
           description,
@@ -1947,6 +2181,11 @@
       if (selectedTourId) { setMsg(msgEl, "Use AMEND to update an existing tour.", "bad"); return; }
 
       const title = titleEl.value.trim();
+      const category = categoryEl.value;
+      const duration = durationEl.value.trim();
+      const shortSummary = shortSummaryEl.value.trim();
+      const homepageSearchable = !!homepageSearchableEl.checked;
+      const pickupLocations = pickupLocationsObject();
       const isLive = !!liveEl.checked;
       syncEditorToHiddenTextarea();
       const description = descEl.value.trim();
@@ -1977,6 +2216,11 @@
 
         await update(ref(db, `tours/${tourId}`), {
           title,
+          category,
+          duration,
+          shortSummary,
+          homepageSearchable,
+          pickupLocations,
           imageUrl,
           isLive,
           description,
@@ -1989,7 +2233,7 @@
         setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
         selectedTourId = tourId;
         selectedTourData = {
-          title,
+          title, category, duration, shortSummary, homepageSearchable, pickupLocations,
           imageUrl,
           isLive,
           description,
@@ -2009,10 +2253,12 @@
       const time = tourTimeEl.value;
       const capacity = parseInt(tourCapacityEl.value, 10);
       const price = parseFloat(tourPriceEl.value);
+      const pickups = collectSchedulePickups();
 
       if (!time) { setMsg(scheduleMsgEl, "Select a time.", "bad"); return; }
       if (!capacity || capacity < 1) { setMsg(scheduleMsgEl, "Enter valid capacity.", "bad"); return; }
       if (Number.isNaN(price) || price < 0) { setMsg(scheduleMsgEl, "Enter valid price (>= 0).", "bad"); return; }
+      if (Object.keys(selectedTourData?.pickupLocations || {}).length && !Object.keys(pickups).length) { setMsg(scheduleMsgEl, "Choose at least one pickup point for this departure.", "bad"); return; }
 
       const slotRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
 
@@ -2026,6 +2272,7 @@
         await set(slotRef, {
           capacity,
           price,
+          pickups,
           createdAt: serverTimestamp(),
           createdBy: adminEmail,
           updatedAt: serverTimestamp(),
@@ -2037,6 +2284,7 @@
         tourTimeEl.value = "";
         tourCapacityEl.value = "";
         tourPriceEl.value = "";
+        renderSchedulePickupChoices();
       } catch (err) {
         setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
       }
