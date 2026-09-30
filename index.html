@@ -1648,26 +1648,35 @@ img { width: 100%; display: block; }
 
 /* ===== Homepage live tour finder ===== */
 .hero-wrapper.home-booking-hero {
-  min-height: 760px;
+  min-height: 0;
   display: flex;
   align-items: stretch;
   justify-content: center;
   overflow: hidden;
 }
-.home-booking-hero .hero-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* Override the older responsive hero-image height limit so the photograph
+   covers the entire booking section, right down to its orange bottom frame. */
+.hero-wrapper.home-booking-hero > .hero-image {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-height:none;
+  object-fit:cover;
+}
 .home-booking-hero::after { background:rgba(0,0,0,.66); }
-.home-booking-shell { position:relative; z-index:2; width:min(1060px,calc(100% - 40px)); margin:auto; padding:62px 0; color:rgba(255,255,255,.94); }
+.home-booking-shell { position:relative; z-index:2; width:min(1060px,calc(100% - 40px)); margin:0 auto; padding:38px 0 34px; color:rgba(255,255,255,.94); }
 .home-booking-shell h1 { position:static; width:auto; color:#b86b2a; font-size:clamp(38px,5vw,64px); line-height:1; text-align:center; margin:0; }
-.home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:16px 0 42px; }
-.home-finder { border-top:1px solid rgba(184,107,42,.72); border-bottom:1px solid rgba(184,107,42,.72); padding:28px 0; }
-.home-finder-title { margin:0 0 22px; color:rgba(255,255,255,.94); text-align:center; font-size:18px; letter-spacing:.4px; }
+.home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; }
+.home-finder { border:0; padding:0; }
+.home-finder-title { margin:0 0 14px; color:rgba(255,255,255,.94); text-align:center; font-size:18px; letter-spacing:.4px; }
 .home-finder-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:rgba(184,107,42,.5); }
 .home-finder-field { background:rgba(43,43,43,.88); padding:15px; }
 .home-finder-field label { display:block; margin-bottom:7px; color:#b86b2a; font-size:11px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
 .home-finder-field select,.home-finder-field input { width:100%; border:0; border-bottom:1px solid rgba(184,107,42,.65); border-radius:0; outline:0; background:rgba(255,255,255,.06); color:#fff; padding:12px 10px; font:inherit; }
 .home-finder-field select option { color:#2b2b2b; background:#f3ead8; }
-.home-finder-status { min-height:22px; margin-top:18px; text-align:center; color:rgba(255,255,255,.75); font-size:14px; }
-.home-results { margin-top:24px; border-top:1px solid rgba(255,255,255,.16); }
+.home-finder-status { min-height:22px; margin-top:12px; text-align:center; color:rgba(255,255,255,.75); font-size:14px; }
+.home-results { margin-top:12px; border-top:0; }
 .home-result { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; padding:20px 0; border-bottom:1px solid rgba(255,255,255,.16); }
 .home-result h3 { margin:0 0 6px; color:#fff; font-size:22px; }
 .home-result p { position:static; width:auto; text-align:left; margin:3px 0; color:rgba(255,255,255,.76); font-size:14px; }
@@ -1683,12 +1692,49 @@ img { width: 100%; display: block; }
 .home-booking-success { margin-top:24px; padding:24px 0; border-top:2px solid #b86b2a; border-bottom:2px solid #b86b2a; }
 .home-booking-success h3 { margin:0 0 12px; color:#b86b2a; font-size:26px; }
 .home-booking-success p { position:static; width:auto; text-align:left; margin:6px 0; color:rgba(255,255,255,.9); font-size:15px; }
-@media screen and (max-width:800px){ .home-finder-grid,.home-booking-fields{grid-template-columns:1fr 1fr;} .hero-wrapper.home-booking-hero{min-height:820px;} }
+@media screen and (max-width:800px){ .home-finder-grid,.home-booking-fields{grid-template-columns:1fr 1fr;} .hero-wrapper.home-booking-hero{min-height:0;} }
+/* Homepage hero refinement: contain the entire finder inside the photograph. */
+.hero-wrapper.home-booking-hero {
+  min-height: 0;
+}
+.home-booking-hero .hero-image {
+  max-height: none;
+  height: 100%;
+  object-fit: cover;
+}
+.home-booking-shell {
+  margin: 0 auto;
+  padding: 40px 0 36px;
+}
+.home-booking-shell .home-booking-subtitle {
+  margin-bottom: 24px;
+}
+.home-finder {
+  border-top: 0;
+  border-bottom: 0;
+  padding: 0;
+}
+.home-finder-title {
+  margin-bottom: 14px;
+}
+.home-finder-grid {
+  gap: 0;
+  background: transparent;
+}
+.home-finder-status {
+  margin-top: 14px;
+}
+/* Earlier tablet image rules capped the hero photograph at 300px. */
+@media screen and (min-width: 601px) and (max-width: 1023px) {
+  .hero-wrapper.home-booking-hero .hero-image {
+    max-height: none;
+    height: 100%;
+  }
+}
 @media screen and (max-width:600px){
-  .hero-wrapper.home-booking-hero{min-height:900px;}
-  .home-booking-shell{width:calc(100% - 32px);padding:40px 0;}
+  .home-booking-shell{width:calc(100% - 32px);padding:36px 0 30px;}
   .home-booking-shell h1{font-size:clamp(31px,9vw,42px);white-space:normal;}
-  .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:28px;}
+  .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
   .home-finder-grid,.home-booking-fields{grid-template-columns:1fr;}
   .home-result{grid-template-columns:1fr;}
   .home-result button{width:100%;}
