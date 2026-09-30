@@ -1960,7 +1960,7 @@ img { width: 100%; display: block; }
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, onValue, push, set, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import { getDatabase, ref, onValue, get, push, set, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -2058,17 +2058,118 @@ img { width: 100%; display: block; }
 
   confirmBtn.addEventListener("click",async()=>{
     if(!selected){messageEl.textContent="Choose a departure first.";return;}
-    const name=nameEl.value.trim(),email=emailEl.value.trim(),phone=phoneEl.value.trim(),qty=parseInt(bookingQtyEl.value||"0",10);
-    if(!name){messageEl.textContent="Enter your full name.";return;}if(!email||!emailEl.checkValidity()){messageEl.textContent="Enter a valid email address.";return;}if(!qty||qty<1){messageEl.textContent="Enter a valid passenger quantity.";return;}if(qty>Number(selected.slot.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
-    if(!bookable(selected.date,selected.time)){messageEl.textContent="Online booking has now closed for this departure.";renderResults();return;}
-    const capRef=ref(db,`tours/${selected.tourId}/dates/${selected.date}/times/${selected.time}/capacity`);confirmBtn.disabled=true;messageEl.textContent="Submitting...";
+
+    const name=nameEl.value.trim();
+    const email=emailEl.value.trim();
+    const phone=phoneEl.value.trim();
+    const qty=parseInt(bookingQtyEl.value||"0",10);
+
+    if(!name){messageEl.textContent="Enter your full name.";return;}
+    if(!email||!emailEl.checkValidity()){messageEl.textContent="Enter a valid email address.";return;}
+    if(!qty||qty<1){messageEl.textContent="Enter a valid passenger quantity.";return;}
+    if(qty>Number(selected.slot.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
+    if(!bookable(selected.date,selected.time)){messageEl.textContent="Online booking has now closed for this departure.";return;}
+
+    const capRef=ref(db,`tours/${selected.tourId}/dates/${selected.date}/times/${selected.time}/capacity`);
+    confirmBtn.disabled=true;
+    messageEl.textContent="Submitting...";
+
+    let capacityReduced=false;
+
     try{
-      const tx=await runTransaction(capRef,current=>{const cur=Number(current);if(!Number.isFinite(cur))return current;if(cur<qty)return;return cur-qty;});if(!tx.committed){messageEl.textContent="Not enough places remain for this departure.";return;}
-      const bookingRef=push(ref(db,`bookings/${selected.tourId}`));const price=Number(selected.slot.price)||0;
-      try{await set(bookingRef,{tourId:selected.tourId,tourTitle:first(selected.tour.title,selected.tourId),category:first(selected.tour.category,"sightseeing"),categoryLabel:categoryLabelForTour(selected.tour),dateKey:selected.date,time:selected.time,qty,name,email,phone,price,duration:first(selected.tour.duration),pickupId:selected.pickupId,pickupLabel:first(selected.pickup.label,selected.pickupId),pickupPoint:first(selected.pickup.meetingPoint,selected.pickup.label),pickupTime:selected.pickupTime,departurePoint:first(selected.pickup.meetingPoint,selected.pickup.label),tourType:first(selected.tour.tourType,selected.tour.categoryLabel,categoryLabels[first(selected.tour.category,"sightseeing")],"Small-group sightseeing tour"),shortSummary:first(selected.tour.shortSummary),bookingSource:"homepage",createdAt:serverTimestamp(),createdAtMs:Date.now(),bookingStatus:"active",paymentStatus:"outstanding",status:"new"});}
-      catch(err){await runTransaction(capRef,current=>{const cur=Number(current);return Number.isFinite(cur)?cur+qty:current;});throw err;}
-      const refShort=(bookingRef.key||"").slice(-7);formEl.hidden=true;successEl.hidden=false;successEl.innerHTML=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(selected.tour.title,selected.tourId))} • ${esc(selected.date)} • pickup ${esc(selected.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,selected.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;messageEl.textContent="";
-    }catch(err){messageEl.textContent=`Error: ${err?.message||err}`;}finally{confirmBtn.disabled=false;}
+      const tx=await runTransaction(capRef,current=>{
+        const cur=Number(current);
+        if(!Number.isFinite(cur)) return current;
+        if(cur<qty) return;
+        return cur-qty;
+      });
+
+      if(!tx.committed){
+        messageEl.textContent="Not enough places remain for this departure.";
+        return;
+      }
+      capacityReduced=true;
+
+      const bookingRef=push(ref(db,`bookings/${selected.tourId}`));
+      const price=Number(selected.slot.price)||0;
+
+      const bookingData={
+        tourId:selected.tourId,
+        tourTitle:first(selected.tour.title,selected.tourId),
+        category:first(selected.tour.category,"sightseeing"),
+        categoryLabel:categoryLabelForTour(selected.tour),
+        dateKey:selected.date,
+        time:selected.time,
+        qty,
+        name,
+        email,
+        price,
+        duration:first(selected.tour.duration),
+        pickupId:selected.pickupId,
+        pickupLabel:first(selected.pickup.label,selected.pickupId),
+        pickupPoint:first(selected.pickup.meetingPoint,selected.pickup.label),
+        pickupTime:selected.pickupTime,
+        departurePoint:first(selected.pickup.meetingPoint,selected.pickup.label),
+        tourType:first(
+          selected.tour.tourType,
+          selected.tour.categoryLabel,
+          categoryLabels[first(selected.tour.category,"sightseeing")],
+          "Small-group sightseeing tour"
+        ),
+        shortSummary:first(selected.tour.shortSummary),
+        bookingSource:"homepage",
+        createdAt:serverTimestamp(),
+        createdAtMs:Date.now(),
+        bookingStatus:"active",
+        paymentStatus:"outstanding",
+        status:"new"
+      };
+
+      // Phone is genuinely optional. Do not create an empty Firebase child.
+      if(phone) bookingData.phone=phone;
+
+      await set(bookingRef,bookingData);
+
+      // Do not collapse the booking UI merely because set() returned.
+      // Confirm that the new record can actually be read back first.
+      const written=await get(bookingRef);
+      if(!written.exists()){
+        throw new Error("The booking record could not be verified.");
+      }
+
+      capacityReduced=false;
+
+      const refShort=(bookingRef.key||"").slice(-7);
+      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(selected.tour.title,selected.tourId))} • ${esc(selected.date)} • pickup ${esc(selected.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,selected.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
+
+      // Build the confirmation first, then swap the visible state.
+      successEl.innerHTML=confirmationHtml;
+      successEl.hidden=false;
+      formEl.hidden=true;
+      messageEl.textContent="";
+      successEl.scrollIntoView({behavior:"smooth",block:"nearest"});
+    }catch(err){
+      // A failed booking must not silently consume seats.
+      // The existing public capacity rule may reject a public increase, so keep
+      // the original booking error visible even if the restoration is refused.
+      if(capacityReduced){
+        try{
+          await runTransaction(capRef,current=>{
+            const cur=Number(current);
+            return Number.isFinite(cur)?cur+qty:current;
+          });
+        }catch(restoreErr){
+          console.error("Booking failed and automatic capacity restoration was refused:",restoreErr);
+        }
+      }
+
+      console.error("Homepage booking failed:",err);
+      messageEl.textContent=`Booking could not be completed. ${err?.message||err}`;
+      formEl.hidden=false;
+      successEl.hidden=true;
+    }finally{
+      confirmBtn.disabled=false;
+    }
   });
 
   onValue(ref(db,"tours"),snap=>{tours=snap.val()||{};populateCategories();},()=>{statusEl.textContent="Live tour availability is temporarily unavailable. Please try again shortly.";});
