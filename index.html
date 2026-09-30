@@ -2062,6 +2062,10 @@ img { width: 100%; display: block; }
   dateEl.min=todayKey();
   const first=(...v)=>{for(const x of v){const c=String(x??"").trim();if(c)return c;}return "";};
   const money=n=>`£${Number(n||0).toFixed(2)}`;
+  const displayDate=dateKey=>{
+    const m=String(dateKey||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m?`${m[3]}/${m[2]}/${m[1]}`:dateKey;
+  };
   const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
   function parseDT(date,time){const [y,m,d]=String(date).split("-").map(Number),[h,mi]=String(time).split(":").map(Number);return new Date(y,m-1,d,h,mi,0,0);}
   function bookable(date,time){const dt=parseDT(date,time);return !Number.isNaN(dt.getTime()) && dt.getTime()>=Date.now()+CUTOFF_MS;}
@@ -2117,7 +2121,7 @@ img { width: 100%; display: block; }
 
       const details=document.createElement("div");details.className="home-result-details";
       const detailParts=[
-        item.date,
+        displayDate(item.date),
         `Pickup ${item.pickupTime} from ${pickupDisplayLabel(item.pickup,item.pickupId)}`,
         `${item.slot.capacity} places remaining`,
         `${money(item.slot.price)} per person`
