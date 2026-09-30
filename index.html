@@ -1675,11 +1675,81 @@ img { width: 100%; display: block; }
 .home-finder-field label { display:block; margin-bottom:7px; color:#b86b2a; font-size:11px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
 .home-finder-field select,.home-finder-field input { width:100%; border:0; border-bottom:1px solid rgba(184,107,42,.65); border-radius:0; outline:0; background:rgba(255,255,255,.06); color:#fff; padding:12px 10px; font:inherit; }
 .home-finder-field select option { color:#2b2b2b; background:#f3ead8; }
-.home-finder-status { min-height:22px; margin-top:12px; text-align:center; color:rgba(255,255,255,.75); font-size:14px; }
-.home-results { margin-top:12px; border-top:0; }
-.home-result { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; padding:20px 0; border-bottom:0; }
-.home-result h3 { margin:0 0 6px; color:#fff; font-size:22px; }
-.home-result p { position:static; width:auto; text-align:left; margin:3px 0; color:rgba(255,255,255,.76); font-size:14px; }
+
+/* Results remain inside the same dark finder cradle as the four search fields. */
+.home-finder-status {
+  min-height:22px;
+  margin:0;
+  padding:17px 18px 8px;
+  text-align:center;
+  color:rgba(255,255,255,.70);
+  font-size:14px;
+  background:rgba(43,43,43,.88);
+}
+.home-results {
+  margin:0;
+  padding:0 18px 12px;
+  border-top:0;
+  background:rgba(43,43,43,.88);
+}
+.home-results:empty { padding-bottom:0; }
+.home-result {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:28px;
+  align-items:center;
+  padding:24px 0 26px;
+  border-bottom:1px solid rgba(184,107,42,.34);
+}
+.home-result:last-child { border-bottom:0; }
+.home-result-copy { min-width:0; }
+.home-result h3 {
+  margin:0 0 11px;
+  color:#fff;
+  font-size:23px;
+  line-height:1.15;
+  font-weight:700;
+}
+.home-result-summary {
+  position:static;
+  width:auto;
+  text-align:left;
+  margin:0 0 14px;
+  color:rgba(255,255,255,.82);
+  font-size:15px;
+  line-height:1.48;
+}
+.home-result-details {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px 0;
+  margin:0;
+  color:rgba(255,255,255,.68);
+  font-size:13px;
+  line-height:1.35;
+}
+.home-result-detail {
+  display:inline-flex;
+  align-items:center;
+  white-space:normal;
+}
+.home-result-detail + .home-result-detail::before {
+  content:"";
+  width:4px;
+  height:4px;
+  margin:0 10px;
+  border-radius:50%;
+  background:#b86b2a;
+  flex:0 0 4px;
+}
+.home-result-price {
+  color:#fff;
+  font-weight:700;
+}
+.home-result button {
+  min-width:178px;
+}
 .home-result button,.home-booking-form button { border:0; border-radius:0; background:#b86b2a; color:#fff; padding:13px 18px; font:700 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; text-transform:uppercase; cursor:pointer; }
 .home-booking-form { margin-top:24px; padding-top:0; border-top:0; }
 .home-finder.booking-active .home-finder-title,
@@ -1741,7 +1811,11 @@ img { width: 100%; display: block; }
   .home-booking-shell h1{font-size:clamp(31px,9vw,42px);white-space:normal;}
   .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
   .home-finder-grid,.home-booking-fields{grid-template-columns:1fr;}
-  .home-result{grid-template-columns:1fr;}
+  .home-results{padding-left:15px;padding-right:15px;}
+  .home-result{grid-template-columns:1fr;gap:18px;padding:22px 0 24px;}
+  .home-result h3{font-size:21px;}
+  .home-result-summary{font-size:14px;}
+  .home-result-details{font-size:12px;}
   .home-result button{width:100%;}
 }
 </style>
@@ -2036,10 +2110,26 @@ img { width: 100%; display: block; }
     if(!matches.length){statusEl.textContent="No online departures match those choices. Try another date, pickup point or tour type.";return;}
     statusEl.textContent=`${matches.length} available departure${matches.length===1?"":"s"}.`;
     matches.forEach(item=>{
-      const row=document.createElement("div");row.className="home-result";const copy=document.createElement("div");
+      const row=document.createElement("div");row.className="home-result";
+      const copy=document.createElement("div");copy.className="home-result-copy";
       const h=document.createElement("h3");h.textContent=first(item.tour.title,item.tourId);copy.appendChild(h);
-      const summary=document.createElement("p");summary.textContent=first(item.tour.shortSummary,`${categoryLabelForTour(item.tour)||"Tour The Lakes tour"}.`);copy.appendChild(summary);
-      const details=document.createElement("p");details.textContent=`${item.date} • pickup ${item.pickupTime} from ${pickupDisplayLabel(item.pickup,item.pickupId)} • ${item.slot.capacity} places remaining • ${money(item.slot.price)} per person`;copy.appendChild(details);
+      const summary=document.createElement("p");summary.className="home-result-summary";summary.textContent=first(item.tour.shortSummary,`${categoryLabelForTour(item.tour)||"Tour The Lakes tour"}.`);copy.appendChild(summary);
+
+      const details=document.createElement("div");details.className="home-result-details";
+      const detailParts=[
+        item.date,
+        `Pickup ${item.pickupTime} from ${pickupDisplayLabel(item.pickup,item.pickupId)}`,
+        `${item.slot.capacity} places remaining`,
+        `${money(item.slot.price)} per person`
+      ];
+      detailParts.forEach((value,index)=>{
+        const span=document.createElement("span");
+        span.className=`home-result-detail${index===3?" home-result-price":""}`;
+        span.textContent=value;
+        details.appendChild(span);
+      });
+      copy.appendChild(details);
+
       const btn=document.createElement("button");btn.type="button";btn.textContent="Book this departure";btn.addEventListener("click",()=>openBooking(item));row.append(copy,btn);resultsEl.appendChild(row);
     });
   }
