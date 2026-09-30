@@ -1960,7 +1960,7 @@ img { width: 100%; display: block; }
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, onValue, get, push, set, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import { getDatabase, ref, onValue, push, set, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -2059,6 +2059,10 @@ img { width: 100%; display: block; }
   confirmBtn.addEventListener("click",async()=>{
     if(!selected){messageEl.textContent="Choose a departure first.";return;}
 
+    // Freeze the chosen departure. The live tours listener fires again when
+    // capacity changes and renderResults() clears the global `selected`.
+    const bookingSelection=selected;
+
     const name=nameEl.value.trim();
     const email=emailEl.value.trim();
     const phone=phoneEl.value.trim();
@@ -2067,10 +2071,10 @@ img { width: 100%; display: block; }
     if(!name){messageEl.textContent="Enter your full name.";return;}
     if(!email||!emailEl.checkValidity()){messageEl.textContent="Enter a valid email address.";return;}
     if(!qty||qty<1){messageEl.textContent="Enter a valid passenger quantity.";return;}
-    if(qty>Number(selected.slot.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
-    if(!bookable(selected.date,selected.time)){messageEl.textContent="Online booking has now closed for this departure.";return;}
+    if(qty>Number(bookingSelection.slot.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
+    if(!bookable(bookingSelection.date,bookingSelection.time)){messageEl.textContent="Online booking has now closed for this departure.";return;}
 
-    const capRef=ref(db,`tours/${selected.tourId}/dates/${selected.date}/times/${selected.time}/capacity`);
+    const capRef=ref(db,`tours/${bookingSelection.tourId}/dates/${bookingSelection.date}/times/${bookingSelection.time}/capacity`);
     confirmBtn.disabled=true;
     messageEl.textContent="Submitting...";
 
@@ -2090,33 +2094,33 @@ img { width: 100%; display: block; }
       }
       capacityReduced=true;
 
-      const bookingRef=push(ref(db,`bookings/${selected.tourId}`));
-      const price=Number(selected.slot.price)||0;
+      const bookingRef=push(ref(db,`bookings/${bookingSelection.tourId}`));
+      const price=Number(bookingSelection.slot.price)||0;
 
       const bookingData={
-        tourId:selected.tourId,
-        tourTitle:first(selected.tour.title,selected.tourId),
-        category:first(selected.tour.category,"sightseeing"),
+        tourId:bookingSelection.tourId,
+        tourTitle:first(bookingSelection.tour.title,bookingSelection.tourId),
+        category:first(bookingSelection.tour.category,"sightseeing"),
         categoryLabel:categoryLabelForTour(selected.tour),
-        dateKey:selected.date,
-        time:selected.time,
+        dateKey:bookingSelection.date,
+        time:bookingSelection.time,
         qty,
         name,
         email,
         price,
-        duration:first(selected.tour.duration),
-        pickupId:selected.pickupId,
-        pickupLabel:first(selected.pickup.label,selected.pickupId),
-        pickupPoint:first(selected.pickup.meetingPoint,selected.pickup.label),
-        pickupTime:selected.pickupTime,
-        departurePoint:first(selected.pickup.meetingPoint,selected.pickup.label),
+        duration:first(bookingSelection.tour.duration),
+        pickupId:bookingSelection.pickupId,
+        pickupLabel:first(bookingSelection.pickup.label,bookingSelection.pickupId),
+        pickupPoint:first(bookingSelection.pickup.meetingPoint,bookingSelection.pickup.label),
+        pickupTime:bookingSelection.pickupTime,
+        departurePoint:first(bookingSelection.pickup.meetingPoint,bookingSelection.pickup.label),
         tourType:first(
-          selected.tour.tourType,
-          selected.tour.categoryLabel,
-          categoryLabels[first(selected.tour.category,"sightseeing")],
+          bookingSelection.tour.tourType,
+          bookingSelection.tour.categoryLabel,
+          categoryLabels[first(bookingSelection.tour.category,"sightseeing")],
           "Small-group sightseeing tour"
         ),
-        shortSummary:first(selected.tour.shortSummary),
+        shortSummary:first(bookingSelection.tour.shortSummary),
         bookingSource:"homepage",
         createdAt:serverTimestamp(),
         createdAtMs:Date.now(),
@@ -2130,17 +2134,10 @@ img { width: 100%; display: block; }
 
       await set(bookingRef,bookingData);
 
-      // Do not collapse the booking UI merely because set() returned.
-      // Confirm that the new record can actually be read back first.
-      const written=await get(bookingRef);
-      if(!written.exists()){
-        throw new Error("The booking record could not be verified.");
-      }
-
       capacityReduced=false;
 
       const refShort=(bookingRef.key||"").slice(-7);
-      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(selected.tour.title,selected.tourId))} • ${esc(selected.date)} • pickup ${esc(selected.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,selected.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
+      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(bookingSelection.tour.title,bookingSelection.tourId))} • ${esc(bookingSelection.date)} • pickup ${esc(bookingSelection.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,bookingSelection.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
 
       // Build the confirmation first, then swap the visible state.
       successEl.innerHTML=confirmationHtml;
