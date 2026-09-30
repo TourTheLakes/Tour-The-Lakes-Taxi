@@ -1780,6 +1780,9 @@ img { width: 100%; display: block; }
               <div class="booking-title">Your booking</div>
               <div class="booking-summary" aria-live="polite"></div>
 
+              <label class="sr-only booking-pickup-label">Pickup location</label>
+              <select class="booking-field booking-pickup" aria-label="Pickup location"></select>
+
               <label class="sr-only booking-name-label">Full name</label>
               <input class="booking-field booking-name" type="text" placeholder="Full name" autocomplete="name" />
 
@@ -1982,10 +1985,12 @@ img { width: 100%; display: block; }
       const factsEl = articleEl.querySelector(".tour-facts");
       if (!factsEl) return;
 
+      const pickupLabels = Object.values(tour?.pickupLocations || {}).map(x => firstUsefulValue(x?.label)).filter(Boolean).join(", ");
+      const categoryLabels = { "sightseeing": "Sightseeing Tour", "brewery-distillery": "Brewery & Distillery Tour", "special-interest": "Special Interest Tour" };
       const facts = [
         ["Duration", firstUsefulValue(tour?.duration)],
-        ["Tour type", firstUsefulValue(tour?.tourType, "Small-group sightseeing tour")],
-        ["Departure", firstUsefulValue(tour?.departurePoint, tour?.meetingPoint, "Windermere Railway Station")],
+        ["Tour type", firstUsefulValue(categoryLabels[tour?.category], tour?.tourType, "Small-group sightseeing tour")],
+        ["Pickup locations", pickupLabels || firstUsefulValue(tour?.departurePoint, tour?.meetingPoint, "Windermere Railway Station")],
       ].filter(([, value]) => value);
 
       factsEl.innerHTML = "";
@@ -2160,6 +2165,7 @@ img { width: 100%; display: block; }
       return {
         wrap: root?.querySelector(".booking-wrap"),
         summary: root?.querySelector(".booking-summary"),
+        pickup: root?.querySelector(".booking-pickup"),
         name: root?.querySelector(".booking-name"),
         email: root?.querySelector(".booking-email"),
         phone: root?.querySelector(".booking-phone"),
@@ -2181,6 +2187,28 @@ img { width: 100%; display: block; }
       setBookingMsg(state, "");
     }
 
+    function pickupDetailsForSlot(state) {
+      const slotPickups = state.selectedSlot?.pickups;
+      const tourPickups = state.tourData?.pickupLocations;
+      if (!slotPickups || typeof slotPickups !== "object" || !tourPickups || typeof tourPickups !== "object") return [];
+      return Object.entries(slotPickups).map(([id, cfg]) => {
+        const loc = tourPickups[id] || {};
+        return { id, label: firstUsefulValue(loc.label, id), meetingPoint: firstUsefulValue(loc.meetingPoint), time: firstUsefulValue(cfg?.time, state.selectedSlot?.time) };
+      }).filter(x => x.label);
+    }
+
+    function selectedPickupDetails(state) {
+      const els = bookingEls(state);
+      const choices = pickupDetailsForSlot(state);
+      if (choices.length) return choices.find(x => x.id === els.pickup?.value) || null;
+      return {
+        id: "default",
+        label: firstUsefulValue(state.tourData?.departurePoint, state.tourData?.meetingPoint, "Windermere"),
+        meetingPoint: firstUsefulValue(state.tourData?.departurePoint, state.tourData?.meetingPoint, "Windermere Railway Station"),
+        time: state.selectedSlot?.time || "",
+      };
+    }
+
     function showBooking(state) {
       const els = bookingEls(state);
       if (!els.wrap) return;
@@ -2200,21 +2228,31 @@ img { width: 100%; display: block; }
       const capText = Number.isFinite(cap) ? `${cap} places remaining` : "places unknown";
       const priceText = Number.isFinite(price) ? `£${price.toFixed(2)}` : "";
 
-      if (els.summary) {
+      const pickupChoices = pickupDetailsForSlot(state);
+      if (els.pickup) {
+        els.pickup.innerHTML = "";
+        if (pickupChoices.length) {
+          const placeholder = document.createElement("option"); placeholder.value = ""; placeholder.textContent = "Choose your pickup location"; placeholder.disabled = true; placeholder.selected = true; els.pickup.appendChild(placeholder);
+          for (const pickup of pickupChoices) {
+            const option = document.createElement("option"); option.value = pickup.id; option.textContent = `${pickup.label}${pickup.time ? ` — ${pickup.time}` : ""}`; els.pickup.appendChild(option);
+          }
+          els.pickup.hidden = false;
+        } else {
+          const option = document.createElement("option"); option.value = "default"; option.textContent = firstUsefulValue(state.tourData?.departurePoint, state.tourData?.meetingPoint, "Windermere Railway Station"); option.selected = true; els.pickup.appendChild(option);
+          els.pickup.hidden = false;
+        }
+      }
+
+      const refreshSummary = () => {
+        if (!els.summary) return;
+        const pickup = selectedPickupDetails(state);
         const details = [];
         if (state.tourData?.duration) details.push(state.tourData.duration);
-        details.push(firstUsefulValue(
-          state.tourData?.departurePoint,
-          state.tourData?.meetingPoint,
-          "Windermere Railway Station"
-        ));
-
-        const detailText = details.filter(Boolean).join(" — ");
-        els.summary.textContent =
-          `${state.selectedDateKey} at ${slot.time} — ${capText}` +
-          (priceText ? ` — ${priceText} per passenger` : "") +
-          (detailText ? ` — ${detailText}` : "");
-      }
+        if (pickup?.label) details.push(pickup.label);
+        els.summary.textContent = `${state.selectedDateKey} at ${slot.time} — ${capText}` + (priceText ? ` — ${priceText} per passenger` : "") + (details.length ? ` — ${details.join(" — ")}` : "");
+      };
+      refreshSummary();
+      if (els.pickup) els.pickup.onchange = refreshSummary;
 
       if (els.qty) {
   els.qty.value = "";
@@ -2560,7 +2598,9 @@ img { width: 100%; display: block; }
       const email = (els.email?.value || "").trim();
       const phone = (els.phone?.value || "").trim();
       const qty = parseInt(els.qty?.value || "", 10);
+      const pickup = selectedPickupDetails(state);
 
+      if (pickupDetailsForSlot(state).length && !els.pickup?.value) { setBookingMsg(state, "Choose your pickup location."); return; }
       if (!name) { setBookingMsg(state, "Enter your full name."); return; }
       if (!email) { setBookingMsg(state, "Enter your email."); return; }
       if (!qty || qty < 1) { setBookingMsg(state, "Enter a valid passenger quantity."); return; }
@@ -2613,13 +2653,15 @@ img { width: 100%; display: block; }
           phone,
           price: slotPrice,
           duration: firstUsefulValue(state.tourData?.duration),
-          departurePoint: firstUsefulValue(
-            state.tourData?.departurePoint,
-            state.tourData?.meetingPoint,
-            "Windermere Railway Station"
-          ),
+          category: firstUsefulValue(state.tourData?.category, "sightseeing"),
+          pickupId: firstUsefulValue(pickup?.id),
+          pickupLabel: firstUsefulValue(pickup?.label),
+          pickupPoint: firstUsefulValue(pickup?.meetingPoint, pickup?.label),
+          pickupTime: firstUsefulValue(pickup?.time, time),
+          departurePoint: firstUsefulValue(pickup?.meetingPoint, pickup?.label, state.tourData?.departurePoint, state.tourData?.meetingPoint, "Windermere Railway Station"),
           tourType: firstUsefulValue(state.tourData?.tourType, "Small-group sightseeing tour"),
           shortSummary: firstUsefulValue(state.tourData?.shortSummary),
+          bookingSource: "public-tours",
 
           // keep your existing field
           createdAt: serverTimestamp(),
@@ -2647,11 +2689,7 @@ img { width: 100%; display: block; }
           email,
           phone,
           duration: firstUsefulValue(state.tourData?.duration),
-          departurePoint: firstUsefulValue(
-            state.tourData?.departurePoint,
-            state.tourData?.meetingPoint,
-            "Windermere Railway Station"
-          ),
+          departurePoint: firstUsefulValue(pickup?.meetingPoint, pickup?.label, state.tourData?.departurePoint, state.tourData?.meetingPoint, "Windermere Railway Station"),
         });
 
         // keep the UI stable after success
@@ -2798,7 +2836,7 @@ img { width: 100%; display: block; }
           if (btn.disabled) return;
 
           state.selectedTime = time;
-          state.selectedSlot = { time, capacity: slot.capacity, price: slot.price };
+          state.selectedSlot = { time, capacity: slot.capacity, price: slot.price, pickups: slot.pickups || {} };
 
           state.slotsListEl.querySelectorAll(".slot-btn.selected")
             .forEach(x => {
@@ -3032,6 +3070,7 @@ img { width: 100%; display: block; }
         }
 
         const bookingFields = [
+          [".booking-pickup", ".booking-pickup-label", "pickup"],
           [".booking-name", ".booking-name-label", "name"],
           [".booking-email", ".booking-email-label", "email"],
           [".booking-phone", ".booking-phone-label", "phone"],
