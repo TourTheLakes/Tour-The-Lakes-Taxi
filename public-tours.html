@@ -1996,7 +1996,7 @@ img { width: 100%; display: block; }
       const categoryLabels = { "sightseeing": "Sightseeing Tour", "brewery-distillery": "Brewery & Distillery Tour", "special-interest": "Special Interest Tour" };
       const facts = [
         ["Duration", firstUsefulValue(tour?.duration)],
-        ["Tour type", firstUsefulValue(categoryLabels[tour?.category], tour?.tourType, "Small-group sightseeing tour")],
+        ["Tour type", firstUsefulValue(tour?.categoryLabel, categoryLabels[tour?.category], tour?.tourType, "Small-group sightseeing tour")],
         ["Pickup locations", pickupLabels || firstUsefulValue(tour?.departurePoint, tour?.meetingPoint, "Windermere Railway Station")],
       ].filter(([, value]) => value);
 
