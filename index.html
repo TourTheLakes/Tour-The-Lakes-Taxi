@@ -1677,11 +1677,16 @@ img { width: 100%; display: block; }
 .home-finder-field select option { color:#2b2b2b; background:#f3ead8; }
 .home-finder-status { min-height:22px; margin-top:12px; text-align:center; color:rgba(255,255,255,.75); font-size:14px; }
 .home-results { margin-top:12px; border-top:0; }
-.home-result { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; padding:20px 0; border-bottom:1px solid rgba(255,255,255,.16); }
+.home-result { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; padding:20px 0; border-bottom:0; }
 .home-result h3 { margin:0 0 6px; color:#fff; font-size:22px; }
 .home-result p { position:static; width:auto; text-align:left; margin:3px 0; color:rgba(255,255,255,.76); font-size:14px; }
-.home-result button,.home-booking-form button { border:0; border-bottom:2px solid #b86b2a; border-radius:0; background:rgba(184,107,42,.18); color:#fff; padding:13px 18px; font:700 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; text-transform:uppercase; cursor:pointer; }
-.home-booking-form { margin-top:24px; padding-top:24px; border-top:2px solid #b86b2a; }
+.home-result button,.home-booking-form button { border:0; border-radius:0; background:#b86b2a; color:#fff; padding:13px 18px; font:700 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; text-transform:uppercase; cursor:pointer; }
+.home-booking-form { margin-top:24px; padding-top:0; border-top:0; }
+.home-finder.booking-active .home-finder-title,
+.home-finder.booking-active .home-finder-grid,
+.home-finder.booking-active .home-finder-status,
+.home-finder.booking-active .home-results { display:none; }
+.home-finder.booking-active .home-booking-form { margin-top:0; }
 .home-booking-form h3 { margin:0 0 8px; color:#b86b2a; font-size:24px; }
 .home-booking-form .booking-selection { margin:0 0 18px; color:rgba(255,255,255,.82); font-size:14px; line-height:1.5; }
 .home-booking-fields { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
@@ -1971,6 +1976,7 @@ img { width: 100%; display: block; }
   const db = getDatabase(app);
   const CUTOFF_MS = 48 * 60 * 60 * 1000;
   const categoryLabels = { "sightseeing":"Sightseeing Tour", "brewery-distillery":"Brewery & Distillery Tour", "special-interest":"Special Interest Tour" };
+  const categoryLabelForTour=t=>first(t?.categoryLabel,categoryLabels[first(t?.category,"sightseeing")],first(t?.category,"sightseeing"));
 
   const categoryEl=document.getElementById("homeCategory"), pickupEl=document.getElementById("homePickup"), dateEl=document.getElementById("homeDate"), qtyEl=document.getElementById("homeQty");
   const statusEl=document.getElementById("homeFinderStatus"), resultsEl=document.getElementById("homeResults"), formEl=document.getElementById("homeBookingForm"), selectionEl=document.getElementById("homeBookingSelection");
@@ -1990,7 +1996,7 @@ img { width: 100%; display: block; }
   function populateCategories(){
     const current=categoryEl.value; categoryEl.innerHTML='<option value="">Choose a tour type</option>';
     const cats=[...new Set(searchableTours().map(([,t])=>first(t.category,"sightseeing")))];
-    for(const cat of cats){const o=document.createElement("option");o.value=cat;o.textContent=categoryLabels[cat]||cat;categoryEl.appendChild(o);}
+    for(const cat of cats){const o=document.createElement("option");o.value=cat;const sample=searchableTours().find(([,t])=>first(t.category,"sightseeing")===cat)?.[1];o.textContent=first(sample?.categoryLabel,categoryLabels[cat],cat);categoryEl.appendChild(o);}
     if(cats.includes(current)) categoryEl.value=current;
     populatePickups();
   }
@@ -2032,17 +2038,23 @@ img { width: 100%; display: block; }
     matches.forEach(item=>{
       const row=document.createElement("div");row.className="home-result";const copy=document.createElement("div");
       const h=document.createElement("h3");h.textContent=first(item.tour.title,item.tourId);copy.appendChild(h);
-      const summary=document.createElement("p");summary.textContent=first(item.tour.shortSummary,`${categoryLabels[first(item.tour.category,"sightseeing")]||"Tour The Lakes tour"}.`);copy.appendChild(summary);
+      const summary=document.createElement("p");summary.textContent=first(item.tour.shortSummary,`${categoryLabelForTour(item.tour)||"Tour The Lakes tour"}.`);copy.appendChild(summary);
       const details=document.createElement("p");details.textContent=`${item.date} • pickup ${item.pickupTime} from ${pickupDisplayLabel(item.pickup,item.pickupId)} • ${item.slot.capacity} places remaining • ${money(item.slot.price)} per person`;copy.appendChild(details);
       const btn=document.createElement("button");btn.type="button";btn.textContent="Book this departure";btn.addEventListener("click",()=>openBooking(item));row.append(copy,btn);resultsEl.appendChild(row);
     });
   }
+  function updateBookingSelection(){
+    if(!selected)return;
+    const qty=Math.max(1,parseInt(bookingQtyEl.value||"1",10)||1);
+    selectionEl.textContent=`${first(selected.tour.title,selected.tourId)} • ${selected.date} • pickup ${selected.pickupTime} from ${pickupDisplayLabel(selected.pickup,selected.pickupId)}${selected.pickup.meetingPoint?` at ${selected.pickup.meetingPoint}`:""} • ${qty} passenger${qty===1?"":"s"} • ${money(selected.slot.price)} per passenger • ${money(Number(selected.slot.price)*qty)} total`;
+  }
   function openBooking(item){
     selected=item;successEl.hidden=true;formEl.hidden=false;messageEl.textContent="";const qty=parseInt(qtyEl.value||"1",10);bookingQtyEl.value=String(qty);bookingQtyEl.max=String(item.slot.capacity);
-    selectionEl.textContent=`${first(item.tour.title,item.tourId)} • ${item.date} • pickup ${item.pickupTime} from ${pickupDisplayLabel(item.pickup,item.pickupId)}${item.pickup.meetingPoint?` at ${item.pickup.meetingPoint}`:""} • ${money(item.slot.price)} per passenger • ${money(Number(item.slot.price)*qty)} total`;
+    document.querySelector(".home-finder")?.classList.add("booking-active");
+    updateBookingSelection();
     formEl.scrollIntoView({behavior:"smooth",block:"nearest"});
   }
-  categoryEl.addEventListener("change",populatePickups);pickupEl.addEventListener("change",renderResults);dateEl.addEventListener("change",renderResults);qtyEl.addEventListener("input",renderResults);
+  categoryEl.addEventListener("change",populatePickups);pickupEl.addEventListener("change",renderResults);dateEl.addEventListener("change",renderResults);qtyEl.addEventListener("input",renderResults);bookingQtyEl.addEventListener("input",()=>{messageEl.textContent="";updateBookingSelection();});
 
   confirmBtn.addEventListener("click",async()=>{
     if(!selected){messageEl.textContent="Choose a departure first.";return;}
@@ -2053,7 +2065,7 @@ img { width: 100%; display: block; }
     try{
       const tx=await runTransaction(capRef,current=>{const cur=Number(current);if(!Number.isFinite(cur))return current;if(cur<qty)return;return cur-qty;});if(!tx.committed){messageEl.textContent="Not enough places remain for this departure.";return;}
       const bookingRef=push(ref(db,`bookings/${selected.tourId}`));const price=Number(selected.slot.price)||0;
-      try{await set(bookingRef,{tourId:selected.tourId,tourTitle:first(selected.tour.title,selected.tourId),category:first(selected.tour.category,"sightseeing"),dateKey:selected.date,time:selected.time,qty,name,email,phone,price,duration:first(selected.tour.duration),pickupId:selected.pickupId,pickupLabel:first(selected.pickup.label,selected.pickupId),pickupPoint:first(selected.pickup.meetingPoint,selected.pickup.label),pickupTime:selected.pickupTime,departurePoint:first(selected.pickup.meetingPoint,selected.pickup.label),tourType:first(selected.tour.tourType,categoryLabels[first(selected.tour.category,"sightseeing")],"Small-group sightseeing tour"),shortSummary:first(selected.tour.shortSummary),bookingSource:"homepage",createdAt:serverTimestamp(),createdAtMs:Date.now(),bookingStatus:"active",paymentStatus:"outstanding",status:"new"});}
+      try{await set(bookingRef,{tourId:selected.tourId,tourTitle:first(selected.tour.title,selected.tourId),category:first(selected.tour.category,"sightseeing"),categoryLabel:categoryLabelForTour(selected.tour),dateKey:selected.date,time:selected.time,qty,name,email,phone,price,duration:first(selected.tour.duration),pickupId:selected.pickupId,pickupLabel:first(selected.pickup.label,selected.pickupId),pickupPoint:first(selected.pickup.meetingPoint,selected.pickup.label),pickupTime:selected.pickupTime,departurePoint:first(selected.pickup.meetingPoint,selected.pickup.label),tourType:first(selected.tour.tourType,selected.tour.categoryLabel,categoryLabels[first(selected.tour.category,"sightseeing")],"Small-group sightseeing tour"),shortSummary:first(selected.tour.shortSummary),bookingSource:"homepage",createdAt:serverTimestamp(),createdAtMs:Date.now(),bookingStatus:"active",paymentStatus:"outstanding",status:"new"});}
       catch(err){await runTransaction(capRef,current=>{const cur=Number(current);return Number.isFinite(cur)?cur+qty:current;});throw err;}
       const refShort=(bookingRef.key||"").slice(-7);formEl.hidden=true;successEl.hidden=false;successEl.innerHTML=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(selected.tour.title,selected.tourId))} • ${esc(selected.date)} • pickup ${esc(selected.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,selected.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;messageEl.textContent="";
     }catch(err){messageEl.textContent=`Error: ${err?.message||err}`;}finally{confirmBtn.disabled=false;}
