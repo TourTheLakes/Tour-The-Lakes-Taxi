@@ -2059,9 +2059,20 @@ img { width: 100%; display: block; }
   confirmBtn.addEventListener("click",async()=>{
     if(!selected){messageEl.textContent="Choose a departure first.";return;}
 
-    // Freeze the chosen departure. The live tours listener fires again when
-    // capacity changes and renderResults() clears the global `selected`.
-    const bookingSelection=selected;
+    /*
+      Freeze every value needed by the booking BEFORE changing capacity.
+      Changing capacity immediately fires the live tours listener, which calls
+      renderResults() and clears the global `selected` variable. Nothing below
+      this point is therefore allowed to read from `selected`.
+    */
+    const tourId=selected.tourId;
+    const dateKey=selected.date;
+    const time=selected.time;
+    const tourData=selected.tour||{};
+    const slotData=selected.slot||{};
+    const pickupData=selected.pickup||{};
+    const pickupId=selected.pickupId;
+    const pickupTime=selected.pickupTime;
 
     const name=nameEl.value.trim();
     const email=emailEl.value.trim();
@@ -2071,16 +2082,16 @@ img { width: 100%; display: block; }
     if(!name){messageEl.textContent="Enter your full name.";return;}
     if(!email||!emailEl.checkValidity()){messageEl.textContent="Enter a valid email address.";return;}
     if(!qty||qty<1){messageEl.textContent="Enter a valid passenger quantity.";return;}
-    if(qty>Number(bookingSelection.slot.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
-    if(!bookable(bookingSelection.date,bookingSelection.time)){messageEl.textContent="Online booking has now closed for this departure.";return;}
+    if(qty>Number(slotData.capacity)){messageEl.textContent="There are not enough places remaining.";return;}
+    if(!bookable(dateKey,time)){messageEl.textContent="Online booking has now closed for this departure.";return;}
 
-    const capRef=ref(db,`tours/${bookingSelection.tourId}/dates/${bookingSelection.date}/times/${bookingSelection.time}/capacity`);
+    const capRef=ref(db,`tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
     confirmBtn.disabled=true;
     messageEl.textContent="Submitting...";
 
-    let capacityReduced=false;
-
     try{
+      // Same booking sequence as public-tours.html:
+      // 1) reduce capacity using the exact tours/<tourId>/dates/<date>/times/<time>/capacity path.
       const tx=await runTransaction(capRef,current=>{
         const cur=Number(current);
         if(!Number.isFinite(cur)) return current;
@@ -2092,73 +2103,67 @@ img { width: 100%; display: block; }
         messageEl.textContent="Not enough places remain for this departure.";
         return;
       }
-      capacityReduced=true;
 
-      const bookingRef=push(ref(db,`bookings/${bookingSelection.tourId}`));
-      const price=Number(bookingSelection.slot.price)||0;
+      // 2) create the booking under the exact bookings/<tourId>/<generated booking id> path.
+      const bookingRef=push(ref(db,`bookings/${tourId}`));
+      const tourTitle=first(tourData.title,tourId);
+      const slotPrice=Number(slotData.price)||0;
 
-      const bookingData={
-        tourId:bookingSelection.tourId,
-        tourTitle:first(bookingSelection.tour.title,bookingSelection.tourId),
-        category:first(bookingSelection.tour.category,"sightseeing"),
-        categoryLabel:categoryLabelForTour(bookingSelection.tour),
-        dateKey:bookingSelection.date,
-        time:bookingSelection.time,
+      await set(bookingRef,{
+        tourId,
+        tourTitle,
+        dateKey,
+        time,
         qty,
         name,
         email,
-        price,
-        duration:first(bookingSelection.tour.duration),
-        pickupId:bookingSelection.pickupId,
-        pickupLabel:first(bookingSelection.pickup.label,bookingSelection.pickupId),
-        pickupPoint:first(bookingSelection.pickup.meetingPoint,bookingSelection.pickup.label),
-        pickupTime:bookingSelection.pickupTime,
-        departurePoint:first(bookingSelection.pickup.meetingPoint,bookingSelection.pickup.label),
-        tourType:first(
-          bookingSelection.tour.tourType,
-          bookingSelection.tour.categoryLabel,
-          categoryLabels[first(bookingSelection.tour.category,"sightseeing")],
-          "Small-group sightseeing tour"
+        phone,
+        price:slotPrice,
+        duration:first(tourData.duration),
+        category:first(tourData.category,"sightseeing"),
+        pickupId:first(pickupId),
+        pickupLabel:first(pickupData.label),
+        pickupPoint:first(pickupData.meetingPoint,pickupData.label),
+        pickupTime:first(pickupTime,time),
+        departurePoint:first(
+          pickupData.meetingPoint,
+          pickupData.label,
+          tourData.departurePoint,
+          tourData.meetingPoint,
+          "Windermere Railway Station"
         ),
-        shortSummary:first(bookingSelection.tour.shortSummary),
+        tourType:first(tourData.tourType,"Small-group sightseeing tour"),
+        shortSummary:first(tourData.shortSummary),
         bookingSource:"homepage",
         createdAt:serverTimestamp(),
         createdAtMs:Date.now(),
         bookingStatus:"active",
         paymentStatus:"outstanding",
         status:"new"
-      };
-
-      // Phone is genuinely optional. Do not create an empty Firebase child.
-      if(phone) bookingData.phone=phone;
-
-      await set(bookingRef,bookingData);
-
-      capacityReduced=false;
+      });
 
       const refShort=(bookingRef.key||"").slice(-7);
-      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(bookingSelection.tour.title,bookingSelection.tourId))} • ${esc(bookingSelection.date)} • pickup ${esc(bookingSelection.pickupTime)} from ${esc(pickupDisplayLabel(bookingSelection.pickup,bookingSelection.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
+      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(tourTitle)} • ${esc(dateKey)} • pickup ${esc(first(pickupTime,time))} from ${esc(pickupDisplayLabel(pickupData,pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(slotPrice))} per person • <strong>${esc(money(slotPrice*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
 
-      // Build the confirmation first, then swap the visible state.
       successEl.innerHTML=confirmationHtml;
       successEl.hidden=false;
       formEl.hidden=true;
       messageEl.textContent="";
       successEl.scrollIntoView({behavior:"smooth",block:"nearest"});
     }catch(err){
-      // A failed booking must not silently consume seats.
-      // The existing public capacity rule may reject a public increase, so keep
-      // the original booking error visible even if the restoration is refused.
-      if(capacityReduced){
-        try{
-          await runTransaction(capRef,current=>{
-            const cur=Number(current);
-            return Number.isFinite(cur)?cur+qty:current;
-          });
-        }catch(restoreErr){
-          console.error("Booking failed and automatic capacity restoration was refused:",restoreErr);
-        }
-      }
+      /*
+        Match public-tours.html: if the booking write itself fails after capacity
+        was reduced, attempt to put the seats back. Current public Firebase rules
+        deliberately reject unauthenticated capacity increases, so this recovery
+        may itself be refused; do not replace the real booking error with it.
+      */
+      try{
+        await runTransaction(capRef,current=>{
+          const cur=Number(current);
+          if(!Number.isFinite(cur)) return current;
+          return cur+qty;
+        });
+      }catch{}
 
       console.error("Homepage booking failed:",err);
       messageEl.textContent=`Booking could not be completed. ${err?.message||err}`;
