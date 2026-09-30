@@ -1667,9 +1667,10 @@ img { width: 100%; display: block; }
 .home-booking-hero::after { background:rgba(0,0,0,.66); }
 .home-booking-shell { position:relative; z-index:2; width:min(1060px,calc(100% - 40px)); margin:0 auto; padding:38px 0 34px; color:rgba(255,255,255,.94); }
 .home-booking-shell h1 { position:static; width:auto; color:#b86b2a; font-size:clamp(38px,5vw,64px); line-height:1; text-align:center; margin:0; }
-.home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; }
+.home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; display:flex; align-items:center; justify-content:center; gap:12px; text-transform:lowercase; }
+.home-booking-subtitle-dot { width:5px; height:5px; flex:0 0 5px; border-radius:50%; background:rgba(255,255,255,.72); }
 .home-finder { border:0; padding:0; }
-.home-finder-title { margin:0 0 14px; color:rgba(255,255,255,.94); text-align:center; font-size:18px; letter-spacing:.4px; }
+.home-finder-title { margin:0 0 14px; color:#b86b2a; text-align:center; font-size:18px; font-weight:700; letter-spacing:1.4px; }
 .home-finder-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:rgba(184,107,42,.5); }
 .home-finder-field { background:rgba(43,43,43,.88); padding:15px; }
 .home-finder-field label { display:block; margin-bottom:7px; color:#b86b2a; font-size:11px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
@@ -1805,10 +1806,14 @@ img { width: 100%; display: block; }
     <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" fetchpriority="high" decoding="async" />
     <div class="home-booking-shell">
       <h1>Explore the Lake District</h1>
-      <p class="home-booking-subtitle">See more. Discover more. Book direct.</p>
+      <p class="home-booking-subtitle">
+        <span class="home-booking-subtitle-dot" aria-hidden="true"></span>
+        <span>and beyond</span>
+        <span class="home-booking-subtitle-dot" aria-hidden="true"></span>
+      </p>
 
       <section class="home-finder" aria-label="Find a bookable Tour The Lakes departure">
-        <h2 class="home-finder-title">Find your tour</h2>
+        <h2 class="home-finder-title">FIND YOUR EXPERIENCE</h2>
         <div class="home-finder-grid">
           <div class="home-finder-field">
             <label for="homeCategory">What would you like to do?</label>
