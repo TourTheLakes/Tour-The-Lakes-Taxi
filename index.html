@@ -2101,7 +2101,7 @@ img { width: 100%; display: block; }
         tourId:bookingSelection.tourId,
         tourTitle:first(bookingSelection.tour.title,bookingSelection.tourId),
         category:first(bookingSelection.tour.category,"sightseeing"),
-        categoryLabel:categoryLabelForTour(selected.tour),
+        categoryLabel:categoryLabelForTour(bookingSelection.tour),
         dateKey:bookingSelection.date,
         time:bookingSelection.time,
         qty,
@@ -2137,7 +2137,7 @@ img { width: 100%; display: block; }
       capacityReduced=false;
 
       const refShort=(bookingRef.key||"").slice(-7);
-      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(bookingSelection.tour.title,bookingSelection.tourId))} • ${esc(bookingSelection.date)} • pickup ${esc(bookingSelection.pickupTime)} from ${esc(pickupDisplayLabel(selected.pickup,bookingSelection.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
+      const confirmationHtml=`<h3>Booking Confirmed</h3><p>Your booking reference is <strong>${esc(refShort)}</strong>.</p><p>${esc(first(bookingSelection.tour.title,bookingSelection.tourId))} • ${esc(bookingSelection.date)} • pickup ${esc(bookingSelection.pickupTime)} from ${esc(pickupDisplayLabel(bookingSelection.pickup,bookingSelection.pickupId))}</p><p>${esc(qty)} passenger(s) • ${esc(money(price))} per person • <strong>${esc(money(price*qty))} total</strong></p><p>You will receive an email within the next 24 hours containing your payment link and everything you need to know.</p>`;
 
       // Build the confirmation first, then swap the visible state.
       successEl.innerHTML=confirmationHtml;
