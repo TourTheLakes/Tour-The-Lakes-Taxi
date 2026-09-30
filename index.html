@@ -1818,6 +1818,70 @@ img { width: 100%; display: block; }
   .home-result-details{font-size:12px;}
   .home-result button{width:100%;}
 }
+
+/* ===== Homepage booking stage refinement ===== */
+.home-finder.booking-active .home-booking-form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.home-finder.booking-active .home-booking-form h3 {
+  margin: 0 0 14px;
+}
+
+.home-finder.booking-active .booking-selection {
+  margin: 0 0 20px;
+  padding: 0 0 17px;
+  border-bottom: 1px solid rgba(184,107,42,.55);
+  color: rgba(255,255,255,.82);
+  line-height: 1.55;
+}
+
+.home-finder.booking-active .booking-selection strong {
+  color: rgba(255,255,255,.96);
+  font-weight: 700;
+}
+
+.home-finder.booking-active .booking-selection span {
+  color: #b86b2a;
+  padding: 0 5px;
+}
+
+.home-finder.booking-active .home-booking-fields {
+  display: grid;
+  grid-template-columns: 1.15fr 1.15fr 1.15fr .75fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.home-finder.booking-active .home-booking-fields input {
+  min-width: 0;
+  height: 54px;
+  margin: 0;
+}
+
+.home-finder.booking-active #homeConfirmBooking {
+  min-height: 48px;
+}
+
+@media screen and (max-width: 600px) {
+  .home-finder.booking-active .booking-selection {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .home-finder.booking-active .home-booking-fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .home-finder.booking-active .home-booking-fields input,
+  .home-finder.booking-active #homeConfirmBooking {
+    min-height: 52px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2140,7 +2204,7 @@ img { width: 100%; display: block; }
   function updateBookingSelection(){
     if(!selected)return;
     const qty=Math.max(1,parseInt(bookingQtyEl.value||"1",10)||1);
-    selectionEl.textContent=`${first(selected.tour.title,selected.tourId)} • ${selected.date} • pickup ${selected.pickupTime} from ${pickupDisplayLabel(selected.pickup,selected.pickupId)}${selected.pickup.meetingPoint?` at ${selected.pickup.meetingPoint}`:""} • ${qty} passenger${qty===1?"":"s"} • ${money(selected.slot.price)} per passenger • ${money(Number(selected.slot.price)*qty)} total`;
+    selectionEl.innerHTML=`<strong>${escapeHtml(first(selected.tour.title,selected.tourId))}</strong><br>${displayDate(selected.date)} <span>•</span> Pickup ${escapeHtml(selected.pickupTime)} from ${escapeHtml(pickupDisplayLabel(selected.pickup,selected.pickupId))}${selected.pickup.meetingPoint?` at ${escapeHtml(selected.pickup.meetingPoint)}`:""}<br>${qty} passenger${qty===1?"":"s"} <span>•</span> ${money(selected.slot.price)} per passenger <span>•</span> <strong>${money(Number(selected.slot.price)*qty)} total</strong>`;
   }
   function openBooking(item){
     selected=item;successEl.hidden=true;formEl.hidden=false;messageEl.textContent="";const qty=parseInt(qtyEl.value||"1",10);bookingQtyEl.value=String(qty);bookingQtyEl.max=String(item.slot.capacity);
