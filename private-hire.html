@@ -76,16 +76,49 @@
       "@type": "TravelAgency",
       "@id": "https://www.tourthelakes.com/#tour-operator",
       "name": "Tour The Lakes",
-      "category": ["Sightseeing Tour Agency", "Transportation Service"],
+      "category": [
+        "Sightseeing Tour Agency",
+        "Transportation Service"
+      ],
       "url": "https://www.tourthelakes.com/",
       "email": "info@tourthelakes.com",
       "areaServed": [
-        { "@type": "Place", "name": "Windermere" },
-        { "@type": "Place", "name": "Ambleside" },
-        { "@type": "Place", "name": "Staveley and Kendal" },
-        { "@type": "Place", "name": "Grasmere and Ambleside" },
-        { "@type": "Place", "name": "Cartmel and Grange-over-Sands" },
-        { "@type": "Place", "name": "Lake District" }
+        {
+          "@type": "Place",
+          "name": "Windermere"
+        },
+        {
+          "@type": "Place",
+          "name": "Kendal"
+        },
+        {
+          "@type": "Place",
+          "name": "Ambleside"
+        },
+        {
+          "@type": "Place",
+          "name": "Staveley"
+        },
+        {
+          "@type": "Place",
+          "name": "Grasmere"
+        },
+        {
+          "@type": "Place",
+          "name": "Cartmel"
+        },
+        {
+          "@type": "Place",
+          "name": "Grange-over-Sands"
+        },
+        {
+          "@type": "Place",
+          "name": "Lake District"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Cumbria"
+        }
       ],
       "openingHoursSpecification": [
         {
@@ -169,7 +202,56 @@
       border: 0;
     }
 
-    .site-header {
+    @media screen and (min-width: 1024px) {
+body {
+  padding-top: 0;
+}
+
+.site-header {
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transform: translateY(0);
+  transition: transform 0.22s ease;
+  will-change: transform;
+  background-color: #2b2b2b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+    url("images/Web Paper 5.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.92);
+  border-bottom: 2px solid #b86b2a;
+}
+.site-header.header-scroll-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+}
+
+.site-header.header-scroll-fixed.header-scroll-initializing {
+  transition: none;
+}
+.site-header.header-scroll-fixed.header-scroll-reveal {
+  transform: translateY(0);
+}
+.header-scroll-placeholder {
+  display: none;
+  width: 100%;
+}
+.header-scroll-placeholder.is-active {
+  display: block;
+}
+}
+
+@media screen and (max-width: 1023px) {
+.site-header {
   width: 100%;
   position: fixed;
   top: 0;
@@ -186,6 +268,8 @@
   color: rgba(255,255,255,0.92);
   border-bottom: 2px solid #b86b2a;
 }
+}
+
 
     .header-inner {
   min-height: 170px;
@@ -1817,5 +1901,121 @@ img { width: 100%; display: block; }
   });
 </script>
 
+
+
+<script>
+if (window.matchMedia("(min-width: 1024px)").matches) {
+const siteHeader = document.querySelector(".site-header");
+  const mobileMenuToggle = document.querySelector(".brand-toggle");
+  const mobileNavigation = document.getElementById("mobile-navigation");
+  const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
+  const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
+  const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+  const headerScrollPlaceholder = document.createElement("div");
+  headerScrollPlaceholder.className = "header-scroll-placeholder";
+  headerScrollPlaceholder.setAttribute("aria-hidden", "true");
+  siteHeader?.insertAdjacentElement("afterend", headerScrollPlaceholder);
+
+  let lastHeaderScrollY = Math.max(window.scrollY, 0);
+  let headerDirectionAnchorY = lastHeaderScrollY;
+  let headerScrollTicking = false;
+  const headerDirectionThreshold = 8;
+
+  function setHeaderFixed(fixed) {
+    if (!siteHeader) return;
+
+    if (fixed) {
+      if (!siteHeader.classList.contains("header-scroll-fixed")) {
+        headerScrollPlaceholder.style.height = `${siteHeader.offsetHeight || 172}px`;
+        headerScrollPlaceholder.classList.add("is-active");
+
+        siteHeader.classList.add("header-scroll-initializing");
+        siteHeader.classList.add("header-scroll-fixed");
+
+        // First hand-off is deliberately instantaneous. At this threshold the
+        // in-flow header has already naturally left the viewport, so animating
+        // the switch to fixed positioning creates the one-off initial bounce.
+        void siteHeader.offsetHeight;
+        siteHeader.classList.remove("header-scroll-initializing");
+      }
+      return;
+    }
+
+    siteHeader.classList.remove("header-scroll-fixed", "header-scroll-reveal", "header-scroll-initializing");
+    headerScrollPlaceholder.classList.remove("is-active");
+    headerScrollPlaceholder.style.height = "";
+  }
+
+  function updateHeaderOnScroll() {
+    if (!siteHeader) return;
+
+    const currentScrollY = Math.max(window.scrollY, 0);
+    const headerHeight = headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172);
+    const menuIsOpen = siteHeader.classList.contains("mobile-menu-open");
+
+    if (currentScrollY <= headerHeight) {
+      setHeaderFixed(false);
+      headerDirectionAnchorY = currentScrollY;
+    } else {
+      setHeaderFixed(true);
+
+      if (menuIsOpen) {
+        siteHeader.classList.add("header-scroll-reveal");
+        headerDirectionAnchorY = currentScrollY;
+      } else {
+        const movement = currentScrollY - headerDirectionAnchorY;
+
+        if (movement >= headerDirectionThreshold) {
+          siteHeader.classList.remove("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        } else if (movement <= -headerDirectionThreshold) {
+          siteHeader.classList.add("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        }
+      }
+    }
+
+    lastHeaderScrollY = currentScrollY;
+    headerScrollTicking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (headerScrollTicking) return;
+    headerScrollTicking = true;
+    window.requestAnimationFrame(updateHeaderOnScroll);
+  }, { passive: true });
+
+  function setMobileMenu(open) {
+    if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
+    siteHeader.classList.toggle("mobile-menu-open", open);
+    mobileMenuToggle.setAttribute("aria-expanded", String(open));
+    mobileMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    mobileNavigation.setAttribute("aria-hidden", String(!open));
+    if (open && window.scrollY > (headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172))) {
+      setHeaderFixed(true);
+      siteHeader.classList.add("header-scroll-reveal");
+    }
+    if (mobileBrandHome) mobileBrandHome.textContent = open ? "Menu" : "Tour The Lakes";
+    if (mobileBrandMenu) mobileBrandMenu.textContent = open ? "Close" : "Menu";
+  }
+
+  mobileMenuToggle?.addEventListener("click", () => {
+    if (!mobileBreakpoint.matches) return;
+    setMobileMenu(mobileMenuToggle.getAttribute("aria-expanded") !== "true");
+  });
+
+  mobileNavigation?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setMobileMenu(false));
+  });
+
+  mobileBreakpoint.addEventListener("change", (event) => {
+    if (!event.matches) setMobileMenu(false);
+  });
+}
+</script>
 </body>
 </html>
