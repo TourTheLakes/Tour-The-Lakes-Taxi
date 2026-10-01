@@ -2082,11 +2082,11 @@ img { width: 100%; display: block; }
         <div class="home-finder-grid">
           <div class="home-finder-field">
             <label for="homeCategory">What would you like to do?</label>
-            <select id="homeCategory"><option value="">Choose a tour type</option></select>
+            <select id="homeCategory"><option value="">All tours</option></select>
           </div>
           <div class="home-finder-field">
             <label for="homePickup">Where should we pick you up?</label>
-            <select id="homePickup" disabled><option value="">Choose a pickup</option></select>
+            <select id="homePickup"><option value="">All locations</option></select>
           </div>
           <div class="home-finder-field">
             <label for="homeDate">When would you like to go?</label>
@@ -2097,7 +2097,7 @@ img { width: 100%; display: block; }
             <input id="homeQty" type="number" min="1" step="1" value="2" inputmode="numeric" />
           </div>
         </div>
-        <div id="homeFinderStatus" class="home-finder-status" aria-live="polite">Choose a tour type to begin.</div>
+        <div id="homeFinderStatus" class="home-finder-status" aria-live="polite">Showing all available tours and pickup locations for your selected date.</div>
         <div id="homeResults" class="home-results"></div>
         <div id="homeBookingForm" class="home-booking-form" hidden>
           <h3>Your booking</h3>
@@ -2295,6 +2295,7 @@ img { width: 100%; display: block; }
   const pad2=n=>String(n).padStart(2,"0");
   const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;};
   dateEl.min=todayKey();
+  dateEl.value=todayKey();
   const first=(...v)=>{for(const x of v){const c=String(x??"").trim();if(c)return c;}return "";};
   const money=n=>`£${Number(n||0).toFixed(2)}`;
   const displayDate=dateKey=>{
@@ -2307,7 +2308,7 @@ img { width: 100%; display: block; }
 
   function searchableTours(){return Object.entries(tours).filter(([,t])=>t?.isLive===true && t?.homepageSearchable===true);}
   function populateCategories(){
-    const current=categoryEl.value; categoryEl.innerHTML='<option value="">Choose a tour type</option>';
+    const current=categoryEl.value; categoryEl.innerHTML='<option value="">All tours</option>';
     const cats=[...new Set(searchableTours().map(([,t])=>first(t.category,"sightseeing")))];
     for(const cat of cats){const o=document.createElement("option");o.value=cat;const sample=searchableTours().find(([,t])=>first(t.category,"sightseeing")===cat)?.[1];o.textContent=first(sample?.categoryLabel,categoryLabels[cat],cat);categoryEl.appendChild(o);}
     if(cats.includes(current)) categoryEl.value=current;
@@ -2321,28 +2322,30 @@ img { width: 100%; display: block; }
   }
   function populatePickups(){
     const cat=categoryEl.value,current=pickupEl.value,map=new Map();
-    pickupEl.innerHTML='<option value="">Choose a pickup</option>';
+    pickupEl.innerHTML='<option value="">All locations</option>';
     for(const [,t] of searchableTours()){if(cat && first(t.category,"sightseeing")!==cat)continue;for(const [id,p] of Object.entries(t.pickupLocations||{})){if(p?.enabled===false)continue;map.set(id,pickupDisplayLabel(p,id));}}
     for(const [id,label] of [...map.entries()].sort((a,b)=>a[1].localeCompare(b[1]))){const o=document.createElement("option");o.value=id;o.textContent=label;pickupEl.appendChild(o);}
-    pickupEl.disabled=!cat||!map.size;if(map.has(current))pickupEl.value=current;else pickupEl.value="";renderResults();
+    pickupEl.disabled=!map.size;if(map.has(current))pickupEl.value=current;else pickupEl.value="";renderResults();
   }
   function matchingDepartures(){
-    const cat=categoryEl.value,pickup=pickupEl.value,date=dateEl.value,qty=parseInt(qtyEl.value||"0",10);if(!cat||!pickup||!date||!qty||qty<1)return [];
+    const cat=categoryEl.value,pickup=pickupEl.value,date=dateEl.value,qty=parseInt(qtyEl.value||"0",10);if(!date||!qty||qty<1)return [];
     const out=[];
     for(const [tourId,t] of searchableTours()){
-      if(first(t.category,"sightseeing")!==cat)continue;
-      const location=t.pickupLocations?.[pickup]; if(!location||location.enabled===false)continue;
+      if(cat && first(t.category,"sightseeing")!==cat)continue;
       for(const [time,slot] of Object.entries(t.dates?.[date]?.times||{})){
-        const cap=Number(slot?.capacity); if(!bookable(date,time)||!Number.isFinite(cap)||cap<qty||!slot?.pickups?.[pickup])continue;
-        out.push({tourId,tour:t,date,time,slot,pickupId:pickup,pickup:location,pickupTime:first(slot.pickups[pickup]?.time,time)});
+        const cap=Number(slot?.capacity); if(!bookable(date,time)||!Number.isFinite(cap)||cap<qty)continue;
+        const pickupIds=pickup?[pickup]:Object.keys(slot?.pickups||{});
+        for(const pickupId of pickupIds){
+          const location=t.pickupLocations?.[pickupId];
+          if(!location||location.enabled===false||!slot?.pickups?.[pickupId])continue;
+          out.push({tourId,tour:t,date,time,slot,pickupId,pickup:location,pickupTime:first(slot.pickups[pickupId]?.time,time)});
+        }
       }
     }
-    return out.sort((a,b)=>a.pickupTime.localeCompare(b.pickupTime)||a.time.localeCompare(b.time));
+    return out.sort((a,b)=>a.pickupTime.localeCompare(b.pickupTime)||a.time.localeCompare(b.time)||first(a.tour.title,a.tourId).localeCompare(first(b.tour.title,b.tourId)));
   }
   function renderResults(){
     selected=null;formEl.hidden=true;successEl.hidden=true;resultsEl.innerHTML="";
-    if(!categoryEl.value){statusEl.textContent="Choose a tour type to begin.";return;}
-    if(!pickupEl.value){statusEl.textContent="Choose where you would like to be picked up.";return;}
     if(!dateEl.value){statusEl.textContent="Choose the day you would like to travel.";return;}
     const qty=parseInt(qtyEl.value||"0",10);if(!qty||qty<1){statusEl.textContent="Enter the number of passengers.";return;}
     const matches=matchingDepartures();
