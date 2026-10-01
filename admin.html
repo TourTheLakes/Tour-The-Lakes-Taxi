@@ -1183,7 +1183,13 @@
       for (const sec of sections) {
         const h = sec.querySelector(".tsec-h")?.textContent?.trim() || "";
         const bEl = sec.querySelector(".tsec-b");
-        const b = bEl ? bEl.textContent.trim() : "";
+        const htmlToEditorText = (el) => {
+          if (!el) return "";
+          const clone = el.cloneNode(true);
+          clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
+          return clone.textContent.trim();
+        };
+        const b = htmlToEditorText(bEl);
 
         if (h === "Product Title" || h === "Tour") descProductTitleEl.value = b;
         if (h === "Overview") descOverviewEl.value = b;
@@ -1193,8 +1199,8 @@
           const items = Array.from(sec.querySelectorAll(".tit-item"));
           for (const it of items) {
             itineraryItems.push({
-              title: it.querySelector(".tit-title")?.textContent?.trim() || "",
-              body: it.querySelector(".tit-body")?.textContent?.trim() || "",
+              title: htmlToEditorText(it.querySelector(".tit-title")),
+              body: htmlToEditorText(it.querySelector(".tit-body")),
             });
           }
         }
