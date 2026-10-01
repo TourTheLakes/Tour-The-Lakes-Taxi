@@ -1789,6 +1789,38 @@ img { width: 100%; display: block; }
   background:#b86b2a;
   flex:0 0 4px;
 }
+
+/* Small and medium screens: align departure details as a stable two-column grid. */
+@media screen and (max-width: 1023px) {
+  .home-result-details {
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+    column-gap:18px;
+    row-gap:10px;
+    align-items:start;
+  }
+
+  .home-result-detail {
+    display:grid;
+    grid-template-columns:4px minmax(0, 1fr);
+    column-gap:10px;
+    align-items:start;
+    min-width:0;
+  }
+
+  .home-result-detail::before,
+  .home-result-detail:first-child::before,
+  .home-result-detail + .home-result-detail::before {
+    content:"";
+    width:4px;
+    height:4px;
+    margin:0;
+    margin-top:0.62em;
+    border-radius:50%;
+    background:#b86b2a;
+    flex:none;
+  }
+}
 .home-result-price {
   color:#fff;
   font-weight:700;
