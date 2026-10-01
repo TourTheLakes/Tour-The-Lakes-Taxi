@@ -1771,6 +1771,15 @@ img { width: 100%; display: block; }
   align-items:center;
   white-space:normal;
 }
+.home-result-detail:first-child::before {
+  content:"";
+  width:4px;
+  height:4px;
+  margin:0 10px 0 0;
+  border-radius:50%;
+  background:#b86b2a;
+  flex:0 0 4px;
+}
 .home-result-detail + .home-result-detail::before {
   content:"";
   width:4px;
