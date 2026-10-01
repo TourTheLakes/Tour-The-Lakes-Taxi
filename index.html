@@ -233,8 +233,7 @@
       border: 0;
     }
 
-@media screen and (min-width: 1024px) {
-  .site-header {
+    .site-header {
   width: 100%;
   position: relative;
   top: 0;
@@ -254,59 +253,27 @@
   color: rgba(255,255,255,0.92);
   border-bottom: 2px solid #b86b2a;
 }
-  .site-header.header-scroll-fixed {
+
+.site-header.header-scroll-fixed {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   transform: translateY(-100%);
 }
-  .site-header.header-scroll-fixed.header-scroll-reveal {
+
+.site-header.header-scroll-fixed.header-scroll-reveal {
   transform: translateY(0);
 }
-  .header-scroll-placeholder {
+
+.header-scroll-placeholder {
   display: none;
   width: 100%;
 }
-  .header-scroll-placeholder.is-active {
+
+.header-scroll-placeholder.is-active {
   display: block;
 }
-}
-
-
-@media screen and (max-width: 1023px) {
-  body {
-    padding-top: 172px;
-  }
-
-  .site-header,
-  .site-header.header-scroll-fixed,
-  .site-header.header-scroll-fixed.header-scroll-reveal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: none;
-    transition: none;
-  }
-
-  .header-scroll-placeholder,
-  .header-scroll-placeholder.is-active {
-    display: none;
-  }
-}
-
-
-
-    
-
-
-
-
-
-
-
-
 
     .header-inner {
   min-height: 170px;
@@ -2146,8 +2113,7 @@ img { width: 100%; display: block; }
 
 
 <script>
-if (window.matchMedia("(min-width: 1024px)").matches) {
-const siteHeader = document.querySelector(".site-header");
+  const siteHeader = document.querySelector(".site-header");
   const mobileMenuToggle = document.querySelector(".brand-toggle");
   const mobileNavigation = document.getElementById("mobile-navigation");
   const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
@@ -2249,7 +2215,6 @@ const siteHeader = document.querySelector(".site-header");
   mobileBreakpoint.addEventListener("change", (event) => {
     if (!event.matches) setMobileMenu(false);
   });
-}
 </script>
 
 <script type="module">
