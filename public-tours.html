@@ -204,7 +204,7 @@
 
     
 @media screen and (min-width: 1024px) {
-  .site-header {
+.site-header {
   width: 100%;
   position: relative;
   top: 0;
@@ -224,46 +224,43 @@
   color: rgba(255,255,255,0.92);
   border-bottom: 2px solid #b86b2a;
 }
-  .site-header.header-scroll-fixed {
+.site-header.header-scroll-fixed {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   transform: translateY(-100%);
 }
-  .site-header.header-scroll-fixed.header-scroll-reveal {
+.site-header.header-scroll-fixed.header-scroll-reveal {
   transform: translateY(0);
 }
-  .header-scroll-placeholder {
+.header-scroll-placeholder {
   display: none;
   width: 100%;
 }
-  .header-scroll-placeholder.is-active {
+.header-scroll-placeholder.is-active {
   display: block;
 }
 }
 
-
 @media screen and (max-width: 1023px) {
-  body {
-    padding-top: 172px;
-  }
-
-  .site-header,
-  .site-header.header-scroll-fixed,
-  .site-header.header-scroll-fixed.header-scroll-reveal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: none;
-    transition: none;
-  }
-
-  .header-scroll-placeholder,
-  .header-scroll-placeholder.is-active {
-    display: none;
-  }
+.site-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #2b2b2b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+    url("images/Web Paper 5.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.92);
+  border-bottom: 2px solid #b86b2a;
+}
 }
 
 
@@ -954,9 +951,10 @@ img { width: 100%; display: block; }
       background: transparent;
     }
 
-    .tour.is-open .tour-divider.is-following {
+    
+.tour.is-open .tour-divider.is-following {
       position: fixed;
-      top: 171px;
+      top: var(--tour-follow-top, 171px);
       left: 0;
       right: 0;
       width: 100%;
@@ -970,6 +968,7 @@ img { width: 100%; display: block; }
       background-position: center center;
       background-repeat: no-repeat;
     }
+
 
     .tour-divider-placeholder {
       display: none;
@@ -1057,7 +1056,7 @@ img { width: 100%; display: block; }
 }
 
     /* ===== Public calendar (match admin look) ===== */
-    .tour-booking-area { max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; }
+    .tour-booking-area { width: 100%; max-width: none; margin: 0 auto 40px auto; padding: 0; }
     .tour-calendar { margin-top: 18px; border: 1px solid #b86b2a; padding: 14px; background: transparent; }
     .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
     .cal-nav {
@@ -1715,6 +1714,11 @@ img { width: 100%; display: block; }
     
   
   }
+
+@media screen and (max-width: 1023px) {
+  body { padding-top: 172px; }
+}
+
 </style>
 </head>
 <body>
@@ -1769,7 +1773,6 @@ img { width: 100%; display: block; }
     <a href="private-hire.html">Private Hire</a>
   </nav>
 </header>
-  <div class="header-scroll-placeholder" aria-hidden="true"></div>
 
 <div class="folder-gap"></div>
 
@@ -1785,20 +1788,6 @@ img { width: 100%; display: block; }
         <p class="folder-intro-description">Discover the Lake District on one of our scheduled small group tours, carefully planned to showcase some of the region’s most memorable scenery, villages and attractions. Travel in comfort with an experienced driver, enjoy time to explore at each stop, and experience a full day in the Lakes without having to worry about planning the route, parking or getting from place to place.</p>
       </div>
     </div>
-
-  <div class="folder-gap"></div>
-
-  <div class="private-tour-statement-strip" aria-labelledby="public-tour-explore-title">
-    <h2 id="public-tour-explore-title" class="private-tour-statement-title">Explore</h2>
-  </div>
-
-  <div class="folder-gap"></div>
-
-  <div class="public-tour-information" aria-label="Public tour availability and booking information">
-    <div class="public-tour-information-inner">
-      <p>Explore our public tours below. Each tour shows the next available departure, with further dates, full tour information and booking options available through Read More.</p>
-    </div>
-  </div>
 
   <div class="folder-gap"></div>
 
@@ -3238,11 +3227,27 @@ img { width: 100%; display: block; }
       renderTours(snapshot.val());
     });
 
-    // Keep an opened tour's Read Less control directly beneath the fixed header
-    // until the user reaches the end of that same tour.
-    const FOLLOW_TOP = 172;
+    // Keep an opened tour's Read Less control at the top of the viewport.
+    // On laptop/desktop it sits at top:0 while the header is hidden, then moves
+    // directly beneath the header as soon as the header is revealed.
+    // On phones/tablets the header remains permanently fixed, so Read Less stays beneath it.
+    function getTourFollowTop() {
+      const header = document.querySelector(".site-header");
+      if (!header) return 0;
+
+      if (window.matchMedia("(max-width: 1023px)").matches) {
+        return Math.round(header.getBoundingClientRect().bottom);
+      }
+
+      return header.classList.contains("header-scroll-reveal")
+        ? Math.round(header.getBoundingClientRect().bottom)
+        : 0;
+    }
 
     function updateFollowingTourDivider() {
+      const followTop = Math.max(0, getTourFollowTop());
+      document.documentElement.style.setProperty("--tour-follow-top", `${followTop}px`);
+
       document.querySelectorAll(".tour").forEach((tour) => {
         const divider = tour.querySelector(".tour-divider");
         if (!divider) return;
@@ -3267,7 +3272,9 @@ img { width: 100%; display: block; }
         const dividerRect = divider.getBoundingClientRect();
         const dividerHeight = divider.offsetHeight;
         const tourRect = tour.getBoundingClientRect();
-        const shouldFollow = dividerRect.top <= FOLLOW_TOP && tourRect.bottom > FOLLOW_TOP + dividerHeight;
+        const shouldFollow =
+          dividerRect.top <= followTop &&
+          tourRect.bottom > followTop + dividerHeight;
 
         if (shouldFollow) {
           placeholder.style.height = `${divider.offsetHeight}px`;
@@ -3280,8 +3287,18 @@ img { width: 100%; display: block; }
       });
     }
 
-    window.addEventListener("scroll", updateFollowingTourDivider, { passive: true });
-    window.addEventListener("resize", updateFollowingTourDivider);
+    let tourDividerTicking = false;
+    function queueFollowingTourDividerUpdate() {
+      if (tourDividerTicking) return;
+      tourDividerTicking = true;
+      requestAnimationFrame(() => {
+        updateFollowingTourDivider();
+        tourDividerTicking = false;
+      });
+    }
+
+    window.addEventListener("scroll", queueFollowingTourDividerUpdate, { passive: true });
+    window.addEventListener("resize", queueFollowingTourDividerUpdate);
 
     // Toggle open/close (event delegation)
     document.addEventListener("click", (e) => {
