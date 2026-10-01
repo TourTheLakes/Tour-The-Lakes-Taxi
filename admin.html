@@ -663,7 +663,10 @@
     measurementId: "G-W6JY1LZXTP",
   };
 
-  const ALLOWED_EMAIL = "info@tourthelakes.com";
+  const ALLOWED_EMAILS = new Set([
+    "info@tourthelakes.com",
+    "georgina@tourthelakes.com",
+  ]);
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
@@ -738,7 +741,7 @@
     }
 
     const email = String(user.email || "").toLowerCase();
-    if (email !== ALLOWED_EMAIL.toLowerCase()) {
+    if (!ALLOWED_EMAILS.has(email)) {
       msg.textContent = `Not authorised: ${user.email || "(no email)"}`;
       if (adminMain) adminMain.style.display = "none";
       btnLogin.hidden = false;
