@@ -254,12 +254,25 @@
   border-bottom: 2px solid #b86b2a;
 }
 
-.site-header.header-scroll-reveal {
+.site-header.header-scroll-fixed {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  transform: translateY(-100%);
+}
+
+.site-header.header-scroll-fixed.header-scroll-reveal {
   transform: translateY(0);
+}
+
+.header-scroll-placeholder {
+  display: none;
+  width: 100%;
+}
+
+.header-scroll-placeholder.is-active {
+  display: block;
 }
 
     .header-inner {
@@ -2106,22 +2119,62 @@ img { width: 100%; display: block; }
   const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
   const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
   const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+  const headerScrollPlaceholder = document.createElement("div");
+  headerScrollPlaceholder.className = "header-scroll-placeholder";
+  headerScrollPlaceholder.setAttribute("aria-hidden", "true");
+  siteHeader?.insertAdjacentElement("afterend", headerScrollPlaceholder);
+
   let lastHeaderScrollY = Math.max(window.scrollY, 0);
+  let headerDirectionAnchorY = lastHeaderScrollY;
   let headerScrollTicking = false;
+  const headerDirectionThreshold = 8;
+
+  function setHeaderFixed(fixed) {
+    if (!siteHeader) return;
+
+    if (fixed) {
+      if (!siteHeader.classList.contains("header-scroll-fixed")) {
+        headerScrollPlaceholder.style.height = `${siteHeader.offsetHeight || 172}px`;
+        headerScrollPlaceholder.classList.add("is-active");
+        siteHeader.classList.add("header-scroll-fixed");
+      }
+      return;
+    }
+
+    siteHeader.classList.remove("header-scroll-fixed", "header-scroll-reveal");
+    headerScrollPlaceholder.classList.remove("is-active");
+    headerScrollPlaceholder.style.height = "";
+  }
 
   function updateHeaderOnScroll() {
     if (!siteHeader) return;
 
     const currentScrollY = Math.max(window.scrollY, 0);
-    const headerHeight = siteHeader.offsetHeight || 172;
+    const headerHeight = headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172);
     const menuIsOpen = siteHeader.classList.contains("mobile-menu-open");
 
     if (currentScrollY <= headerHeight) {
-      siteHeader.classList.remove("header-scroll-reveal");
-    } else if (currentScrollY < lastHeaderScrollY || menuIsOpen) {
-      siteHeader.classList.add("header-scroll-reveal");
-    } else if (currentScrollY > lastHeaderScrollY) {
-      siteHeader.classList.remove("header-scroll-reveal");
+      setHeaderFixed(false);
+      headerDirectionAnchorY = currentScrollY;
+    } else {
+      setHeaderFixed(true);
+
+      if (menuIsOpen) {
+        siteHeader.classList.add("header-scroll-reveal");
+        headerDirectionAnchorY = currentScrollY;
+      } else {
+        const movement = currentScrollY - headerDirectionAnchorY;
+
+        if (movement >= headerDirectionThreshold) {
+          siteHeader.classList.remove("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        } else if (movement <= -headerDirectionThreshold) {
+          siteHeader.classList.add("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        }
+      }
     }
 
     lastHeaderScrollY = currentScrollY;
@@ -2140,7 +2193,10 @@ img { width: 100%; display: block; }
     mobileMenuToggle.setAttribute("aria-expanded", String(open));
     mobileMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     mobileNavigation.setAttribute("aria-hidden", String(!open));
-    if (open && window.scrollY > (siteHeader.offsetHeight || 172)) {
+    if (open && window.scrollY > (headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172))) {
+      setHeaderFixed(true);
       siteHeader.classList.add("header-scroll-reveal");
     }
     if (mobileBrandHome) mobileBrandHome.textContent = open ? "Menu" : "Tour The Lakes";
