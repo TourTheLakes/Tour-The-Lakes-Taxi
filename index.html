@@ -204,7 +204,7 @@
     body {
       position: relative;
       isolation: isolate;
-      padding-top: 0;
+      padding-top: 172px;
     }
 
     body::before {
@@ -233,7 +233,12 @@
       border: 0;
     }
 
-    .site-header {
+@media screen and (min-width: 1024px) {
+body {
+  padding-top: 0;
+}
+
+.site-header {
   width: 100%;
   position: relative;
   top: 0;
@@ -273,6 +278,27 @@
 
 .header-scroll-placeholder.is-active {
   display: block;
+}
+}
+
+@media screen and (max-width: 1023px) {
+.site-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #2b2b2b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+    url("images/Web Paper 5.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.92);
+  border-bottom: 2px solid #b86b2a;
+}
 }
 
     .header-inner {
@@ -2119,6 +2145,7 @@ img { width: 100%; display: block; }
   const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
   const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
   const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+  const desktopHeaderBreakpoint = window.matchMedia("(min-width: 1024px)");
   const headerScrollPlaceholder = document.createElement("div");
   headerScrollPlaceholder.className = "header-scroll-placeholder";
   headerScrollPlaceholder.setAttribute("aria-hidden", "true");
@@ -2182,10 +2209,21 @@ img { width: 100%; display: block; }
   }
 
   window.addEventListener("scroll", () => {
-    if (headerScrollTicking) return;
+    if (!desktopHeaderBreakpoint.matches || headerScrollTicking) return;
     headerScrollTicking = true;
     window.requestAnimationFrame(updateHeaderOnScroll);
   }, { passive: true });
+
+  desktopHeaderBreakpoint.addEventListener("change", (event) => {
+    if (!event.matches) {
+      setHeaderFixed(false);
+      headerScrollTicking = false;
+    } else {
+      lastHeaderScrollY = Math.max(window.scrollY, 0);
+      headerDirectionAnchorY = lastHeaderScrollY;
+      updateHeaderOnScroll();
+    }
+  });
 
   function setMobileMenu(open) {
     if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
