@@ -204,7 +204,7 @@
     body {
       position: relative;
       isolation: isolate;
-      padding-top: 172px;
+      padding-top: 0;
     }
 
     body::before {
@@ -235,11 +235,14 @@
 
     .site-header {
   width: 100%;
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  transform: translateY(0);
+  transition: transform 0.22s ease;
+  will-change: transform;
   background-color: #2b2b2b;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
@@ -249,6 +252,14 @@
   background-repeat: no-repeat;
   color: rgba(255,255,255,0.92);
   border-bottom: 2px solid #b86b2a;
+}
+
+.site-header.header-scroll-reveal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(0);
 }
 
     .header-inner {
@@ -2095,6 +2106,33 @@ img { width: 100%; display: block; }
   const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
   const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
   const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+  let lastHeaderScrollY = Math.max(window.scrollY, 0);
+  let headerScrollTicking = false;
+
+  function updateHeaderOnScroll() {
+    if (!siteHeader) return;
+
+    const currentScrollY = Math.max(window.scrollY, 0);
+    const headerHeight = siteHeader.offsetHeight || 172;
+    const menuIsOpen = siteHeader.classList.contains("mobile-menu-open");
+
+    if (currentScrollY <= headerHeight) {
+      siteHeader.classList.remove("header-scroll-reveal");
+    } else if (currentScrollY < lastHeaderScrollY || menuIsOpen) {
+      siteHeader.classList.add("header-scroll-reveal");
+    } else if (currentScrollY > lastHeaderScrollY) {
+      siteHeader.classList.remove("header-scroll-reveal");
+    }
+
+    lastHeaderScrollY = currentScrollY;
+    headerScrollTicking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (headerScrollTicking) return;
+    headerScrollTicking = true;
+    window.requestAnimationFrame(updateHeaderOnScroll);
+  }, { passive: true });
 
   function setMobileMenu(open) {
     if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
@@ -2102,6 +2140,9 @@ img { width: 100%; display: block; }
     mobileMenuToggle.setAttribute("aria-expanded", String(open));
     mobileMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     mobileNavigation.setAttribute("aria-hidden", String(!open));
+    if (open && window.scrollY > (siteHeader.offsetHeight || 172)) {
+      siteHeader.classList.add("header-scroll-reveal");
+    }
     if (mobileBrandHome) mobileBrandHome.textContent = open ? "Menu" : "Tour The Lakes";
     if (mobileBrandMenu) mobileBrandMenu.textContent = open ? "Close" : "Menu";
   }
