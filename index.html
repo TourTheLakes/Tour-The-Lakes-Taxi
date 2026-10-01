@@ -2243,7 +2243,7 @@ img { width: 100%; display: block; }
     selected=item;successEl.hidden=true;formEl.hidden=false;messageEl.textContent="";const qty=parseInt(qtyEl.value||"1",10);bookingQtyEl.value=String(qty);bookingQtyEl.max=String(item.slot.capacity);
     document.querySelector(".home-finder")?.classList.add("booking-active");
     updateBookingSelection();
-    formEl.scrollIntoView({behavior:"smooth",block:"nearest"});
+    window.scrollTo({top:0,behavior:"smooth"});
   }
   categoryEl.addEventListener("change",populatePickups);pickupEl.addEventListener("change",renderResults);dateEl.addEventListener("change",renderResults);qtyEl.addEventListener("input",renderResults);bookingQtyEl.addEventListener("input",()=>{messageEl.textContent="";updateBookingSelection();});
 
