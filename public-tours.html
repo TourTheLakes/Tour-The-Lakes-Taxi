@@ -235,6 +235,10 @@ body {
   right: 0;
   transform: translateY(-100%);
 }
+
+.site-header.header-scroll-fixed.header-scroll-initializing {
+  transition: none;
+}
 .site-header.header-scroll-fixed.header-scroll-reveal {
   transform: translateY(0);
 }
@@ -3374,12 +3378,20 @@ const siteHeader = document.querySelector(".site-header");
       if (!siteHeader.classList.contains("header-scroll-fixed")) {
         headerScrollPlaceholder.style.height = `${siteHeader.offsetHeight || 172}px`;
         headerScrollPlaceholder.classList.add("is-active");
+
+        siteHeader.classList.add("header-scroll-initializing");
         siteHeader.classList.add("header-scroll-fixed");
+
+        // First hand-off is deliberately instantaneous. At this threshold the
+        // in-flow header has already naturally left the viewport, so animating
+        // the switch to fixed positioning creates the one-off initial bounce.
+        void siteHeader.offsetHeight;
+        siteHeader.classList.remove("header-scroll-initializing");
       }
       return;
     }
 
-    siteHeader.classList.remove("header-scroll-fixed", "header-scroll-reveal");
+    siteHeader.classList.remove("header-scroll-fixed", "header-scroll-reveal", "header-scroll-initializing");
     headerScrollPlaceholder.classList.remove("is-active");
     headerScrollPlaceholder.style.height = "";
   }
