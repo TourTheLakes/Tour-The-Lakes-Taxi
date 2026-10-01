@@ -1292,6 +1292,7 @@ img { width: 100%; display: block; }
 }
 
     @media screen and (min-width: 1024px) {
+      .home-booking-shell h1 { font-size: clamp(53.2px,10.5vw,134.4px); }
       .hero-wrapper img { max-height: 300px; object-fit: cover; }
       .hero-wrapper h1 { top: 27%; }
       .hero-wrapper p { top: 50%; }
@@ -1763,6 +1764,19 @@ img { width: 100%; display: block; }
 .home-finder-field label { display:block; margin-bottom:7px; color:#b86b2a; font-size:11px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
 .home-finder-field select,.home-finder-field input { width:100%; border:0; border-bottom:1px solid rgba(184,107,42,.65); border-radius:0; outline:0; background:rgba(255,255,255,.06); color:#fff; padding:12px 10px; font:inherit; }
 .home-finder-field select option { color:#2b2b2b; background:#f3ead8; }
+.home-search-btn {
+  width:100%;
+  border:0;
+  border-radius:0;
+  background:#b86b2a;
+  color:#fff;
+  padding:14px 18px;
+  cursor:pointer;
+  font:700 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+.home-search-btn:hover,.home-search-btn:focus-visible { filter:brightness(1.08); }
 
 /* Results remain inside the same dark finder cradle as the four search fields. */
 .home-finder-status {
@@ -1886,6 +1900,7 @@ img { width: 100%; display: block; }
 .home-booking-form { margin-top:24px; padding-top:0; border-top:0; }
 .home-finder.booking-active .home-finder-title,
 .home-finder.booking-active .home-finder-grid,
+.home-finder.booking-active .home-search-btn,
 .home-finder.booking-active .home-finder-status,
 .home-finder.booking-active .home-results { display:none; }
 .home-finder.booking-active .home-booking-form { margin-top:0; }
@@ -2095,7 +2110,8 @@ img { width: 100%; display: block; }
             <input id="homeQty" type="number" min="1" step="1" value="2" inputmode="numeric" />
           </div>
         </div>
-        <div id="homeFinderStatus" class="home-finder-status" aria-live="polite">Showing all available tours and pickup locations for your selected date.</div>
+        <button id="homeSearch" class="home-search-btn" type="button">Search</button>
+        <div id="homeFinderStatus" class="home-finder-status" aria-live="polite">Choose your options, then press Search.</div>
         <div id="homeResults" class="home-results"></div>
         <div id="homeBookingForm" class="home-booking-form" hidden>
           <h3>Your booking</h3>
@@ -2285,7 +2301,7 @@ img { width: 100%; display: block; }
   const categoryLabels = { "sightseeing":"Sightseeing Tour", "brewery-distillery":"Brewery & Distillery Tour", "special-interest":"Special Interest Tour" };
   const categoryLabelForTour=t=>first(t?.categoryLabel,categoryLabels[first(t?.category,"sightseeing")],first(t?.category,"sightseeing"));
 
-  const categoryEl=document.getElementById("homeCategory"), pickupEl=document.getElementById("homePickup"), dateEl=document.getElementById("homeDate"), qtyEl=document.getElementById("homeQty");
+  const categoryEl=document.getElementById("homeCategory"), pickupEl=document.getElementById("homePickup"), dateEl=document.getElementById("homeDate"), qtyEl=document.getElementById("homeQty"), searchBtn=document.getElementById("homeSearch");
   const statusEl=document.getElementById("homeFinderStatus"), resultsEl=document.getElementById("homeResults"), formEl=document.getElementById("homeBookingForm"), selectionEl=document.getElementById("homeBookingSelection");
   const nameEl=document.getElementById("homeName"), emailEl=document.getElementById("homeEmail"), phoneEl=document.getElementById("homePhone"), bookingQtyEl=document.getElementById("homeBookingQty"), confirmBtn=document.getElementById("homeConfirmBooking"), messageEl=document.getElementById("homeBookingMessage"), successEl=document.getElementById("homeBookingSuccess");
   let tours={}, selected=null;
@@ -2323,7 +2339,7 @@ img { width: 100%; display: block; }
     pickupEl.innerHTML='<option value="">All locations</option>';
     for(const [,t] of searchableTours()){if(cat && first(t.category,"sightseeing")!==cat)continue;for(const [id,p] of Object.entries(t.pickupLocations||{})){if(p?.enabled===false)continue;map.set(id,pickupDisplayLabel(p,id));}}
     for(const [id,label] of [...map.entries()].sort((a,b)=>a[1].localeCompare(b[1]))){const o=document.createElement("option");o.value=id;o.textContent=label;pickupEl.appendChild(o);}
-    pickupEl.disabled=!map.size;if(map.has(current))pickupEl.value=current;else pickupEl.value="";renderResults();
+    pickupEl.disabled=!map.size;if(map.has(current))pickupEl.value=current;else pickupEl.value="";
   }
   function matchingDepartures(){
     const cat=categoryEl.value,pickup=pickupEl.value,date=dateEl.value,qty=parseInt(qtyEl.value||"0",10);if(!date||!qty||qty<1)return [];
@@ -2341,6 +2357,51 @@ img { width: 100%; display: block; }
       }
     }
     return out.sort((a,b)=>a.pickupTime.localeCompare(b.pickupTime)||a.time.localeCompare(b.time)||first(a.tour.title,a.tourId).localeCompare(first(b.tour.title,b.tourId)));
+  }
+  function nextAvailableDeparture(relaxPickup=false){
+    const cat=categoryEl.value,pickup=relaxPickup?"":pickupEl.value,qty=parseInt(qtyEl.value||"0",10);
+    if(!qty||qty<1)return null;
+    const requestedDate=dateEl.value||todayKey();
+    const out=[];
+    for(const [tourId,t] of searchableTours()){
+      if(cat && first(t.category,"sightseeing")!==cat)continue;
+      for(const [date,dateData] of Object.entries(t.dates||{})){
+        if(date<requestedDate)continue;
+        for(const [time,slot] of Object.entries(dateData?.times||{})){
+          const cap=Number(slot?.capacity);if(!bookable(date,time)||!Number.isFinite(cap)||cap<qty)continue;
+          const pickupIds=pickup?[pickup]:Object.keys(slot?.pickups||{});
+          for(const pickupId of pickupIds){
+            const location=t.pickupLocations?.[pickupId];
+            if(!location||location.enabled===false||!slot?.pickups?.[pickupId])continue;
+            out.push({tourId,tour:t,date,time,slot,pickupId,pickup:location,pickupTime:first(slot.pickups[pickupId]?.time,time)});
+          }
+        }
+      }
+    }
+    return out.sort((a,b)=>a.date.localeCompare(b.date)||a.pickupTime.localeCompare(b.pickupTime)||a.time.localeCompare(b.time))[0]||null;
+  }
+  function runSearch(){
+    resultsEl.innerHTML="";
+    formEl.hidden=true;successEl.hidden=true;selected=null;
+    if(!dateEl.value){statusEl.textContent="Choose the day you would like to travel.";return;}
+    const qty=parseInt(qtyEl.value||"0",10);if(!qty||qty<1){statusEl.textContent="Enter the number of passengers.";return;}
+    if(matchingDepartures().length){renderResults();return;}
+
+    let next=nextAvailableDeparture(false);
+    if(!next && pickupEl.value) next=nextAvailableDeparture(true);
+    if(!next){
+      statusEl.textContent="No online departures are currently available for those choices.";
+      return;
+    }
+
+    dateEl.value=next.date;
+    if(pickupEl.value!==next.pickupId){
+      const option=[...pickupEl.options].find(o=>o.value===next.pickupId);
+      if(option) pickupEl.value=next.pickupId;
+      else pickupEl.value="";
+    }
+    window.alert("There were no tours available for the date you selected, so we have altered the search to show the next available date and location.");
+    renderResults();
   }
   function renderResults(){
     selected=null;formEl.hidden=true;successEl.hidden=true;resultsEl.innerHTML="";
@@ -2393,7 +2454,19 @@ img { width: 100%; display: block; }
     updateBookingSelection();
     window.scrollTo({top:0,behavior:"smooth"});
   }
-  categoryEl.addEventListener("change",populatePickups);pickupEl.addEventListener("change",renderResults);dateEl.addEventListener("change",renderResults);qtyEl.addEventListener("input",renderResults);bookingQtyEl.addEventListener("input",()=>{messageEl.textContent="";updateBookingSelection();});
+  function clearSearchResults(){
+    selected=null;
+    formEl.hidden=true;
+    successEl.hidden=true;
+    resultsEl.innerHTML="";
+    statusEl.textContent="Choose your options, then press Search.";
+  }
+  categoryEl.addEventListener("change",()=>{populatePickups();clearSearchResults();});
+  pickupEl.addEventListener("change",clearSearchResults);
+  dateEl.addEventListener("change",clearSearchResults);
+  qtyEl.addEventListener("input",clearSearchResults);
+  searchBtn.addEventListener("click",runSearch);
+  bookingQtyEl.addEventListener("input",()=>{messageEl.textContent="";updateBookingSelection();});
 
   confirmBtn.addEventListener("click",async()=>{
     if(!selected){messageEl.textContent="Choose a departure first.";return;}
