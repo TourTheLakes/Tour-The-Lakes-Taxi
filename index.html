@@ -355,7 +355,14 @@ body {
   display: none;
 }
 
+.brand-home-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .brand-toggle {
+  display: none;
   appearance: none;
   border: 0;
   padding: 0;
@@ -1368,6 +1375,10 @@ img { width: 100%; display: block; }
     }
 
     @media screen and (max-width: 600px) {
+  .brand-home-link {
+    display: none;
+  }
+
   .header-inner {
     transition: padding-bottom 0.35s ease;
   }
@@ -1740,7 +1751,7 @@ img { width: 100%; display: block; }
   max-height:none;
   object-fit:cover;
 }
-.home-booking-hero::after { background:rgba(0,0,0,.66); }
+.home-booking-hero::after { display:none; }
 .home-booking-shell { position:relative; z-index:2; width:100%; margin:0 auto; padding:38px 0 34px; color:rgba(255,255,255,.94); }
 .home-booking-shell h1 { position:relative; top:auto; left:auto; transform:none; width:100%; color:rgba(255,255,255,0.92); font-size:clamp(76px,15vw,192px); font-weight:800; line-height:0.88; text-align:center; margin:0 0 38px; }
 .home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; }
@@ -2276,6 +2287,8 @@ img { width: 100%; display: block; }
       </a>
 
       <div class="header-established">EST. 2023</div>
+
+      <a href="index.html" class="brand brand-home-link" aria-label="Return to homepage">Tour The Lakes</a>
 
       <button
         class="brand brand-toggle"
