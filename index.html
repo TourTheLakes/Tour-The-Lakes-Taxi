@@ -2042,6 +2042,120 @@ img { width: 100%; display: block; }
   }
 }
 
+/* ===== Homepage company introduction ===== */
+.home-company-intro {
+  width: 100%;
+  background: #f3ead8;
+  color: #2b2b2b;
+}
+.home-company-features {
+  width: min(1180px, calc(100% - 56px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 34px;
+  padding: 42px 0 30px;
+}
+.home-company-feature {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 15px;
+  align-items: center;
+  min-width: 0;
+}
+.home-company-feature-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b86b2a;
+}
+.home-company-feature-icon svg {
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.home-company-feature-title {
+  margin: 0 0 4px;
+  color: #2b2b2b;
+  font: 700 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.home-company-feature-copy {
+  margin: 0;
+  color: rgba(43,43,43,.76);
+  font: 500 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.home-company-story {
+  width: min(940px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 74px 0 72px;
+  text-align: center;
+}
+.home-company-story h2 {
+  margin: 0 auto 30px;
+  max-width: 900px;
+  color: #2b2b2b;
+  font: 700 clamp(30px, 3.3vw, 48px)/1.12 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: -.6px;
+}
+.home-company-story p {
+  margin: 0 auto;
+  max-width: 850px;
+  color: rgba(43,43,43,.82);
+  font: 500 18px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.home-tours-from {
+  width: min(1180px, calc(100% - 56px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 0 0;
+}
+.home-tours-from::before,
+.home-tours-from::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 2px;
+  background: #2b2b2b;
+}
+.home-tours-from h2 {
+  margin: 0;
+  color: #2b2b2b;
+  font: 500 clamp(25px, 2.4vw, 36px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+.home-signature-gap {
+  height: 64px;
+  width: 100%;
+  background: #f3ead8;
+}
+@media screen and (max-width: 1023px) {
+  .home-company-features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 38px; }
+}
+@media screen and (max-width: 600px) {
+  .home-company-features {
+    width: calc(100% - 32px);
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 34px 0 20px;
+  }
+  .home-company-feature { grid-template-columns: 42px 1fr; gap: 13px; }
+  .home-company-feature-icon { width: 40px; height: 40px; }
+  .home-company-feature-icon svg { width: 37px; height: 37px; }
+  .home-company-story { width: calc(100% - 32px); padding: 54px 0 52px; }
+  .home-company-story h2 { font-size: clamp(27px, 8vw, 36px); margin-bottom: 22px; }
+  .home-company-story p { font-size: 15px; line-height: 1.55; }
+  .home-tours-from { width: calc(100% - 32px); gap: 15px; padding-top: 18px; }
+  .home-tours-from h2 { font-size: clamp(20px, 6vw, 27px); letter-spacing: 2px; }
+}
+
 </style>
 </head>
 <body>
@@ -2142,6 +2256,34 @@ img { width: 100%; display: block; }
   </div>
 
 
+<section class="home-company-intro" aria-labelledby="home-company-heading">
+  <div class="home-company-features">
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 33c5-8 9-13 15-22 4 7 7 11 10 16l4-6 5 12"/><path d="M6 37h36"/><path d="M17 33l6-9 4 6"/></svg></div>
+      <div><div class="home-company-feature-title">Small group tours</div><p class="home-company-feature-copy">More personal journeys with fewer passengers.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 42s13-12 13-24a13 13 0 1 0-26 0c0 12 13 24 13 24Z"/><circle cx="24" cy="18" r="4"/><path d="M17 30c4-3 10-3 14 0"/></svg></div>
+      <div><div class="home-company-feature-title">Born in the Lakes</div><p class="home-company-feature-copy">Local knowledge from people who call the area home.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 35h32"/><path d="M11 35V20l13-8 13 8v15"/><path d="M18 35V24h12v11"/><path d="M24 12V7"/></svg></div>
+      <div><div class="home-company-feature-title">More than sightseeing</div><p class="home-company-feature-copy">Private tours, days out and tailored travel.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M7 29l4-10h26l4 10v8H7Z"/><path d="M13 19l4-7h14l4 7"/><circle cx="14" cy="36" r="3"/><circle cx="34" cy="36" r="3"/><path d="M11 29h26"/></svg></div>
+      <div><div class="home-company-feature-title">Executive travel</div><p class="home-company-feature-copy">Pre booked travel for business, leisure and special occasions.</p></div>
+    </div>
+  </div>
+
+  <div class="home-company-story">
+    <h2 id="home-company-heading">A small, family run company with its roots deep in the Lake District.</h2>
+    <p>Based in the Lakes, Tour The Lakes was established in 2023 with a simple idea. To offer a more personal way to explore the places we know and call home. From small group sightseeing tours to private days out and executive travel, we keep things friendly, flexible and refreshingly straightforward.</p>
+  </div>
+
+  <div class="home-tours-from" aria-label="Tours from"><h2>TOURS FROM</h2></div>
+  <div class="home-signature-gap" aria-hidden="true"></div>
+</section>
 
 <footer class="site-footer">
     <div class="footer-inner">
