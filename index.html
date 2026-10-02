@@ -1282,7 +1282,17 @@ img { width: 100%; display: block; }
 }
 
     @media screen and (min-width: 1024px) {
-      .home-booking-shell h1 { font-size: clamp(53.2px,10.5vw,134.4px); }
+      .hero-wrapper.home-booking-hero { background: #f3ead8; }
+      .hero-wrapper.home-booking-hero > .hero-image { display: none; }
+      .home-booking-hero::after { display: none; }
+      .home-booking-shell h1 {
+        width: 100%;
+        max-width: 100%;
+        font-size: clamp(48px, 7.6vw, 118px);
+        white-space: nowrap;
+        text-align: center;
+        color: #2b2b2b;
+      }
       .hero-wrapper img { max-height: 300px; object-fit: cover; }
       .hero-wrapper h1 { top: 27%; }
       .hero-wrapper p { top: 50%; }
