@@ -374,6 +374,11 @@ body {
   display: none;
 }
 
+.mobile-header-title,
+.mobile-navigation-backdrop {
+  display: none;
+}
+
 @media screen and (min-width: 601px) {
   .header-inner {
     display: grid;
@@ -1379,69 +1384,235 @@ img { width: 100%; display: block; }
     display: none;
   }
 
+  body {
+    padding-top: 66px;
+  }
+
+  body.mobile-menu-active {
+    overflow: hidden;
+  }
+
+  .site-header {
+    height: 66px;
+    background-color: #2b2b2b;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+      url("images/Web Paper 5.png");
+    border-bottom: 2px solid #b86b2a;
+  }
+
   .header-inner {
-    transition: padding-bottom 0.35s ease;
+    min-height: 64px;
+    height: 64px;
+    width: 100%;
+    padding: 6px 12px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    align-items: center;
+    justify-content: stretch;
+  }
+
+  .header-brand {
+    display: contents;
+  }
+
+  .header-home-link {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .header-logo {
+    width: 46px;
+    height: 46px;
+    margin: 0;
+  }
+
+  .header-established {
+    display: none;
   }
 
   .brand-toggle {
-    display: block;
+    grid-column: 3;
+    display: flex;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: rgba(255,255,255,0.92);
     cursor: pointer;
-    color: inherit;
-    text-align: center;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .brand-toggle:focus-visible {
+  .brand-toggle:focus-visible,
+  .mobile-navigation-close:focus-visible {
     outline: 1px solid #b86b2a;
-    outline-offset: 6px;
+    outline-offset: 3px;
+  }
+
+  .brand-home,
+  .brand-menu {
+    display: none;
+  }
+
+  .mobile-header-title {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding: 0 8px;
+    color: rgba(255,255,255,0.92);
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 600 clamp(20px, 6.2vw, 27px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.2px;
+  }
+
+  .mobile-hamburger {
+    position: relative;
+    display: block;
+    width: 29px;
+    height: 20px;
+  }
+
+  .mobile-hamburger::before,
+  .mobile-hamburger::after,
+  .mobile-hamburger span {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 29px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .mobile-hamburger::before { top: 0; }
+  .mobile-hamburger span { top: 9px; }
+  .mobile-hamburger::after { bottom: 0; }
+
+  .mobile-navigation-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    background: rgba(0,0,0,0.42);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.28s ease, visibility 0s linear 0.28s;
   }
 
   .mobile-navigation {
-    display: grid;
-    grid-template-columns: 1fr;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    width: min(82vw, 330px);
+    height: 100dvh;
+    padding: 0 18px 24px;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #f3ead8;
+    background-image: url("images/Web Paper BG.png");
+    background-size: cover;
+    background-position: center center;
+    color: #2b2b2b;
+    box-shadow: -14px 0 34px rgba(0,0,0,0.24);
+    transform: translateX(104%);
     visibility: hidden;
-    padding: 0 24px;
-    background: transparent;
-    transition:
-      max-height 0.4s ease,
-      opacity 0.25s ease,
-      padding 0.4s ease,
-      visibility 0s linear 0.4s;
+    transition: transform 0.32s ease, visibility 0s linear 0.32s;
   }
 
   .site-header.mobile-menu-open .mobile-navigation {
-    max-height: 260px;
-    opacity: 1;
+    transform: translateX(0);
     visibility: visible;
-    padding-top: 14px;
-    padding-bottom: 20px;
-    transition:
-      max-height 0.4s ease,
-      opacity 0.25s ease 0.1s,
-      padding 0.4s ease,
-      visibility 0s linear 0s;
+    transition: transform 0.32s ease, visibility 0s linear 0s;
   }
 
-  .mobile-navigation a {
-    display: block;
-    padding: 12px 8px;
-    color: rgba(255,255,255,0.92);
-    font: 500 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    letter-spacing: 0.2px;
-    text-align: center;
+  .site-header.mobile-menu-open + .mobile-navigation-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.28s ease, visibility 0s linear 0s;
+  }
+
+  .mobile-navigation-top {
+    min-height: 66px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 46px;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(43,43,43,0.22);
+  }
+
+  .mobile-navigation-slogan {
+    color: #2b2b2b;
+    font: 700 clamp(13px, 4vw, 16px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 1.1px;
+    white-space: nowrap;
+  }
+
+  .mobile-navigation-close {
+    width: 46px;
+    height: 46px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: #2b2b2b;
+    font: 300 38px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    cursor: pointer;
+  }
+
+  .mobile-navigation-links {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+  }
+
+  .mobile-navigation a.mobile-navigation-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0 4px;
+    border-bottom: 1px solid rgba(43,43,43,0.28);
+    color: #2b2b2b;
+    font: 600 clamp(15px, 4.5vw, 18px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.15px;
+    text-align: left;
     text-decoration: none;
   }
 
-  .mobile-navigation a + a {
-    border-top: 1px solid rgba(184,107,42,0.35);
+  .mobile-navigation-link::after {
+    content: "›";
+    padding-left: 14px;
+    color: #b86b2a;
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1;
   }
 
-  .mobile-navigation a:active,
-  .mobile-navigation a:focus-visible {
+  .mobile-navigation a.mobile-navigation-link:active,
+  .mobile-navigation a.mobile-navigation-link:focus-visible {
     color: #b86b2a;
+  }
+
+  .mobile-navigation-home {
+    margin-top: auto;
+    padding-top: 22px;
+    color: rgba(43,43,43,0.72);
+    font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.8px;
+    text-decoration: none;
   }
 
   .hero-wrapper h1 {
@@ -1621,114 +1792,7 @@ img { width: 100%; display: block; }
   padding-right: 0;
 }
 
-.brand {
-  position: relative;
-  width: 170px;
-  height: 24px;
-  transform-origin: center;
-}
 
-.brand-home,
-.brand-menu {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: center;
-}
-
-.brand-home {
-  color: rgba(255,255,255,0.92);
-  animation: mobile-brand-home 8s ease-in-out infinite;
-}
-
-.brand-menu {
-  color: #b86b2a;
-  animation: mobile-brand-menu 8s ease-in-out infinite;
-}
-
-@keyframes mobile-brand-home {
-  0%,
-  24% {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-
-  27% {
-    transform: rotate(-2deg) scale(1.03);
-  }
-
-  30% {
-    transform: rotate(2deg) scale(1.03);
-  }
-
-  33% {
-    transform: rotate(-1.5deg) scale(1.02);
-  }
-
-  36% {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-
-  43%,
-  72% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-
-  79% {
-    opacity: 1;
-    transform: rotate(-2deg) scale(1.03);
-  }
-
-  82% {
-    transform: rotate(2deg) scale(1.03);
-  }
-
-  85%,
-  100% {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-}
-
-@keyframes mobile-brand-menu {
-  0%,
-  36% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-
-  43% {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-
-  54% {
-    transform: rotate(-2deg) scale(1.05);
-  }
-
-  57% {
-    transform: rotate(2deg) scale(1.05);
-  }
-
-  60% {
-    transform: rotate(-1.5deg) scale(1.03);
-  }
-
-  63% {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-
-  72%,
-  100% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-}
     
   
   }
@@ -2297,16 +2361,16 @@ img { width: 100%; display: block; }
       <div class="header-established">EST. 2023</div>
 
       <a href="index.html" class="brand brand-home-link" aria-label="Return to homepage">Tour The Lakes</a>
+      <a href="index.html" class="mobile-header-title" aria-label="Return to homepage">Tour The Lakes</a>
 
       <button
-        class="brand brand-toggle"
+        class="brand-toggle"
         type="button"
         aria-expanded="false"
         aria-controls="mobile-navigation"
         aria-label="Open menu"
       >
-        <span class="brand-home">Tour The Lakes</span>
-        <span class="brand-menu">Menu</span>
+        <span class="mobile-hamburger" aria-hidden="true"><span></span></span>
       </button>
     </div>
 
@@ -2322,12 +2386,20 @@ img { width: 100%; display: block; }
     aria-label="Mobile navigation"
     aria-hidden="true"
   >
-    <a href="private-tours.html">Private Tours</a>
-    <a href="public-tours.html">Public Tours</a>
-    <a href="executive-travel.html">Executive Travel</a>
-    <a href="private-hire.html">Private Hire</a>
+    <div class="mobile-navigation-top">
+      <div class="mobile-navigation-slogan">UP, UP AND AWAY</div>
+      <button class="mobile-navigation-close" type="button" aria-label="Close menu">×</button>
+    </div>
+    <div class="mobile-navigation-links">
+      <a class="mobile-navigation-link" href="private-tours.html">Private Tours</a>
+      <a class="mobile-navigation-link" href="public-tours.html">Public Tours</a>
+      <a class="mobile-navigation-link" href="executive-travel.html">Executive Travel</a>
+      <a class="mobile-navigation-link" href="private-hire.html">Private Hire</a>
+    </div>
+    <a class="mobile-navigation-home" href="index.html">TOUR THE LAKES · HOME</a>
   </nav>
 </header>
+<div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
 <div class="home-signature-gap" aria-hidden="true"></div>
 
@@ -2454,8 +2526,8 @@ img { width: 100%; display: block; }
   const siteHeader = document.querySelector(".site-header");
   const mobileMenuToggle = document.querySelector(".brand-toggle");
   const mobileNavigation = document.getElementById("mobile-navigation");
-  const mobileBrandHome = mobileMenuToggle?.querySelector(".brand-home");
-  const mobileBrandMenu = mobileMenuToggle?.querySelector(".brand-menu");
+  const mobileMenuClose = document.querySelector(".mobile-navigation-close");
+  const mobileNavigationBackdrop = document.querySelector(".mobile-navigation-backdrop");
   const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
   const desktopHeaderBreakpoint = window.matchMedia("(min-width: 1024px)");
   const headerScrollPlaceholder = document.createElement("div");
@@ -2557,14 +2629,16 @@ img { width: 100%; display: block; }
       setHeaderFixed(true);
       siteHeader.classList.add("header-scroll-reveal");
     }
-    if (mobileBrandHome) mobileBrandHome.textContent = open ? "Menu" : "Tour The Lakes";
-    if (mobileBrandMenu) mobileBrandMenu.textContent = open ? "Close" : "Menu";
+    document.body.classList.toggle("mobile-menu-active", open);
   }
 
   mobileMenuToggle?.addEventListener("click", () => {
     if (!mobileBreakpoint.matches) return;
     setMobileMenu(mobileMenuToggle.getAttribute("aria-expanded") !== "true");
   });
+
+  mobileMenuClose?.addEventListener("click", () => setMobileMenu(false));
+  mobileNavigationBackdrop?.addEventListener("click", () => setMobileMenu(false));
 
   mobileNavigation?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => setMobileMenu(false));
