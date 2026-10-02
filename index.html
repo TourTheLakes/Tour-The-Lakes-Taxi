@@ -1947,13 +1947,27 @@ img { width: 100%; display: block; }
   /* iPhone Safari: keep the native date control inside the same field width as the other inputs. */
   .home-finder-field { min-width: 0; }
   .home-finder-field select,
-  .home-finder-field input { min-width: 0; max-width: 100%; }
+  .home-finder-field input {
+    min-width: 0;
+    max-width: 100%;
+    height: 48px;
+    min-height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+  }
   #homeDate {
     display: block;
     width: -webkit-fill-available;
     max-width: 100%;
     min-width: 0;
+    height: 48px;
+    min-height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
     box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .home-booking-shell{width:calc(100% - 32px);padding:36px 0 30px;}
