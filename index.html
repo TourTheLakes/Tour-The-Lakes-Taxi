@@ -212,11 +212,8 @@
       position: fixed;
       inset: 0;
       z-index: -1;
-      background-color: #2b2b2b;
-      background-image: url("images/Web Paper BG.png");
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
+      background-color: #f3ead8;
+      background-image: none;
       pointer-events: none;
     }
     *, *::before, *::after { box-sizing: border-box; }
@@ -1282,13 +1279,7 @@ img { width: 100%; display: block; }
 }
 
     @media screen and (min-width: 1024px) {
-      .home-booking-shell h1 {
-        width: 100%;
-        font-size: clamp(53.2px,10.5vw,134.4px);
-        color: #2b2b2b;
-        text-align: center;
-        white-space: nowrap;
-      }
+      .home-booking-shell h1 { font-size: clamp(53.2px,10.5vw,134.4px); }
       .hero-wrapper img { max-height: 300px; object-fit: cover; }
       .hero-wrapper h1 { top: 27%; }
       .hero-wrapper p { top: 50%; }
@@ -1739,13 +1730,6 @@ img { width: 100%; display: block; }
   justify-content: center;
   overflow: hidden;
 }
-/* Homepage only: plain website cream background, with no hero photograph. */
-.hero-wrapper.home-booking-hero {
-  background: #f3ead8;
-}
-.hero-wrapper.home-booking-hero::after {
-  display: none;
-}
 /* Override the older responsive hero-image height limit so the photograph
    covers the entire booking section, right down to its orange bottom frame. */
 .hero-wrapper.home-booking-hero > .hero-image {
@@ -1758,7 +1742,7 @@ img { width: 100%; display: block; }
 }
 .home-booking-hero::after { background:rgba(0,0,0,.66); }
 .home-booking-shell { position:relative; z-index:2; width:min(1060px,calc(100% - 40px)); margin:0 auto; padding:38px 0 34px; color:rgba(255,255,255,.94); }
-.home-booking-shell h1 { position:static; width:auto; color:#2b2b2b; font-size:clamp(76px,15vw,192px); font-weight:800; line-height:0.88; text-align:center; margin:0 0 28px; }
+.home-booking-shell h1 { position:relative; left:50%; transform:translateX(-50%); width:100vw; color:rgba(255,255,255,0.92); font-size:clamp(76px,15vw,192px); font-weight:800; line-height:0.88; text-align:center; margin:0 0 28px; }
 .home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; }
 .home-finder { border:0; padding:0; }
 .home-finder-title { margin:0 0 14px; color:#b86b2a; text-align:center; font-size:18px; font-weight:700; letter-spacing:1.4px; }
@@ -2116,6 +2100,7 @@ img { width: 100%; display: block; }
 <div class="folder-gap"></div>
 
 <div class="hero-wrapper home-booking-hero">
+    <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" fetchpriority="high" decoding="async" />
     <div class="home-booking-shell">
       <h1>GO EXPLORE</h1>
 
