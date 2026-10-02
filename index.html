@@ -2042,6 +2042,13 @@ img { width: 100%; display: block; }
   }
 }
 
+/* ===== Signature gap beneath homepage search engine ===== */
+.home-search-signature-gap {
+  height: 64px;
+  width: 100%;
+  background: #f3ead8;
+}
+
 /* ===== Homepage company introduction ===== */
 .home-company-intro {
   width: 100%;
@@ -2057,7 +2064,10 @@ img { width: 100%; display: block; }
   padding: 42px 0 30px;
 }
 .home-company-feature {
-  display: block;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
   min-width: 0;
 }
 .home-company-feature-icon {
@@ -2254,19 +2264,24 @@ img { width: 100%; display: block; }
     </div>
   </div>
 
+  <div class="home-search-signature-gap" aria-hidden="true"></div>
 
 <section class="home-company-intro" aria-labelledby="home-company-heading">
   <div class="home-company-features">
     <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M6 36L18 18l6 9 5-7 13 16"/><path d="M4 40h40"/></svg></div>
       <div><div class="home-company-feature-title">Small group tours</div><p class="home-company-feature-copy">More personal journeys with fewer passengers.</p></div>
     </div>
     <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 43s11-10 11-22a11 11 0 1 0-22 0c0 12 11 22 11 22Z"/><circle cx="24" cy="21" r="3.5"/></svg></div>
       <div><div class="home-company-feature-title">Born in the Lakes</div><p class="home-company-feature-copy">Local knowledge from people who call the area home.</p></div>
     </div>
     <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M9 39V22l15-11 15 11v17"/><path d="M6 39h36M18 39V27h12v12"/></svg></div>
       <div><div class="home-company-feature-title">More than sightseeing</div><p class="home-company-feature-copy">Private tours, days out and tailored travel.</p></div>
     </div>
     <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="14" width="30" height="24" rx="2"/><path d="M18 14v-4h12v4M9 24h30M21 24v3h6v-3"/></svg></div>
       <div><div class="home-company-feature-title">Executive travel</div><p class="home-company-feature-copy">Pre booked travel for business, leisure and special occasions.</p></div>
     </div>
   </div>
