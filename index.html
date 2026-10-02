@@ -1944,6 +1944,11 @@ img { width: 100%; display: block; }
   }
 }
 @media screen and (max-width:600px){
+  /* iPhone Safari: allow the native date control to shrink within its mobile grid cell. */
+  .home-finder-field { min-width: 0; }
+  .home-finder-field select,
+  .home-finder-field input { min-width: 0; max-width: 100%; }
+
   .home-booking-shell{width:calc(100% - 32px);padding:36px 0 30px;}
   .home-booking-shell h1{font-size:clamp(46.5px,13.5vw,81px);font-weight:800;line-height:0.88;white-space:normal;margin-bottom:26px;}
   .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
