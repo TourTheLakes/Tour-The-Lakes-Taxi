@@ -1970,6 +1970,16 @@ img { width: 100%; display: block; }
     appearance: none;
   }
 
+  /* iPhone Safari keeps the date text in its own internal value box.
+     Centre that internal box vertically without changing the field itself. */
+  #homeDate::-webkit-date-and-time-value {
+    height: 48px;
+    line-height: 48px;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+  }
+
   .home-booking-shell{width:calc(100% - 32px);padding:36px 0 30px;}
   .home-booking-shell h1{font-size:clamp(46.5px,13.5vw,81px);font-weight:800;line-height:0.88;white-space:normal;margin-bottom:26px;}
   .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
