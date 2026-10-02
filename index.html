@@ -1882,9 +1882,29 @@ img { width: 100%; display: block; }
 .home-finder-grid {
   gap: 0;
   background: transparent;
+  width: min(900px, calc(100% - 40px));
+  margin: 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.home-finder {
+  width: 100%;
+  background: rgba(43,43,43,.88);
+  padding: 18px 0 0;
+}
+.home-finder-field {
+  background: transparent;
+}
+.home-search-btn {
+  display: block;
+  width: min(900px, calc(100% - 40px));
+  margin: 0 auto;
 }
 /* Earlier tablet image rules capped the hero photograph at 300px. */
 @media screen and (min-width: 601px) and (max-width: 1023px) {
+  .home-finder-grid,
+  .home-search-btn {
+    width: min(720px, calc(100% - 40px));
+  }
   .home-finder-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1907,35 +1927,7 @@ img { width: 100%; display: block; }
     padding-bottom: 0;
     box-sizing: border-box;
   }
-  #homeDate {
-    display: block;
-    width: -webkit-fill-available;
-    max-width: 100%;
-    min-width: 0;
-    height: 48px;
-    min-height: 48px;
-    padding-top: 0;
-    padding-bottom: 0;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    appearance: none;
-    text-align: left;
-  }
-  #homeDate::-webkit-date-and-time-value {
-    display: flex;
-    align-items: center;
-    height: 48px;
-    min-height: 48px;
-    text-align: left;
-    margin: 0;
-  }
-  #homeDate::-webkit-datetime-edit {
-    display: flex;
-    align-items: center;
-    height: 48px;
-    min-height: 48px;
-    padding: 0;
-  }
+
 
   .home-booking-shell{width:100%;padding:100px 0 30px;}
   .home-booking-shell h1{font-size:clamp(31px,9vw,54px);font-weight:800;line-height:0.88;white-space:nowrap;margin-bottom:26px;}
@@ -1948,6 +1940,8 @@ img { width: 100%; display: block; }
     .home-booking-shell h1 .home-slogan-rest{display:block;font-size:1em;line-height:.88;}
   }
   .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
+  .home-finder-grid,
+  .home-search-btn { width: calc(100% - 32px); }
   .home-finder-grid{grid-template-columns:1fr;}
 }
 
@@ -2233,14 +2227,6 @@ img { width: 100%; display: block; }
           <div class="home-finder-field">
             <label for="homePickup">Where should we pick you up?</label>
             <select id="homePickup"><option value="">All locations</option></select>
-          </div>
-          <div class="home-finder-field">
-            <label for="homeDate">When would you like to go?</label>
-            <input id="homeDate" type="date" required />
-          </div>
-          <div class="home-finder-field">
-            <label for="homeQty">How many people?</label>
-            <input id="homeQty" type="number" min="1" step="1" value="2" inputmode="numeric" />
           </div>
         </div>
         <button id="homeSearch" class="home-search-btn" type="button">Search</button>
