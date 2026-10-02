@@ -1405,7 +1405,7 @@ img { width: 100%; display: block; }
     min-height: 64px;
     height: 64px;
     width: 100%;
-    padding: 6px 12px;
+    padding: 6px 60px;
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr) 48px;
     align-items: center;
@@ -1433,12 +1433,13 @@ img { width: 100%; display: block; }
   }
 
   .header-established {
-    grid-column: 1;
-    grid-row: 1;
+    position: absolute;
+    left: 60px;
+    bottom: 3px;
+    width: 46px;
     display: block;
-    align-self: end;
-    justify-self: center;
-    margin: 0 0 1px;
+    margin: 0;
+    text-align: center;
     color: rgba(255,255,255,0.70);
     font: 600 6px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     letter-spacing: 0.8px;
@@ -1474,6 +1475,7 @@ img { width: 100%; display: block; }
   }
 
   .mobile-header-title {
+    display: block;
     grid-column: 2;
     grid-row: 1;
     min-width: 0;
