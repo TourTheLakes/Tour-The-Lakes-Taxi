@@ -426,6 +426,32 @@ img { width: 100%; display: block; }
   background: transparent;
 }
 
+
+.home-tours-from {
+  width: min(1180px, calc(100% - 56px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 0 0;
+}
+
+.home-tours-from::before,
+.home-tours-from::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 2px;
+  background: #2b2b2b;
+}
+
+.home-tours-from h2 {
+  margin: 0;
+  color: #2b2b2b;
+  font: 500 clamp(25px, 2.4vw, 36px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+
     .public-tours-intro {
   position: relative;
   width: 100%;
@@ -1364,6 +1390,17 @@ img { width: 100%; display: block; }
     }
 
     @media screen and (max-width: 600px) {
+  .home-tours-from {
+    width: calc(100% - 32px);
+    gap: 15px;
+    padding-top: 18px;
+  }
+
+  .home-tours-from h2 {
+    font-size: clamp(20px, 6vw, 27px);
+    letter-spacing: 2px;
+  }
+
   .header-inner {
     transition: padding-bottom 0.35s ease;
   }
@@ -2298,6 +2335,107 @@ body {
   }
 }
 
+.home-tours-from-grid {
+  width: min(1540px, calc(100% - 120px));
+  height: 520px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1.45fr 1.2fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  padding: 34px 0 0;
+  background: #f3ead8;
+}
+.home-tours-from-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: #2b2b2b;
+  text-decoration: none;
+  background: #2b2b2b;
+}
+.home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1 / 3; }
+.home-tours-from-card:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
+.home-tours-from-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+.home-tours-from-card:nth-child(4) { grid-column: 3; grid-row: 2; }
+.home-tours-from-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .28s ease;
+}
+.home-tours-from-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.06), rgba(0,0,0,.20));
+  pointer-events: none;
+}
+.home-tours-from-card:hover img,
+.home-tours-from-card:focus-visible img { transform: scale(1.025); }
+.home-tours-from-label {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 18px;
+  background: rgba(243,234,216,.90);
+  color: #2b2b2b;
+  font: 700 clamp(17px, 1.55vw, 23px)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.home-tours-from-arrow {
+  flex: 0 0 auto;
+  color: #b86b2a;
+  font-size: 27px;
+  line-height: 1;
+}
+@media screen and (max-width: 1023px) {
+  .home-company-features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 38px; }
+  .home-tours-from-grid { width: calc(100% - 40px); height: 460px; grid-template-columns: 1fr 1.2fr 1fr; padding-left: 0; padding-right: 0; }
+  .home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1 / 3; }
+  .home-tours-from-card:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
+  .home-tours-from-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .home-tours-from-card:nth-child(4) { grid-column: 3; grid-row: 2; }
+}
+@media screen and (max-width: 600px) {
+  .home-company-features {
+    width: calc(100% - 32px);
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 34px 0 20px;
+  }
+  .home-company-feature { grid-template-columns: 42px 1fr; gap: 13px; }
+  .home-company-feature-icon { width: 40px; height: 40px; }
+  .home-company-feature-icon svg { width: 37px; height: 37px; }
+  .home-company-story { width: calc(100% - 32px); padding: 54px 0 52px; }
+  .home-company-story h2 { font-size: clamp(27px, 8vw, 36px); margin-bottom: 22px; }
+  .home-company-story p { font-size: 15px; line-height: 1.55; }
+  .home-tours-from { width: calc(100% - 32px); gap: 15px; padding-top: 18px; }
+  .home-tours-from h2 { font-size: clamp(20px, 6vw, 27px); letter-spacing: 2px; }
+  .home-tours-from-grid {
+    width: calc(100% - 32px);
+    height: 410px;
+    grid-template-columns: 1.12fr .88fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 7px;
+    padding: 24px 0 0;
+  }
+  .home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .home-tours-from-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .home-tours-from-card:nth-child(3) { grid-column: 1; grid-row: 2; }
+  .home-tours-from-card:nth-child(4) { grid-column: 2; grid-row: 2; }
+  .home-tours-from-label { min-height: 48px; padding: 0 10px; gap: 8px; font-size: clamp(13px, 3.6vw, 16px); }
+  .home-tours-from-arrow { font-size: 22px; }
+}
+
 </style>
 </head>
 <body>
@@ -2364,19 +2502,23 @@ body {
 <div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
 <section id="public-tours" class="folder-page" aria-label="Public Lake District tours">
-  <div class="public-tours-intro">
-    <img
-      src="images/Kirkstone%20Pass%20Hero.png"
-      alt="Tour The Lakes vehicle on a scenic Lake District route"
-      decoding="async"
-    />
-        <div class="folder-intro-content">
-        <h1 class="folder-intro-title">Public Tours</h1>
-        <p class="folder-intro-description">Discover the Lake District on one of our scheduled small group tours, carefully planned to showcase some of the region’s most memorable scenery, villages and attractions. Travel in comfort with an experienced driver, enjoy time to explore at each stop, and experience a full day in the Lakes without having to worry about planning the route, parking or getting from place to place.</p>
-      </div>
-    </div>
 
   <div class="folder-gap"></div>
+
+  <div class="home-tours-from" aria-label="Public Tours"><h2>PUBLIC TOURS</h2></div>
+
+  <div class="folder-gap"></div>
+
+  <div class="home-tours-from-grid" aria-label="Choose a public tour">
+    <a class="home-tours-from-card" href="six-lakes.html" aria-label="Six Lakes">
+      <img src="images/DSC_0005.jpg" alt="Six Lakes" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Six Lakes</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+    </a>
+    <a class="home-tours-from-card" href="lakes-villages.html" aria-label="Lakes Villages">
+      <img src="images/DSC_0023.jpg" alt="Lakes Villages" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Lakes Villages</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+    </a>
+  </div>
 
   <div id="tours"></div>
 </section>
