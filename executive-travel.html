@@ -2142,6 +2142,38 @@ body {
     text-decoration: none;
   }
 
+
+/* FINAL INDEX MOBILE SIDEBAR AUTHORITY */
+@media screen and (max-width: 600px) {
+  .mobile-navigation {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(82vw, 330px);
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    padding: 0 18px 24px;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    opacity: 1;
+  }
+
+  .site-header.mobile-menu-open .mobile-navigation {
+    max-height: none;
+    padding: 0 18px 24px;
+    opacity: 1;
+    overflow-y: auto;
+  }
+
+  .mobile-navigation-home {
+    margin-top: auto;
+  }
+}
+
 </style>
 </head>
 <body>
