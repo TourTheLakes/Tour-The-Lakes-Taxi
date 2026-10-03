@@ -1698,6 +1698,450 @@ img { width: 100%; display: block; }
   .mobile-navigation a.mobile-navigation-link:active,.mobile-navigation a.mobile-navigation-link:focus-visible { color:#b86b2a; }
   .mobile-navigation-home { margin-top:auto; padding-top:22px; color:rgba(43,43,43,.72); font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; letter-spacing:.8px; text-decoration:none; }
 }
+
+
+/* INDEX HEADER AUTHORITY — matched exactly from index.html */
+@media screen and (min-width: 1024px) {
+body {
+  padding-top: 0;
+}
+
+.site-header {
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transform: translateY(0);
+  transition: transform 0.22s ease;
+  will-change: transform;
+  background-color: #2b2b2b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+    url("images/Web Paper 5.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.92);
+  border-bottom: 2px solid #b86b2a;
+}
+
+.site-header.header-scroll-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+}
+
+.site-header.header-scroll-fixed.header-scroll-initializing {
+  transition: none;
+}
+
+.site-header.header-scroll-fixed.header-scroll-reveal {
+  transform: translateY(0);
+}
+
+.header-scroll-placeholder {
+  display: none;
+  width: 100%;
+}
+
+.header-scroll-placeholder.is-active {
+  display: block;
+}
+}
+
+@media screen and (max-width: 1023px) {
+.site-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #2b2b2b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+    url("images/Web Paper 5.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.92);
+  border-bottom: 2px solid #b86b2a;
+}
+}
+
+    .header-inner {
+  min-height: 170px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 18px 16px 26px;
+}
+
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .header-home-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+    .header-logo {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+}
+
+    .header-established {
+  color: rgba(255,255,255,0.65);
+  font: 600 9px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+    .brand {
+     color: rgba(255,255,255,0.92);
+     font: 600 clamp(21px, 3vw, 38px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+     letter-spacing: 0.2px;
+     white-space: nowrap;
+     }
+
+     .brand-menu {
+  display: none;
+}
+
+.header-nav {
+  display: none;
+}
+
+.brand-home-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-toggle {
+  display: none;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.mobile-navigation {
+  display: none;
+}
+
+.mobile-header-title,
+.mobile-navigation-backdrop {
+  display: none;
+}
+
+@media screen and (min-width: 601px) {
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: clamp(28px, 4vw, 70px);
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .header-nav {
+  display: flex;
+  align-self: end;
+  gap: clamp(22px, 3vw, 48px);
+  min-width: 0;
+  padding-top: 34px;
+}
+
+  .header-nav-left {
+    justify-content: flex-end;
+  }
+
+  .header-nav-right {
+    justify-content: flex-start;
+  }
+
+  .header-nav a {
+  color: rgba(255,255,255,0.92);
+  font: 500 clamp(13px, 1.45vw, 17px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+  .header-nav a:hover,
+  .header-nav a:focus-visible {
+    color: #b86b2a;
+  }
+}
+
+    @media screen and (max-width: 600px) {
+  .brand-home-link {
+    display: none;
+  }
+
+  body {
+    padding-top: 66px;
+  }
+
+  body.mobile-menu-active {
+    overflow: hidden;
+  }
+
+  .site-header {
+    height: 66px;
+    background-color: #2b2b2b;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+      url("images/Web Paper 5.png");
+    border-bottom: 2px solid #b86b2a;
+  }
+
+  .header-inner {
+    min-height: 64px;
+    height: 64px;
+    width: 100%;
+    padding: 6px 30px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    align-items: center;
+    justify-content: stretch;
+  }
+
+  .header-brand {
+    display: contents;
+  }
+
+  .header-home-link {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    min-width: 46px;
+  }
+
+  .header-logo {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .header-established {
+    position: absolute;
+    left: 30px;
+    bottom: 3px;
+    width: 46px;
+    display: block;
+    margin: 0;
+    text-align: center;
+    color: rgba(255,255,255,0.70);
+    font: 600 6px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .brand-toggle {
+    grid-column: 3;
+    display: flex;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    align-items: center;
+    justify-content: flex-end;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: rgba(255,255,255,0.92);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .brand-toggle:focus-visible,
+  .mobile-navigation-close:focus-visible {
+    outline: 1px solid #b86b2a;
+    outline-offset: 3px;
+  }
+
+  .brand-home,
+  .brand-menu {
+    display: none;
+  }
+
+  .mobile-header-title {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding: 0 8px;
+    color: rgba(255,255,255,0.92);
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 600 clamp(20px, 6.2vw, 27px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.2px;
+  }
+
+  .mobile-hamburger {
+    position: relative;
+    display: block;
+    width: 29px;
+    height: 20px;
+  }
+
+  .mobile-hamburger::before,
+  .mobile-hamburger::after,
+  .mobile-hamburger span {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 29px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .mobile-hamburger::before { top: 0; }
+  .mobile-hamburger span { top: 9px; }
+  .mobile-hamburger::after { bottom: 0; }
+
+  .mobile-navigation-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    background: rgba(0,0,0,0.42);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.28s ease, visibility 0s linear 0.28s;
+  }
+
+  .mobile-navigation {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    width: min(82vw, 330px);
+    height: 100dvh;
+    padding: 0 18px 24px;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #f3ead8;
+    background-image: url("images/Web Paper BG.png");
+    background-size: cover;
+    background-position: center center;
+    color: #2b2b2b;
+    box-shadow: -14px 0 34px rgba(0,0,0,0.24);
+    transform: translateX(104%);
+    visibility: hidden;
+    transition: transform 0.32s ease, visibility 0s linear 0.32s;
+  }
+
+  .site-header.mobile-menu-open .mobile-navigation {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.32s ease, visibility 0s linear 0s;
+  }
+
+  .site-header.mobile-menu-open + .mobile-navigation-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.28s ease, visibility 0s linear 0s;
+  }
+
+  .mobile-navigation-top {
+    min-height: 66px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 46px;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(43,43,43,0.22);
+  }
+
+  .mobile-navigation-slogan {
+    color: #2b2b2b;
+    font: 700 clamp(13px, 4vw, 16px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 1.1px;
+    white-space: nowrap;
+  }
+
+  .mobile-navigation-close {
+    width: 46px;
+    height: 46px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: #2b2b2b;
+    font: 300 38px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    cursor: pointer;
+  }
+
+  .mobile-navigation-links {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+  }
+
+  .mobile-navigation a.mobile-navigation-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0 4px;
+    border-bottom: 1px solid rgba(43,43,43,0.28);
+    color: #2b2b2b;
+    font: 600 clamp(15px, 4.5vw, 18px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.15px;
+    text-align: left;
+    text-decoration: none;
+  }
+
+  .mobile-navigation-link::after {
+    content: "›";
+    padding-left: 14px;
+    color: #b86b2a;
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .mobile-navigation a.mobile-navigation-link:active,
+  .mobile-navigation a.mobile-navigation-link:focus-visible {
+    color: #b86b2a;
+  }
+
+  .mobile-navigation-home {
+    margin-top: auto;
+    padding-top: 22px;
+    color: rgba(43,43,43,0.72);
+    font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: 0.8px;
+    text-decoration: none;
+  }
+
 </style>
 </head>
 <body>
@@ -1737,7 +2181,7 @@ img { width: 100%; display: block; }
     </div>
 
     <nav class="header-nav header-nav-right" aria-label="Secondary navigation">
-      <a href="executive-travel.html" aria-current="page">Executive Travel</a>
+      <a href="executive-travel.html">Executive Travel</a>
       <a href="private-hire.html">Private Hire</a>
     </nav>
   </div>
@@ -1755,7 +2199,7 @@ img { width: 100%; display: block; }
     <div class="mobile-navigation-links">
       <a class="mobile-navigation-link" href="private-tours.html">Private Tours</a>
       <a class="mobile-navigation-link" href="public-tours.html">Public Tours</a>
-      <a class="mobile-navigation-link" href="executive-travel.html" aria-current="page">Executive Travel</a>
+      <a class="mobile-navigation-link" href="executive-travel.html">Executive Travel</a>
       <a class="mobile-navigation-link" href="private-hire.html">Private Hire</a>
     </div>
     <a class="mobile-navigation-home" href="index.html">TOUR THE LAKES · HOME</a>
