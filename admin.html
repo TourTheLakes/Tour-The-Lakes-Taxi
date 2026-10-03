@@ -17,9 +17,17 @@
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
+
+    html {
+      margin: 0;
+      min-height: 100%;
+    }
 
     body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background-color: var(--ink);
       background-image:
@@ -71,11 +79,12 @@
       padding-bottom: 4px;
     }
 
-    .admin-main,
-    .admin-wrap {
+    .admin-main {
       width: 100%;
+      flex: 1 0 auto;
     }
 
+    .admin-wrap { width: 100%; }
 
     .admin-nav {
       width: 100%;
@@ -116,14 +125,8 @@
       background: var(--orange);
     }
 
-    .admin-panel {
-      display: none;
-      width: 100%;
-    }
-
-    .admin-panel.is-active {
-      display: block;
-    }
+    .admin-panel { display: none; width: 100%; }
+    .admin-panel.is-active { display: block; }
 
     .admin-section {
       width: 100%;
@@ -132,11 +135,7 @@
     }
 
     .admin-section:last-child { border-bottom: 0; }
-
-    .admin-content {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-    }
+    .admin-content { width: min(1120px, 100%); margin: 0 auto; }
 
     .eyebrow {
       color: var(--orange);
@@ -259,23 +258,24 @@
     #driversList > div {
       cursor: pointer;
       transition: padding-left .15s ease, background .15s ease;
-      border: 0;
-      border-bottom: 1px solid var(--line);
-      background: transparent;
-      padding: 18px 0;
+      border: 0 !important;
+      border-bottom: 1px solid var(--line) !important;
+      background: transparent !important;
+      padding: 18px 0 !important;
     }
 
     #driversList > div:first-child {
-      border-top: 1px solid var(--line);
+      border-top: 1px solid var(--line) !important;
     }
 
     #driversList > div:hover {
-      padding-left: 12px;
-      background: rgba(184,107,42,.08);
+      padding-left: 12px !important;
+      background: rgba(184,107,42,.08) !important;
     }
 
     .site-footer {
       width: 100%;
+      margin-top: auto;
       border-top: 2px solid var(--orange);
       background-color: var(--ink);
       background-image:
@@ -298,30 +298,12 @@
     }
 
     @media (max-width: 720px) {
-      .header-inner {
-        min-height: 88px;
-        align-items: center;
-      }
-
+      .header-inner { min-height: 88px; align-items: center; }
       .brand-sub { display: none; }
-
-      .admin-nav button {
-        min-height: 54px;
-        font-size: 12px;
-      }
-
-      .admin-section {
-        padding-top: 32px;
-        padding-bottom: 38px;
-      }
-
-      .admin-actions {
-        flex-direction: column;
-      }
-
-      .admin-actions .admin-btn {
-        width: 100%;
-      }
+      .admin-nav button { min-height: 54px; font-size: 12px; }
+      .admin-section { padding-top: 32px; padding-bottom: 38px; }
+      .admin-actions { flex-direction: column; }
+      .admin-actions .admin-btn { width: 100%; }
     }
   </style>
 </head>
@@ -333,23 +315,6 @@
       <div class="brand-sub">Operations Admin</div>
     </div>
   </header>
-
-  <script>
-    (() => {
-      const buttons = Array.from(document.querySelectorAll("[data-admin-panel]"));
-      const panels = Array.from(document.querySelectorAll(".admin-panel"));
-
-      function showPanel(id) {
-        panels.forEach((panel) => panel.classList.toggle("is-active", panel.id === id));
-        buttons.forEach((button) => button.classList.toggle("is-active", button.dataset.adminPanel === id));
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      buttons.forEach((button) => {
-        button.addEventListener("click", () => showPanel(button.dataset.adminPanel));
-      });
-    })();
-  </script>
 
   <main class="admin-main">
     <div class="admin-wrap">
@@ -420,10 +385,25 @@
   </main>
 
   <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-text">© Tour The Lakes · Operations Admin</div>
-    </div>
+    <div class="footer-inner"><div class="footer-text">© Tour The Lakes · Operations Admin</div></div>
   </footer>
+
+  <script>
+    (() => {
+      const buttons = Array.from(document.querySelectorAll("[data-admin-panel]"));
+      const panels = Array.from(document.querySelectorAll(".admin-panel"));
+
+      function showPanel(id) {
+        panels.forEach((panel) => panel.classList.toggle("is-active", panel.id === id));
+        buttons.forEach((button) => button.classList.toggle("is-active", button.dataset.adminPanel === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => showPanel(button.dataset.adminPanel));
+      });
+    })();
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -440,10 +420,6 @@
       get,
       serverTimestamp,
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-    import {
-      getStorage,
-    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
-
     import {
       getAuth,
       onAuthStateChanged,
@@ -471,17 +447,10 @@
     ]);
 
     const app = initializeApp(firebaseConfig);
-
-    // Realtime Database is retained ONLY for the existing Drivers/App connection.
     const db = getDatabase(app);
-
-    // Firebase Storage is initialised and ready for the rebuilt backend.
-    const storage = getStorage(app);
-
     const auth = getAuth(app);
 
-    // Keep the authorised admin signed in across refreshes, tabs and browser restarts.
-    // There is deliberately no inactivity/session timeout in this admin page.
+    // Persistent login. No inactivity/session timeout is imposed by this page.
     try {
       await setPersistence(auth, browserLocalPersistence);
     } catch (err) {
@@ -592,8 +561,8 @@
         el.textContent = String(text || "");
       }
 
-      function safeStr(value) {
-        return String(value ?? "");
+      function safeStr(v) {
+        return String(v ?? "");
       }
 
       const driverNameEl = document.getElementById("driverName");
@@ -608,221 +577,144 @@
       const driverEditorTitleEl = document.getElementById("driverEditorTitle");
       const driverEditorLeadEl = document.getElementById("driverEditorLead");
       const cancelDriverEditBtn = document.getElementById("cancelDriverEdit");
-
       let selectedDriverId = "";
 
-      function setDriverEditorMode(mode, driverId = "") {
-        const editing = mode === "edit";
-        selectedDriverId = editing ? driverId : "";
-
-        if (driverEditorTitleEl) {
-          driverEditorTitleEl.textContent = editing ? "Driver Profile" : "Drivers";
-        }
-
-        if (driverEditorLeadEl) {
-          driverEditorLeadEl.textContent = editing
-            ? "Amend this driver profile. The email address is the Google account assigned to this driver."
-            : "Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.";
-        }
-
-        if (saveDriverBtn) {
-          saveDriverBtn.textContent = editing ? "Save driver changes" : "Create driver";
-        }
-
-        if (cancelDriverEditBtn) {
-          cancelDriverEditBtn.hidden = !editing;
-        }
-      }
-
-      function clearDriverForm() {
-        driverNameEl.value = "";
-        driverBadgeNoEl.value = "";
-        driverBadgeExpiryEl.value = "";
-        driverEmailEl.value = "";
-        driverPhoneEl.value = "";
-      }
-
-      function openDriverProfile(id, driver) {
-        setDriverEditorMode("edit", id);
-        driverNameEl.value = safeStr(driver.name);
-        driverBadgeNoEl.value = safeStr(driver.badgeNo);
-        driverBadgeExpiryEl.value = safeStr(driver.badgeExpiry);
-        driverEmailEl.value = safeStr(driver.email);
-        driverPhoneEl.value = safeStr(driver.phone);
-        setMsg(driverMsgEl, `Editing driver: ${safeStr(driver.name)}`, null);
-        document.getElementById("driversPanel")?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-
-      function renderDrivers(driversObj) {
-        if (!driversListEl) return;
-
-        driversListEl.innerHTML = "";
-
-        if (!driversObj || typeof driversObj !== "object") {
-          setMsg(driversListMsgEl, "No driver profiles yet.", null);
-          return;
-        }
-
-        const entries = Object.entries(driversObj)
-          .map(([id, driver]) => ({ id, driver: driver || {} }))
-          .sort((a, b) => safeStr(a.driver.name).localeCompare(safeStr(b.driver.name)));
-
-        setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
-
-        for (const { id, driver } of entries) {
-          const row = document.createElement("div");
-          row.tabIndex = 0;
-          row.setAttribute("role", "button");
-          row.setAttribute(
-            "aria-label",
-            `Open driver profile for ${safeStr(driver.name)}`
-          );
-
-          const name = document.createElement("div");
-          name.textContent = safeStr(driver.name);
-          name.style.color = "rgba(255,255,255,0.92)";
-          name.style.fontSize = "17px";
-          name.style.fontWeight = "650";
-          row.appendChild(name);
-
-          const details = document.createElement("div");
-          details.className = "admin-msg";
-          details.style.marginTop = "6px";
-          details.textContent =
-            `Badge ${safeStr(driver.badgeNo)} • ` +
-            `Expires ${safeStr(driver.badgeExpiry)} • ` +
-            `${safeStr(driver.email)}` +
-            `${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
-          row.appendChild(details);
-
-          const open = () => openDriverProfile(id, driver);
-
-          row.addEventListener("click", open);
-          row.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              open();
-            }
-          });
-
-          driversListEl.appendChild(row);
-        }
-      }
-
-      onValue(
-        ref(db, "drivers"),
-        (snap) => {
-          renderDrivers(snap.val());
-        },
-        (err) => {
-          setMsg(
-            driversListMsgEl,
-            `Error loading drivers: ${err?.message || err}`,
-            "bad"
-          );
-        }
-      );
-
-      cancelDriverEditBtn.addEventListener("click", () => {
-        clearDriverForm();
-        setDriverEditorMode("create");
-        setMsg(driverMsgEl, "", null);
-      });
-
-      saveDriverBtn.addEventListener("click", async () => {
-        const name = driverNameEl.value.trim();
-        const badgeNo = driverBadgeNoEl.value.trim();
-        const badgeExpiry = driverBadgeExpiryEl.value;
-        const email = driverEmailEl.value.trim().toLowerCase();
-        const phone = driverPhoneEl.value.trim();
-
-        if (!name) {
-          setMsg(driverMsgEl, "Name required.", "bad");
-          return;
-        }
-
-        if (!badgeNo) {
-          setMsg(driverMsgEl, "Badge No required.", "bad");
-          return;
-        }
-
-        if (!badgeExpiry) {
-          setMsg(driverMsgEl, "Badge Expiry required.", "bad");
-          return;
-        }
-
-        if (!email || !driverEmailEl.checkValidity()) {
-          setMsg(driverMsgEl, "Valid email required.", "bad");
-          return;
-        }
-
-        try {
-          const duplicateEmail = query(
-            ref(db, "drivers"),
-            orderByChild("email"),
-            equalTo(email)
-          );
-
-          const duplicateSnap = await get(duplicateEmail);
-          let emailUsedByAnotherDriver = false;
-
-          duplicateSnap.forEach((child) => {
-            if (child.key !== selectedDriverId) {
-              emailUsedByAnotherDriver = true;
-            }
-          });
-
-          if (emailUsedByAnotherDriver) {
-            setMsg(
-              driverMsgEl,
-              "A driver profile already exists for this email address.",
-              "bad"
-            );
-            return;
+      // ---- Drivers ----
+          function setDriverEditorMode(mode, driverId = "") {
+            const editing = mode === "edit";
+            selectedDriverId = editing ? driverId : "";
+            if (driverEditorTitleEl) driverEditorTitleEl.textContent = editing ? "Driver Profile" : "Drivers";
+            if (driverEditorLeadEl) driverEditorLeadEl.textContent = editing
+              ? "Amend this driver profile. The email address is the Google account assigned to this driver."
+              : "Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.";
+            if (saveDriverBtn) saveDriverBtn.textContent = editing ? "Save driver changes" : "Create driver";
+            if (cancelDriverEditBtn) cancelDriverEditBtn.hidden = !editing;
           }
 
-          if (selectedDriverId) {
-            await update(ref(db, `drivers/${selectedDriverId}`), {
-              name,
-              badgeNo,
-              badgeExpiry,
-              email,
-              phone,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
+          function clearDriverForm() {
+            driverNameEl.value = "";
+            driverBadgeNoEl.value = "";
+            driverBadgeExpiryEl.value = "";
+            driverEmailEl.value = "";
+            driverPhoneEl.value = "";
+          }
 
-            setMsg(driverMsgEl, `Driver updated: ${name}`, "ok");
-          } else {
-            const driverRef = push(ref(db, "drivers"));
+          function openDriverProfile(id, driver) {
+            setDriverEditorMode("edit", id);
+            driverNameEl.value = safeStr(driver.name);
+            driverBadgeNoEl.value = safeStr(driver.badgeNo);
+            driverBadgeExpiryEl.value = safeStr(driver.badgeExpiry);
+            driverEmailEl.value = safeStr(driver.email);
+            driverPhoneEl.value = safeStr(driver.phone);
+            setMsg(driverMsgEl, `Editing driver: ${safeStr(driver.name)}`, null);
+            document.getElementById("driversPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
 
-            await set(driverRef, {
-              name,
-              badgeNo,
-              badgeExpiry,
-              email,
-              phone,
-              createdAt: serverTimestamp(),
-              createdBy: adminEmail,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
+          function renderDrivers(driversObj) {
+            if (!driversListEl) return;
+            driversListEl.innerHTML = "";
 
+            if (!driversObj || typeof driversObj !== "object") {
+              setMsg(driversListMsgEl, "No driver profiles yet.", null);
+              return;
+            }
+
+            const entries = Object.entries(driversObj)
+              .map(([id, driver]) => ({ id, driver: driver || {} }))
+              .sort((a, b) => safeStr(a.driver.name).localeCompare(safeStr(b.driver.name)));
+
+            setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
+
+            for (const { id, driver } of entries) {
+              const row = document.createElement("div");
+              row.tabIndex = 0;
+              row.setAttribute("role", "button");
+              row.setAttribute("aria-label", `Open driver profile for ${safeStr(driver.name)}`);
+
+              const name = document.createElement("div");
+              name.textContent = safeStr(driver.name);
+              name.style.color = "rgba(255,255,255,0.92)";
+              name.style.fontSize = "17px";
+              name.style.fontWeight = "650";
+              row.appendChild(name);
+
+              const details = document.createElement("div");
+              details.className = "admin-msg";
+              details.style.marginTop = "6px";
+              details.textContent = `Badge ${safeStr(driver.badgeNo)} • Expires ${safeStr(driver.badgeExpiry)} • ${safeStr(driver.email)}${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
+              row.appendChild(details);
+
+              const open = () => openDriverProfile(id, driver);
+              row.addEventListener("click", open);
+              row.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); }
+              });
+
+              driversListEl.appendChild(row);
+            }
+          }
+
+          onValue(ref(db, "drivers"), (snap) => {
+            renderDrivers(snap.val());
+          }, (err) => {
+            setMsg(driversListMsgEl, `Error loading drivers: ${err?.message || err}`, "bad");
+          });
+
+          cancelDriverEditBtn.addEventListener("click", () => {
             clearDriverForm();
-            setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
-          }
-        } catch (err) {
-          setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
-        }
-      });
+            setDriverEditorMode("create");
+            setMsg(driverMsgEl, "", null);
+          });
 
-      setDriverEditorMode("create");
+          saveDriverBtn.addEventListener("click", async () => {
+            const name = driverNameEl.value.trim();
+            const badgeNo = driverBadgeNoEl.value.trim();
+            const badgeExpiry = driverBadgeExpiryEl.value;
+            const email = driverEmailEl.value.trim().toLowerCase();
+            const phone = driverPhoneEl.value.trim();
 
-      // Ready for the rebuild: db is Drivers only; Storage is the new backend connection.
-      void storage;
+            if (!name) { setMsg(driverMsgEl, "Name required.", "bad"); return; }
+            if (!badgeNo) { setMsg(driverMsgEl, "Badge No required.", "bad"); return; }
+            if (!badgeExpiry) { setMsg(driverMsgEl, "Badge Expiry required.", "bad"); return; }
+            if (!email || !driverEmailEl.checkValidity()) { setMsg(driverMsgEl, "Valid email required.", "bad"); return; }
+
+            try {
+              const duplicateEmail = query(ref(db, "drivers"), orderByChild("email"), equalTo(email));
+              const duplicateSnap = await get(duplicateEmail);
+              let emailUsedByAnotherDriver = false;
+              duplicateSnap.forEach((child) => {
+                if (child.key !== selectedDriverId) emailUsedByAnotherDriver = true;
+              });
+              if (emailUsedByAnotherDriver) {
+                setMsg(driverMsgEl, "A driver profile already exists for this email address.", "bad");
+                return;
+              }
+
+              if (selectedDriverId) {
+                await update(ref(db, `drivers/${selectedDriverId}`), {
+                  name, badgeNo, badgeExpiry, email, phone,
+                  updatedAt: serverTimestamp(),
+                  updatedBy: adminEmail,
+                });
+                setMsg(driverMsgEl, `Driver updated: ${name}`, "ok");
+              } else {
+                const driverRef = push(ref(db, "drivers"));
+                await set(driverRef, {
+                  name, badgeNo, badgeExpiry, email, phone,
+                  createdAt: serverTimestamp(),
+                  createdBy: adminEmail,
+                  updatedAt: serverTimestamp(),
+                  updatedBy: adminEmail,
+                });
+                clearDriverForm();
+                setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
+              }
+            } catch (err) {
+              setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
+            }
+          });
+
+          setDriverEditorMode("create");
     }
   </script>
 </body>
