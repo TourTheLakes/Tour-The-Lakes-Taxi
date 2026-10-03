@@ -2300,14 +2300,10 @@ body {
 
 
 
-/* ===== Public Tours menu — matched to Index "TOURS FROM" ===== */
-.public-menu-signature-gap {
-  height: 64px;
-  width: 100%;
-  background: #f3ead8;
-}
 
-.public-menu-heading {
+
+/* ===== Public Tours directory — exact Index "TOURS FROM" visual language ===== */
+.home-tours-from {
   width: min(1180px, calc(100% - 56px));
   margin: 0 auto;
   display: flex;
@@ -2315,72 +2311,38 @@ body {
   gap: 32px;
   padding: 28px 0 0;
 }
-
-.public-menu-heading::before,
-.public-menu-heading::after {
+.home-tours-from::before,
+.home-tours-from::after {
   content: "";
   flex: 1 1 auto;
   height: 2px;
   background: #2b2b2b;
 }
-
-.public-menu-heading h1,
-.public-menu-heading h2 {
+.home-tours-from h1,
+.home-tours-from h2 {
   margin: 0;
   color: #2b2b2b;
   font: 500 clamp(25px, 2.4vw, 36px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   letter-spacing: 3px;
   white-space: nowrap;
 }
-
-.public-menu-grid {
+.home-signature-gap {
+  height: 64px;
+  width: 100%;
+  background: #f3ead8;
+}
+.home-tours-from-grid {
   width: min(1540px, calc(100% - 120px));
+  height: 520px;
   margin: 0 auto;
   display: grid;
+  grid-template-columns: 1.05fr 1.45fr 1.2fr;
+  grid-template-rows: 1fr 1fr;
   gap: 12px;
   padding: 34px 0 0;
   background: #f3ead8;
 }
-
-.public-menu-grid--two {
-  height: 340px;
-  grid-template-columns: 1.05fr 1.45fr;
-  grid-template-rows: 1fr;
-}
-
-.public-menu-grid--four {
-  height: 520px;
-  grid-template-columns: 1.05fr 1.45fr 1.2fr;
-  grid-template-rows: 1fr 1fr;
-}
-
-.public-menu-grid--four .public-menu-card:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1 / 3;
-}
-
-.public-menu-grid--four .public-menu-card:nth-child(2) {
-  grid-column: 2 / 4;
-  grid-row: 1;
-}
-
-.public-menu-grid--four .public-menu-card:nth-child(3) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.public-menu-grid--four .public-menu-card:nth-child(4) {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-.public-menu-grid--one {
-  height: 330px;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-}
-
-.public-menu-card {
+.home-tours-from-card {
   position: relative;
   display: block;
   min-width: 0;
@@ -2390,33 +2352,26 @@ body {
   text-decoration: none;
   background: #2b2b2b;
 }
-
-.public-menu-card img {
+.home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1 / 3; }
+.home-tours-from-card:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
+.home-tours-from-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+.home-tours-from-card:nth-child(4) { grid-column: 3; grid-row: 2; }
+.home-tours-from-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform .28s ease;
 }
-
-.public-menu-card::after {
+.home-tours-from-card::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, rgba(0,0,0,.06), rgba(0,0,0,.20));
   pointer-events: none;
 }
-
-.public-menu-card:hover img,
-.public-menu-card:focus-visible img {
-  transform: scale(1.025);
-}
-
-.public-menu-card:focus-visible {
-  outline: 2px solid #b86b2a;
-  outline-offset: 3px;
-}
-
-.public-menu-label {
+.home-tours-from-card:hover img,
+.home-tours-from-card:focus-visible img { transform: scale(1.025); }
+.home-tours-from-label {
   position: absolute;
   z-index: 2;
   top: 0;
@@ -2432,120 +2387,103 @@ body {
   color: #2b2b2b;
   font: 700 clamp(17px, 1.55vw, 23px)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
-
-.public-menu-arrow {
+.home-tours-from-arrow {
   flex: 0 0 auto;
   color: #b86b2a;
   font-size: 27px;
   line-height: 1;
 }
 
+/* Same cards, adjusted only for sections containing fewer than four choices. */
+.home-tours-from-grid.public-directory-two {
+  height: 330px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+.home-tours-from-grid.public-directory-two .home-tours-from-card:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+.home-tours-from-grid.public-directory-two .home-tours-from-card:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.home-tours-from-grid.public-directory-one {
+  height: 300px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+.home-tours-from-grid.public-directory-one .home-tours-from-card:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 @media screen and (max-width: 1023px) {
-  .public-menu-grid {
+  .home-tours-from-grid {
     width: calc(100% - 40px);
-  }
-
-  .public-menu-grid--two {
-    height: 310px;
-    grid-template-columns: 1fr 1.2fr;
-  }
-
-  .public-menu-grid--four {
     height: 460px;
     grid-template-columns: 1fr 1.2fr 1fr;
+    padding-left: 0;
+    padding-right: 0;
   }
+  .home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1 / 3; }
+  .home-tours-from-card:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
+  .home-tours-from-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .home-tours-from-card:nth-child(4) { grid-column: 3; grid-row: 2; }
 
-  .public-menu-grid--four .public-menu-card:nth-child(1) {
-    grid-column: 1;
-    grid-row: 1 / 3;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(2) {
-    grid-column: 2 / 4;
-    grid-row: 1;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(3) {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(4) {
-    grid-column: 3;
-    grid-row: 2;
-  }
-
-  .public-menu-grid--one {
+  .home-tours-from-grid.public-directory-two {
     height: 300px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .home-tours-from-grid.public-directory-one {
+    height: 280px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .public-menu-heading {
+  .home-tours-from {
     width: calc(100% - 32px);
     gap: 15px;
     padding-top: 18px;
   }
-
-  .public-menu-heading h1,
-  .public-menu-heading h2 {
+  .home-tours-from h1,
+  .home-tours-from h2 {
     font-size: clamp(20px, 6vw, 27px);
     letter-spacing: 2px;
   }
-
-  .public-menu-grid {
+  .home-tours-from-grid {
     width: calc(100% - 32px);
-    gap: 7px;
-    padding: 24px 0 0;
-  }
-
-  .public-menu-grid--two {
-    height: 230px;
-    grid-template-columns: 1.12fr .88fr;
-    grid-template-rows: 1fr;
-  }
-
-  .public-menu-grid--four {
     height: 410px;
     grid-template-columns: 1.12fr .88fr;
     grid-template-rows: 1fr 1fr;
+    gap: 7px;
+    padding: 24px 0 0;
   }
-
-  .public-menu-grid--four .public-menu-card:nth-child(1) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(2) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(3) {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .public-menu-grid--four .public-menu-card:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .public-menu-grid--one {
-    height: 230px;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-  }
-
-  .public-menu-label {
+  .home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .home-tours-from-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .home-tours-from-card:nth-child(3) { grid-column: 1; grid-row: 2; }
+  .home-tours-from-card:nth-child(4) { grid-column: 2; grid-row: 2; }
+  .home-tours-from-label {
     min-height: 48px;
     padding: 0 10px;
     gap: 8px;
     font-size: clamp(13px, 3.6vw, 16px);
   }
+  .home-tours-from-arrow { font-size: 22px; }
 
-  .public-menu-arrow {
-    font-size: 22px;
+  .home-tours-from-grid.public-directory-two {
+    height: 230px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .home-tours-from-grid.public-directory-one {
+    height: 220px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
   }
 }
 
@@ -2615,122 +2553,66 @@ body {
 <div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
 <section id="public-tours" class="folder-page" aria-label="Public Lake District tours">
-  <div class="public-menu-signature-gap" aria-hidden="true"></div>
+  <div class="home-signature-gap" aria-hidden="true"></div>
 
-  <div class="public-menu-heading" aria-label="Public Tours">
+  <div class="home-tours-from" aria-label="Public Tours">
     <h1>PUBLIC TOURS</h1>
   </div>
 
-  <div class="public-menu-grid public-menu-grid--two" aria-label="Choose a public Lake District tour">
-    <a class="public-menu-card" href="six-lakes.html" aria-label="Six Lakes">
-      <img
-        src="images/DSC_0005.jpg"
-        alt="Six Lakes public tour in the Lake District"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Six Lakes</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+  <div class="home-tours-from-grid public-directory-two" aria-label="Choose a public Lake District tour">
+    <a class="home-tours-from-card" href="six-lakes.html" aria-label="Six Lakes">
+      <img src="images/DSC_0005.jpg" alt="Six Lakes public tour in the Lake District" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Six Lakes</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
 
-    <a class="public-menu-card" href="lakes-villages.html" aria-label="Lakes Villages">
-      <img
-        src="images/DSC_0023.jpg"
-        alt="Lakes Villages public tour in the Lake District"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Lakes Villages</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+    <a class="home-tours-from-card" href="lakes-villages.html" aria-label="Lakes Villages">
+      <img src="images/DSC_0023.jpg" alt="Lakes Villages public tour in the Lake District" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Lakes Villages</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
   </div>
 
-  <div class="public-menu-signature-gap" aria-hidden="true"></div>
+  <div class="home-signature-gap" aria-hidden="true"></div>
 
-  <div class="public-menu-heading" aria-label="Christmas Markets">
+  <div class="home-tours-from" aria-label="Christmas Markets">
     <h2>CHRISTMAS MARKETS</h2>
   </div>
 
-  <div class="public-menu-grid public-menu-grid--four" aria-label="Choose a Christmas market trip">
-    <a class="public-menu-card" href="christmas-market-york.html" aria-label="York Christmas Market">
-      <img
-        src="images/York.png"
-        alt="York Christmas market trip"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>York</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+  <div class="home-tours-from-grid" aria-label="Choose a Christmas market trip">
+    <a class="home-tours-from-card" href="christmas-market-york.html" aria-label="York Christmas Market">
+      <img src="images/York.png" alt="York Christmas market trip" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>York</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
 
-    <a class="public-menu-card" href="christmas-market-skipton.html" aria-label="Skipton Christmas Market">
-      <img
-        src="images/Skipton.png"
-        alt="Skipton Christmas market trip"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Skipton</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+    <a class="home-tours-from-card" href="christmas-market-skipton.html" aria-label="Skipton Christmas Market">
+      <img src="images/Skipton.png" alt="Skipton Christmas market trip" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Skipton</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
 
-    <a class="public-menu-card" href="christmas-market-ilkley.html" aria-label="Ilkley Christmas Market">
-      <img
-        src="images/Ilkley.png"
-        alt="Ilkley Christmas market trip"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Ilkley</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+    <a class="home-tours-from-card" href="christmas-market-ilkley.html" aria-label="Ilkley Christmas Market">
+      <img src="images/Ilkley.png" alt="Ilkley Christmas market trip" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Ilkley</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
 
-    <a class="public-menu-card" href="christmas-market-knaresborough.html" aria-label="Knaresborough Christmas Market">
-      <img
-        src="images/knaresborough.png"
-        alt="Knaresborough Christmas market trip"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Knaresborough</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+    <a class="home-tours-from-card" href="christmas-market-knaresborough.html" aria-label="Knaresborough Christmas Market">
+      <img src="images/knaresborough.png" alt="Knaresborough Christmas market trip" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Knaresborough</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
   </div>
 
-  <div class="public-menu-signature-gap" aria-hidden="true"></div>
+  <div class="home-signature-gap" aria-hidden="true"></div>
 
-  <div class="public-menu-heading" aria-label="Group Experiences">
+  <div class="home-tours-from" aria-label="Group Experiences">
     <h2>GROUP EXPERIENCES</h2>
   </div>
 
-  <div class="public-menu-grid public-menu-grid--one" aria-label="Choose a group experience">
-    <a class="public-menu-card" href="lunch-and-distillery.html" aria-label="Lunch and Distillery">
-      <img
-        src="images/lunch and distilery.png"
-        alt="Lunch and distillery group experience"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="public-menu-label">
-        <span>Lunch &amp; Distillery</span>
-        <span class="public-menu-arrow" aria-hidden="true">→</span>
-      </span>
+  <div class="home-tours-from-grid public-directory-one" aria-label="Choose a group experience">
+    <a class="home-tours-from-card" href="lunch-and-distillery.html" aria-label="Lunch and Distillery">
+      <img src="images/lunch and distilery.png" alt="Lunch and distillery group experience" loading="lazy" decoding="async" />
+      <span class="home-tours-from-label"><span>Lunch &amp; Distillery</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
     </a>
   </div>
 
-  <div class="public-menu-signature-gap" aria-hidden="true"></div>
+  <div class="home-signature-gap" aria-hidden="true"></div>
 </section>
 
 <footer class="site-footer">
