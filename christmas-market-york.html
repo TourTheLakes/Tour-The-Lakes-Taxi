@@ -571,20 +571,13 @@ html, body {
 
 
     /* ===== York Christmas Market tour page ===== */
-    .tour-page-signature-gap {
-      height: 64px;
-      width: 100%;
-      background: transparent;
-    }
 
     .tour-hero {
       position: relative;
       width: 100%;
-      height: clamp(360px, 42vw, 620px);
+      height: clamp(120px, 14vw, 207px);
       overflow: hidden;
       background: #2b2b2b;
-      border-top: 2px solid #b86b2a;
-      border-bottom: 2px solid #b86b2a;
     }
 
     .tour-hero img {
@@ -613,13 +606,13 @@ html, body {
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: min(620px, 48vw);
-      min-height: 150px;
+      width: min(500px, 42vw);
+      min-height: 92px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 30px clamp(36px, 6vw, 96px) 30px clamp(28px, 5vw, 86px);
-      border-radius: 0 110px 110px 0;
+      padding: 16px clamp(30px, 4vw, 64px) 16px clamp(24px, 4vw, 58px);
+      border-radius: 0 72px 72px 0;
       background:
         linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)),
         url("images/Web Paper 5.png");
@@ -629,17 +622,17 @@ html, body {
     }
 
     .tour-hero-kicker {
-      margin: 0 0 9px;
+      margin: 0 0 5px;
       color: #d9d2c4;
-      font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 2.2px;
+      font: 600 9px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.6px;
       text-transform: uppercase;
     }
 
     .tour-hero-title {
       margin: 0;
       color: rgba(255,255,255,0.96);
-      font: 600 clamp(46px, 6vw, 82px)/0.96 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font: 600 clamp(28px, 3vw, 44px)/0.96 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       letter-spacing: 0.2px;
     }
 
@@ -1024,13 +1017,6 @@ html, body {
       cursor: not-allowed;
     }
 
-    .booking-firebase-hook {
-      margin: 14px 0 0;
-      color: rgba(43,43,43,0.48);
-      text-align: center;
-      font: 500 10px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
     @media screen and (min-width: 901px) and (max-width: 1023px) {
       .tour-page-layout {
         width: min(960px, calc(100% - 48px));
@@ -1075,28 +1061,25 @@ html, body {
     }
 
     @media screen and (max-width: 600px) {
-      .tour-page-signature-gap {
-        height: 36px;
-      }
 
       .tour-hero {
-        height: 330px;
+        height: 110px;
       }
 
       .tour-hero-title-wrap {
-        width: min(86vw, 420px);
-        min-height: 118px;
-        padding: 22px 42px 22px 24px;
-        border-radius: 0 76px 76px 0;
+        width: min(78vw, 330px);
+        min-height: 78px;
+        padding: 12px 34px 12px 20px;
+        border-radius: 0 52px 52px 0;
       }
 
       .tour-hero-kicker {
-        font-size: 10px;
-        letter-spacing: 1.6px;
+        font-size: 8px;
+        letter-spacing: 1.3px;
       }
 
       .tour-hero-title {
-        font-size: clamp(39px, 14vw, 58px);
+        font-size: clamp(28px, 9vw, 38px);
       }
 
       .tour-page-layout {
@@ -1208,8 +1191,6 @@ html, body {
 <div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
   <main id="page-content">
-    <div class="tour-page-signature-gap" aria-hidden="true"></div>
-
     <section class="tour-hero" aria-labelledby="tour-page-title">
       <img src="images/York.png" alt="York at Christmas" decoding="async" />
       <div class="tour-hero-title-wrap">
@@ -1340,7 +1321,7 @@ html, body {
             </div>
 
             <p class="booking-status" id="bookingStatus">
-              No live departures are loaded yet. This panel is ready for the York schedule to be supplied from Firebase.
+              Select an available departure date.
             </p>
 
             <div class="booking-selection">
@@ -1358,7 +1339,6 @@ html, body {
               </div>
 
               <button class="booking-continue" id="bookingContinue" type="button" disabled>Continue to booking</button>
-              <p class="booking-firebase-hook">Availability, capacity and pricing are reserved for the Firebase booking stage.</p>
             </div>
           </div>
         </div>
@@ -1391,8 +1371,6 @@ html, body {
 
 <script>
   // York booking UI.
-  // The availability map is deliberately empty until the new Firebase
-  // Tours / Schedule / Bookings schema is connected.
   (() => {
     const TOUR_KEY = "christmas-market-york";
     const availability = new Map();
@@ -1539,9 +1517,7 @@ html, body {
       renderSelection();
     });
 
-    // This is the single integration hook for the next stage.
-    // Firebase can supply objects shaped like:
-    // { date: "2026-12-05", time: "08:30", price: 49, remaining: 8 }
+    // Availability interface.
     window.TTLYorkBooking = {
       tourKey: TOUR_KEY,
       setAvailability(departures) {
@@ -1560,7 +1536,7 @@ html, body {
         } else {
           selectedDateKey = "";
           selectedDeparture = null;
-          statusEl.textContent = "No live departures are loaded yet. This panel is ready for the York schedule to be supplied from Firebase.";
+          statusEl.textContent = "No departures are currently available.";
         }
 
         renderCalendar();
