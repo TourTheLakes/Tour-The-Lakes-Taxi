@@ -569,48 +569,575 @@ html, body {
       }
     }
 
-    /* ===== Individual tour page heading ===== */
+
+    /* ===== York Christmas Market tour page ===== */
     .tour-page-signature-gap {
       height: 64px;
       width: 100%;
-      background: #f3ead8;
+      background: transparent;
     }
 
-    .tour-page-heading {
-      width: min(1180px, calc(100% - 56px));
+    .tour-hero {
+      position: relative;
+      width: 100%;
+      height: clamp(360px, 42vw, 620px);
+      overflow: hidden;
+      background: #2b2b2b;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 2px solid #b86b2a;
+    }
+
+    .tour-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .tour-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0,0,0,0.26) 0%,
+        rgba(0,0,0,0.08) 48%,
+        rgba(0,0,0,0.02) 100%
+      );
+      pointer-events: none;
+    }
+
+    .tour-hero-title-wrap {
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: min(620px, 48vw);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 30px clamp(36px, 6vw, 96px) 30px clamp(28px, 5vw, 86px);
+      border-radius: 0 110px 110px 0;
+      background:
+        linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 14px 38px rgba(0,0,0,0.22);
+    }
+
+    .tour-hero-kicker {
+      margin: 0 0 9px;
+      color: #d9d2c4;
+      font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .tour-hero-title {
+      margin: 0;
+      color: rgba(255,255,255,0.96);
+      font: 600 clamp(46px, 6vw, 82px)/0.96 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.2px;
+    }
+
+    .tour-page-layout {
+      width: min(1420px, calc(100% - 64px));
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr);
+      align-items: start;
+      padding-top: 58px;
+    }
+
+    .tour-description-column {
+      min-width: 0;
+      padding: 0 clamp(36px, 5vw, 78px) 0 0;
+    }
+
+    .tour-booking-column {
+      min-width: 0;
+      padding-left: clamp(28px, 3vw, 48px);
+      border-left: 1px solid rgba(43,43,43,0.42);
+    }
+
+    .tour-section {
+      margin-bottom: 54px;
+    }
+
+    .tour-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tour-section-heading {
+      margin: 0 0 24px;
       display: flex;
       align-items: center;
-      gap: 32px;
-      padding: 28px 0 0;
+      gap: 20px;
+      color: #2b2b2b;
+      font: 600 clamp(25px, 2.3vw, 34px)/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.1px;
     }
 
-    .tour-page-heading::before,
-    .tour-page-heading::after {
+    .tour-section-heading::after {
       content: "";
       flex: 1 1 auto;
-      height: 2px;
-      background: #2b2b2b;
+      height: 1px;
+      background: rgba(43,43,43,0.55);
     }
 
-    .tour-page-heading h1 {
-      margin: 0;
+    .tour-lead {
+      margin: 0 0 28px;
       color: #2b2b2b;
-      font: 500 clamp(25px, 2.4vw, 36px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: 3px;
-      white-space: nowrap;
+      font: 600 clamp(19px, 1.6vw, 23px)/1.48 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-copy {
+      margin: 0 0 22px;
+      color: rgba(43,43,43,0.88);
+      font: 500 17px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: justify;
+      text-align-last: left;
+    }
+
+    .tour-copy:last-child {
+      margin-bottom: 0;
+    }
+
+    .tour-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 44px;
+      margin: 34px 0 0;
+      border-top: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-fact {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 13px;
+      align-items: start;
+      padding: 22px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-fact-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #b86b2a;
+      border-radius: 50%;
+      color: #b86b2a;
+      font: 600 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-fact-label {
+      display: block;
+      margin-bottom: 4px;
+      color: #b86b2a;
+      font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .tour-fact-value {
+      display: block;
+      color: #2b2b2b;
+      font: 600 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-simple-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-simple-list li {
+      position: relative;
+      padding: 16px 0 16px 25px;
+      border-bottom: 1px solid rgba(43,43,43,0.28);
+      color: rgba(43,43,43,0.88);
+      font: 500 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-simple-list li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 24px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b86b2a;
+    }
+
+    /* ===== Booking side ===== */
+    .booking-panel {
+      position: sticky;
+      top: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(43,43,43,0.46);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 16px 36px rgba(43,43,43,0.08);
+    }
+
+    .booking-panel-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid rgba(43,43,43,0.20);
+      background:
+        linear-gradient(rgba(0,0,0,0.17), rgba(0,0,0,0.17)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      color: rgba(255,255,255,0.94);
+    }
+
+    .booking-panel-eyebrow {
+      margin: 0 0 5px;
+      color: #d9d2c4;
+      font: 600 11px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .booking-panel-title {
+      margin: 0;
+      font: 600 23px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-panel-body {
+      padding: 24px;
+    }
+
+    .booking-price-line {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(43,43,43,0.20);
+    }
+
+    .booking-price-label {
+      color: rgba(43,43,43,0.68);
+      font: 500 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-price {
+      margin-top: 4px;
+      color: #2b2b2b;
+      font: 700 27px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-capacity {
+      color: rgba(43,43,43,0.68);
+      font: 500 12px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: right;
+    }
+
+    .booking-subheading {
+      margin: 24px 0 14px;
+      color: #2b2b2b;
+      font: 700 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .passenger-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.16);
+    }
+
+    .passenger-name {
+      color: #2b2b2b;
+      font: 600 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .passenger-note {
+      display: block;
+      margin-top: 3px;
+      color: rgba(43,43,43,0.58);
+      font: 500 12px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .qty-control {
+      display: grid;
+      grid-template-columns: 36px 28px 36px;
+      align-items: center;
+      justify-items: center;
+      gap: 4px;
+    }
+
+    .qty-button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(43,43,43,0.42);
+      border-radius: 50%;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 300 25px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .qty-button:hover,
+    .qty-button:focus-visible {
+      border-color: #b86b2a;
+      color: #b86b2a;
+    }
+
+    .qty-value {
+      color: #2b2b2b;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-calendar {
+      margin-top: 8px;
+      border-top: 1px solid rgba(43,43,43,0.20);
+      padding-top: 22px;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) 36px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .calendar-title {
+      text-align: center;
+      color: #2b2b2b;
+      font: 700 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .calendar-nav {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 400 26px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .calendar-weekdays span {
+      padding: 7px 0;
+      color: rgba(43,43,43,0.52);
+      text-align: center;
+      font: 600 10px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      min-height: 47px;
+      margin: 2px;
+      padding: 4px 2px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(43,43,43,0.32);
+      text-align: center;
+      font: 600 13px/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    button.calendar-day {
+      cursor: pointer;
+    }
+
+    button.calendar-day.is-available {
+      color: #2b2b2b;
+      border-color: rgba(184,107,42,0.38);
+      background: rgba(184,107,42,0.06);
+    }
+
+    button.calendar-day.is-selected {
+      border-color: #b86b2a;
+      background: rgba(184,107,42,0.16);
+      box-shadow: inset 0 0 0 1px #b86b2a;
+    }
+
+    .calendar-day-price {
+      display: block;
+      margin-top: 3px;
+      color: rgba(43,43,43,0.58);
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .booking-status {
+      margin: 16px 0 0;
+      padding: 13px 14px;
+      border: 1px solid rgba(184,107,42,0.30);
+      background: rgba(184,107,42,0.07);
+      color: rgba(43,43,43,0.74);
+      font: 500 12px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-selection {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(43,43,43,0.20);
+    }
+
+    .booking-selection-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 9px;
+      color: rgba(43,43,43,0.70);
+      font: 500 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-selection-row strong {
+      color: #2b2b2b;
+      text-align: right;
+    }
+
+    .booking-continue {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 16px;
+      border: 1px solid #b86b2a;
+      background:
+        linear-gradient(rgba(0,0,0,0.13), rgba(0,0,0,0.13)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      color: rgba(255,255,255,0.94);
+      cursor: pointer;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.3px;
+    }
+
+    .booking-continue:disabled {
+      opacity: 0.46;
+      cursor: not-allowed;
+    }
+
+    .booking-firebase-hook {
+      margin: 14px 0 0;
+      color: rgba(43,43,43,0.48);
+      text-align: center;
+      font: 500 10px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    @media screen and (min-width: 901px) and (max-width: 1023px) {
+      .tour-page-layout {
+        width: min(960px, calc(100% - 48px));
+        grid-template-columns: minmax(0, 1.7fr) minmax(310px, 1fr);
+      }
+
+      .tour-description-column {
+        padding-right: 34px;
+      }
+
+      .tour-booking-column {
+        padding-left: 28px;
+      }
+
+      .booking-panel {
+        top: 196px;
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .tour-page-layout {
+        width: min(760px, calc(100% - 40px));
+        grid-template-columns: 1fr;
+        padding-top: 44px;
+      }
+
+      .tour-description-column {
+        padding-right: 0;
+      }
+
+      .tour-booking-column {
+        margin-top: 48px;
+        padding: 48px 0 0;
+        border-left: 0;
+        border-top: 1px solid rgba(43,43,43,0.42);
+      }
+
+      .booking-panel {
+        position: relative;
+        top: auto;
+      }
     }
 
     @media screen and (max-width: 600px) {
-      .tour-page-heading {
-        width: calc(100% - 32px);
-        gap: 15px;
-        padding-top: 18px;
+      .tour-page-signature-gap {
+        height: 36px;
       }
 
-      .tour-page-heading h1 {
-        font-size: clamp(20px, 6vw, 27px);
-        letter-spacing: 2px;
+      .tour-hero {
+        height: 330px;
+      }
+
+      .tour-hero-title-wrap {
+        width: min(86vw, 420px);
+        min-height: 118px;
+        padding: 22px 42px 22px 24px;
+        border-radius: 0 76px 76px 0;
+      }
+
+      .tour-hero-kicker {
+        font-size: 10px;
+        letter-spacing: 1.6px;
+      }
+
+      .tour-hero-title {
+        font-size: clamp(39px, 14vw, 58px);
+      }
+
+      .tour-page-layout {
+        width: calc(100% - 32px);
+        padding-top: 38px;
+      }
+
+      .tour-section {
+        margin-bottom: 44px;
+      }
+
+      .tour-section-heading {
+        gap: 14px;
+        margin-bottom: 20px;
+        font-size: 25px;
+      }
+
+      .tour-lead {
+        font-size: 18px;
+      }
+
+      .tour-copy {
+        font-size: 16px;
+        line-height: 1.58;
+        text-align: left;
+      }
+
+      .tour-facts-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .booking-panel-body,
+      .booking-panel-header {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .calendar-day {
+        min-height: 43px;
+        margin: 1px;
       }
     }
 
@@ -683,8 +1210,159 @@ html, body {
   <main id="page-content">
     <div class="tour-page-signature-gap" aria-hidden="true"></div>
 
-    <div class="tour-page-heading" aria-labelledby="tour-page-title">
-      <h1 id="tour-page-title">YORK</h1>
+    <section class="tour-hero" aria-labelledby="tour-page-title">
+      <img src="images/York.png" alt="York at Christmas" decoding="async" />
+      <div class="tour-hero-title-wrap">
+        <p class="tour-hero-kicker">Christmas Market</p>
+        <h1 class="tour-hero-title" id="tour-page-title">York</h1>
+      </div>
+    </section>
+
+    <div class="tour-page-layout">
+      <article class="tour-description-column">
+        <section class="tour-section" aria-labelledby="tour-details-heading">
+          <h2 class="tour-section-heading" id="tour-details-heading">Tour Details</h2>
+
+          <p class="tour-lead">A festive day in York with the journey taken care of from the Lake District.</p>
+
+          <p class="tour-copy">
+            Leave the driving to us and enjoy York at Christmas at your own pace. Once we arrive, the day is yours to wander the city, explore the Christmas market, stop for something to eat and make as much or as little of the day as you please before the return journey home.
+          </p>
+
+          <p class="tour-copy">
+            This is designed as an easy day out rather than a guided sightseeing tour. We take care of the travel while you have the freedom to enjoy York for yourself.
+          </p>
+
+          <div class="tour-facts-grid" aria-label="York tour facts">
+            <div class="tour-fact">
+              <span class="tour-fact-icon" aria-hidden="true">A</span>
+              <div>
+                <span class="tour-fact-label">Departure</span>
+                <span class="tour-fact-value">Lake District</span>
+              </div>
+            </div>
+            <div class="tour-fact">
+              <span class="tour-fact-icon" aria-hidden="true">Y</span>
+              <div>
+                <span class="tour-fact-label">Destination</span>
+                <span class="tour-fact-value">York</span>
+              </div>
+            </div>
+            <div class="tour-fact">
+              <span class="tour-fact-icon" aria-hidden="true">D</span>
+              <div>
+                <span class="tour-fact-label">Experience</span>
+                <span class="tour-fact-value">Full day</span>
+              </div>
+            </div>
+            <div class="tour-fact">
+              <span class="tour-fact-icon" aria-hidden="true">C</span>
+              <div>
+                <span class="tour-fact-label">Dates &amp; times</span>
+                <span class="tour-fact-value">Shown when booking</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tour-section" aria-labelledby="day-heading">
+          <h2 class="tour-section-heading" id="day-heading">The Day</h2>
+          <p class="tour-copy">
+            We will collect passengers from the published pickup points and travel directly to York. On arrival you will have a generous block of free time in the city before meeting the vehicle again for the journey back to the Lake District.
+          </p>
+          <p class="tour-copy">
+            Exact departure times, pickup arrangements and the scheduled return are attached to each available date, so the booking panel will always show the information for the departure you are actually choosing.
+          </p>
+        </section>
+
+        <section class="tour-section" aria-labelledby="included-heading">
+          <h2 class="tour-section-heading" id="included-heading">Included</h2>
+          <ul class="tour-simple-list">
+            <li>Pre booked return transport to York</li>
+            <li>Published Lake District pickup points</li>
+            <li>Free time in York to enjoy the Christmas market and city independently</li>
+            <li>Your confirmed departure details held with your booking</li>
+          </ul>
+        </section>
+
+        <section class="tour-section" aria-labelledby="before-heading">
+          <h2 class="tour-section-heading" id="before-heading">Before You Travel</h2>
+          <p class="tour-copy">
+            The final pickup point, departure time and return information will be shown against the date you select and repeated in your booking confirmation. Please use those confirmed details rather than relying on a general timetable.
+          </p>
+        </section>
+      </article>
+
+      <aside class="tour-booking-column" aria-label="Book the York Christmas Market tour">
+        <div class="booking-panel" id="yorkBookingPanel" data-tour-key="christmas-market-york">
+          <div class="booking-panel-header">
+            <p class="booking-panel-eyebrow">Christmas Market</p>
+            <h2 class="booking-panel-title">Book York</h2>
+          </div>
+
+          <div class="booking-panel-body">
+            <div class="booking-price-line">
+              <div>
+                <div class="booking-price-label">Price</div>
+                <div class="booking-price" id="bookingPrice">Select a date</div>
+              </div>
+              <div class="booking-capacity" id="bookingCapacity">Live capacity<br />will appear here</div>
+            </div>
+
+            <h3 class="booking-subheading">Passengers</h3>
+
+            <div class="passenger-row">
+              <div>
+                <span class="passenger-name">Passengers</span>
+                <span class="passenger-note">Choose the number travelling</span>
+              </div>
+              <div class="qty-control" aria-label="Passenger quantity">
+                <button class="qty-button" id="qtyMinus" type="button" aria-label="Remove passenger">−</button>
+                <span class="qty-value" id="qtyValue" aria-live="polite">1</span>
+                <button class="qty-button" id="qtyPlus" type="button" aria-label="Add passenger">+</button>
+              </div>
+            </div>
+
+            <h3 class="booking-subheading">Choose a date</h3>
+
+            <div class="booking-calendar">
+              <div class="calendar-header">
+                <button class="calendar-nav" id="calendarPrev" type="button" aria-label="Previous month">‹</button>
+                <div class="calendar-title" id="calendarTitle"></div>
+                <button class="calendar-nav" id="calendarNext" type="button" aria-label="Next month">›</button>
+              </div>
+
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+
+              <div class="calendar-grid" id="calendarGrid" aria-label="Available York departure dates"></div>
+            </div>
+
+            <p class="booking-status" id="bookingStatus">
+              No live departures are loaded yet. This panel is ready for the York schedule to be supplied from Firebase.
+            </p>
+
+            <div class="booking-selection">
+              <div class="booking-selection-row">
+                <span>Date</span>
+                <strong id="selectedDateText">Not selected</strong>
+              </div>
+              <div class="booking-selection-row">
+                <span>Departure</span>
+                <strong id="selectedTimeText">—</strong>
+              </div>
+              <div class="booking-selection-row">
+                <span>Total</span>
+                <strong id="selectedTotalText">—</strong>
+              </div>
+
+              <button class="booking-continue" id="bookingContinue" type="button" disabled>Continue to booking</button>
+              <p class="booking-firebase-hook">Availability, capacity and pricing are reserved for the Firebase booking stage.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
   </main>
 
@@ -709,6 +1387,191 @@ html, body {
       </div>
     </div>
   </footer>
+
+
+<script>
+  // York booking UI.
+  // The availability map is deliberately empty until the new Firebase
+  // Tours / Schedule / Bookings schema is connected.
+  (() => {
+    const TOUR_KEY = "christmas-market-york";
+    const availability = new Map();
+
+    const title = document.getElementById("calendarTitle");
+    const grid = document.getElementById("calendarGrid");
+    const prev = document.getElementById("calendarPrev");
+    const next = document.getElementById("calendarNext");
+    const qtyMinus = document.getElementById("qtyMinus");
+    const qtyPlus = document.getElementById("qtyPlus");
+    const qtyValue = document.getElementById("qtyValue");
+    const priceEl = document.getElementById("bookingPrice");
+    const capacityEl = document.getElementById("bookingCapacity");
+    const statusEl = document.getElementById("bookingStatus");
+    const selectedDateText = document.getElementById("selectedDateText");
+    const selectedTimeText = document.getElementById("selectedTimeText");
+    const selectedTotalText = document.getElementById("selectedTotalText");
+    const continueButton = document.getElementById("bookingContinue");
+
+    let quantity = 1;
+    let selectedDateKey = "";
+    let selectedDeparture = null;
+
+    const now = new Date();
+    let visibleMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    function dateKey(year, month, day) {
+      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
+
+    function money(value) {
+      const amount = Number(value);
+      return Number.isFinite(amount) ? `£${amount.toFixed(2).replace(".00", "")}` : "—";
+    }
+
+    function renderSelection() {
+      qtyValue.textContent = String(quantity);
+
+      if (!selectedDeparture || !selectedDateKey) {
+        selectedDateText.textContent = "Not selected";
+        selectedTimeText.textContent = "—";
+        selectedTotalText.textContent = "—";
+        priceEl.textContent = "Select a date";
+        capacityEl.innerHTML = "Live capacity<br />will appear here";
+        continueButton.disabled = true;
+        return;
+      }
+
+      const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+      selectedDateText.textContent = selectedDate.toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+
+      selectedTimeText.textContent = selectedDeparture.time || "See departure details";
+      priceEl.textContent = selectedDeparture.price != null ? `From ${money(selectedDeparture.price)}` : "Price on schedule";
+
+      const remaining = Number(selectedDeparture.remaining);
+      capacityEl.textContent = Number.isFinite(remaining)
+        ? `${remaining} seat${remaining === 1 ? "" : "s"} remaining`
+        : "Capacity available";
+
+      const unitPrice = Number(selectedDeparture.price);
+      selectedTotalText.textContent = Number.isFinite(unitPrice) ? money(unitPrice * quantity) : "—";
+      continueButton.disabled = false;
+    }
+
+    function selectDate(key) {
+      const departure = availability.get(key);
+      if (!departure) return;
+      selectedDateKey = key;
+      selectedDeparture = departure;
+      renderCalendar();
+      renderSelection();
+    }
+
+    function renderCalendar() {
+      if (!title || !grid) return;
+
+      const year = visibleMonth.getFullYear();
+      const month = visibleMonth.getMonth();
+      title.textContent = visibleMonth.toLocaleDateString("en-GB", {
+        month: "long",
+        year: "numeric"
+      });
+
+      grid.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1);
+      const mondayIndex = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < mondayIndex; i += 1) {
+        const blank = document.createElement("span");
+        blank.className = "calendar-day";
+        blank.setAttribute("aria-hidden", "true");
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const key = dateKey(year, month, day);
+        const departure = availability.get(key);
+
+        if (departure) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "calendar-day is-available";
+          if (key === selectedDateKey) button.classList.add("is-selected");
+          button.innerHTML = `${day}<span class="calendar-day-price">${departure.price != null ? money(departure.price) : "Available"}</span>`;
+          button.setAttribute("aria-label", `Select ${key}`);
+          button.addEventListener("click", () => selectDate(key));
+          grid.appendChild(button);
+        } else {
+          const cell = document.createElement("span");
+          cell.className = "calendar-day";
+          cell.textContent = String(day);
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    prev?.addEventListener("click", () => {
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    next?.addEventListener("click", () => {
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    qtyMinus?.addEventListener("click", () => {
+      quantity = Math.max(1, quantity - 1);
+      renderSelection();
+    });
+
+    qtyPlus?.addEventListener("click", () => {
+      const max = selectedDeparture && Number.isFinite(Number(selectedDeparture.remaining))
+        ? Math.max(1, Number(selectedDeparture.remaining))
+        : 12;
+      quantity = Math.min(max, quantity + 1);
+      renderSelection();
+    });
+
+    // This is the single integration hook for the next stage.
+    // Firebase can supply objects shaped like:
+    // { date: "2026-12-05", time: "08:30", price: 49, remaining: 8 }
+    window.TTLYorkBooking = {
+      tourKey: TOUR_KEY,
+      setAvailability(departures) {
+        availability.clear();
+
+        (Array.isArray(departures) ? departures : []).forEach((departure) => {
+          if (!departure || !departure.date) return;
+          availability.set(String(departure.date), departure);
+        });
+
+        const firstAvailableKey = [...availability.keys()].sort()[0];
+        if (firstAvailableKey) {
+          const firstDate = new Date(`${firstAvailableKey}T12:00:00`);
+          visibleMonth = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
+          statusEl.textContent = "Choose an available date to continue.";
+        } else {
+          selectedDateKey = "";
+          selectedDeparture = null;
+          statusEl.textContent = "No live departures are loaded yet. This panel is ready for the York schedule to be supplied from Firebase.";
+        }
+
+        renderCalendar();
+        renderSelection();
+      }
+    };
+
+    renderCalendar();
+    renderSelection();
+  })();
+</script>
 
 <script>
   const siteHeader = document.querySelector(".site-header");
