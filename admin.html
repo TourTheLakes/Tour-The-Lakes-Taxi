@@ -11,7 +11,6 @@
     :root {
       --ink: #2b2b2b;
       --orange: #b86b2a;
-      --paper: #f3ead8;
       --white: rgba(255,255,255,0.92);
       --muted: rgba(255,255,255,0.62);
       --line: rgba(184,107,42,0.42);
@@ -19,6 +18,7 @@
 
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
+
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background-color: var(--ink);
@@ -32,7 +32,7 @@
       overflow-x: hidden;
     }
 
-    button, input, textarea, select { font: inherit; }
+    button, input { font: inherit; }
     button { -webkit-tap-highlight-color: transparent; }
 
     .site-header {
@@ -46,6 +46,7 @@
       background-repeat: no-repeat;
       border-bottom: 2px solid var(--orange);
     }
+
     .header-inner {
       min-height: 104px;
       display: flex;
@@ -54,11 +55,27 @@
       gap: 20px;
       padding: 24px clamp(20px,5vw,72px) 22px;
     }
-    .brand { font-size: clamp(24px,4vw,42px); font-weight: 650; letter-spacing: -0.8px; }
-    .brand-sub { color: var(--orange); font-size: 13px; font-weight: 700; letter-spacing: 2.2px; text-transform: uppercase; padding-bottom: 4px; }
 
-    .admin-main { width: 100%; }
-    .admin-wrap { width: 100%; }
+    .brand {
+      font-size: clamp(24px,4vw,42px);
+      font-weight: 650;
+      letter-spacing: -0.8px;
+    }
+
+    .brand-sub {
+      color: var(--orange);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      padding-bottom: 4px;
+    }
+
+    .admin-main,
+    .admin-wrap {
+      width: 100%;
+    }
+
 
     .admin-nav {
       width: 100%;
@@ -70,6 +87,7 @@
       top: 0;
       z-index: 50;
     }
+
     .admin-nav button {
       min-height: 58px;
       border: 0;
@@ -81,8 +99,14 @@
       font-weight: 650;
       letter-spacing: .4px;
     }
+
     .admin-nav button:last-child { border-right: 0; }
-    .admin-nav button.is-active { color: var(--white); background: rgba(184,107,42,0.16); }
+
+    .admin-nav button.is-active {
+      color: var(--white);
+      background: rgba(184,107,42,0.16);
+    }
+
     .admin-nav button.is-active::after {
       content: "";
       display: block;
@@ -92,31 +116,105 @@
       background: var(--orange);
     }
 
-    .admin-panel { display: none; width: 100%; }
-    .admin-panel.is-active { display: block; }
+    .admin-panel {
+      display: none;
+      width: 100%;
+    }
+
+    .admin-panel.is-active {
+      display: block;
+    }
+
     .admin-section {
       width: 100%;
       padding: 42px clamp(20px,5vw,72px) 48px;
       border-bottom: 2px solid var(--orange);
     }
-    .admin-section:last-child { border-bottom: 0; }
-    .admin-content { width: min(1120px, 100%); margin: 0 auto; }
 
-    .eyebrow { color: var(--orange); text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 800; margin-bottom: 10px; }
-    .admin-section-title { color: var(--white); font-size: clamp(30px,5vw,52px); line-height: 1.02; font-weight: 620; letter-spacing: -1.4px; margin: 0 0 14px; }
-    .admin-subtitle { margin: 34px 0 12px; color: var(--white); font-size: 21px; line-height: 1.15; font-weight: 650; }
-    .admin-lead { max-width: 760px; color: var(--muted); font-size: 15px; line-height: 1.55; margin: 0 0 28px; }
-    .admin-msg { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .admin-section:last-child { border-bottom: 0; }
+
+    .admin-content {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .admin-section-title {
+      color: var(--white);
+      font-size: clamp(30px,5vw,52px);
+      line-height: 1.02;
+      font-weight: 620;
+      letter-spacing: -1.4px;
+      margin: 0 0 14px;
+    }
+
+    .admin-subtitle {
+      margin: 34px 0 12px;
+      color: var(--white);
+      font-size: 21px;
+      line-height: 1.15;
+      font-weight: 650;
+    }
+
+    .admin-lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0 0 28px;
+    }
+
+    .admin-msg {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
     .admin-msg.ok { color: #8fe0b9; }
     .admin-msg.bad { color: #ff9a9a; }
-    .admin-hint { color: rgba(255,255,255,0.48); font-size: 13px; line-height: 1.5; }
 
-    .admin-stack { display: flex; flex-direction: column; gap: 18px; }
-    .admin-list { display: flex; flex-direction: column; gap: 0; margin: 0; }
-    .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .admin-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-    .field-group { display: flex; flex-direction: column; gap: 7px; }
-    .field-label { color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: 1px; text-transform: uppercase; }
+    .admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 0;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
     .admin-field {
       width: 100%;
       border: 0;
@@ -129,25 +227,11 @@
       font-size: 16px;
       line-height: 1.3;
     }
-    .admin-field:focus { border-bottom-color: var(--orange); background: rgba(255,255,255,0.075); }
-    .admin-field::placeholder { color: rgba(255,255,255,0.35); }
-    .admin-textarea { resize: vertical; min-height: 112px; }
-    input[type="file"]::file-selector-button { border: 0; background: var(--orange); color: #fff; padding: 8px 12px; margin-right: 12px; cursor: pointer; }
 
-    .admin-check { display: flex; align-items: center; gap: 12px; color: var(--white); font-size: 16px; cursor: pointer; }
-    .admin-check input { accent-color: var(--orange); width: 20px; height: 20px; }
-
-    .admin-flow-step { padding: 26px 0 30px; border-bottom: 1px solid var(--line); }
-    .admin-flow-step:last-child { border-bottom: 0; }
-    .admin-flow-step-title { margin: 0 0 7px; color: var(--white); font-size: 20px; font-weight: 700; }
-    .admin-flow-step-copy { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 780px; }
-    .admin-grid-two { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
-    .pickup-editor-row { display: grid; grid-template-columns: minmax(140px,.7fr) minmax(220px,1.5fr) auto; gap: 10px; align-items: end; padding: 14px 0; border-bottom: 1px solid var(--line); }
-    .pickup-editor-row .admin-btn { min-width: 110px; }
-    .schedule-pickup-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
-    .schedule-pickup-row { display: grid; grid-template-columns: minmax(180px,1fr) 150px; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
-    .schedule-pickup-row label { display:flex; align-items:center; gap:10px; color:var(--white); }
-    .schedule-pickup-row input[type="checkbox"] { accent-color: var(--orange); width:20px; height:20px; }
+    .admin-field:focus {
+      border-bottom-color: var(--orange);
+      background: rgba(255,255,255,0.075);
+    }
 
     .admin-btn {
       width: auto;
@@ -164,128 +248,80 @@
       letter-spacing: .45px;
       text-transform: uppercase;
     }
+
     .admin-btn:hover { background: rgba(184,107,42,0.24); }
-    .admin-btn:disabled { opacity: .32; cursor: not-allowed; }
     .admin-btn.primary { background: var(--orange); color: #fff; }
-    .admin-btn.danger { border-bottom-color: #b75a50; background: rgba(183,90,80,.10); }
-    .admin-btn.quiet { border-bottom-color: rgba(255,255,255,.24); background: rgba(255,255,255,.04); }
-
-    .workflow-note {
-      border-left: 3px solid var(--orange);
-      padding: 12px 0 12px 18px;
-      margin: 18px 0 28px;
-      color: var(--muted);
-      line-height: 1.5;
+    .admin-btn.quiet {
+      border-bottom-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.04);
     }
 
-    .it-item { padding: 16px 0 22px; border: 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
-    .it-row { display: flex; gap: 10px; }
-    .it-row .admin-field { flex: 1 1 auto; min-width: 0; }
-    .it-row .admin-btn { width: auto; flex: 0 0 auto; min-width: 110px; }
-
-    .tour-picker { margin-top: 26px; }
-    #tourList > button {
-      width: 100%;
-      border: 0 !important;
-      border-bottom: 1px solid var(--line) !important;
-      background: transparent !important;
-      color: var(--white) !important;
-      padding: 17px 4px !important;
-      text-align: left !important;
-      font-size: 17px;
-      cursor: pointer;
-    }
-    #tourList > button:hover { padding-left: 12px !important; background: rgba(184,107,42,.08) !important; }
-
-    #driversList > div { cursor: pointer; transition: padding-left .15s ease, background .15s ease; }
-    #driversList > div:hover { padding-left: 12px !important; background: rgba(184,107,42,.08) !important; }
-
-    .calendar-header { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; margin: 22px 0 12px; }
-    .calendar-header button { border: 0; background: transparent; color: var(--orange); padding: 12px; cursor: pointer; font-size: 20px; }
-    .calendar-month { text-align: center; color: var(--white); font-size: 19px; font-weight: 700; }
-    .calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-    .calendar-grid { grid-template-rows: repeat(6, minmax(58px, 1fr)); }
-    .calendar-weekdays div { text-align: center; font-weight: 700; padding: 10px 0; color: var(--muted); font-size: 12px; text-transform: uppercase; }
-    .calendar-cell {
-      border: 0;
-      border-top: 1px solid rgba(255,255,255,.08);
-      min-height: 62px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-end;
-      padding: 9px;
-      color: var(--muted);
-      cursor: pointer;
-      user-select: none;
-    }
-    .calendar-cell.is-empty { opacity: .18; cursor: default; }
-    .calendar-cell.is-today {
-      box-shadow: inset 0 0 0 2px rgba(184,107,42,.62);
-      color: var(--white);
-      font-weight: 800;
-    }
-    .calendar-cell.selected { background: var(--orange); color: #fff; }
-    .calendar-cell.has-data:not(.selected) { background: rgba(184,107,42,.16); color: var(--white); }
-    .calendar-cell:not(.is-empty):hover { background: rgba(255,255,255,.07); }
-
-    #liveBookingsList > div,
-    #dateOverviewList > div,
-    #timesList > div,
-    #bookingsList > div,
     #driversList > div {
-      border: 0 !important;
-      border-bottom: 1px solid var(--line) !important;
-      background: transparent !important;
-      padding: 18px 0 !important;
+      cursor: pointer;
+      transition: padding-left .15s ease, background .15s ease;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      padding: 18px 0;
     }
-    #liveBookingsList > div:first-child,
-    #dateOverviewList > div:first-child,
-    #timesList > div:first-child,
-    #bookingsList > div:first-child,
-    #driversList > div:first-child { border-top: 1px solid var(--line) !important; }
 
-    #timesList .admin-btn, #bookingsList .admin-btn, #dateOverviewList .admin-btn { min-width: 0; }
-    #timesList .admin-field, #bookingsList .admin-field { background: rgba(255,255,255,.045) !important; }
-
-    .quick-status {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(184,107,42,.34);
-      margin-top: 28px;
+    #driversList > div:first-child {
+      border-top: 1px solid var(--line);
     }
-    .quick-status > div { background: rgba(43,43,43,.96); padding: 18px; }
-    .quick-status strong { display: block; color: var(--orange); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-    .quick-status span { color: var(--white); font-size: 14px; }
+
+    #driversList > div:hover {
+      padding-left: 12px;
+      background: rgba(184,107,42,.08);
+    }
 
     .site-footer {
       width: 100%;
       border-top: 2px solid var(--orange);
       background-color: var(--ink);
-      background-image: linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),url("images/Web Paper 5.png");
+      background-image:
+        linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),
+        url("images/Web Paper 5.png");
       background-size: cover;
       background-position: center top;
     }
-    .footer-inner { min-height: 72px; display: flex; align-items: center; padding: 0 clamp(20px,5vw,72px); }
-    .footer-text { color: var(--muted); font-size: 13px; }
+
+    .footer-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      padding: 0 clamp(20px,5vw,72px);
+    }
+
+    .footer-text {
+      color: var(--muted);
+      font-size: 13px;
+    }
 
     @media (max-width: 720px) {
-      .header-inner { min-height: 88px; align-items: center; }
+      .header-inner {
+        min-height: 88px;
+        align-items: center;
+      }
+
       .brand-sub { display: none; }
-      .admin-nav button { min-height: 54px; font-size: 12px; }
-      .admin-section { padding-top: 32px; padding-bottom: 38px; }
-      .quick-status { grid-template-columns: 1fr; }
-      .it-row { flex-direction: column; }
-      .it-row .admin-btn { width: 100%; }
-      .admin-actions { flex-direction: column; }
-      .admin-actions .admin-btn { width: 100%; }
-      #timesList [style*="display: flex"], #bookingsList [style*="display: flex"] { flex-wrap: wrap; }
-      #timesList .admin-field, #timesList .admin-btn, #bookingsList .admin-field, #bookingsList .admin-btn { flex: 1 1 100% !important; width: 100% !important; }
-      .calendar-grid { grid-template-rows: repeat(6, minmax(48px, 1fr)); }
-      .calendar-cell { min-height: 50px; padding: 7px; }
-      .admin-grid-two { grid-template-columns: 1fr; }
-      .pickup-editor-row, .schedule-pickup-row { grid-template-columns: 1fr; }
-      .pickup-editor-row .admin-btn { width:100%; }
+
+      .admin-nav button {
+        min-height: 54px;
+        font-size: 12px;
+      }
+
+      .admin-section {
+        padding-top: 32px;
+        padding-bottom: 38px;
+      }
+
+      .admin-actions {
+        flex-direction: column;
+      }
+
+      .admin-actions .admin-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -298,6 +334,23 @@
     </div>
   </header>
 
+  <script>
+    (() => {
+      const buttons = Array.from(document.querySelectorAll("[data-admin-panel]"));
+      const panels = Array.from(document.querySelectorAll(".admin-panel"));
+
+      function showPanel(id) {
+        panels.forEach((panel) => panel.classList.toggle("is-active", panel.id === id));
+        buttons.forEach((button) => button.classList.toggle("is-active", button.dataset.adminPanel === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => showPanel(button.dataset.adminPanel));
+      });
+    })();
+  </script>
+
   <main class="admin-main">
     <div class="admin-wrap">
       <nav class="admin-nav" aria-label="Admin areas">
@@ -307,240 +360,9 @@
         <button type="button" data-admin-panel="driversPanel">Drivers</button>
       </nav>
 
-      <section id="bookingsPanel" class="admin-panel is-active">
-        <div class="admin-section">
-          <div class="admin-content">
-            <div class="eyebrow">Live operations</div>
-            <h1 class="admin-section-title">Bookings</h1>
-            <p class="admin-lead">The newest bookings across every tour appear here automatically. This feed is read-only; choose Schedule when you need to amend a booking.</p>
-            <div class="admin-msg" id="liveBookingsMsg">Loading…</div>
-            <div id="liveBookingsList" class="admin-list" style="margin-top:16px;"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="toursPanel" class="admin-panel">
-        <div class="admin-section">
-          <div class="admin-content">
-            <div class="eyebrow">Tour product</div>
-            <h1 class="admin-section-title" id="editorTitle">Create Tour</h1>
-            <div class="workflow-note" id="editorModeMsg">No tour selected. You are creating a new tour.</div>
-
-            <div class="admin-stack">
-              <div class="admin-flow-step">
-                <div class="eyebrow">Tour types</div>
-                <h2 class="admin-flow-step-title">Manage tour types</h2>
-                <p class="admin-flow-step-copy">Create the customer-facing tour types used by the homepage finder and assign them to tours below.</p>
-                <div class="admin-grid-two">
-                  <div class="field-group">
-                    <label class="field-label" for="newTourTypeName">New tour type</label>
-                    <input id="newTourTypeName" type="text" placeholder="Photography Tour" class="admin-field" />
-                  </div>
-                  <div class="field-group" style="justify-content:end;">
-                    <button id="addTourType" type="button" class="admin-btn primary">Add tour type</button>
-                  </div>
-                </div>
-                <div id="tourTypeMsg" class="admin-msg" style="margin-top:12px;"></div>
-                <div id="tourTypesList" class="admin-list" style="margin-top:12px;"></div>
-              </div>
-
-              <div class="admin-flow-step">
-                <div class="eyebrow">Step 1</div>
-                <h2 class="admin-flow-step-title">What are we selling?</h2>
-                <p class="admin-flow-step-copy">Give the tour its customer-facing identity first. Category drives the homepage finder. Duration and the short summary are reused anywhere we need a concise description.</p>
-
-                <div class="field-group">
-                  <label class="field-label" for="tourTitle">Tour title</label>
-                  <input id="tourTitle" type="text" placeholder="Six Lakes Splendour" class="admin-field" />
-                </div>
-
-                <div class="admin-grid-two" style="margin-top:18px;">
-                  <div class="field-group">
-                    <label class="field-label" for="tourCategory">Tour category</label>
-                    <select id="tourCategory" class="admin-field">
-                      <option value="sightseeing">Sightseeing Tour</option>
-                      <option value="brewery-distillery">Brewery &amp; Distillery Tour</option>
-                      <option value="special-interest">Special Interest Tour</option>
-                    </select>
-                  </div>
-                  <div class="field-group">
-                    <label class="field-label" for="tourDuration">Duration</label>
-                    <input id="tourDuration" type="text" placeholder="4 hours" class="admin-field" />
-                  </div>
-                </div>
-
-                <div class="field-group" style="margin-top:18px;">
-                  <label class="field-label" for="tourShortSummary">Short booking description</label>
-                  <textarea id="tourShortSummary" rows="3" class="admin-field admin-textarea" placeholder="A concise description used in booking results and tour summaries."></textarea>
-                </div>
-              </div>
-
-              <div class="admin-flow-step">
-                <div class="eyebrow">Step 2</div>
-                <h2 class="admin-flow-step-title">Where can guests join?</h2>
-                <p class="admin-flow-step-copy">Create the pickup locations this tour is allowed to use. You will choose which of these apply to each individual departure in Schedule.</p>
-                <div id="pickupLocationsEditor"></div>
-                <button id="addPickupLocation" type="button" class="admin-btn quiet" style="margin-top:14px;">Add pickup location</button>
-              </div>
-
-              <div class="admin-flow-step">
-                <div class="eyebrow">Step 3</div>
-                <h2 class="admin-flow-step-title">Write the tour</h2>
-                <p class="admin-flow-step-copy">This is the fuller information shown to customers when they open the tour. Write it in the order they need it: title, overview, joining notes, then the itinerary.</p>
-
-                <div class="field-group">
-                  <label class="field-label" for="tourImageFile">Tour image</label>
-                  <input id="tourImageFile" type="file" accept="image/*" class="admin-field" />
-                </div>
-
-                <div id="tourDescEditor" class="admin-stack" style="margin-top:18px;">
-                  <div class="field-group">
-                    <label class="field-label" for="descProductTitle">Product title</label>
-                    <input id="descProductTitle" type="text" class="admin-field" />
-                  </div>
-                  <div class="field-group">
-                    <label class="field-label" for="descOverview">Overview</label>
-                    <textarea id="descOverview" rows="5" class="admin-field admin-textarea"></textarea>
-                  </div>
-                  <div class="field-group">
-                    <label class="field-label" for="descMeetingPoint">Joining and meeting point notes</label>
-                    <textarea id="descMeetingPoint" rows="3" class="admin-field admin-textarea"></textarea>
-                  </div>
-
-                  <div>
-                    <div class="field-label" style="margin-bottom:10px;">Itinerary</div>
-                    <div id="itineraryList" class="admin-stack"></div>
-                    <button id="addItineraryItem" type="button" class="admin-btn quiet" style="margin-top:14px;">Add itinerary stop</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="admin-flow-step">
-                <div class="eyebrow">Step 4</div>
-                <h2 class="admin-flow-step-title">Publish and booking visibility</h2>
-                <p class="admin-flow-step-copy">Live controls whether the tour is published. Homepage searchable controls whether it can appear in the homepage tour finder once it has bookable departures.</p>
-                <label class="admin-check">
-                  <input id="tourLive" type="checkbox" />
-                  <span>Publish this tour live</span>
-                </label>
-                <label class="admin-check" style="margin-top:14px;">
-                  <input id="tourHomepageSearchable" type="checkbox" />
-                  <span>Include this tour in the homepage booking finder</span>
-                </label>
-              </div>
-
-              <textarea id="tourDescription" hidden></textarea>
-              <div id="adminMsg" class="admin-msg"></div>
-            </div>
-
-            <div class="admin-actions">
-              <button id="saveTour" type="button" class="admin-btn primary">Create tour</button>
-              <button id="amendTour" type="button" class="admin-btn primary" hidden>Save tour changes</button>
-              <button id="newTour" type="button" class="admin-btn quiet">Start a new tour</button>
-              <button id="deleteTour" type="button" class="admin-btn danger" hidden>Delete selected tour</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-section">
-          <div class="admin-content tour-picker">
-            <div class="eyebrow">Choose existing</div>
-            <div class="admin-subtitle" style="margin-top:0;">Existing tours</div>
-            <p class="admin-lead">Select a tour below to load it into the editor above. The same selection carries into Schedule.</p>
-            <div id="tourList" class="admin-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="schedulePanel" class="admin-panel">
-        <div class="admin-section">
-          <div class="admin-content">
-            <div class="eyebrow">Dates & availability</div>
-            <h1 class="admin-section-title">Schedule</h1>
-            <p class="admin-lead">Pick a date. If no tour is selected, the calendar shows everything running that day and lets you choose what to manage.</p>
-
-            <div class="calendar-header">
-              <button id="calPrev" type="button" aria-label="Previous month">←</button>
-              <div id="calMonth" class="calendar-month"></div>
-              <button id="calNext" type="button" aria-label="Next month">→</button>
-            </div>
-            <div class="calendar-weekdays">
-              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-
-            <div class="admin-stack" id="dateOverviewWrap" style="margin-top:22px;">
-              <div class="admin-msg" id="dateOverviewMsg">Calendar overview shows all saved tour dates. Select a date to see what it holds.</div>
-              <div id="dateOverviewList" class="admin-list"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-section">
-          <div class="admin-content">
-            <div class="eyebrow">Selected tour & date</div>
-            <div class="admin-subtitle" style="margin-top:0;">Times, capacity & price</div>
-            <div class="workflow-note" id="scheduleMsg">Select a date to view what it holds, or select a tour to manage its times and bookings.</div>
-
-            <div class="admin-stack" id="scheduleControls" hidden>
-              <div class="field-group">
-                <label class="field-label" for="selectedDate">Selected date</label>
-                <input id="selectedDate" class="admin-field" type="text" readonly />
-              </div>
-
-              <div class="quick-status">
-                <div><strong>1</strong><span>Set departure</span></div>
-                <div><strong>2</strong><span>Capacity &amp; price</span></div>
-                <div><strong>3</strong><span>Choose pickups</span></div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label" for="tourTime">New time</label>
-                <input id="tourTime" class="admin-field" type="time" />
-              </div>
-              <div class="field-group">
-                <label class="field-label" for="tourCapacity">Capacity</label>
-                <input id="tourCapacity" class="admin-field" type="number" min="1" placeholder="Capacity" />
-              </div>
-              <div class="field-group">
-                <label class="field-label" for="tourPrice">Price per passenger (£)</label>
-                <input id="tourPrice" class="admin-field" type="number" min="0" step="0.01" placeholder="Price (£)" />
-              </div>
-
-              <div class="field-group">
-                <div class="field-label">Pickup points for this departure</div>
-                <div class="admin-hint">Tick every place this vehicle will collect from and set the actual pickup time. All selected pickups share the single capacity above.</div>
-                <div id="schedulePickupList" class="schedule-pickup-list" style="margin-top:10px;"></div>
-              </div>
-
-              <div>
-                <button id="confirmSchedule" type="button" class="admin-btn primary">Add this departure</button>
-              </div>
-
-              <div class="admin-hint" id="confirmHelp">Adding creates one physical departure with one shared capacity. Existing departures are edited individually below.</div>
-              <div class="admin-hint">A time slot cannot be deleted or renamed while it has active bookings. Capacity can still be changed.</div>
-
-              <div id="timesListWrap" class="admin-stack" style="margin-top:18px;">
-                <div class="admin-subtitle">Existing time slots</div>
-                <div class="admin-msg" id="timesListMsg">No date selected.</div>
-                <div id="timesList" class="admin-list"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-section">
-          <div class="admin-content">
-            <div id="bookingsWrap" class="admin-stack">
-              <div class="eyebrow">Customer records</div>
-              <div class="admin-subtitle" style="margin-top:0;">Bookings for selected date</div>
-              <div class="admin-msg" id="bookingsMsg">No date selected.</div>
-              <div class="admin-hint">Paid bookings lock passenger quantity and price. Marking a booking paid requires its payment date and time. Deleting a booking returns its seats automatically.</div>
-              <div id="bookingsList" class="admin-list"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section id="bookingsPanel" class="admin-panel is-active"></section>
+      <section id="toursPanel" class="admin-panel"></section>
+      <section id="schedulePanel" class="admin-panel"></section>
 
       <section id="driversPanel" class="admin-panel">
         <div class="admin-section">
@@ -598,1934 +420,410 @@
   </main>
 
   <footer class="site-footer">
-    <div class="footer-inner"><div class="footer-text">© Tour The Lakes · Operations Admin</div></div>
+    <div class="footer-inner">
+      <div class="footer-text">© Tour The Lakes · Operations Admin</div>
+    </div>
   </footer>
 
-  <script>
-    (() => {
-      const buttons = Array.from(document.querySelectorAll("[data-admin-panel]"));
-      const panels = Array.from(document.querySelectorAll(".admin-panel"));
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      push,
+      set,
+      update,
+      onValue,
+      query,
+      orderByChild,
+      equalTo,
+      get,
+      serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+    import {
+      getStorage,
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
 
-      function showPanel(id) {
-        panels.forEach((panel) => panel.classList.toggle("is-active", panel.id === id));
-        buttons.forEach((button) => button.classList.toggle("is-active", button.dataset.adminPanel === id));
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+    import {
+      getAuth,
+      onAuthStateChanged,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      setPersistence,
+      browserLocalPersistence,
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-      buttons.forEach((button) => button.addEventListener("click", () => showPanel(button.dataset.adminPanel)));
-
-      document.addEventListener("click", (event) => {
-        const manage = event.target.closest("#dateOverviewList .admin-btn");
-        if (manage) setTimeout(() => showPanel("schedulePanel"), 0);
-      });
-    })();
-  </script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import {
-    getDatabase,
-    ref,
-    push,
-    set,
-    update,
-    onValue,
-    remove,
-    runTransaction,
-    query,
-    orderByChild,
-    equalTo,
-    get,
-    serverTimestamp,
-  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-  import {
-    getStorage,
-    ref as sRef,
-    uploadBytes,
-    getDownloadURL,
-  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
-    authDomain: "tourthelakes-1e165.firebaseapp.com",
-    databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
-    projectId: "tourthelakes-1e165",
-    storageBucket: "tourthelakes-1e165.firebasestorage.app",
-    messagingSenderId: "470758171431",
-    appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
-    measurementId: "G-W6JY1LZXTP",
-  };
-
-  const ALLOWED_EMAILS = new Set([
-    "info@tourthelakes.com",
-    "georgina@tourthelakes.com",
-  ]);
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const storage = getStorage(app);
-  const auth = getAuth(app);
-
-  // --- Auth bar injection ---
-  const adminMain = document.querySelector(".admin-main");
-  if (adminMain) adminMain.style.display = "none";
-
-  const bar = document.createElement("div");
-  bar.style.borderBottom = "1px solid #b86b2a";
-  bar.style.padding = "10px 16px";
-  bar.style.display = "flex";
-  bar.style.alignItems = "center";
-  bar.style.gap = "10px";
-  bar.style.color = "rgba(255,255,255,0.92)";
-  bar.style.font = "400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif";
-
-  const msg = document.createElement("div");
-  msg.textContent = "Checking sign-in…";
-  msg.style.flex = "1";
-
-  const btnLogin = document.createElement("button");
-  btnLogin.type = "button";
-  btnLogin.textContent = "SIGN IN (Google)";
-  btnLogin.style.border = "1px solid #b86b2a";
-  btnLogin.style.background = "#2b2b2b";
-  btnLogin.style.color = "#b86b2a";
-  btnLogin.style.padding = "8px 12px";
-  btnLogin.style.cursor = "pointer";
-
-  const btnLogout = document.createElement("button");
-  btnLogout.type = "button";
-  btnLogout.textContent = "SIGN OUT";
-  btnLogout.style.border = "1px solid #b86b2a";
-  btnLogout.style.background = "#2b2b2b";
-  btnLogout.style.color = "#b86b2a";
-  btnLogout.style.padding = "8px 12px";
-  btnLogout.style.cursor = "pointer";
-  btnLogout.hidden = true;
-
-  bar.appendChild(msg);
-  bar.appendChild(btnLogin);
-  bar.appendChild(btnLogout);
-
-  const header = document.querySelector(".site-header");
-  if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
-  else document.body.insertBefore(bar, document.body.firstChild);
-
-  btnLogin.addEventListener("click", async () => {
-    msg.textContent = "Signing in…";
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      msg.textContent = `Sign-in failed: ${e?.message || e}`;
-    }
-  });
-
-  btnLogout.addEventListener("click", async () => { await signOut(auth); });
-
-  let booted = false;
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      btnLogin.hidden = false;
-      btnLogout.hidden = true;
-      if (adminMain) adminMain.style.display = "none";
-      msg.textContent = "Sign in to access admin.";
-      return;
-    }
-
-    const email = String(user.email || "").toLowerCase();
-    if (!ALLOWED_EMAILS.has(email)) {
-      msg.textContent = `Not authorised: ${user.email || "(no email)"}`;
-      if (adminMain) adminMain.style.display = "none";
-      btnLogin.hidden = false;
-      btnLogout.hidden = true;
-      await signOut(auth);
-      return;
-    }
-
-    msg.textContent = `Signed in as ${user.email}`;
-    btnLogin.hidden = true;
-    btnLogout.hidden = false;
-    if (adminMain) adminMain.style.display = "";
-
-    if (!booted) {
-      booted = true;
-      bootAdminApp(user);
-    }
-  });
-
-  // =========================
-  // ADMIN APP
-  // =========================
-  function bootAdminApp(user) {
-    const adminEmail = String(user?.email || "").toLowerCase();
-      function hardRefresh() {
-        window.location.reload(true);
-         }
-
-    // ---- UI helpers ----
-    function setMsg(el, text, tone) {
-      if (!el) return;
-      el.classList.remove("ok", "bad");
-      if (tone === "ok") el.classList.add("ok");
-      if (tone === "bad") el.classList.add("bad");
-      el.textContent = String(text || "");
-    }
-
-    function safeStr(v){ return String(v ?? ""); }
-
-    function fmtGBP(n){
-      const v = Number(n);
-      if (!Number.isFinite(v)) return "£0.00";
-      return `£${v.toFixed(2)}`;
-    }
-
-    function isPaidBooking(b){
-      return String(b?.paymentStatus || "").toLowerCase() === "paid";
-    }
-
-    function bookingActive(b){
-      // for future: allow cancelled/no_show etc.
-      const s = String(b?.bookingStatus || "active").toLowerCase();
-      return s === "active";
-    }
-
-    // ---- DOM ----
-    const titleEl = document.getElementById("tourTitle");
-    const categoryEl = document.getElementById("tourCategory");
-    const newTourTypeNameEl = document.getElementById("newTourTypeName");
-    const addTourTypeBtn = document.getElementById("addTourType");
-    const tourTypeMsgEl = document.getElementById("tourTypeMsg");
-    const tourTypesListEl = document.getElementById("tourTypesList");
-    const durationEl = document.getElementById("tourDuration");
-    const shortSummaryEl = document.getElementById("tourShortSummary");
-    const homepageSearchableEl = document.getElementById("tourHomepageSearchable");
-    const pickupLocationsEditorEl = document.getElementById("pickupLocationsEditor");
-    const addPickupLocationBtn = document.getElementById("addPickupLocation");
-    const imgFileEl = document.getElementById("tourImageFile");
-    const liveEl = document.getElementById("tourLive");
-    const saveBtn = document.getElementById("saveTour");
-    const msgEl = document.getElementById("adminMsg");
-    const tourListEl = document.getElementById("tourList");
-    const amendBtn = document.getElementById("amendTour");
-    const deleteBtn = document.getElementById("deleteTour");
-    const newTourBtn = document.getElementById("newTour");
-    const editorTitleEl = document.getElementById("editorTitle");
-    const editorModeMsgEl = document.getElementById("editorModeMsg");
-    const descEl = document.getElementById("tourDescription");
-
-    const builtInTourTypes = {
-      "sightseeing": "Sightseeing Tour",
-      "brewery-distillery": "Brewery & Distillery Tour",
-      "special-interest": "Special Interest Tour",
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP",
     };
-    let managedTourTypes = {};
 
-    function tourTypeSlug(name) {
-      return String(name || "").trim().toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-    }
-    function tourTypeLabel(id) {
-      return managedTourTypes[id]?.label || builtInTourTypes[id] || id;
-    }
-    function refreshTourCategorySelect(preferred = "") {
-      const current = preferred || categoryEl.value || "sightseeing";
-      const map = { ...builtInTourTypes };
-      for (const [id, item] of Object.entries(managedTourTypes || {})) if (item?.label) map[id] = item.label;
-      for (const [, tour] of Object.entries(allToursCache || {})) {
-        const id = String(tour?.category || "").trim();
-        if (id) map[id] = String(tour?.categoryLabel || map[id] || id);
-      }
-      categoryEl.innerHTML = "";
-      Object.entries(map).sort((a,b)=>a[1].localeCompare(b[1])).forEach(([id,label])=>{
-        const option=document.createElement("option"); option.value=id; option.textContent=label; categoryEl.appendChild(option);
-      });
-      if (map[current]) categoryEl.value=current;
-      else if (categoryEl.options.length) categoryEl.selectedIndex=0;
-    }
-    function renderTourTypesList() {
-      if (!tourTypesListEl) return;
-      tourTypesListEl.innerHTML = "";
-      const map = { ...builtInTourTypes };
-      for (const [id,item] of Object.entries(managedTourTypes || {})) if(item?.label) map[id]=item.label;
-      for (const [id,label] of Object.entries(map).sort((a,b)=>a[1].localeCompare(b[1]))) {
-        const row=document.createElement("div"); row.style.display="flex"; row.style.alignItems="center"; row.style.gap="12px"; row.style.padding="12px 0"; row.style.borderBottom="1px solid var(--line)";
-        const name=document.createElement("div"); name.style.flex="1"; name.textContent=label; row.appendChild(name);
-        if (managedTourTypes[id]) {
-          const del=document.createElement("button"); del.type="button"; del.className="admin-btn quiet"; del.textContent="Remove";
-          del.addEventListener("click",async()=>{
-            const used=Object.values(allToursCache||{}).some(t=>String(t?.category||"")===id);
-            if(used){setMsg(tourTypeMsgEl,"That tour type is assigned to an existing tour. Reassign that tour first.","bad");return;}
-            if(!confirm(`Remove tour type “${label}”?`))return;
-            try{await remove(ref(db,`tourTypes/${id}`));setMsg(tourTypeMsgEl,`Removed ${label}.`,"ok");}catch(err){setMsg(tourTypeMsgEl,`Error: ${err?.message||err}`,"bad");}
-          });
-          row.appendChild(del);
-        }
-        tourTypesListEl.appendChild(row);
-      }
+    const ALLOWED_EMAILS = new Set([
+      "info@tourthelakes.com",
+      "georgina@tourthelakes.com",
+    ]);
+
+    const app = initializeApp(firebaseConfig);
+
+    // Realtime Database is retained ONLY for the existing Drivers/App connection.
+    const db = getDatabase(app);
+
+    // Firebase Storage is initialised and ready for the rebuilt backend.
+    const storage = getStorage(app);
+
+    const auth = getAuth(app);
+
+    // Keep the authorised admin signed in across refreshes, tabs and browser restarts.
+    // There is deliberately no inactivity/session timeout in this admin page.
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (err) {
+      console.error("Could not set persistent Firebase Auth session:", err);
     }
 
-    function setEditorMode(mode, tourId = "") {
-      const editing = mode === "edit";
+    const adminMain = document.querySelector(".admin-main");
+    if (adminMain) adminMain.style.display = "none";
 
-      if (editorTitleEl) {
-        editorTitleEl.textContent = editing ? "Amend Tour" : "Create Tour";
-      }
+    const bar = document.createElement("div");
+    bar.style.borderBottom = "1px solid #b86b2a";
+    bar.style.padding = "10px 16px";
+    bar.style.display = "flex";
+    bar.style.alignItems = "center";
+    bar.style.gap = "10px";
+    bar.style.color = "rgba(255,255,255,0.92)";
+    bar.style.font = "400 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif";
 
-      if (editorModeMsgEl) {
-        editorModeMsgEl.textContent = editing
-          ? `Selected tour: ${tourId}. Changes here will amend the existing tour.`
-          : "No tour selected. You are creating a new tour.";
-      }
+    const msg = document.createElement("div");
+    msg.textContent = "Checking sign-in…";
+    msg.style.flex = "1";
 
-      if (saveBtn) saveBtn.hidden = editing;
-      if (amendBtn) amendBtn.hidden = !editing;
-      if (deleteBtn) deleteBtn.hidden = !editing;
+    const btnLogin = document.createElement("button");
+    btnLogin.type = "button";
+    btnLogin.textContent = "SIGN IN (Google)";
+    btnLogin.style.border = "1px solid #b86b2a";
+    btnLogin.style.background = "#2b2b2b";
+    btnLogin.style.color = "#b86b2a";
+    btnLogin.style.padding = "8px 12px";
+    btnLogin.style.cursor = "pointer";
+
+    const btnLogout = document.createElement("button");
+    btnLogout.type = "button";
+    btnLogout.textContent = "SIGN OUT";
+    btnLogout.style.border = "1px solid #b86b2a";
+    btnLogout.style.background = "#2b2b2b";
+    btnLogout.style.color = "#b86b2a";
+    btnLogout.style.padding = "8px 12px";
+    btnLogout.style.cursor = "pointer";
+    btnLogout.hidden = true;
+
+    bar.appendChild(msg);
+    bar.appendChild(btnLogin);
+    bar.appendChild(btnLogout);
+
+    const header = document.querySelector(".site-header");
+    if (header && header.parentNode) {
+      header.parentNode.insertBefore(bar, header.nextSibling);
+    } else {
+      document.body.insertBefore(bar, document.body.firstChild);
     }
 
-    // Live feed
-    const liveBookingsMsgEl = document.getElementById("liveBookingsMsg");
-    const liveBookingsListEl = document.getElementById("liveBookingsList");
-    let unsubscribeLiveBookings = null;
-
-    // Schedule
-    let selectedDateKey = "";
-    const selectedDateEl = document.getElementById("selectedDate");
-    const scheduleMsgEl = document.getElementById("scheduleMsg");
-    const scheduleControlsEl = document.getElementById("scheduleControls");
-    const tourTimeEl = document.getElementById("tourTime");
-    const tourCapacityEl = document.getElementById("tourCapacity");
-    const tourPriceEl = document.getElementById("tourPrice");
-    const schedulePickupListEl = document.getElementById("schedulePickupList");
-    const confirmScheduleBtn = document.getElementById("confirmSchedule");
-    const timesListMsgEl = document.getElementById("timesListMsg");
-    const timesListEl = document.getElementById("timesList");
-    let unsubscribeTimes = null;
-
-    // Bookings for selected date
-    const bookingsMsgEl = document.getElementById("bookingsMsg");
-    const bookingsListEl = document.getElementById("bookingsList");
-    let unsubscribeBookings = null;
-
-    // Calendar
-    const calPrevBtn = document.getElementById("calPrev");
-    const calNextBtn = document.getElementById("calNext");
-    const calMonthEl = document.getElementById("calMonth");
-    const calendarGrid = document.getElementById("calendarGrid");
-    const dateOverviewMsgEl = document.getElementById("dateOverviewMsg");
-    const dateOverviewListEl = document.getElementById("dateOverviewList");
-
-    // Drivers
-    const driverNameEl = document.getElementById("driverName");
-    const driverBadgeNoEl = document.getElementById("driverBadgeNo");
-    const driverBadgeExpiryEl = document.getElementById("driverBadgeExpiry");
-    const driverEmailEl = document.getElementById("driverEmail");
-    const driverPhoneEl = document.getElementById("driverPhone");
-    const saveDriverBtn = document.getElementById("saveDriver");
-    const driverMsgEl = document.getElementById("driverMsg");
-    const driversListMsgEl = document.getElementById("driversListMsg");
-    const driversListEl = document.getElementById("driversList");
-    const driverEditorTitleEl = document.getElementById("driverEditorTitle");
-    const driverEditorLeadEl = document.getElementById("driverEditorLead");
-    const cancelDriverEditBtn = document.getElementById("cancelDriverEdit");
-    let selectedDriverId = "";
-
-    const CELL_COUNT = 42;
-    let viewYear = new Date().getFullYear();
-    let viewMonth = new Date().getMonth();
-    let savedDates = new Set();
-    let unsubscribeDates = null;
-
-    let selectedTourId = "";
-    let selectedTourData = null;
-
-    let allToursCache = {};
-    let allDatesIndex = new Map();
-
-    // ---- shared helpers ----
-    function pad2(n) { return String(n).padStart(2, "0"); }
-    function toKeyYYYYMMDD(y, m0, d) { return `${y}-${pad2(m0 + 1)}-${pad2(d)}`; }
-    function monthLabel(y, m0) { return new Date(y, m0, 1).toLocaleString(undefined, { month: "long", year: "numeric" }); }
-    function firstDayIndexMonFirst(y, m0) { return (new Date(y, m0, 1).getDay() + 6) % 7; }
-    function daysInMonth(y, m0) { return new Date(y, m0 + 1, 0).getDate(); }
-    function localTodayKey() {
-      const now = new Date();
-      return toKeyYYYYMMDD(now.getFullYear(), now.getMonth(), now.getDate());
-    }
-
-    function slugifyTitle(input) {
-      return String(input || "")
-        .trim()
-        .toLowerCase()
-        .replace(/['"]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-    }
-
-    function detach(fnRef){
-      if (typeof fnRef === "function") { try { fnRef(); } catch {} }
-      return null;
-    }
-
-    // ---- Tour pickup locations ----
-    let pickupLocationItems = [];
-
-    function slugifyPickup(input) { return slugifyTitle(input); }
-
-    function normalisePickupLocations(value) {
-      if (!value || typeof value !== "object") return [];
-      return Object.entries(value).map(([id, item]) => ({
-        id,
-        label: safeStr(item?.label || id),
-        meetingPoint: safeStr(item?.meetingPoint),
-        enabled: item?.enabled !== false,
-      }));
-    }
-
-    function pickupLocationsObject() {
-      const out = {};
-      for (const item of pickupLocationItems) {
-        const label = safeStr(item.label).trim();
-        const meetingPoint = safeStr(item.meetingPoint).trim();
-        if (!label) continue;
-        let id = slugifyPickup(item.id || label);
-        if (!id) continue;
-        let uniqueId = id;
-        let n = 2;
-        while (out[uniqueId]) uniqueId = `${id}-${n++}`;
-        out[uniqueId] = { label, meetingPoint, enabled: true };
-      }
-      return out;
-    }
-
-    function renderPickupLocationEditor() {
-      if (!pickupLocationsEditorEl) return;
-      pickupLocationsEditorEl.innerHTML = "";
-      if (!pickupLocationItems.length) {
-        const hint = document.createElement("div");
-        hint.className = "admin-hint";
-        hint.textContent = "No pickup locations added yet.";
-        pickupLocationsEditorEl.appendChild(hint);
-        return;
-      }
-      pickupLocationItems.forEach((item, idx) => {
-        const row = document.createElement("div");
-        row.className = "pickup-editor-row";
-        const labelWrap = document.createElement("div"); labelWrap.className = "field-group";
-        const labelLabel = document.createElement("label"); labelLabel.className = "field-label"; labelLabel.textContent = "Pickup area";
-        const labelInput = document.createElement("input"); labelInput.className = "admin-field"; labelInput.value = item.label || ""; labelInput.placeholder = "Windermere";
-        labelWrap.append(labelLabel,labelInput);
-        const pointWrap = document.createElement("div"); pointWrap.className = "field-group";
-        const pointLabel = document.createElement("label"); pointLabel.className = "field-label"; pointLabel.textContent = "Exact meeting point";
-        const pointInput = document.createElement("input"); pointInput.className = "admin-field"; pointInput.value = item.meetingPoint || ""; pointInput.placeholder = "Windermere Railway Station";
-        pointWrap.append(pointLabel,pointInput);
-        const removeBtn = document.createElement("button"); removeBtn.type="button"; removeBtn.className="admin-btn quiet"; removeBtn.textContent="Remove";
-        labelInput.addEventListener("input",()=>{ pickupLocationItems[idx].label=labelInput.value; });
-        pointInput.addEventListener("input",()=>{ pickupLocationItems[idx].meetingPoint=pointInput.value; });
-        removeBtn.addEventListener("click",()=>{ pickupLocationItems.splice(idx,1); renderPickupLocationEditor(); renderSchedulePickupChoices(); });
-        row.append(labelWrap,pointWrap,removeBtn); pickupLocationsEditorEl.appendChild(row);
-      });
-    }
-
-    function addPickupLocationBlank() {
-      pickupLocationItems.push({ id:"", label:"", meetingPoint:"", enabled:true });
-      renderPickupLocationEditor();
-    }
-
-    function renderSchedulePickupChoices(existingPickups = null) {
-      if (!schedulePickupListEl) return;
-      schedulePickupListEl.innerHTML = "";
-      const locations = normalisePickupLocations(selectedTourData?.pickupLocations);
-      if (!locations.length) {
-        const hint = document.createElement("div"); hint.className="admin-hint"; hint.textContent="This tour has no pickup locations yet. Add them in Tours first."; schedulePickupListEl.appendChild(hint); return;
-      }
-      for (const loc of locations) {
-        const row=document.createElement("div"); row.className="schedule-pickup-row"; row.dataset.pickupId=loc.id;
-        const label=document.createElement("label"); const check=document.createElement("input"); check.type="checkbox"; check.className="schedule-pickup-check";
-        const existing=existingPickups?.[loc.id]; check.checked=!!existing;
-        const text=document.createElement("span"); text.textContent=loc.meetingPoint ? `${loc.label} — ${loc.meetingPoint}` : loc.label; label.append(check,text);
-        const time=document.createElement("input"); time.type="time"; time.className="admin-field schedule-pickup-time"; time.value=safeStr(existing?.time || tourTimeEl?.value || ""); time.disabled=!check.checked;
-        check.addEventListener("change",()=>{ time.disabled=!check.checked; if(check.checked && !time.value) time.value=tourTimeEl.value || ""; });
-        row.append(label,time); schedulePickupListEl.appendChild(row);
-      }
-    }
-
-    function collectSchedulePickups(container = schedulePickupListEl) {
-      const out={};
-      if (!container) return out;
-      container.querySelectorAll(".schedule-pickup-row").forEach(row=>{
-        const check=row.querySelector(".schedule-pickup-check"); const time=row.querySelector(".schedule-pickup-time");
-        if (!check?.checked) return;
-        const id=row.dataset.pickupId; if (!id) return;
-        out[id]={ time: safeStr(time?.value).trim() || safeStr(tourTimeEl?.value).trim() };
-      });
-      return out;
-    }
-
-    addPickupLocationBtn?.addEventListener("click", addPickupLocationBlank);
-    tourTimeEl?.addEventListener("change",()=>{ schedulePickupListEl?.querySelectorAll(".schedule-pickup-row").forEach(row=>{ const check=row.querySelector(".schedule-pickup-check"); const time=row.querySelector(".schedule-pickup-time"); if(check?.checked && time && !time.value) time.value=tourTimeEl.value; }); });
-    renderPickupLocationEditor();
-
-    // ---- Itinerary editor (unchanged logic, tidied) ----
-    const descProductTitleEl = document.getElementById("descProductTitle");
-    const descOverviewEl = document.getElementById("descOverview");
-    const descMeetingPointEl = document.getElementById("descMeetingPoint");
-    const itineraryListEl = document.getElementById("itineraryList");
-    const addItineraryBtn = document.getElementById("addItineraryItem");
-    let itineraryItems = [];
-
-    function escHtml(s) {
-      return String(s || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
-    function nl2br(s) { return escHtml(s).replace(/\r?\n/g, "<br>"); }
-
-    function buildDescriptionHtml() {
-      const pt = descProductTitleEl.value.trim();
-      const ov = descOverviewEl.value.trim();
-      const mp = descMeetingPointEl.value.trim();
-
-      const items = itineraryItems
-        .map((x) => ({ title: String(x.title || "").trim(), body: String(x.body || "").trim() }))
-        .filter((x) => x.title || x.body);
-
-      let html = "";
-      if (pt) html += `<div class="tsec"><div class="tsec-h">Tour</div><div class="tsec-b">${nl2br(pt)}</div></div>`;
-      if (ov) html += `<div class="tsec"><div class="tsec-h">Overview</div><div class="tsec-b">${nl2br(ov)}</div></div>`;
-      if (mp) html += `<div class="tsec"><div class="tsec-h">Meeting Point</div><div class="tsec-b">${nl2br(mp)}</div></div>`;
-
-      if (items.length) {
-        html += `<div class="tsec"><div class="tsec-h">Itinerary</div><div class="tsec-b">`;
-        for (const it of items) {
-          html += `<div class="tit-item">`;
-          if (it.title) html += `<div class="tit-title">${nl2br(it.title)}</div>`;
-          if (it.body) html += `<div class="tit-body">${nl2br(it.body)}</div>`;
-          html += `</div>`;
-        }
-        html += `</div></div>`;
-      }
-      return html;
-    }
-
-    function syncEditorToHiddenTextarea() { descEl.value = buildDescriptionHtml(); }
-
-    function renderItineraryEditor() {
-      itineraryListEl.innerHTML = "";
-      itineraryItems.forEach((item, idx) => {
-        const wrap = document.createElement("div");
-        wrap.className = "it-item";
-
-        const row = document.createElement("div");
-        row.className = "it-row";
-
-        const title = document.createElement("input");
-        title.type = "text";
-        title.className = "admin-field";
-        title.value = item.title || "";
-
-        const removeBtn = document.createElement("button");
-        removeBtn.type = "button";
-        removeBtn.className = "admin-btn";
-        removeBtn.textContent = "REMOVE";
-
-        row.appendChild(title);
-        row.appendChild(removeBtn);
-
-        const body = document.createElement("textarea");
-        body.rows = 4;
-        body.className = "admin-field admin-textarea";
-        body.value = item.body || "";
-
-        title.addEventListener("input", () => { itineraryItems[idx].title = title.value; syncEditorToHiddenTextarea(); });
-        body.addEventListener("input", () => { itineraryItems[idx].body = body.value; syncEditorToHiddenTextarea(); });
-        removeBtn.addEventListener("click", () => { itineraryItems.splice(idx, 1); renderItineraryEditor(); syncEditorToHiddenTextarea(); });
-
-        wrap.appendChild(row);
-        wrap.appendChild(body);
-        itineraryListEl.appendChild(wrap);
-      });
-    }
-
-    function addItineraryBlank() {
-      itineraryItems.push({ title: "", body: "" });
-      renderItineraryEditor();
-      syncEditorToHiddenTextarea();
-    }
-
-    function loadEditorFromHtml(htmlString) {
-      descProductTitleEl.value = "";
-      descOverviewEl.value = "";
-      descMeetingPointEl.value = "";
-      itineraryItems = [];
-
-      const raw = String(htmlString || "").trim();
-      if (!raw) { renderItineraryEditor(); syncEditorToHiddenTextarea(); return; }
-
-      const doc = new DOMParser().parseFromString(raw, "text/html");
-      const sections = Array.from(doc.querySelectorAll(".tsec"));
-      if (!sections.length) {
-        descOverviewEl.value = raw;
-        renderItineraryEditor();
-        syncEditorToHiddenTextarea();
-        return;
-      }
-
-      for (const sec of sections) {
-        const h = sec.querySelector(".tsec-h")?.textContent?.trim() || "";
-        const bEl = sec.querySelector(".tsec-b");
-        const htmlToEditorText = (el) => {
-          if (!el) return "";
-          const clone = el.cloneNode(true);
-          clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
-          return clone.textContent.trim();
-        };
-        const b = htmlToEditorText(bEl);
-
-        if (h === "Product Title" || h === "Tour") descProductTitleEl.value = b;
-        if (h === "Overview") descOverviewEl.value = b;
-        if (h === "Meeting Point") descMeetingPointEl.value = b;
-
-        if (h === "Itinerary") {
-          const items = Array.from(sec.querySelectorAll(".tit-item"));
-          for (const it of items) {
-            itineraryItems.push({
-              title: htmlToEditorText(it.querySelector(".tit-title")),
-              body: htmlToEditorText(it.querySelector(".tit-body")),
-            });
-          }
-        }
-      }
-
-      renderItineraryEditor();
-      syncEditorToHiddenTextarea();
-    }
-
-    addItineraryBtn.addEventListener("click", addItineraryBlank);
-    [descProductTitleEl, descOverviewEl, descMeetingPointEl].forEach((el) => el.addEventListener("input", syncEditorToHiddenTextarea));
-    renderItineraryEditor();
-    refreshTourCategorySelect("sightseeing");
-    setEditorMode("create");
-
-    onValue(ref(db,"tourTypes"),(snap)=>{ managedTourTypes=snap.val()||{}; refreshTourCategorySelect(categoryEl.value); renderTourTypesList(); });
-    addTourTypeBtn?.addEventListener("click",async()=>{
-      const label=String(newTourTypeNameEl?.value||"").trim();
-      const id=tourTypeSlug(label);
-      if(!label||!id){setMsg(tourTypeMsgEl,"Enter a tour type name.","bad");return;}
-      const exists={...builtInTourTypes,...Object.fromEntries(Object.entries(managedTourTypes||{}).map(([k,v])=>[k,v?.label]))};
-      if(exists[id]){setMsg(tourTypeMsgEl,"That tour type already exists.","bad");return;}
-      try{await set(ref(db,`tourTypes/${id}`),{label,createdAt:serverTimestamp(),createdBy:adminEmail});newTourTypeNameEl.value="";setMsg(tourTypeMsgEl,`Added ${label}.`,"ok");}
-      catch(err){setMsg(tourTypeMsgEl,`Error: ${err?.message||err}`,"bad");}
-    });
-
-    // ---- Live bookings feed (read-only, across all tours) ----
-    function detachLiveBookings(){ unsubscribeLiveBookings = detach(unsubscribeLiveBookings); }
-    function clearLiveBookingsUI(text){
-      if (liveBookingsListEl) liveBookingsListEl.innerHTML = "";
-      setMsg(liveBookingsMsgEl, text || "", null);
-    }
-
-    function renderLiveBookings(items){
-      if (!liveBookingsListEl) return;
-
-      liveBookingsListEl.innerHTML = "";
-      if (!items.length) { clearLiveBookingsUI("No bookings yet."); return; }
-
-      setMsg(liveBookingsMsgEl, `Showing latest ${items.length} booking(s)`, null);
-
-      for (const it of items){
-        const b = it.b || {};
-        const bookingId = safeStr(it.bookingId);
-        const refShort = bookingId.slice(-7);
-
-        const row = document.createElement("div");
-        row.style.border = "1px solid #b86b2a";
-        row.style.background = "#2b2b2b";
-        row.style.color = "rgba(255,255,255,0.92)";
-        row.style.display = "flex";
-        row.style.flexDirection = "column";
-        row.style.gap = "6px";
-
-        const top = document.createElement("div");
-        top.textContent = `${safeStr(b.tourTitle || it.tourId)} — ${safeStr(b.dateKey)} — ${safeStr(b.time)} — Ref: ${refShort}`;
-        row.appendChild(top);
-
-        const line2 = document.createElement("div");
-        line2.className = "admin-msg";
-        line2.textContent = `${safeStr(b.name)} • ${safeStr(b.email)}${b.phone ? " • " + safeStr(b.phone) : ""}`;
-        row.appendChild(line2);
-
-        const line3 = document.createElement("div");
-        line3.className = "admin-msg";
-        const qty = Number(b.qty || 0);
-        const price = Number(b.price || 0);
-        const total = qty * price;
-        const pay = String(b.paymentStatus || "outstanding").toLowerCase();
-        line3.textContent = `${qty ? qty + " pax" : ""} • ${fmtGBP(price)} pp • ${pay === "paid" ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}`;
-        row.appendChild(line3);
-
-        const journey = document.createElement("div");
-        journey.className = "admin-msg";
-        journey.textContent = `${b.pickupLabel ? `Pickup: ${safeStr(b.pickupLabel)}${b.pickupTime ? " at " + safeStr(b.pickupTime) : ""}${b.pickupPoint ? " • " + safeStr(b.pickupPoint) : ""}` : "Pickup: legacy/default"}${b.category ? " • " + safeStr(b.category) : ""}${b.bookingSource ? " • Source: " + safeStr(b.bookingSource) : ""}`;
-        row.appendChild(journey);
-
-        liveBookingsListEl.appendChild(row);
-      }
-    }
-
-    function attachLiveBookingsFeed(){
-      detachLiveBookings();
-      const rootRef = ref(db, "bookings");
-
-      unsubscribeLiveBookings = onValue(rootRef, (snap) => {
-        const root = snap.val();
-        if (!root || typeof root !== "object"){ renderLiveBookings([]); return; }
-
-        const all = [];
-
-        for (const [tourId, tourBookings] of Object.entries(root)){
-          if (!tourBookings || typeof tourBookings !== "object") continue;
-          for (const [bookingId, b] of Object.entries(tourBookings)){
-            if (!b || typeof b !== "object") continue;
-            // best-effort sort key
-            let sortKey = 0;
-            if (typeof b.createdAtMs === "number") sortKey = b.createdAtMs;
-            else if (typeof b.createdAt === "number") sortKey = b.createdAt;
-            all.push({ tourId, bookingId, b, sortKey });
-          }
-        }
-
-        all.sort((a, c) => {
-          if (c.sortKey !== a.sortKey) return c.sortKey - a.sortKey;
-          return String(c.bookingId).localeCompare(String(a.bookingId));
-        });
-
-        renderLiveBookings(all.slice(0, 50));
-      });
-    }
-
-    attachLiveBookingsFeed();
-
-    // ---- Calendar rendering ----
-    function ensureGridCells() {
-      if (calendarGrid.children.length === CELL_COUNT) return;
-      calendarGrid.innerHTML = "";
-      for (let i = 0; i < CELL_COUNT; i++) {
-        const cell = document.createElement("div");
-        cell.className = "calendar-cell is-empty";
-        cell.dataset.key = "";
-        cell.textContent = "";
-        calendarGrid.appendChild(cell);
-      }
-    }
-
-    function rebuildAllDatesIndex(tours) {
-      const index = new Map();
-
-      if (!tours || typeof tours !== "object") return index;
-
-      for (const [tourId, tour] of Object.entries(tours)) {
-        const dates = tour?.dates;
-        if (!dates || typeof dates !== "object") continue;
-
-        for (const [dateKey, dateNode] of Object.entries(dates)) {
-          const timesObj = dateNode?.times || {};
-          const times = Object.keys(timesObj).sort();
-
-          if (!index.has(dateKey)) index.set(dateKey, []);
-
-          index.get(dateKey).push({
-            tourId,
-            title: tour?.title || tourId,
-            isLive: !!tour?.isLive,
-            times,
-            timesObj,
-          });
-        }
-      }
-
-      return index;
-    }
-
-    function useAllTourCalendarOverview() {
-      savedDates = new Set(allDatesIndex.keys());
-      renderCalendar();
-    }
-
-    function renderCalendar() {
-      ensureGridCells();
-      calMonthEl.textContent = monthLabel(viewYear, viewMonth);
-
-      const startIdx = firstDayIndexMonFirst(viewYear, viewMonth);
-      const dim = daysInMonth(viewYear, viewMonth);
-
-      for (let i = 0; i < CELL_COUNT; i++) {
-        const cell = calendarGrid.children[i];
-        cell.classList.remove("selected", "has-data", "is-empty", "is-today");
-        cell.dataset.key = "";
-        cell.textContent = "";
-        cell.classList.add("is-empty");
-
-        const dayNum = i - startIdx + 1;
-        if (dayNum < 1 || dayNum > dim) continue;
-
-        const key = toKeyYYYYMMDD(viewYear, viewMonth, dayNum);
-        cell.dataset.key = key;
-        cell.textContent = String(dayNum);
-        cell.classList.remove("is-empty");
-
-        if (key === localTodayKey()) {
-          cell.classList.add("is-today");
-          cell.setAttribute("aria-current", "date");
-        } else {
-          cell.removeAttribute("aria-current");
-        }
-
-        if (savedDates.has(key)) cell.classList.add("has-data");
-      }
-    }
-
-    function attachDatesListenerForTour(tourId) {
-      unsubscribeDates = detach(unsubscribeDates);
-      savedDates = new Set();
-
-      if (!tourId) { renderCalendar(); return; }
-
-      const datesRef = ref(db, `tours/${tourId}/dates`);
-      unsubscribeDates = onValue(datesRef, (snap) => {
-        const val = snap.val();
-        savedDates = new Set();
-        if (val && typeof val === "object") for (const k of Object.keys(val)) savedDates.add(k);
-        renderCalendar();
-      });
-    }
-
-    // ---- Times + Bookings listeners ----
-    function detachTimesListener(){ unsubscribeTimes = detach(unsubscribeTimes); }
-    function detachBookingsListener(){ unsubscribeBookings = detach(unsubscribeBookings); }
-
-    function clearTimesUI(){ if (timesListEl) timesListEl.innerHTML = ""; setMsg(timesListMsgEl, "No date selected.", null); }
-    function clearBookingsUI(text){ if (bookingsListEl) bookingsListEl.innerHTML = ""; setMsg(bookingsMsgEl, text || "No date selected.", null); }
-
-    function clearDateOverview(text) {
-      if (dateOverviewListEl) dateOverviewListEl.innerHTML = "";
-      setMsg(dateOverviewMsgEl, text || "Select a date to see what it holds.", null);
-    }
-
-    function renderDateOverview(dateKey) {
-      if (!dateOverviewListEl) return;
-
-      dateOverviewListEl.innerHTML = "";
-
-      const entries = allDatesIndex.get(dateKey) || [];
-
-      if (!entries.length) {
-        clearDateOverview(`No tour data saved on ${dateKey}.`);
-        return;
-      }
-
-      setMsg(dateOverviewMsgEl, `${dateKey} contains ${entries.length} tour record(s):`, null);
-
-      for (const item of entries) {
-        const row = document.createElement("div");
-        row.style.border = "1px solid #b86b2a";
-        row.style.padding = "10px";
-        row.style.background = "#2b2b2b";
-        row.style.color = "rgba(255,255,255,0.92)";
-        row.style.display = "flex";
-        row.style.flexDirection = "column";
-        row.style.gap = "8px";
-
-        const title = document.createElement("div");
-        title.textContent = `${item.title} ${item.isLive ? "(live)" : "(not live)"}`;
-        row.appendChild(title);
-
-        const details = document.createElement("div");
-        details.className = "admin-msg";
-        details.textContent = item.times.length
-          ? `Times: ${item.times.join(", ")}`
-          : "Date exists but no saved times found.";
-        row.appendChild(details);
-
-        const manageBtn = document.createElement("button");
-        manageBtn.type = "button";
-        manageBtn.className = "admin-btn";
-        manageBtn.textContent = "MANAGE THIS TOUR / DATE";
-        manageBtn.addEventListener("click", () => {
-          selectTour(item.tourId, allToursCache[item.tourId], { keepDate: dateKey });
-        });
-
-        row.appendChild(manageBtn);
-        dateOverviewListEl.appendChild(row);
-      }
-    }
-
-    function hardResetDateSelection(){
-      selectedDateKey = "";
-      if (selectedDateEl) selectedDateEl.value = "";
-      if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-      setMsg(scheduleMsgEl, "Select a date to view what it holds, or select a tour to manage its times and bookings.", null);
-      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
-      detachTimesListener();
-      detachBookingsListener();
-      clearTimesUI();
-      clearBookingsUI("No date selected.");
-    }
-
-    function clearTourEditor() {
-      selectedTourId = "";
-      selectedTourData = null;
-
-      titleEl.value = "";
-      refreshTourCategorySelect("sightseeing");
-      durationEl.value = "";
-      shortSummaryEl.value = "";
-      homepageSearchableEl.checked = false;
-      pickupLocationItems = [];
-      renderPickupLocationEditor();
-      imgFileEl.value = "";
-      liveEl.checked = false;
-      descEl.value = "";
-
-      descProductTitleEl.value = "";
-      descOverviewEl.value = "";
-      descMeetingPointEl.value = "";
-      itineraryItems = [];
-      renderItineraryEditor();
-      syncEditorToHiddenTextarea();
-
-      hardResetDateSelection();
-      unsubscribeDates = detach(unsubscribeDates);
-      useAllTourCalendarOverview();
-      clearDateOverview("Calendar overview shows all saved tour dates. Select a date to see what it holds.");
-
-      setEditorMode("create");
-      setMsg(msgEl, "Create mode. No tour selected.", null);
-    }
-
-    function attachTimesListenerForSelectedDate() {
-      detachTimesListener();
-      if (!selectedTourId || !selectedDateKey) { clearTimesUI(); return; }
-
-      setMsg(timesListMsgEl, "Loading times...", null);
-
-      const timesRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times`);
-      unsubscribeTimes = onValue(timesRef, (snap) => renderTimesList(snap.val()));
-    }
-
-    function attachBookingsListenerForSelectedDate(){
-      detachBookingsListener();
-      if (!selectedTourId || !selectedDateKey) { clearBookingsUI("No date selected."); return; }
-
-      setMsg(bookingsMsgEl, "Loading bookings...", null);
-
-      const q = query(ref(db, `bookings/${selectedTourId}`), orderByChild("dateKey"), equalTo(selectedDateKey));
-      unsubscribeBookings = onValue(q, (snap) => renderBookingsList(snap.val()));
-    }
-
-    // ---- Capacity adjustment (bulletproof seat maths) ----
-    async function adjustCapacity({ tourId, dateKey, time, delta }) {
-      // delta > 0 => booking needs MORE seats => capacity must go DOWN by delta
-      // delta < 0 => booking needs FEWER seats => capacity goes UP by abs(delta)
-      const capRef = ref(db, `tours/${tourId}/dates/${dateKey}/times/${time}/capacity`);
-
-      const tx = await runTransaction(capRef, (current) => {
-        const cur = Number(current);
-        if (!Number.isFinite(cur)) return current;
-
-        if (delta > 0) {
-          if (cur < delta) return; // abort
-          return cur - delta;
-        }
-        if (delta < 0) {
-          return cur + Math.abs(delta);
-        }
-        return cur;
-      });
-
-      return tx?.committed === true;
-    }
-
-    async function slotHasActiveBookings({ tourId, dateKey, time }) {
-      // Query by dateKey then filter by time + active
-      const q = query(ref(db, `bookings/${tourId}`), orderByChild("dateKey"), equalTo(dateKey));
-      const snap = await get(q);
-      const val = snap.val();
-      if (!val || typeof val !== "object") return false;
-
-      for (const b of Object.values(val)) {
-        if (!b || typeof b !== "object") continue;
-        if (!bookingActive(b)) continue;
-        if (String(b.time || "") === String(time || "")) return true;
-      }
-      return false;
-    }
-
-    // ---- Bookings UI ----
-    function renderBookingsList(bookingsObj){
-      if (!bookingsListEl) return;
-      bookingsListEl.innerHTML = "";
-
-      if (!bookingsObj || typeof bookingsObj !== "object") {
-        clearBookingsUI("No bookings for this date.");
-        return;
-      }
-
-      const entries = Object.entries(bookingsObj).map(([id, b]) => ({ id, b }));
-      if (!entries.length) { clearBookingsUI("No bookings for this date."); return; }
-
-      // sort by time then created
-      entries.sort((a, c) => {
-        const ta = String(a.b?.time || "");
-        const tc = String(c.b?.time || "");
-        if (ta < tc) return -1;
-        if (ta > tc) return 1;
-        const ca = Number(a.b?.createdAtMs || 0);
-        const cc = Number(c.b?.createdAtMs || 0);
-        return ca - cc;
-      });
-
-      setMsg(bookingsMsgEl, `Bookings for ${selectedDateKey}: ${entries.length}`, null);
-
-      for (const { id: bookingId, b } of entries){
-        const time = String(b?.time || "");
-        const qty = Number(b?.qty || 0);
-        const price = Number(b?.price || 0);
-        const total = qty * price;
-        const paid = isPaidBooking(b);
-        const active = bookingActive(b);
-
-        const refShort = String(bookingId).slice(-7);
-
-        const card = document.createElement("div");
-        card.style.border = "1px solid #b86b2a";
-        card.style.padding = "12px";
-        card.style.background = "#2b2b2b";
-        card.style.color = "rgba(255,255,255,0.92)";
-        card.style.display = "flex";
-        card.style.flexDirection = "column";
-        card.style.gap = "10px";
-
-        const top = document.createElement("div");
-        top.textContent = `${time} — ${safeStr(b?.name)} — ${qty} pax — ${fmtGBP(price)} pp — Total ${fmtGBP(total)} — Ref: ${refShort}`;
-        card.appendChild(top);
-
-        const line = document.createElement("div");
-        line.className = "admin-msg";
-        line.textContent = `${safeStr(b?.email)}${b?.phone ? " • " + safeStr(b.phone) : ""} • ${paid ? "TOTAL PAID" : "TOTAL OUTSTANDING"} ${fmtGBP(total)}${active ? "" : " • NOT ACTIVE"}`;
-        card.appendChild(line);
-
-        const journey = document.createElement("div");
-        journey.className = "admin-msg";
-        journey.textContent = `${b?.pickupLabel ? `Pickup: ${safeStr(b.pickupLabel)}${b.pickupTime ? " at " + safeStr(b.pickupTime) : ""}${b.pickupPoint ? " • " + safeStr(b.pickupPoint) : ""}` : "Pickup: legacy/default"}${b?.category ? " • " + safeStr(b.category) : ""}${b?.bookingSource ? " • Source: " + safeStr(b.bookingSource) : ""}`;
-        card.appendChild(journey);
-
-        // PASSENGERS (LOCKED ON PAID)
-        const rowQty = document.createElement("div");
-        rowQty.style.display = "flex";
-        rowQty.style.gap = "8px";
-
-        const qtyInput = document.createElement("input");
-        qtyInput.type = "number";
-        qtyInput.min = "1";
-        qtyInput.className = "admin-field";
-        qtyInput.style.flex = "1";
-        qtyInput.style.padding = "10px";
-        qtyInput.value = String(qty || 1);
-        qtyInput.disabled = paid;
-
-        const btnQty = document.createElement("button");
-        btnQty.type = "button";
-        btnQty.className = "admin-btn";
-        btnQty.style.flex = "1";
-        btnQty.textContent = paid ? "PASSENGERS LOCKED (PAID)" : "UPDATE PASSENGERS";
-        btnQty.disabled = paid;
-
-        rowQty.appendChild(qtyInput);
-        rowQty.appendChild(btnQty);
-        card.appendChild(rowQty);
-
-        // PRICE (LOCKED ON PAID)
-        const rowPrice = document.createElement("div");
-        rowPrice.style.display = "flex";
-        rowPrice.style.gap = "8px";
-
-        const priceInput = document.createElement("input");
-        priceInput.type = "number";
-        priceInput.min = "0";
-        priceInput.step = "0.01";
-        priceInput.className = "admin-field";
-        priceInput.style.flex = "1";
-        priceInput.style.padding = "10px";
-        priceInput.value = Number.isFinite(price) ? String(price) : "0";
-        priceInput.disabled = paid;
-
-        const btnPrice = document.createElement("button");
-        btnPrice.type = "button";
-        btnPrice.className = "admin-btn";
-        btnPrice.style.flex = "1";
-        btnPrice.textContent = paid ? "PRICE LOCKED (PAID)" : "UPDATE PRICE";
-        btnPrice.disabled = paid;
-
-        rowPrice.appendChild(priceInput);
-        rowPrice.appendChild(btnPrice);
-        card.appendChild(rowPrice);
-
-        // PAYMENT STATUS
-        const rowPay = document.createElement("div");
-        rowPay.style.display = "flex";
-        rowPay.style.gap = "8px";
-        rowPay.style.alignItems = "center";
-
-        const paySelect = document.createElement("select");
-        paySelect.className = "admin-field";
-        paySelect.style.flex = "1";
-        paySelect.style.padding = "10px";
-        paySelect.innerHTML = `
-          <option value="outstanding">Payment outstanding</option>
-          <option value="paid">Payment received</option>
-        `;
-        paySelect.value = paid ? "paid" : "outstanding";
-
-        const paidAtInput = document.createElement("input");
-        paidAtInput.type = "datetime-local";
-        paidAtInput.className = "admin-field";
-        paidAtInput.style.flex = "1";
-        paidAtInput.style.padding = "10px";
-        paidAtInput.value = String(b?.paidAt || "");
-        paidAtInput.disabled = (paySelect.value !== "paid");
-
-        const btnPay = document.createElement("button");
-        btnPay.type = "button";
-        btnPay.className = "admin-btn";
-        btnPay.style.flex = "1";
-        btnPay.textContent = "CONFIRM PAYMENT STATUS";
-
-        rowPay.appendChild(paySelect);
-        rowPay.appendChild(paidAtInput);
-        rowPay.appendChild(btnPay);
-        card.appendChild(rowPay);
-
-        // DELETE (ALWAYS ALLOWED, RETURNS CAPACITY)
-        const btnDel = document.createElement("button");
-        btnDel.type = "button";
-        btnDel.className = "admin-btn";
-        btnDel.textContent = "DELETE BOOKING (RETURNS SEATS)";
-        card.appendChild(btnDel);
-
-        // Handlers
-        paySelect.addEventListener("change", () => {
-          const wantsPaid = paySelect.value === "paid";
-          paidAtInput.disabled = !wantsPaid;
-          if (!wantsPaid) paidAtInput.value = "";
-        });
-
-        btnQty.addEventListener("click", async () => {
-          const newQty = parseInt(qtyInput.value, 10);
-          if (!newQty || newQty < 1) { setMsg(bookingsMsgEl, "Enter a valid passenger quantity (>= 1).", "bad"); return; }
-
-          const oldQty = Number(qty || 0);
-          if (newQty === oldQty) { setMsg(bookingsMsgEl, "Passenger quantity unchanged.", null); return; }
-
-          const ok = confirm(`Change passengers Ref ${refShort}: ${oldQty} → ${newQty}?`);
-          if (!ok) return;
-
-          const delta = newQty - oldQty;
-
-          try {
-            const committed = await adjustCapacity({ tourId: selectedTourId, dateKey: selectedDateKey, time, delta });
-            if (!committed) { setMsg(bookingsMsgEl, "Not enough places remaining to increase passengers.", "bad"); return; }
-
-            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-              qty: newQty,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
-            setMsg(bookingsMsgEl, `Updated passengers for Ref ${refShort}.`, "ok");
-          } catch (err) {
-            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        btnPrice.addEventListener("click", async () => {
-          const newPrice = parseFloat(priceInput.value);
-          if (Number.isNaN(newPrice) || newPrice < 0) { setMsg(bookingsMsgEl, "Enter a valid price (>= 0).", "bad"); return; }
-
-          const ok = confirm(`Update price Ref ${refShort} to £${newPrice.toFixed(2)}?`);
-          if (!ok) return;
-
-          try {
-            await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-              price: newPrice,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
-            setMsg(bookingsMsgEl, `Updated price for Ref ${refShort}.`, "ok");
-          } catch (err) {
-            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        btnPay.addEventListener("click", async () => {
-          const newStatus = paySelect.value;
-
-          if (newStatus === "paid" && !paidAtInput.value) {
-            setMsg(bookingsMsgEl, "Payment received requires a payment date and time.", "bad");
-            return;
-          }
-
-          const ok = confirm(`Confirm payment status Ref ${refShort}: ${newStatus.toUpperCase()}?`);
-          if (!ok) return;
-
-          try {
-            if (newStatus === "paid") {
-              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-                paymentStatus: "paid",
-                paidAt: paidAtInput.value,
-                paidBy: adminEmail,
-                updatedAt: serverTimestamp(),
-                updatedBy: adminEmail,
-              });
-              setMsg(bookingsMsgEl, `Marked PAID for Ref ${refShort}.`, "ok");
-            } else {
-              await update(ref(db, `bookings/${selectedTourId}/${bookingId}`), {
-                paymentStatus: "outstanding",
-                paidAt: "",
-                paidBy: "",
-                updatedAt: serverTimestamp(),
-                updatedBy: adminEmail,
-              });
-              setMsg(bookingsMsgEl, `Marked OUTSTANDING for Ref ${refShort}.`, "ok");
-            }
-          } catch (err) {
-            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        btnDel.addEventListener("click", async () => {
-          const warnPaid = paid ? "THIS BOOKING IS PAID. Ensure you have handled refund/offline reconciliation before deleting.\n\n" : "";
-          const ok = confirm(`${warnPaid}Delete booking Ref ${refShort}?\nThis will return ${qty} seat(s) to capacity.`);
-          if (!ok) return;
-
-          try {
-            // Return seats first, then delete booking
-            await adjustCapacity({ tourId: selectedTourId, dateKey: selectedDateKey, time, delta: -Math.abs(qty || 0) });
-            await remove(ref(db, `bookings/${selectedTourId}/${bookingId}`));
-            setMsg(bookingsMsgEl, `Deleted booking Ref ${refShort}.`, "ok");
-          } catch (err) {
-            setMsg(bookingsMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        bookingsListEl.appendChild(card);
-      }
-    }
-
-    // ---- Times UI with slot protection rules ----
-    function renderTimesList(timesObj) {
-      if (!timesListEl) return;
-      timesListEl.innerHTML = "";
-
-      if (!timesObj || typeof timesObj !== "object") { setMsg(timesListMsgEl, "No times saved for this date yet.", null); return; }
-
-      const times = Object.keys(timesObj).sort();
-      if (!times.length) { setMsg(timesListMsgEl, "No times saved for this date yet.", null); return; }
-
-      setMsg(timesListMsgEl, `Saved times for ${selectedDateKey}:`, null);
-
-      for (const time of times) {
-        const slotNode = timesObj?.[time] || {};
-        const cap = slotNode?.capacity ?? "";
-        const price = slotNode?.price ?? "";
-
-        const row = document.createElement("div");
-        row.style.border = "1px solid #b86b2a";
-        row.style.padding = "10px";
-        row.style.background = "#2b2b2b";
-        row.style.color = "rgba(255,255,255,0.92)";
-        row.style.display = "flex";
-        row.style.flexDirection = "column";
-        row.style.gap = "8px";
-
-        const top = document.createElement("div");
-        const pickupNames = Object.keys(slotNode?.pickups || {}).map(id => selectedTourData?.pickupLocations?.[id]?.label || id);
-        top.textContent = `${time} — capacity: ${cap} — ${fmtGBP(price)}${pickupNames.length ? ` — pickups: ${pickupNames.join(", ")}` : ""}`;
-        row.appendChild(top);
-
-        const controls = document.createElement("div");
-        controls.style.display = "flex";
-        controls.style.flexDirection = "column";
-        controls.style.gap = "8px";
-
-        // row1: capacity + update/delete
-        const row1 = document.createElement("div");
-        row1.style.display = "flex";
-        row1.style.gap = "8px";
-
-        const capInput = document.createElement("input");
-        capInput.type = "number";
-        capInput.min = "1";
-        capInput.value = String(cap ?? "");
-        capInput.className = "admin-field";
-        capInput.style.padding = "10px";
-        capInput.style.flex = "1";
-
-        const saveCapBtn = document.createElement("button");
-        saveCapBtn.type = "button";
-        saveCapBtn.className = "admin-btn";
-        saveCapBtn.textContent = "UPDATE CAPACITY";
-        saveCapBtn.style.flex = "1";
-
-        const delBtn = document.createElement("button");
-        delBtn.type = "button";
-        delBtn.className = "admin-btn";
-        delBtn.textContent = "DELETE TIME SLOT";
-        delBtn.style.flex = "1";
-
-        row1.appendChild(capInput);
-        row1.appendChild(saveCapBtn);
-        row1.appendChild(delBtn);
-
-        // row2: change time + update time
-        const row2 = document.createElement("div");
-        row2.style.display = "flex";
-        row2.style.gap = "8px";
-
-        const timeInput = document.createElement("input");
-        timeInput.type = "time";
-        timeInput.value = time;
-        timeInput.className = "admin-field";
-        timeInput.style.padding = "10px";
-        timeInput.style.flex = "1";
-
-        const saveTimeBtn = document.createElement("button");
-        saveTimeBtn.type = "button";
-        saveTimeBtn.className = "admin-btn";
-        saveTimeBtn.textContent = "UPDATE TIME";
-        saveTimeBtn.style.flex = "1";
-
-        row2.appendChild(timeInput);
-        row2.appendChild(saveTimeBtn);
-
-        // row3: price + update
-        const row3 = document.createElement("div");
-        row3.style.display = "flex";
-        row3.style.gap = "8px";
-
-        const priceInput = document.createElement("input");
-        priceInput.type = "number";
-        priceInput.min = "0";
-        priceInput.step = "0.01";
-        priceInput.value = (price === "" || price === null || typeof price === "undefined") ? "" : String(price);
-        priceInput.className = "admin-field";
-        priceInput.style.padding = "10px";
-        priceInput.style.flex = "1";
-
-        const savePriceBtn = document.createElement("button");
-        savePriceBtn.type = "button";
-        savePriceBtn.className = "admin-btn";
-        savePriceBtn.textContent = "UPDATE PRICE";
-        savePriceBtn.style.flex = "1";
-
-        row3.appendChild(priceInput);
-        row3.appendChild(savePriceBtn);
-
-        const pickupEditor = document.createElement("div");
-        pickupEditor.className = "schedule-pickup-list";
-        const locations = normalisePickupLocations(selectedTourData?.pickupLocations);
-        for (const loc of locations) {
-          const pRow=document.createElement("div"); pRow.className="schedule-pickup-row"; pRow.dataset.pickupId=loc.id;
-          const pLabel=document.createElement("label"); const pCheck=document.createElement("input"); pCheck.type="checkbox"; pCheck.className="schedule-pickup-check"; pCheck.checked=!!slotNode?.pickups?.[loc.id];
-          const pText=document.createElement("span"); pText.textContent=loc.meetingPoint ? `${loc.label} — ${loc.meetingPoint}` : loc.label; pLabel.append(pCheck,pText);
-          const pTime=document.createElement("input"); pTime.type="time"; pTime.className="admin-field schedule-pickup-time"; pTime.value=safeStr(slotNode?.pickups?.[loc.id]?.time || time); pTime.disabled=!pCheck.checked;
-          pCheck.addEventListener("change",()=>{pTime.disabled=!pCheck.checked; if(pCheck.checked && !pTime.value) pTime.value=time;});
-          pRow.append(pLabel,pTime); pickupEditor.appendChild(pRow);
-        }
-        const savePickupsBtn=document.createElement("button"); savePickupsBtn.type="button"; savePickupsBtn.className="admin-btn"; savePickupsBtn.textContent="UPDATE PICKUPS";
-
-        controls.appendChild(row1);
-        controls.appendChild(row2);
-        controls.appendChild(row3);
-        if (locations.length) { controls.appendChild(pickupEditor); controls.appendChild(savePickupsBtn); }
-        row.appendChild(controls);
-
-        // handlers
-        savePickupsBtn.addEventListener("click", async () => {
-          const pickups = collectSchedulePickups(pickupEditor);
-          if (locations.length && !Object.keys(pickups).length) { setMsg(timesListMsgEl, "Choose at least one pickup point.", "bad"); return; }
-          try {
-            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), { pickups, updatedAt: serverTimestamp(), updatedBy: adminEmail });
-            setMsg(timesListMsgEl, `Updated pickups for ${time}.`, "ok");
-          } catch (err) { setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad"); }
-        });
-
-        saveCapBtn.addEventListener("click", async () => {
-          const newCap = parseInt(capInput.value, 10);
-          if (!newCap || newCap < 1) { setMsg(timesListMsgEl, "Enter a valid capacity (>= 1).", "bad"); return; }
-
-          const ok = confirm(`Update capacity for ${time} on ${selectedDateKey} to ${newCap}?`);
-          if (!ok) return;
-
-          try {
-            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
-              capacity: newCap,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
-            setMsg(timesListMsgEl, `Updated ${time} capacity to ${newCap}.`, "ok");
-          } catch (err) {
-            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        savePriceBtn.addEventListener("click", async () => {
-          const newPrice = parseFloat(priceInput.value);
-          if (Number.isNaN(newPrice) || newPrice < 0) { setMsg(timesListMsgEl, "Enter valid price (>= 0).", "bad"); return; }
-
-          const ok = confirm(`Update slot price for ${time} on ${selectedDateKey} to £${newPrice.toFixed(2)}?`);
-          if (!ok) return;
-
-          try {
-            await update(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`), {
-              price: newPrice,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
-            setMsg(timesListMsgEl, `Updated ${time} price to £${newPrice.toFixed(2)}.`, "ok");
-          } catch (err) {
-            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        delBtn.addEventListener("click", async () => {
-          const ok = confirm(`Delete time slot ${time} for ${selectedDateKey}?\nThis is blocked if the slot has active bookings.`);
-          if (!ok) return;
-
-          try {
-            const hasBookings = await slotHasActiveBookings({ tourId: selectedTourId, dateKey: selectedDateKey, time });
-            if (hasBookings) {
-              setMsg(timesListMsgEl, `Blocked: ${time} has active bookings. Delete/cancel bookings first.`, "bad");
-              return;
-            }
-
-            await remove(ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`));
-            setMsg(timesListMsgEl, `Deleted time slot ${time}.`, "ok");
-          } catch (err) {
-            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        saveTimeBtn.addEventListener("click", async () => {
-          const newTime = timeInput.value;
-          if (!newTime) { setMsg(timesListMsgEl, "Select a valid time.", "bad"); return; }
-          if (newTime === time) { setMsg(timesListMsgEl, "Time unchanged.", null); return; }
-          if (timesObj && Object.prototype.hasOwnProperty.call(timesObj, newTime)) {
-            setMsg(timesListMsgEl, `That time (${newTime}) already exists.`, "bad");
-            return;
-          }
-
-          const ok = confirm(`Rename slot time ${time} → ${newTime} for ${selectedDateKey}?\nThis is blocked if the slot has active bookings.`);
-          if (!ok) return;
-
-          try {
-            const hasBookings = await slotHasActiveBookings({ tourId: selectedTourId, dateKey: selectedDateKey, time });
-            if (hasBookings) {
-              setMsg(timesListMsgEl, `Blocked: ${time} has active bookings. You cannot rename this slot.`, "bad");
-              return;
-            }
-
-            const oldRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
-            const newRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${newTime}`);
-
-            const oldData = timesObj && timesObj[time] ? timesObj[time] : { capacity: 1, price: 0 };
-            await set(newRef, {
-              ...oldData,
-              updatedAt: serverTimestamp(),
-              updatedBy: adminEmail,
-            });
-            await remove(oldRef);
-
-            setMsg(timesListMsgEl, `Updated time ${time} → ${newTime}.`, "ok");
-          } catch (err) {
-            setMsg(timesListMsgEl, `Error: ${err?.message || err}`, "bad");
-          }
-        });
-
-        timesListEl.appendChild(row);
-      }
-    }
-
-    // ---- Calendar clicks ----
-    calendarGrid.addEventListener("click", (e) => {
-      const cell = e.target.closest(".calendar-cell");
-      if (!cell) return;
-
-      const key = cell.dataset.key;
-      if (!key) return;
-
-      calendarGrid.querySelectorAll(".calendar-cell.selected").forEach((c) => c.classList.remove("selected"));
-      cell.classList.add("selected");
-
-      selectedDateKey = key;
-
-      if (!selectedTourId) {
-        if (selectedDateEl) selectedDateEl.value = "";
-        if (scheduleControlsEl) scheduleControlsEl.hidden = true;
-
-        detachTimesListener();
-        detachBookingsListener();
-        clearTimesUI();
-        clearBookingsUI("Select a tour/date to view bookings.");
-
-        renderDateOverview(key);
-        setMsg(scheduleMsgEl, "Select a tour from the date overview to manage times and bookings.", null);
-        return;
-      }
-
-      if (selectedDateEl) selectedDateEl.value = key;
-      if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-      renderSchedulePickupChoices();
-
-      clearDateOverview(`Managing ${selectedTourData?.title || selectedTourId} on ${key}.`);
-      setMsg(scheduleMsgEl, `Selected date: ${key}`, null);
-
-      attachTimesListenerForSelectedDate();
-      attachBookingsListenerForSelectedDate();
-    });
-
-    calPrevBtn.addEventListener("click", () => {
-      viewMonth -= 1;
-      if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
-      renderCalendar();
-    });
-
-    calNextBtn.addEventListener("click", () => {
-      viewMonth += 1;
-      if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
-      renderCalendar();
-    });
-
-    renderCalendar();
-
-    function selectTour(tourId, tour, options = {}) {
-      selectedTourId = tourId;
-      selectedTourData = tour || null;
-
-      hardResetDateSelection();
-
-      titleEl.value = tour?.title || "";
-      categoryEl.value = tour?.category || "sightseeing";
-      durationEl.value = tour?.duration || "";
-      shortSummaryEl.value = tour?.shortSummary || "";
-      homepageSearchableEl.checked = tour?.homepageSearchable === true;
-      pickupLocationItems = normalisePickupLocations(tour?.pickupLocations);
-      renderPickupLocationEditor();
-      imgFileEl.value = "";
-      liveEl.checked = !!tour?.isLive;
-      descEl.value = tour?.description || "";
-      loadEditorFromHtml(descEl.value);
-
-      setEditorMode("edit", tourId);
-      setMsg(msgEl, `Selected: ${tourId}`, "ok");
-
-      attachDatesListenerForTour(tourId);
-      renderSchedulePickupChoices();
-
-      const keepDate = options.keepDate || "";
-      if (keepDate) {
-        selectedDateKey = keepDate;
-        if (selectedDateEl) selectedDateEl.value = keepDate;
-        if (scheduleControlsEl) scheduleControlsEl.hidden = false;
-        setMsg(scheduleMsgEl, `Selected date: ${keepDate}`, null);
-        attachTimesListenerForSelectedDate();
-        attachBookingsListenerForSelectedDate();
-      }
-        }
-
-    if (newTourBtn) {
-      newTourBtn.addEventListener("click", clearTourEditor);
-    }
-
-    // ---- Tours list + select ----
-    onValue(ref(db, "tours"), (snapshot) => {
-      const tours = snapshot.val() || {};
-
-      allToursCache = tours;
-      allDatesIndex = rebuildAllDatesIndex(tours);
-
-      tourListEl.innerHTML = "";
-
-      if (!Object.keys(tours).length) {
-        useAllTourCalendarOverview();
-        clearDateOverview("No tours saved yet.");
-        return;
-      }
-
-      for (const [tourId, tour] of Object.entries(tours)) {
-        const row = document.createElement("button");
-        row.type = "button";
-        row.textContent = tour?.title ? tour.title : tourId;
-        row.style.padding = "10px";
-        row.style.border = "1px solid #b86b2a";
-        row.style.background = tourId === selectedTourId ? "#1f1f1f" : "#2b2b2b";
-        row.style.color = "rgba(255,255,255,0.92)";
-        row.style.cursor = "pointer";
-        row.style.textAlign = "left";
-
-        row.addEventListener("click", () => {
-          selectTour(tourId, tour);
-        });
-
-        tourListEl.appendChild(row);
-      }
-
-      if (!selectedTourId) {
-        useAllTourCalendarOverview();
-      }
-    });
-
-    // ---- Tour CRUD ----
-    amendBtn.addEventListener("click", async () => {
-      if (!selectedTourId) { setMsg(msgEl, "Select a tour first.", "bad"); return; }
-
-      const title = titleEl.value.trim();
-      const category = categoryEl.value;
-      const categoryLabel = tourTypeLabel(category);
-      const duration = durationEl.value.trim();
-      const shortSummary = shortSummaryEl.value.trim();
-      const homepageSearchable = !!homepageSearchableEl.checked;
-      const pickupLocations = pickupLocationsObject();
-      const isLive = !!liveEl.checked;
-      syncEditorToHiddenTextarea();
-      const description = descEl.value.trim();
-
-      if (!title) { setMsg(msgEl, "Title required.", "bad"); return; }
-
-      const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
-
+    btnLogin.addEventListener("click", async () => {
+      msg.textContent = "Signing in…";
       try {
-        let imageUrl = selectedTourData?.imageUrl || "";
-
-        if (file) {
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const stamp = Date.now();
-          const path = `tours/${selectedTourId}/images/${stamp}-${safeName}`;
-          const storageRef = sRef(storage, path);
-          await uploadBytes(storageRef, file);
-          imageUrl = await getDownloadURL(storageRef);
-        }
-
-        await update(ref(db, `tours/${selectedTourId}`), {
-          title,
-          category,
-          categoryLabel,
-          duration,
-          shortSummary,
-          homepageSearchable,
-          pickupLocations,
-          imageUrl,
-          isLive,
-          description,
-          updatedAt: serverTimestamp(),
-          updatedBy: adminEmail,
-        });
-
-        setMsg(msgEl, `Amended: tours/${selectedTourId}`, "ok");
-        selectedTourData = {
-          ...(selectedTourData || {}),
-          title, category, categoryLabel, duration, shortSummary, homepageSearchable, pickupLocations,
-          imageUrl,
-          isLive,
-          description,
-        };
-        setEditorMode("edit", selectedTourId);
-      } catch (err) {
-        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        msg.textContent = `Sign-in failed: ${e?.message || e}`;
       }
     });
 
-    deleteBtn.addEventListener("click", async () => {
-      if (!selectedTourId) { setMsg(msgEl, "Select a tour first.", "bad"); return; }
+    btnLogout.addEventListener("click", async () => {
+      await signOut(auth);
+    });
 
-      const ok = confirm(
-        `Delete tour "${selectedTourId}"?\n\nThis deletes tour details and schedule.\nBookings are stored under /bookings/${selectedTourId} and will remain unless you delete them separately.`
+    let booted = false;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        btnLogin.hidden = false;
+        btnLogout.hidden = true;
+        if (adminMain) adminMain.style.display = "none";
+        msg.textContent = "Sign in to access admin.";
+        return;
+      }
+
+      const email = String(user.email || "").toLowerCase();
+
+      if (!ALLOWED_EMAILS.has(email)) {
+        msg.textContent = `Not authorised: ${user.email || "(no email)"}`;
+        if (adminMain) adminMain.style.display = "none";
+        btnLogin.hidden = false;
+        btnLogout.hidden = true;
+        await signOut(auth);
+        return;
+      }
+
+      msg.textContent = `Signed in as ${user.email}`;
+      btnLogin.hidden = true;
+      btnLogout.hidden = false;
+      if (adminMain) adminMain.style.display = "";
+
+      if (!booted) {
+        booted = true;
+        bootDriversAdmin(user);
+      }
+    });
+
+    function bootDriversAdmin(user) {
+      const adminEmail = String(user?.email || "").toLowerCase();
+
+      function setMsg(el, text, tone) {
+        if (!el) return;
+        el.classList.remove("ok", "bad");
+        if (tone === "ok") el.classList.add("ok");
+        if (tone === "bad") el.classList.add("bad");
+        el.textContent = String(text || "");
+      }
+
+      function safeStr(value) {
+        return String(value ?? "");
+      }
+
+      const driverNameEl = document.getElementById("driverName");
+      const driverBadgeNoEl = document.getElementById("driverBadgeNo");
+      const driverBadgeExpiryEl = document.getElementById("driverBadgeExpiry");
+      const driverEmailEl = document.getElementById("driverEmail");
+      const driverPhoneEl = document.getElementById("driverPhone");
+      const saveDriverBtn = document.getElementById("saveDriver");
+      const driverMsgEl = document.getElementById("driverMsg");
+      const driversListMsgEl = document.getElementById("driversListMsg");
+      const driversListEl = document.getElementById("driversList");
+      const driverEditorTitleEl = document.getElementById("driverEditorTitle");
+      const driverEditorLeadEl = document.getElementById("driverEditorLead");
+      const cancelDriverEditBtn = document.getElementById("cancelDriverEdit");
+
+      let selectedDriverId = "";
+
+      function setDriverEditorMode(mode, driverId = "") {
+        const editing = mode === "edit";
+        selectedDriverId = editing ? driverId : "";
+
+        if (driverEditorTitleEl) {
+          driverEditorTitleEl.textContent = editing ? "Driver Profile" : "Drivers";
+        }
+
+        if (driverEditorLeadEl) {
+          driverEditorLeadEl.textContent = editing
+            ? "Amend this driver profile. The email address is the Google account assigned to this driver."
+            : "Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.";
+        }
+
+        if (saveDriverBtn) {
+          saveDriverBtn.textContent = editing ? "Save driver changes" : "Create driver";
+        }
+
+        if (cancelDriverEditBtn) {
+          cancelDriverEditBtn.hidden = !editing;
+        }
+      }
+
+      function clearDriverForm() {
+        driverNameEl.value = "";
+        driverBadgeNoEl.value = "";
+        driverBadgeExpiryEl.value = "";
+        driverEmailEl.value = "";
+        driverPhoneEl.value = "";
+      }
+
+      function openDriverProfile(id, driver) {
+        setDriverEditorMode("edit", id);
+        driverNameEl.value = safeStr(driver.name);
+        driverBadgeNoEl.value = safeStr(driver.badgeNo);
+        driverBadgeExpiryEl.value = safeStr(driver.badgeExpiry);
+        driverEmailEl.value = safeStr(driver.email);
+        driverPhoneEl.value = safeStr(driver.phone);
+        setMsg(driverMsgEl, `Editing driver: ${safeStr(driver.name)}`, null);
+        document.getElementById("driversPanel")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+
+      function renderDrivers(driversObj) {
+        if (!driversListEl) return;
+
+        driversListEl.innerHTML = "";
+
+        if (!driversObj || typeof driversObj !== "object") {
+          setMsg(driversListMsgEl, "No driver profiles yet.", null);
+          return;
+        }
+
+        const entries = Object.entries(driversObj)
+          .map(([id, driver]) => ({ id, driver: driver || {} }))
+          .sort((a, b) => safeStr(a.driver.name).localeCompare(safeStr(b.driver.name)));
+
+        setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
+
+        for (const { id, driver } of entries) {
+          const row = document.createElement("div");
+          row.tabIndex = 0;
+          row.setAttribute("role", "button");
+          row.setAttribute(
+            "aria-label",
+            `Open driver profile for ${safeStr(driver.name)}`
+          );
+
+          const name = document.createElement("div");
+          name.textContent = safeStr(driver.name);
+          name.style.color = "rgba(255,255,255,0.92)";
+          name.style.fontSize = "17px";
+          name.style.fontWeight = "650";
+          row.appendChild(name);
+
+          const details = document.createElement("div");
+          details.className = "admin-msg";
+          details.style.marginTop = "6px";
+          details.textContent =
+            `Badge ${safeStr(driver.badgeNo)} • ` +
+            `Expires ${safeStr(driver.badgeExpiry)} • ` +
+            `${safeStr(driver.email)}` +
+            `${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
+          row.appendChild(details);
+
+          const open = () => openDriverProfile(id, driver);
+
+          row.addEventListener("click", open);
+          row.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              open();
+            }
+          });
+
+          driversListEl.appendChild(row);
+        }
+      }
+
+      onValue(
+        ref(db, "drivers"),
+        (snap) => {
+          renderDrivers(snap.val());
+        },
+        (err) => {
+          setMsg(
+            driversListMsgEl,
+            `Error loading drivers: ${err?.message || err}`,
+            "bad"
+          );
+        }
       );
-      if (!ok) return;
 
-      try {
-        await remove(ref(db, `tours/${selectedTourId}`));
-        setMsg(msgEl, `Deleted: tours/${selectedTourId}`, "ok");
-        clearTourEditor();
-      } catch (err) {
-        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
-      }
-    });
+      cancelDriverEditBtn.addEventListener("click", () => {
+        clearDriverForm();
+        setDriverEditorMode("create");
+        setMsg(driverMsgEl, "", null);
+      });
 
-    saveBtn.addEventListener("click", async () => {
-      if (selectedTourId) { setMsg(msgEl, "Use AMEND to update an existing tour.", "bad"); return; }
+      saveDriverBtn.addEventListener("click", async () => {
+        const name = driverNameEl.value.trim();
+        const badgeNo = driverBadgeNoEl.value.trim();
+        const badgeExpiry = driverBadgeExpiryEl.value;
+        const email = driverEmailEl.value.trim().toLowerCase();
+        const phone = driverPhoneEl.value.trim();
 
-      const title = titleEl.value.trim();
-      const category = categoryEl.value;
-      const categoryLabel = tourTypeLabel(category);
-      const duration = durationEl.value.trim();
-      const shortSummary = shortSummaryEl.value.trim();
-      const homepageSearchable = !!homepageSearchableEl.checked;
-      const pickupLocations = pickupLocationsObject();
-      const isLive = !!liveEl.checked;
-      syncEditorToHiddenTextarea();
-      const description = descEl.value.trim();
-
-      if (!title) { setMsg(msgEl, "Title required.", "bad"); return; }
-
-      const tourId = slugifyTitle(title);
-      if (!tourId) { setMsg(msgEl, "Invalid title.", "bad"); return; }
-
-      const existingSnap = await get(ref(db, `tours/${tourId}`));
-      if (existingSnap.exists()) {
-        setMsg(msgEl, "A tour with this title already exists. Select it and use AMEND.", "bad");
-        return;
-      }
-
-      const file = imgFileEl.files && imgFileEl.files[0] ? imgFileEl.files[0] : null;
-      if (!file) { setMsg(msgEl, "Tour image required.", "bad"); return; }
-
-      let imageUrl = "";
-
-      try {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const stamp = Date.now();
-        const path = `tours/${tourId}/images/${stamp}-${safeName}`;
-        const storageRef = sRef(storage, path);
-        await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(storageRef);
-
-        await update(ref(db, `tours/${tourId}`), {
-          title,
-          category,
-          categoryLabel,
-          duration,
-          shortSummary,
-          homepageSearchable,
-          pickupLocations,
-          imageUrl,
-          isLive,
-          description,
-          createdAt: serverTimestamp(),
-          createdBy: adminEmail,
-          updatedAt: serverTimestamp(),
-          updatedBy: adminEmail,
-        });
-
-        setMsg(msgEl, `Saved: tours/${tourId}`, "ok");
-        selectedTourId = tourId;
-        selectedTourData = {
-          title, category, categoryLabel, duration, shortSummary, homepageSearchable, pickupLocations,
-          imageUrl,
-          isLive,
-          description,
-        };
-        setEditorMode("edit", tourId);
-        setMsg(msgEl, `Saved: tours/${tourId}. You are now editing this tour.`, "ok");
-      } catch (err) {
-        setMsg(msgEl, `Error: ${err?.message || err}`, "bad");
-      }
-    });
-
-    // ---- Confirm schedule (new slot) ----
-    confirmScheduleBtn.addEventListener("click", async () => {
-      if (!selectedTourId) { setMsg(scheduleMsgEl, "Select a tour first.", "bad"); return; }
-      if (!selectedDateKey) { setMsg(scheduleMsgEl, "Select a date first.", "bad"); return; }
-
-      const time = tourTimeEl.value;
-      const capacity = parseInt(tourCapacityEl.value, 10);
-      const price = parseFloat(tourPriceEl.value);
-      const pickups = collectSchedulePickups();
-
-      if (!time) { setMsg(scheduleMsgEl, "Select a time.", "bad"); return; }
-      if (!capacity || capacity < 1) { setMsg(scheduleMsgEl, "Enter valid capacity.", "bad"); return; }
-      if (Number.isNaN(price) || price < 0) { setMsg(scheduleMsgEl, "Enter valid price (>= 0).", "bad"); return; }
-      if (Object.keys(selectedTourData?.pickupLocations || {}).length && !Object.keys(pickups).length) { setMsg(scheduleMsgEl, "Choose at least one pickup point for this departure.", "bad"); return; }
-
-      const slotRef = ref(db, `tours/${selectedTourId}/dates/${selectedDateKey}/times/${time}`);
-
-      try {
-        const existingSnap = await get(slotRef);
-        if (existingSnap.exists()) {
-          setMsg(scheduleMsgEl, `A slot already exists at ${time}. Use UPDATE CAPACITY / UPDATE TIME on the existing row.`, "bad");
+        if (!name) {
+          setMsg(driverMsgEl, "Name required.", "bad");
           return;
         }
 
-        await set(slotRef, {
-          capacity,
-          price,
-          pickups,
-          createdAt: serverTimestamp(),
-          createdBy: adminEmail,
-          updatedAt: serverTimestamp(),
-          updatedBy: adminEmail,
-        });
+        if (!badgeNo) {
+          setMsg(driverMsgEl, "Badge No required.", "bad");
+          return;
+        }
 
-        setMsg(scheduleMsgEl, `Saved ${time} (${capacity} spaces) at £${price.toFixed(2)}.`, "ok");
+        if (!badgeExpiry) {
+          setMsg(driverMsgEl, "Badge Expiry required.", "bad");
+          return;
+        }
 
-        tourTimeEl.value = "";
-        tourCapacityEl.value = "";
-        tourPriceEl.value = "";
-        renderSchedulePickupChoices();
-      } catch (err) {
-        setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
-      }
-    });
+        if (!email || !driverEmailEl.checkValidity()) {
+          setMsg(driverMsgEl, "Valid email required.", "bad");
+          return;
+        }
 
-    // ---- Drivers ----
-    function setDriverEditorMode(mode, driverId = "") {
-      const editing = mode === "edit";
-      selectedDriverId = editing ? driverId : "";
-      if (driverEditorTitleEl) driverEditorTitleEl.textContent = editing ? "Driver Profile" : "Drivers";
-      if (driverEditorLeadEl) driverEditorLeadEl.textContent = editing
-        ? "Amend this driver profile. The email address is the Google account assigned to this driver."
-        : "Create a driver profile. The email address is the Google account that will be used to authorise the driver in the Tour The Lakes app.";
-      if (saveDriverBtn) saveDriverBtn.textContent = editing ? "Save driver changes" : "Create driver";
-      if (cancelDriverEditBtn) cancelDriverEditBtn.hidden = !editing;
-    }
+        try {
+          const duplicateEmail = query(
+            ref(db, "drivers"),
+            orderByChild("email"),
+            equalTo(email)
+          );
 
-    function clearDriverForm() {
-      driverNameEl.value = "";
-      driverBadgeNoEl.value = "";
-      driverBadgeExpiryEl.value = "";
-      driverEmailEl.value = "";
-      driverPhoneEl.value = "";
-    }
+          const duplicateSnap = await get(duplicateEmail);
+          let emailUsedByAnotherDriver = false;
 
-    function openDriverProfile(id, driver) {
-      setDriverEditorMode("edit", id);
-      driverNameEl.value = safeStr(driver.name);
-      driverBadgeNoEl.value = safeStr(driver.badgeNo);
-      driverBadgeExpiryEl.value = safeStr(driver.badgeExpiry);
-      driverEmailEl.value = safeStr(driver.email);
-      driverPhoneEl.value = safeStr(driver.phone);
-      setMsg(driverMsgEl, `Editing driver: ${safeStr(driver.name)}`, null);
-      document.getElementById("driversPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+          duplicateSnap.forEach((child) => {
+            if (child.key !== selectedDriverId) {
+              emailUsedByAnotherDriver = true;
+            }
+          });
 
-    function renderDrivers(driversObj) {
-      if (!driversListEl) return;
-      driversListEl.innerHTML = "";
+          if (emailUsedByAnotherDriver) {
+            setMsg(
+              driverMsgEl,
+              "A driver profile already exists for this email address.",
+              "bad"
+            );
+            return;
+          }
 
-      if (!driversObj || typeof driversObj !== "object") {
-        setMsg(driversListMsgEl, "No driver profiles yet.", null);
-        return;
-      }
+          if (selectedDriverId) {
+            await update(ref(db, `drivers/${selectedDriverId}`), {
+              name,
+              badgeNo,
+              badgeExpiry,
+              email,
+              phone,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
+            });
 
-      const entries = Object.entries(driversObj)
-        .map(([id, driver]) => ({ id, driver: driver || {} }))
-        .sort((a, b) => safeStr(a.driver.name).localeCompare(safeStr(b.driver.name)));
+            setMsg(driverMsgEl, `Driver updated: ${name}`, "ok");
+          } else {
+            const driverRef = push(ref(db, "drivers"));
 
-      setMsg(driversListMsgEl, `${entries.length} driver profile(s)`, null);
+            await set(driverRef, {
+              name,
+              badgeNo,
+              badgeExpiry,
+              email,
+              phone,
+              createdAt: serverTimestamp(),
+              createdBy: adminEmail,
+              updatedAt: serverTimestamp(),
+              updatedBy: adminEmail,
+            });
 
-      for (const { id, driver } of entries) {
-        const row = document.createElement("div");
-        row.tabIndex = 0;
-        row.setAttribute("role", "button");
-        row.setAttribute("aria-label", `Open driver profile for ${safeStr(driver.name)}`);
+            clearDriverForm();
+            setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
+          }
+        } catch (err) {
+          setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
+        }
+      });
 
-        const name = document.createElement("div");
-        name.textContent = safeStr(driver.name);
-        name.style.color = "rgba(255,255,255,0.92)";
-        name.style.fontSize = "17px";
-        name.style.fontWeight = "650";
-        row.appendChild(name);
-
-        const details = document.createElement("div");
-        details.className = "admin-msg";
-        details.style.marginTop = "6px";
-        details.textContent = `Badge ${safeStr(driver.badgeNo)} • Expires ${safeStr(driver.badgeExpiry)} • ${safeStr(driver.email)}${driver.phone ? " • " + safeStr(driver.phone) : ""}`;
-        row.appendChild(details);
-
-        const open = () => openDriverProfile(id, driver);
-        row.addEventListener("click", open);
-        row.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); }
-        });
-
-        driversListEl.appendChild(row);
-      }
-    }
-
-    onValue(ref(db, "drivers"), (snap) => {
-      renderDrivers(snap.val());
-    }, (err) => {
-      setMsg(driversListMsgEl, `Error loading drivers: ${err?.message || err}`, "bad");
-    });
-
-    cancelDriverEditBtn.addEventListener("click", () => {
-      clearDriverForm();
       setDriverEditorMode("create");
-      setMsg(driverMsgEl, "", null);
-    });
 
-    saveDriverBtn.addEventListener("click", async () => {
-      const name = driverNameEl.value.trim();
-      const badgeNo = driverBadgeNoEl.value.trim();
-      const badgeExpiry = driverBadgeExpiryEl.value;
-      const email = driverEmailEl.value.trim().toLowerCase();
-      const phone = driverPhoneEl.value.trim();
-
-      if (!name) { setMsg(driverMsgEl, "Name required.", "bad"); return; }
-      if (!badgeNo) { setMsg(driverMsgEl, "Badge No required.", "bad"); return; }
-      if (!badgeExpiry) { setMsg(driverMsgEl, "Badge Expiry required.", "bad"); return; }
-      if (!email || !driverEmailEl.checkValidity()) { setMsg(driverMsgEl, "Valid email required.", "bad"); return; }
-
-      try {
-        const duplicateEmail = query(ref(db, "drivers"), orderByChild("email"), equalTo(email));
-        const duplicateSnap = await get(duplicateEmail);
-        let emailUsedByAnotherDriver = false;
-        duplicateSnap.forEach((child) => {
-          if (child.key !== selectedDriverId) emailUsedByAnotherDriver = true;
-        });
-        if (emailUsedByAnotherDriver) {
-          setMsg(driverMsgEl, "A driver profile already exists for this email address.", "bad");
-          return;
-        }
-
-        if (selectedDriverId) {
-          await update(ref(db, `drivers/${selectedDriverId}`), {
-            name, badgeNo, badgeExpiry, email, phone,
-            updatedAt: serverTimestamp(),
-            updatedBy: adminEmail,
-          });
-          setMsg(driverMsgEl, `Driver updated: ${name}`, "ok");
-        } else {
-          const driverRef = push(ref(db, "drivers"));
-          await set(driverRef, {
-            name, badgeNo, badgeExpiry, email, phone,
-            createdAt: serverTimestamp(),
-            createdBy: adminEmail,
-            updatedAt: serverTimestamp(),
-            updatedBy: adminEmail,
-          });
-          clearDriverForm();
-          setMsg(driverMsgEl, `Driver created: ${name}`, "ok");
-        }
-      } catch (err) {
-        setMsg(driverMsgEl, `Error: ${err?.message || err}`, "bad");
-      }
-    });
-
-    setDriverEditorMode("create");
-
-    // Done
-    void db;
-  }
-</script>
-
+      // Ready for the rebuild: db is Drivers only; Storage is the new backend connection.
+      void storage;
+    }
+  </script>
 </body>
 </html>
