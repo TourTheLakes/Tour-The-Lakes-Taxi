@@ -1584,7 +1584,7 @@ html, body {
         <section class="tour-section" aria-labelledby="itinerary-heading">
           <h2 class="tour-section-heading" id="itinerary-heading">Itinerary</h2>
 
-          <p class="tour-lead">Kendal</p>
+          <p class="tour-lead">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</p>
 
           <p class="tour-copy">
             We meet up ready to depart at 09:00. Following a rest break, we shall arrive in York at approximately 12:00. Once we have left you at a designated drop off stop, you can go and enjoy your day.
@@ -1748,6 +1748,9 @@ html, body {
         <p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p>
         <div class="booking-reference">Reference <span id="bookingReferenceText"></span></div>
         <p id="bookingCompleteSummary"></p>
+        <p><strong>Full name:</strong> <span id="bookingCompleteName"></span><br>
+        <strong>Email:</strong> <span id="bookingCompleteEmail"></span><br>
+        <strong>Mobile phone:</strong> <span id="bookingCompletePhone"></span></p>
         <p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p>
         <p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p>
         <p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p>
@@ -2156,6 +2159,9 @@ html, body {
 
         const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
         bookingReferenceText.textContent = reference;
+        document.getElementById("bookingCompleteName").textContent = `${firstName} ${lastName}`.trim();
+        document.getElementById("bookingCompleteEmail").textContent = email;
+        document.getElementById("bookingCompletePhone").textContent = phone;
         bookingCompleteSummary.textContent =
           `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
           `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
