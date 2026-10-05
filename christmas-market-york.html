@@ -1939,15 +1939,17 @@ html, body {
 
       let seatsReserved = false;
       const departureTime = String(selectedDeparture.time || "");
-      const capacityRef = ref(db, `tours/${tourId}/dates/${selectedDateKey}/times/${departureTime}/capacity`);
+      const departureRef = ref(db, `tours/${tourId}/departures/${selectedDateKey}`);
 
       try {
-        // Reserve the seats against the SAME capacity field used by the admin system.
-        // In the existing admin model, capacity is the number of seats currently remaining.
-        const seatTx = await runTransaction(capacityRef, (current) => {
-          const remaining = Number(current);
-          if (!Number.isFinite(remaining) || remaining < quantity) return;
-          return remaining - quantity;
+        // Reserve seats against the same departure record used by Admin.
+        // Admin stores total capacity plus the number of seats already booked.
+        const seatTx = await runTransaction(departureRef, (dep) => {
+          if (!dep || typeof dep !== "object") return;
+          const capacity = Math.max(0, Number(dep.capacity) || 0);
+          const booked = Math.max(0, Number(dep.booked) || 0);
+          if ((capacity - booked) < quantity) return;
+          return { ...dep, booked: booked + quantity, updatedAt: Date.now(), updatedBy: "website" };
         });
 
         if (!seatTx.committed) {
@@ -1962,7 +1964,7 @@ html, body {
         const total = unitPrice * quantity;
         const nowMs = Date.now();
 
-        // This matches the booking schema already consumed by admin.html.
+        // Save into the booking tree consumed live by Admin.
         await set(bookingRef, {
           reference,
           tourId,
@@ -2023,31 +2025,23 @@ html, body {
     function connectFirebaseTour() {
       statusEl.textContent = "Loading live availability…";
 
-      // Read directly from the schedule tree used by the Tour The Lakes admin page:
-      // tours/{tourId}/dates/{YYYY-MM-DD}/times/{HH:MM}
-      onValue(ref(db, `tours/${TOUR_ID}/dates`), (datesSnap) => {
-        const dates = datesSnap.val() || {};
+      // Read directly from the exact departure tree written by Admin:
+      // tours/{tourId}/departures/{YYYY-MM-DD}
+      onValue(ref(db, `tours/${TOUR_ID}/departures`), (departuresSnap) => {
+        const data = departuresSnap.val() || {};
         const departures = [];
 
-        for (const [dateKeyValue, dateData] of Object.entries(dates)) {
-          const times = dateData?.times || {};
-
-          // York currently has one physical departure per date.
-          // If more are added later, the earliest available time is used by this calendar.
-          const availableTimes = Object.entries(times)
-            .filter(([, slot]) => Number(slot?.capacity) > 0)
-            .sort(([a], [b]) => String(a).localeCompare(String(b)));
-
-          if (!availableTimes.length) continue;
-
-          const [time, slot] = availableTimes[0];
+        for (const [dateKeyValue, dep] of Object.entries(data)) {
+          const capacity = Math.max(0, Number(dep?.capacity) || 0);
+          const booked = Math.max(0, Number(dep?.booked) || 0);
+          if ((capacity - booked) <= 0) continue;
           departures.push({
             date: dateKeyValue,
-            time,
-            price: Number(slot?.price),
-            capacity: Number(slot?.capacity),
-            booked: 0,
-            remaining: Number(slot?.capacity)
+            time: String(dep?.time || ""),
+            price: Number(dep?.price),
+            capacity,
+            booked,
+            remaining: Math.max(0, capacity - booked)
           });
         }
 
