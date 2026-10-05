@@ -1382,6 +1382,7 @@ html, body {
 
   // York booking UI. The page resolves its permanent Firebase tour ID from this slug.
   (() => {
+    const TOUR_ID = "-P3ACI3Xk1hOV2vRW_7Q";
     const TOUR_SLUG = "christmas-market-york";
     const availability = new Map();
     const firebaseConfig = {
@@ -1493,20 +1494,15 @@ html, body {
       renderCalendar(); renderSelection();
     }
 
-    async function connectFirebaseTour() {
+    function connectFirebaseTour() {
       statusEl.textContent="Loading live availability…";
-      try {
-        const tourQuery=query(ref(db,"tours"),orderByChild("slug"),equalTo(TOUR_SLUG)); const snap=await get(tourQuery);
-        let match=null; snap.forEach((child)=>{if(!match)match={id:child.key,data:child.val()||{}};});
-        if(!match){statusEl.textContent="This tour is not yet connected to live availability."; setAvailability([]); return;}
-        tourId=match.id;
-        onValue(ref(db,`tours/${tourId}/departures`),(departuresSnap)=>{
-          const obj=departuresSnap.val()||{}; setAvailability(Object.values(obj));
-        },(err)=>{console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);});
-      } catch(err){console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);}
+      tourId=TOUR_ID;
+      onValue(ref(db,`tours/${TOUR_ID}/departures`),(departuresSnap)=>{
+        const obj=departuresSnap.val()||{}; setAvailability(Object.values(obj));
+      },(err)=>{console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);});
     }
 
-    window.TTLYorkBooking={tourSlug:TOUR_SLUG,get tourId(){return tourId;},setAvailability};
+    window.TTLYorkBooking={tourId:TOUR_ID,tourSlug:TOUR_SLUG,setAvailability};
     renderCalendar(); renderSelection(); connectFirebaseTour();
   })();
 </script>
