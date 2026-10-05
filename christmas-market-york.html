@@ -1117,6 +1117,283 @@ html, body {
       }
     }
 
+    /* ===== Booking request checkout ===== */
+    body.booking-checkout-open {
+      overflow: hidden;
+    }
+
+    .booking-checkout-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(24,24,24,0.58);
+      backdrop-filter: blur(2px);
+    }
+
+    .booking-checkout-backdrop.is-open {
+      display: flex;
+    }
+
+    .booking-checkout {
+      width: min(940px, 100%);
+      max-height: min(760px, calc(100vh - 56px));
+      overflow: auto;
+      border: 1px solid rgba(43,43,43,0.35);
+      border-radius: 13px;
+      background: #f3ead8;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.35);
+      color: #2b2b2b;
+    }
+
+    .booking-checkout-head {
+      min-height: 70px;
+      display: grid;
+      grid-template-columns: 44px minmax(0,1fr) 44px;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(43,43,43,0.22);
+      background: rgba(255,255,255,0.38);
+    }
+
+    .booking-checkout-title {
+      margin: 0;
+      font: 700 22px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-checkout-icon {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 400 30px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-checkout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+      min-height: 470px;
+    }
+
+    .booking-checkout-form {
+      padding: 28px;
+      border-right: 1px solid rgba(43,43,43,0.22);
+      background: rgba(255,255,255,0.26);
+    }
+
+    .booking-checkout-summary {
+      padding: 28px;
+      background: rgba(255,255,255,0.48);
+    }
+
+    .booking-checkout-section-title {
+      margin: 0 0 22px;
+      color: #2b2b2b;
+      font: 700 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .booking-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .booking-form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .booking-form-field label {
+      color: rgba(43,43,43,0.72);
+      font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-field input {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid rgba(43,43,43,0.28);
+      border-radius: 6px;
+      outline: none;
+      background: rgba(255,255,255,0.84);
+      color: #2b2b2b;
+      padding: 0 14px;
+      font: 500 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-field input:focus {
+      border-color: #b86b2a;
+      box-shadow: 0 0 0 2px rgba(184,107,42,0.10);
+    }
+
+    .booking-request-error {
+      min-height: 20px;
+      margin: 16px 0 0;
+      color: #9d2d2d;
+      font: 600 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-request-submit {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 14px;
+      border: 1px solid #b86b2a;
+      background:
+        linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      color: rgba(255,255,255,0.96);
+      cursor: pointer;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .2px;
+    }
+
+    .booking-request-submit:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .booking-summary-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border: 1px solid rgba(43,43,43,0.20);
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .booking-summary-tour {
+      margin: 0 0 6px;
+      font: 700 19px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-sub {
+      margin: 0 0 20px;
+      color: rgba(43,43,43,0.66);
+      font: 500 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.16);
+      color: rgba(43,43,43,0.70);
+      font: 500 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-row strong {
+      color: #2b2b2b;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .booking-summary-total {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 2px solid rgba(184,107,42,0.45);
+      font-size: 16px;
+    }
+
+    .booking-complete {
+      display: none;
+      padding: 48px 34px 44px;
+      text-align: center;
+    }
+
+    .booking-complete.is-active {
+      display: block;
+    }
+
+    .booking-complete-mark {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border: 2px solid #b86b2a;
+      border-radius: 50%;
+      color: #b86b2a;
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .booking-complete h3 {
+      margin: 0 0 12px;
+      font: 700 28px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-complete p {
+      max-width: 620px;
+      margin: 0 auto 12px;
+      color: rgba(43,43,43,0.74);
+      font: 500 15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-reference {
+      margin: 24px auto;
+      padding: 16px 20px;
+      width: fit-content;
+      border: 1px solid rgba(184,107,42,0.42);
+      background: rgba(184,107,42,0.07);
+      font: 700 17px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-complete-close {
+      min-width: 180px;
+      min-height: 50px;
+      margin-top: 8px;
+      border: 1px solid #b86b2a;
+      background: #b86b2a;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      .booking-checkout-backdrop {
+        padding: 12px;
+        align-items: flex-start;
+      }
+
+      .booking-checkout {
+        max-height: calc(100dvh - 24px);
+      }
+
+      .booking-checkout-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-checkout-form {
+        border-right: 0;
+        border-bottom: 1px solid rgba(43,43,43,0.22);
+        padding: 22px 18px;
+      }
+
+      .booking-checkout-summary {
+        padding: 22px 18px;
+      }
+
+      .booking-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-form-field.full {
+        grid-column: auto;
+      }
+    }
+
   </style>
 </head>
 
@@ -1353,6 +1630,70 @@ html, body {
     </div>
   </main>
 
+  <div class="booking-checkout-backdrop" id="bookingCheckoutBackdrop" aria-hidden="true">
+    <section class="booking-checkout" role="dialog" aria-modal="true" aria-labelledby="bookingCheckoutTitle">
+      <div class="booking-checkout-head">
+        <button class="booking-checkout-icon" id="bookingCheckoutBack" type="button" aria-label="Back">‹</button>
+        <h2 class="booking-checkout-title" id="bookingCheckoutTitle">Complete booking request</h2>
+        <button class="booking-checkout-icon" id="bookingCheckoutClose" type="button" aria-label="Close">×</button>
+      </div>
+
+      <div id="bookingCheckoutFormView" class="booking-checkout-grid">
+        <div class="booking-checkout-form">
+          <h3 class="booking-checkout-section-title">Contact Details</h3>
+
+          <form id="bookingRequestForm" novalidate>
+            <div class="booking-form-grid">
+              <div class="booking-form-field">
+                <label for="bookingFirstName">First name *</label>
+                <input id="bookingFirstName" name="firstName" type="text" autocomplete="given-name" required />
+              </div>
+
+              <div class="booking-form-field">
+                <label for="bookingLastName">Last name *</label>
+                <input id="bookingLastName" name="lastName" type="text" autocomplete="family-name" required />
+              </div>
+
+              <div class="booking-form-field full">
+                <label for="bookingEmail">Email *</label>
+                <input id="bookingEmail" name="email" type="email" autocomplete="email" required />
+              </div>
+
+              <div class="booking-form-field full">
+                <label for="bookingPhone">Mobile phone *</label>
+                <input id="bookingPhone" name="phone" type="tel" autocomplete="tel" required />
+              </div>
+            </div>
+
+            <div class="booking-request-error" id="bookingRequestError" aria-live="polite"></div>
+            <button class="booking-request-submit" id="bookingRequestSubmit" type="submit">Submit booking request</button>
+          </form>
+        </div>
+
+        <aside class="booking-checkout-summary" aria-label="Booking summary">
+          <img class="booking-summary-image" src="images/York.png" alt="York at Christmas" />
+          <h3 class="booking-summary-tour">York Christmas Market &amp; Shopping Day</h3>
+          <p class="booking-summary-sub">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</p>
+
+          <div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div>
+          <div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div>
+          <div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div>
+          <div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div>
+          <div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div>
+        </aside>
+      </div>
+
+      <div class="booking-complete" id="bookingCompleteView">
+        <div class="booking-complete-mark">✓</div>
+        <h3>Booking request received</h3>
+        <p>Your request has been sent to Tour The Lakes. We will use the contact details you provided to confirm the booking.</p>
+        <div class="booking-reference">Reference <span id="bookingReferenceText"></span></div>
+        <p id="bookingCompleteSummary"></p>
+        <button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button>
+      </div>
+    </section>
+  </div>
+
 <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-block">
@@ -1378,12 +1719,12 @@ html, body {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, onValue, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   // York booking UI. The page resolves its permanent Firebase tour ID from this slug.
   (() => {
     const TOUR_ID = "-P3ACI3XK1hOV2vRW_7Q";
-    const TOUR_SLUG = "christmas-market-york";
+    const TOUR_TITLE = "York Christmas Market & Shopping Day";
     const availability = new Map();
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -1413,10 +1754,28 @@ html, body {
     const selectedTotalText = document.getElementById("selectedTotalText");
     const continueButton = document.getElementById("bookingContinue");
 
+    const checkoutBackdrop = document.getElementById("bookingCheckoutBackdrop");
+    const checkoutBack = document.getElementById("bookingCheckoutBack");
+    const checkoutClose = document.getElementById("bookingCheckoutClose");
+    const checkoutFormView = document.getElementById("bookingCheckoutFormView");
+    const bookingRequestForm = document.getElementById("bookingRequestForm");
+    const bookingRequestError = document.getElementById("bookingRequestError");
+    const bookingRequestSubmit = document.getElementById("bookingRequestSubmit");
+    const bookingCompleteView = document.getElementById("bookingCompleteView");
+    const bookingCompleteClose = document.getElementById("bookingCompleteClose");
+    const bookingReferenceText = document.getElementById("bookingReferenceText");
+    const bookingCompleteSummary = document.getElementById("bookingCompleteSummary");
+
+    const checkoutSummaryDate = document.getElementById("checkoutSummaryDate");
+    const checkoutSummaryTime = document.getElementById("checkoutSummaryTime");
+    const checkoutSummaryQty = document.getElementById("checkoutSummaryQty");
+    const checkoutSummaryUnit = document.getElementById("checkoutSummaryUnit");
+    const checkoutSummaryTotal = document.getElementById("checkoutSummaryTotal");
+
     let quantity = 1;
     let selectedDateKey = "";
     let selectedDeparture = null;
-    let tourId = "";
+    let tourId = TOUR_ID;
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1494,16 +1853,153 @@ html, body {
       renderCalendar(); renderSelection();
     }
 
-    function connectFirebaseTour() {
-      statusEl.textContent="Loading live availability…";
-      tourId=TOUR_ID;
-      onValue(ref(db,`tours/${TOUR_ID}/departures`),(departuresSnap)=>{
-        const obj=departuresSnap.val()||{}; setAvailability(Object.values(obj));
-      },(err)=>{console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);});
+    function closeCheckout() {
+      checkoutBackdrop?.classList.remove("is-open");
+      checkoutBackdrop?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("booking-checkout-open");
+      bookingRequestError.textContent = "";
     }
 
-    window.TTLYorkBooking={tourId:TOUR_ID,tourSlug:TOUR_SLUG,setAvailability};
-    renderCalendar(); renderSelection(); connectFirebaseTour();
+    function openCheckout() {
+      if (!selectedDeparture || !selectedDateKey || !tourId) return;
+
+      const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+      checkoutSummaryDate.textContent = selectedDate.toLocaleDateString("en-GB", {
+        weekday: "short", day: "numeric", month: "short", year: "numeric"
+      });
+      checkoutSummaryTime.textContent = selectedDeparture.time || "—";
+      checkoutSummaryQty.textContent = `${quantity} passenger${quantity === 1 ? "" : "s"}`;
+      checkoutSummaryUnit.textContent = money(selectedDeparture.price);
+      checkoutSummaryTotal.textContent = money(Number(selectedDeparture.price) * quantity);
+
+      checkoutFormView.style.display = "";
+      bookingCompleteView.classList.remove("is-active");
+      bookingRequestForm.reset();
+      bookingRequestError.textContent = "";
+
+      checkoutBackdrop?.classList.add("is-open");
+      checkoutBackdrop?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("booking-checkout-open");
+      setTimeout(() => document.getElementById("bookingFirstName")?.focus(), 0);
+    }
+
+    function makeBookingReference(firebaseKey) {
+      const suffix = String(firebaseKey || "").replace(/[^a-z0-9]/gi, "").slice(-7).toUpperCase();
+      return `TTL-YORK-${suffix || Date.now().toString().slice(-7)}`;
+    }
+
+    continueButton?.addEventListener("click", openCheckout);
+    checkoutClose?.addEventListener("click", closeCheckout);
+    checkoutBack?.addEventListener("click", closeCheckout);
+    bookingCompleteClose?.addEventListener("click", closeCheckout);
+
+    checkoutBackdrop?.addEventListener("click", (event) => {
+      if (event.target === checkoutBackdrop) closeCheckout();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && checkoutBackdrop?.classList.contains("is-open")) closeCheckout();
+    });
+
+    bookingRequestForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      bookingRequestError.textContent = "";
+
+      if (!selectedDeparture || !selectedDateKey || !tourId) {
+        bookingRequestError.textContent = "Please return to the tour and select an available departure.";
+        return;
+      }
+
+      const formData = new FormData(bookingRequestForm);
+      const firstName = String(formData.get("firstName") || "").trim();
+      const lastName = String(formData.get("lastName") || "").trim();
+      const email = String(formData.get("email") || "").trim().toLowerCase();
+      const phone = String(formData.get("phone") || "").trim();
+
+      if (!firstName || !lastName || !email || !phone) {
+        bookingRequestError.textContent = "Please complete all required contact details.";
+        return;
+      }
+
+      const emailInput = document.getElementById("bookingEmail");
+      if (!emailInput?.checkValidity()) {
+        bookingRequestError.textContent = "Please enter a valid email address.";
+        emailInput?.focus();
+        return;
+      }
+
+      const unitPrice = Number(selectedDeparture.price);
+      if (!Number.isFinite(unitPrice)) {
+        bookingRequestError.textContent = "The price for this departure could not be confirmed. Please try again.";
+        return;
+      }
+
+      bookingRequestSubmit.disabled = true;
+      bookingRequestSubmit.textContent = "Submitting…";
+
+      try {
+        const bookingRef = push(ref(db, `bookings/${tourId}`));
+        const reference = makeBookingReference(bookingRef.key);
+        const total = unitPrice * quantity;
+
+        await set(bookingRef, {
+          reference,
+          tourId,
+          tourTitle: TOUR_TITLE,
+          dateKey: selectedDateKey,
+          time: selectedDeparture.time || "",
+          qty: quantity,
+          name: `${firstName} ${lastName}`.trim(),
+          firstName,
+          lastName,
+          email,
+          phone,
+          pickup: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE",
+          price: unitPrice,
+          total,
+          createdAt: Date.now(),
+          status: "pending"
+        });
+
+        const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+        bookingReferenceText.textContent = reference;
+        bookingCompleteSummary.textContent =
+          `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
+          `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
+          `${selectedDeparture.time || ""} · ${money(total)}`;
+
+        checkoutFormView.style.display = "none";
+        bookingCompleteView.classList.add("is-active");
+      } catch (err) {
+        console.error(err);
+        bookingRequestError.textContent =
+          "Your booking request could not be submitted. Please try again or contact Tour The Lakes.";
+      } finally {
+        bookingRequestSubmit.disabled = false;
+        bookingRequestSubmit.textContent = "Submit booking request";
+      }
+    });
+
+    function connectFirebaseTour() {
+      statusEl.textContent = "Loading live availability…";
+      onValue(ref(db, `tours/${TOUR_ID}/departures`), (departuresSnap) => {
+        const obj = departuresSnap.val() || {};
+        setAvailability(Object.values(obj));
+      }, (err) => {
+        console.error(err);
+        statusEl.textContent = "Live availability could not be loaded.";
+        setAvailability([]);
+      });
+    }
+
+    window.TTLYorkBooking = {
+      tourId: TOUR_ID,
+      setAvailability
+    };
+
+    renderCalendar();
+    renderSelection();
+    connectFirebaseTour();
   })();
 </script>
 
