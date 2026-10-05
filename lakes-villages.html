@@ -1394,43 +1394,6 @@ html, body {
       }
     }
 
-  
-    /* ===== Pickup point details ===== */
-    .pickup-details-section {
-      width: min(1180px, calc(100% - 40px));
-      margin: 44px auto 0;
-      padding: 30px clamp(22px, 4vw, 42px);
-      background: rgba(255,255,255,0.42);
-      border-top: 2px solid #b86b2a;
-      border-bottom: 1px solid rgba(43,43,43,0.16);
-    }
-    .pickup-details-title {
-      margin: 0 0 8px;
-      color: #2b2b2b;
-      font: 700 clamp(24px, 3vw, 34px)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .pickup-details-intro {
-      margin: 0 0 24px;
-      color: rgba(43,43,43,0.78);
-      font: 400 15px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .pickup-details-list { display: grid; gap: 0; }
-    .pickup-detail { padding: 18px 0; border-top: 1px solid rgba(43,43,43,0.14); }
-    .pickup-detail:first-child { border-top: 0; padding-top: 0; }
-    .pickup-detail:last-child { padding-bottom: 0; }
-    .pickup-detail-name {
-      display: block; margin-bottom: 5px; color: #b86b2a;
-      font: 700 15px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .pickup-detail-address {
-      display: block; margin-bottom: 4px; color: #2b2b2b;
-      font: 650 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .pickup-detail-copy {
-      margin: 0; color: rgba(43,43,43,0.80);
-      font: 400 15px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
   </style>
 </head>
 
@@ -1560,6 +1523,10 @@ html, body {
         <section class="tour-section" aria-labelledby="meeting-heading">
           <h2 class="tour-section-heading" id="meeting-heading">Meeting Point</h2>
           <p class="tour-copy">Please arrive at your selected pickup point 10 minutes before your scheduled pickup time. Your Tour The Lakes driver will meet you at the designated pickup area. Please remain at the agreed meeting point until your driver arrives. If you have any difficulty locating your vehicle or driver, please contact Tour The Lakes for assistance. The tour returns to your original pickup area at the end of the day.</p>
+        
+          <p><strong>Kendal</strong><br>Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE. Meet in the main car park by the parking meter.</p>
+          <p><strong>Windermere Railway Station</strong><br>Meet immediately outside the main station building. Look for the yellow “Pick Up” zone box marked on the ground.</p>
+          <p><strong>Bowness Pier</strong><br>Meet immediately outside the Windermere Lake Cruises ticket office, at the yellow “Coaches” pickup bay marked on the ground.</p>
         </section>
       </article>
 
@@ -1577,28 +1544,6 @@ html, body {
         </div>
       </aside>
     </div>
-
-    <section class="pickup-details-section" aria-labelledby="pickup-details-heading">
-      <h2 class="pickup-details-title" id="pickup-details-heading">Pickup Points</h2>
-      <p class="pickup-details-intro">Please arrive at your pickup point 10 minutes before your scheduled pickup time and remain at the meeting point until your Tour The Lakes driver arrives.</p>
-      <div class="pickup-details-list">
-        <div class="pickup-detail">
-          <span class="pickup-detail-name">Kendal</span>
-          <span class="pickup-detail-address">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</span>
-          <p class="pickup-detail-copy">Meet in the main car park by the parking meter.</p>
-        </div>
-        <div class="pickup-detail">
-          <span class="pickup-detail-name">Windermere Railway Station</span>
-          <span class="pickup-detail-address">Windermere Railway Station</span>
-          <p class="pickup-detail-copy">Meet immediately outside the main station building. Look for the yellow “Pick Up” zone box marked on the ground.</p>
-        </div>
-        <div class="pickup-detail">
-          <span class="pickup-detail-name">Bowness Pier</span>
-          <span class="pickup-detail-address">Bowness Pier</span>
-          <p class="pickup-detail-copy">Meet immediately outside the Windermere Lake Cruises ticket office, at the yellow “Coaches” pickup bay marked on the ground.</p>
-        </div>
-      </div>
-    </section>
 
   </main>
 
