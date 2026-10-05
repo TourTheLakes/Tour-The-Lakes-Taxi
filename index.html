@@ -2101,6 +2101,53 @@ img { width: 100%; display: block; }
 }
 
 
+/* ===== Christmas cards — two-line date overlays ===== */
+.home-tours-from-grid--christmas .home-tours-from-label { display: none; }
+.home-christmas-overlay {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(70%, 500px);
+  padding: 16px 22px 18px;
+  border-radius: 0 72px 72px 0;
+  background: rgba(43,43,43,0.50);
+  box-shadow: 0 14px 38px rgba(0,0,0,0.22);
+  color: rgba(255,255,255,.96);
+  text-align: left;
+  pointer-events: none;
+}
+.home-christmas-kicker {
+  display: block;
+  margin: 0 0 7px;
+  color: rgba(255,255,255,.82);
+  font: 700 clamp(8px, .68vw, 10px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+}
+.home-christmas-date {
+  display: block;
+  color: #fff;
+  font: 600 clamp(19px, 2.25vw, 34px)/1.05 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: -.35px;
+}
+@media screen and (max-width: 1023px) {
+  .home-christmas-overlay { width: min(78%, 450px); padding: 14px 18px 16px; border-radius: 0 72px 72px 0; }
+  .home-christmas-kicker { font-size: clamp(8px, 1vw, 10px); }
+  .home-christmas-date { font-size: clamp(18px, 2.4vw, 27px); }
+}
+@media screen and (max-width: 600px) {
+  .home-christmas-overlay { top: 50%; width: 86%; padding: 10px 12px 11px; border-radius: 0 52px 52px 0; }
+  .home-christmas-kicker { margin-bottom: 5px; font-size: 7px; letter-spacing: 1.15px; }
+  .home-christmas-date {
+    font-size: 14px;
+    line-height: 1.08;
+    letter-spacing: -.15px;
+  }
+}
+
+
     @media screen and (max-width: 600px) {
       .home-booking-shell h1 .home-slogan-first {
         font-size: clamp(81.125px, 26.8125vw, 115.5px);
@@ -2127,6 +2174,63 @@ img { width: 100%; display: block; }
 }
 .home-tours-from[aria-label="Tours from"] + .home-tours-from-grid {
   padding-top: 35px;
+}
+
+
+/* York date only — 25% smaller */
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date {
+  font-size: clamp(14.25px, 1.6875vw, 25.5px);
+}
+@media screen and (max-width: 1023px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date {
+    font-size: clamp(13.5px, 1.8vw, 20.25px);
+  }
+}
+@media screen and (max-width: 600px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date {
+    font-size: 10.5px;
+  }
+}
+
+
+/* Ilkley and Knaresborough date lines only — 25% smaller */
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+  font-size: clamp(14.25px, 1.6875vw, 25.5px);
+}
+@media screen and (max-width: 1023px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+    font-size: clamp(13.5px, 1.8vw, 20.25px);
+  }
+}
+@media screen and (max-width: 600px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+    font-size: 10.5px;
+  }
+}
+
+
+/* York, Ilkley and Knaresborough date lines — another 10% reduction */
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date,
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+.home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+  font-size: clamp(12.825px, 1.51875vw, 22.95px);
+}
+@media screen and (max-width: 1023px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+    font-size: clamp(12.15px, 1.62vw, 18.225px);
+  }
+}
+@media screen and (max-width: 600px) {
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) .home-christmas-date,
+  .home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) .home-christmas-date {
+    font-size: 9.45px;
+  }
 }
 
 </style>
@@ -2210,19 +2314,19 @@ img { width: 100%; display: block; }
   <div class="home-tours-from-grid home-tours-from-grid--christmas" aria-label="Choose a Christmas tour">
     <a class="home-tours-from-card" href="christmas-market-york.html" aria-label="York Christmas Tour">
       <img src="images/York.png" alt="York Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>York</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+      <span class="home-christmas-overlay"><span class="home-christmas-kicker">6 WEEKS OF YORK</span><span class="home-christmas-date">12th Nov - 21st Dec</span></span>
     </a>
     <a class="home-tours-from-card" href="christmas-market-skipton.html" aria-label="Skipton Christmas Tour">
       <img src="images/Skipton.png" alt="Skipton Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Skipton</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+      <span class="home-christmas-overlay"><span class="home-christmas-kicker">LIMITED DATES</span><span class="home-christmas-date">6th Dec and 13th Dec ONLY</span></span>
     </a>
     <a class="home-tours-from-card" href="christmas-market-ilkley.html" aria-label="Ilkley Christmas Tour">
       <img src="images/Ilkley.png" alt="Ilkley Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Ilkley</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+      <span class="home-christmas-overlay"><span class="home-christmas-kicker">LIMITED DATES</span><span class="home-christmas-date">21st Dec and 22nd Dec ONLY</span></span>
     </a>
     <a class="home-tours-from-card" href="christmas-market-knaresborough.html" aria-label="Knaresborough Christmas Tour">
       <img src="images/knaresborough.png" alt="Knaresborough Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Knaresborough</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
+      <span class="home-christmas-overlay"><span class="home-christmas-kicker">LIMITED DATES</span><span class="home-christmas-date">5th Dec and 6th Dec ONLY</span></span>
     </a>
   </div>
 
