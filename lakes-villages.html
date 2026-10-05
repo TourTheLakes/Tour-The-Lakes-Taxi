@@ -1394,6 +1394,43 @@ html, body {
       }
     }
 
+  
+    /* ===== Pickup point details ===== */
+    .pickup-details-section {
+      width: min(1180px, calc(100% - 40px));
+      margin: 44px auto 0;
+      padding: 30px clamp(22px, 4vw, 42px);
+      background: rgba(255,255,255,0.42);
+      border-top: 2px solid #b86b2a;
+      border-bottom: 1px solid rgba(43,43,43,0.16);
+    }
+    .pickup-details-title {
+      margin: 0 0 8px;
+      color: #2b2b2b;
+      font: 700 clamp(24px, 3vw, 34px)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .pickup-details-intro {
+      margin: 0 0 24px;
+      color: rgba(43,43,43,0.78);
+      font: 400 15px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .pickup-details-list { display: grid; gap: 0; }
+    .pickup-detail { padding: 18px 0; border-top: 1px solid rgba(43,43,43,0.14); }
+    .pickup-detail:first-child { border-top: 0; padding-top: 0; }
+    .pickup-detail:last-child { padding-bottom: 0; }
+    .pickup-detail-name {
+      display: block; margin-bottom: 5px; color: #b86b2a;
+      font: 700 15px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .pickup-detail-address {
+      display: block; margin-bottom: 4px; color: #2b2b2b;
+      font: 650 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .pickup-detail-copy {
+      margin: 0; color: rgba(43,43,43,0.80);
+      font: 400 15px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
   </style>
 </head>
 
@@ -1477,7 +1514,7 @@ html, body {
           <div class="tour-facts-grid" aria-label="Central Lakes Villages tour facts">
             <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">D</span><div><span class="tour-fact-label">Duration</span><span class="tour-fact-value">8 hours</span></div></div>
             <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">T</span><div><span class="tour-fact-label">Tour type</span><span class="tour-fact-value">Sightseeing Tour</span></div></div>
-            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">P</span><div><span class="tour-fact-label">Pickup locations</span><span class="tour-fact-value">Windermere Railway Station • Kendal • Bowness Pier</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">P</span><div><span class="tour-fact-label">Pickup locations</span><span class="tour-fact-value">Kendal • Windermere Railway Station • Bowness Pier</span></div></div>
             <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">L</span><div><span class="tour-fact-label">Tour</span><span class="tour-fact-value">Central Lakes Villages</span></div></div>
           </div>
         </section>
@@ -1540,6 +1577,29 @@ html, body {
         </div>
       </aside>
     </div>
+
+    <section class="pickup-details-section" aria-labelledby="pickup-details-heading">
+      <h2 class="pickup-details-title" id="pickup-details-heading">Pickup Points</h2>
+      <p class="pickup-details-intro">Please arrive at your pickup point 10 minutes before your scheduled pickup time and remain at the meeting point until your Tour The Lakes driver arrives.</p>
+      <div class="pickup-details-list">
+        <div class="pickup-detail">
+          <span class="pickup-detail-name">Kendal</span>
+          <span class="pickup-detail-address">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</span>
+          <p class="pickup-detail-copy">Meet in the main car park by the parking meter.</p>
+        </div>
+        <div class="pickup-detail">
+          <span class="pickup-detail-name">Windermere Railway Station</span>
+          <span class="pickup-detail-address">Windermere Railway Station</span>
+          <p class="pickup-detail-copy">Meet immediately outside the main station building. Look for the yellow “Pick Up” zone box marked on the ground.</p>
+        </div>
+        <div class="pickup-detail">
+          <span class="pickup-detail-name">Bowness Pier</span>
+          <span class="pickup-detail-address">Bowness Pier</span>
+          <p class="pickup-detail-copy">Meet immediately outside the Windermere Lake Cruises ticket office, at the yellow “Coaches” pickup bay marked on the ground.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <div class="booking-checkout-backdrop" id="bookingCheckoutBackdrop" aria-hidden="true">
@@ -1551,9 +1611,9 @@ html, body {
           <div class="booking-form-field"><label for="bookingLastName">Last name *</label><input id="bookingLastName" name="lastName" type="text" autocomplete="family-name" required /></div>
           <div class="booking-form-field full"><label for="bookingEmail">Email *</label><input id="bookingEmail" name="email" type="email" autocomplete="email" required /></div>
           <div class="booking-form-field full"><label for="bookingPhone">Mobile phone *</label><input id="bookingPhone" name="phone" type="tel" autocomplete="tel" required /></div>
-          <div class="booking-form-field full"><label for="bookingPickup">Pickup location *</label><select id="bookingPickup" name="pickup" required style="width:100%;min-height:52px;border:1px solid rgba(43,43,43,0.28);border-radius:6px;background:rgba(255,255,255,0.84);color:#2b2b2b;padding:0 14px;font:500 16px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;"><option value="">Select your pickup location</option><option value="Windermere Railway Station">Windermere Railway Station</option><option value="Kendal">Kendal</option><option value="Bowness Pier">Bowness Pier</option></select></div>
+          <div class="booking-form-field full"><label for="bookingPickup">Pickup location *</label><select id="bookingPickup" name="pickup" required style="width:100%;min-height:52px;border:1px solid rgba(43,43,43,0.28);border-radius:6px;background:rgba(255,255,255,0.84);color:#2b2b2b;padding:0 14px;font:500 16px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;"><option value="">Select your pickup location</option><option value="Kendal">Kendal</option><option value="Windermere Railway Station">Windermere Railway Station</option><option value="Bowness Pier">Bowness Pier</option></select></div>
         </div><div class="booking-request-error" id="bookingRequestError" aria-live="polite"></div><button class="booking-request-submit" id="bookingRequestSubmit" type="submit">Submit booking request</button></form></div>
-        <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="images/DSC_0023.jpg" alt="Central Lakes Villages in the Lake District" /><h3 class="booking-summary-tour">Central Lakes Villages</h3><p class="booking-summary-sub">Pickup from Windermere Railway Station, Kendal or Bowness Pier</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div><div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div><div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div><div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div></aside>
+        <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="images/DSC_0023.jpg" alt="Central Lakes Villages in the Lake District" /><h3 class="booking-summary-tour">Central Lakes Villages</h3><p class="booking-summary-sub">Pickup from Kendal, Windermere Railway Station or Bowness Pier</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div><div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div><div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div><div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div></aside>
       </div>
       <div class="booking-complete" id="bookingCompleteView"><div class="booking-complete-mark">✓</div><h3>Booking received</h3><p><strong>Thank you. Your booking has been received and your places have been reserved.</strong></p><p>Please take a moment to check that the booking details shown below are correct. We will be in touch using the contact details you supplied during booking, so please also make sure your email address and mobile number were entered correctly.</p><p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p><div class="booking-reference">Reference <span id="bookingReferenceText"></span></div><p id="bookingCompleteSummary"></p><p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p><p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p><p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p><button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button></div>
     </section>
