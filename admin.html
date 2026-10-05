@@ -312,6 +312,176 @@
       font-size: 13px;
     }
 
+
+    /* ===== Schedule calendar ===== */
+    .schedule-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+      gap: clamp(34px, 4vw, 58px);
+      align-items: start;
+    }
+
+    .schedule-editor {
+      min-width: 0;
+    }
+
+    .schedule-calendar-panel {
+      min-width: 0;
+      border-left: 1px solid rgba(184,107,42,.42);
+      padding-left: clamp(24px, 3vw, 38px);
+    }
+
+    .schedule-calendar {
+      background: rgba(255,255,255,.045);
+      border-bottom: 1px solid rgba(184,107,42,.62);
+      padding: 22px;
+    }
+
+    .schedule-calendar-head {
+      display: grid;
+      grid-template-columns: 42px minmax(0,1fr) 42px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .schedule-calendar-title {
+      text-align: center;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .schedule-calendar-nav {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      background: transparent;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .schedule-calendar-nav:hover:not(:disabled) {
+      background: rgba(184,107,42,.16);
+    }
+
+    .schedule-calendar-nav:disabled {
+      opacity: .22;
+      cursor: default;
+    }
+
+    .schedule-calendar-weekdays,
+    .schedule-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0,1fr));
+      gap: 6px;
+    }
+
+    .schedule-calendar-weekdays {
+      margin-bottom: 8px;
+    }
+
+    .schedule-calendar-weekdays span {
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+    }
+
+    .schedule-calendar-day {
+      position: relative;
+      aspect-ratio: 1;
+      min-width: 0;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,.82);
+      cursor: pointer;
+      font-size: 13px;
+      border-radius: 50%;
+    }
+
+    .schedule-calendar-day:hover:not(:disabled) {
+      border-color: rgba(184,107,42,.70);
+      background: rgba(184,107,42,.12);
+    }
+
+    .schedule-calendar-day.is-today {
+      border-color: rgba(255,255,255,.34);
+    }
+
+    .schedule-calendar-day.has-departure {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .schedule-calendar-day.has-departure::after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      left: 50%;
+      bottom: 4px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .schedule-calendar-day.is-selected {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .schedule-calendar-day:disabled {
+      color: rgba(255,255,255,.18);
+      cursor: default;
+    }
+
+    .schedule-calendar-empty {
+      aspect-ratio: 1;
+    }
+
+    .schedule-calendar-key {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .schedule-calendar-key strong {
+      color: var(--orange);
+      font-weight: 750;
+    }
+
+    #scheduleDate {
+      display: none;
+    }
+
+    #removeDeparture {
+      display: none;
+    }
+
+    #removeDeparture.is-visible {
+      display: inline-block;
+    }
+
+    @media (max-width: 900px) {
+      .schedule-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule-calendar-panel {
+        border-left: 0;
+        border-top: 1px solid rgba(184,107,42,.42);
+        padding-left: 0;
+        padding-top: 30px;
+      }
+    }
+
     @media (max-width: 720px) {
       .header-inner { min-height: 88px; align-items: center; }
       .brand-sub { display: none; }
@@ -383,24 +553,64 @@
           <div class="admin-content">
             <div class="eyebrow">Live availability</div>
             <h1 class="admin-section-title">Schedule</h1>
-            <p class="admin-lead">Choose a tour and add a departure. Saving the departure writes it directly to that tour in Firebase.</p>
-            <div class="admin-stack">
-              <div class="field-group"><label class="field-label" for="scheduleTour">Tour</label><select id="scheduleTour" class="admin-field"><option value="">Choose a tour</option></select></div>
-              <div class="field-group"><label class="field-label" for="scheduleDate">Date</label><input id="scheduleDate" type="date" class="admin-field" /></div>
-              <div class="field-group"><label class="field-label" for="scheduleTime">Departure</label><input id="scheduleTime" type="time" class="admin-field" /></div>
-              <div class="field-group"><label class="field-label" for="schedulePrice">Price per person</label><input id="schedulePrice" type="number" min="0" step="0.01" class="admin-field" placeholder="Tour price in pounds" /></div>
-              <div class="field-group"><label class="field-label" for="scheduleCapacity">Capacity</label><input id="scheduleCapacity" type="number" min="1" step="1" class="admin-field" placeholder="Tour capacity" /></div>
-              <div id="scheduleMsg" class="admin-msg"></div>
+            <p class="admin-lead">Choose a tour, then select a date in the calendar. Existing departures are highlighted and can be selected to amend them.</p>
+
+            <div class="schedule-layout">
+              <div class="schedule-editor">
+                <div class="admin-stack">
+                  <div class="field-group">
+                    <label class="field-label" for="scheduleTour">Tour</label>
+                    <select id="scheduleTour" class="admin-field"><option value="">Choose a tour</option></select>
+                  </div>
+
+                  <input id="scheduleDate" type="date" />
+
+                  <div class="field-group">
+                    <label class="field-label" for="scheduleTime">Departure</label>
+                    <input id="scheduleTime" type="time" class="admin-field" />
+                  </div>
+
+                  <div class="field-group">
+                    <label class="field-label" for="schedulePrice">Price per person</label>
+                    <input id="schedulePrice" type="number" min="0" step="0.01" class="admin-field" placeholder="Tour price in pounds" />
+                  </div>
+
+                  <div class="field-group">
+                    <label class="field-label" for="scheduleCapacity">Capacity</label>
+                    <input id="scheduleCapacity" type="number" min="1" step="1" class="admin-field" placeholder="Tour capacity" />
+                  </div>
+
+                  <div id="scheduleMsg" class="admin-msg">Choose a tour and select a date from the calendar.</div>
+                </div>
+
+                <div class="admin-actions">
+                  <button id="saveDeparture" type="button" class="admin-btn primary">Add departure</button>
+                  <button id="removeDeparture" type="button" class="admin-btn quiet">Remove departure</button>
+                </div>
+              </div>
+
+              <aside class="schedule-calendar-panel" aria-label="Departure calendar">
+                <div class="eyebrow">Selected tour</div>
+                <div class="admin-subtitle" style="margin-top:0;">Departure calendar</div>
+                <div id="departuresListMsg" class="admin-msg">Choose a tour.</div>
+
+                <div class="schedule-calendar" style="margin-top:16px;">
+                  <div class="schedule-calendar-head">
+                    <button id="scheduleCalendarPrev" class="schedule-calendar-nav" type="button" aria-label="Previous month">‹</button>
+                    <div id="scheduleCalendarTitle" class="schedule-calendar-title"></div>
+                    <button id="scheduleCalendarNext" class="schedule-calendar-nav" type="button" aria-label="Next month">›</button>
+                  </div>
+
+                  <div class="schedule-calendar-weekdays" aria-hidden="true">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                  </div>
+                  <div id="scheduleCalendarGrid" class="schedule-calendar-grid"></div>
+                  <div class="schedule-calendar-key"><strong>Orange dates</strong> already have a departure. Select one to load and amend it.</div>
+                </div>
+
+                <div id="departuresList" hidden></div>
+              </aside>
             </div>
-            <div class="admin-actions"><button id="saveDeparture" type="button" class="admin-btn primary">Add departure</button></div>
-          </div>
-        </div>
-        <div class="admin-section">
-          <div class="admin-content">
-            <div class="eyebrow">Selected tour</div>
-            <div class="admin-subtitle" style="margin-top:0;">Scheduled departures</div>
-            <div id="departuresListMsg" class="admin-msg">Choose a tour above.</div>
-            <div id="departuresList" class="admin-list" style="margin-top:16px;"></div>
           </div>
         </div>
       </section>
@@ -775,10 +985,19 @@
       const schedulePriceEl = document.getElementById("schedulePrice");
       const scheduleCapacityEl = document.getElementById("scheduleCapacity");
       const saveDepartureBtn = document.getElementById("saveDeparture");
+      const removeDepartureBtn = document.getElementById("removeDeparture");
       const scheduleMsgEl = document.getElementById("scheduleMsg");
       const departuresListMsgEl = document.getElementById("departuresListMsg");
-      const departuresListEl = document.getElementById("departuresList");
+      const calendarTitleEl = document.getElementById("scheduleCalendarTitle");
+      const calendarGridEl = document.getElementById("scheduleCalendarGrid");
+      const calendarPrevBtn = document.getElementById("scheduleCalendarPrev");
+      const calendarNextBtn = document.getElementById("scheduleCalendarNext");
+
       let departuresUnsubscribe = null;
+      let currentDepartures = {};
+      const now = new Date();
+      let calendarYear = now.getFullYear();
+      let calendarMonth = now.getMonth();
 
       function setMsg(el, text, tone) {
         if (!el) return;
@@ -801,15 +1020,100 @@
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
       }
-      scheduleDateEl.min = localTodayKey();
+
+      function dateKey(year, month, day) {
+        return `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+      }
+
+      function clearDepartureForm(clearDate = false) {
+        if (clearDate) scheduleDateEl.value = "";
+        scheduleTimeEl.value = "";
+        schedulePriceEl.value = "";
+        scheduleCapacityEl.value = "";
+        saveDepartureBtn.textContent = "Add departure";
+        removeDepartureBtn.classList.remove("is-visible");
+      }
+
+      function loadDeparture(date) {
+        scheduleDateEl.value = date;
+        const dep = currentDepartures[date];
+
+        if (dep && typeof dep === "object") {
+          scheduleTimeEl.value = String(dep.time || "");
+          schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
+          scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+          saveDepartureBtn.textContent = "Update departure";
+          removeDepartureBtn.classList.add("is-visible");
+          const booked = Math.max(0, Number(dep.booked) || 0);
+          setMsg(scheduleMsgEl, `${date} selected • ${booked} seat${booked === 1 ? "" : "s"} booked`, null);
+        } else {
+          clearDepartureForm(false);
+          scheduleDateEl.value = date;
+          setMsg(scheduleMsgEl, `${date} selected • New departure`, null);
+        }
+
+        renderCalendar();
+      }
+
+      function renderCalendar() {
+        if (!calendarGridEl || !calendarTitleEl) return;
+
+        const today = localTodayKey();
+        const todayDate = new Date(`${today}T12:00:00`);
+        const first = new Date(calendarYear, calendarMonth, 1);
+        const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+        const mondayOffset = (first.getDay() + 6) % 7;
+
+        calendarTitleEl.textContent = first.toLocaleDateString("en-GB", {
+          month: "long",
+          year: "numeric"
+        });
+
+        calendarGridEl.innerHTML = "";
+
+        for (let i = 0; i < mondayOffset; i++) {
+          const empty = document.createElement("div");
+          empty.className = "schedule-calendar-empty";
+          calendarGridEl.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const key = dateKey(calendarYear, calendarMonth, day);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "schedule-calendar-day";
+          button.textContent = String(day);
+          button.setAttribute("aria-label", key);
+
+          if (key === today) button.classList.add("is-today");
+          if (currentDepartures[key]) button.classList.add("has-departure");
+          if (scheduleDateEl.value === key) button.classList.add("is-selected");
+
+          if (key < today) {
+            button.disabled = true;
+          } else {
+            button.addEventListener("click", () => loadDeparture(key));
+          }
+
+          calendarGridEl.appendChild(button);
+        }
+
+        const viewing = new Date(calendarYear, calendarMonth, 1);
+        const currentMonth = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        calendarPrevBtn.disabled = viewing <= currentMonth;
+      }
 
       function renderTours(toursObj) {
         toursListEl.innerHTML = "";
         const previousSelection = scheduleTourEl.value;
         scheduleTourEl.innerHTML = '<option value="">Choose a tour</option>';
+
         const entries = toursObj && typeof toursObj === "object"
-          ? Object.entries(toursObj).map(([id, tour]) => ({ id, tour: tour || {} })).sort((a,b) => String(a.tour.name||"").localeCompare(String(b.tour.name||"")))
+          ? Object.entries(toursObj)
+              .map(([id, tour]) => ({ id, tour: tour || {} }))
+              .sort((a,b) => String(a.tour.name||"").localeCompare(String(b.tour.name||"")))
           : [];
+
         setMsg(toursListMsgEl, entries.length ? `${entries.length} tour(s)` : "No tours yet.", null);
 
         for (const { id, tour } of entries) {
@@ -821,74 +1125,138 @@
           const row = document.createElement("div");
           row.style.borderBottom = "1px solid var(--line)";
           row.style.padding = "18px 0";
+
           const name = document.createElement("div");
           name.textContent = String(tour.name || "Unnamed tour");
           name.style.color = "rgba(255,255,255,0.92)";
           name.style.fontSize = "17px";
           name.style.fontWeight = "650";
+
           const details = document.createElement("div");
           details.className = "admin-msg";
           details.style.marginTop = "6px";
           details.textContent = `ID: ${id} • Slug: ${String(tour.slug || "")}`;
+
           row.append(name, details);
           toursListEl.appendChild(row);
         }
-        if ([...scheduleTourEl.options].some(o => o.value === previousSelection)) scheduleTourEl.value = previousSelection;
+
+        if ([...scheduleTourEl.options].some(o => o.value === previousSelection)) {
+          scheduleTourEl.value = previousSelection;
+        }
       }
 
-      onValue(ref(db, "tours"), (snap) => renderTours(snap.val()), (err) => setMsg(toursListMsgEl, `Error loading tours: ${err?.message || err}`, "bad"));
+      onValue(
+        ref(db, "tours"),
+        (snap) => renderTours(snap.val()),
+        (err) => setMsg(toursListMsgEl, `Error loading tours: ${err?.message || err}`, "bad")
+      );
 
       createTourBtn.addEventListener("click", async () => {
         const name = tourNameEl.value.trim();
         const slug = slugify(name);
-        if (!name) { setMsg(tourMsgEl, "Tour name required.", "bad"); return; }
-        if (!slug) { setMsg(tourMsgEl, "Could not create a valid tour slug.", "bad"); return; }
+
+        if (!name) {
+          setMsg(tourMsgEl, "Tour name required.", "bad");
+          return;
+        }
+        if (!slug) {
+          setMsg(tourMsgEl, "Could not create a valid tour slug.", "bad");
+          return;
+        }
+
         try {
           const duplicate = query(ref(db, "tours"), orderByChild("slug"), equalTo(slug));
           const duplicateSnap = await get(duplicate);
-          if (duplicateSnap.exists()) { setMsg(tourMsgEl, "A tour with this name already exists.", "bad"); return; }
+
+          if (duplicateSnap.exists()) {
+            setMsg(tourMsgEl, "A tour with this name already exists.", "bad");
+            return;
+          }
+
           const tourRef = push(ref(db, "tours"));
-          await set(tourRef, { name, slug, active: true, createdAt: serverTimestamp(), createdBy: adminEmail, updatedAt: serverTimestamp(), updatedBy: adminEmail });
+          await set(tourRef, {
+            name,
+            slug,
+            active: true,
+            createdAt: serverTimestamp(),
+            createdBy: adminEmail,
+            updatedAt: serverTimestamp(),
+            updatedBy: adminEmail
+          });
+
           tourNameEl.value = "";
           setMsg(tourMsgEl, `Tour created. Firebase ID: ${tourRef.key}`, "ok");
-        } catch (err) { setMsg(tourMsgEl, `Error: ${err?.message || err}`, "bad"); }
+        } catch (err) {
+          setMsg(tourMsgEl, `Error: ${err?.message || err}`, "bad");
+        }
       });
 
       function watchDepartures() {
-        if (departuresUnsubscribe) { departuresUnsubscribe(); departuresUnsubscribe = null; }
-        departuresListEl.innerHTML = "";
+        if (departuresUnsubscribe) {
+          departuresUnsubscribe();
+          departuresUnsubscribe = null;
+        }
+
+        currentDepartures = {};
+        clearDepartureForm(true);
+        renderCalendar();
+
         const tourId = scheduleTourEl.value;
-        if (!tourId) { setMsg(departuresListMsgEl, "Choose a tour above.", null); return; }
+        if (!tourId) {
+          setMsg(departuresListMsgEl, "Choose a tour.", null);
+          setMsg(scheduleMsgEl, "Choose a tour and select a date from the calendar.", null);
+          return;
+        }
+
         setMsg(departuresListMsgEl, "Loading…", null);
-        departuresUnsubscribe = onValue(ref(db, `tours/${tourId}/departures`), (snap) => {
-          const obj = snap.val();
-          departuresListEl.innerHTML = "";
-          const entries = obj && typeof obj === "object" ? Object.entries(obj).sort(([a],[b]) => a.localeCompare(b)) : [];
-          setMsg(departuresListMsgEl, entries.length ? `${entries.length} departure(s)` : "No departures scheduled.", null);
-          for (const [date, dep] of entries) {
-            const row = document.createElement("div");
-            row.style.display = "grid";
-            row.style.gridTemplateColumns = "minmax(0,1fr) auto";
-            row.style.gap = "16px";
-            row.style.alignItems = "center";
-            row.style.borderBottom = "1px solid var(--line)";
-            row.style.padding = "18px 0";
-            const booked = Math.max(0, Number(dep?.booked) || 0);
-            const capacity = Math.max(0, Number(dep?.capacity) || 0);
-            const info = document.createElement("div");
-            info.innerHTML = `<div style="color:rgba(255,255,255,.92);font-size:17px;font-weight:650;">${date} · ${String(dep?.time || "")}</div><div class="admin-msg" style="margin-top:6px;">£${Number(dep?.price || 0).toFixed(2).replace(".00","")} per person • ${Math.max(0, capacity-booked)} of ${capacity} seats remaining</div>`;
-            const del = document.createElement("button");
-            del.type = "button"; del.className = "admin-btn quiet"; del.textContent = "Remove";
-            del.addEventListener("click", async () => {
-              if (!confirm(`Remove ${date} departure?`)) return;
-              try { await remove(ref(db, `tours/${tourId}/departures/${date}`)); setMsg(scheduleMsgEl, `Departure removed: ${date}`, "ok"); }
-              catch (err) { setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad"); }
-            });
-            row.append(info, del); departuresListEl.appendChild(row);
-          }
-        }, (err) => setMsg(departuresListMsgEl, `Error loading departures: ${err?.message || err}`, "bad"));
+
+        departuresUnsubscribe = onValue(
+          ref(db, `tours/${tourId}/departures`),
+          (snap) => {
+            const obj = snap.val();
+            currentDepartures = obj && typeof obj === "object" ? obj : {};
+            const count = Object.keys(currentDepartures).length;
+            setMsg(
+              departuresListMsgEl,
+              count ? `${count} scheduled departure${count === 1 ? "" : "s"}` : "No departures scheduled yet.",
+              null
+            );
+
+            if (scheduleDateEl.value && currentDepartures[scheduleDateEl.value]) {
+              const selected = scheduleDateEl.value;
+              const dep = currentDepartures[selected];
+              scheduleTimeEl.value = String(dep.time || "");
+              schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
+              scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+              saveDepartureBtn.textContent = "Update departure";
+              removeDepartureBtn.classList.add("is-visible");
+            }
+
+            renderCalendar();
+          },
+          (err) => setMsg(departuresListMsgEl, `Error loading departures: ${err?.message || err}`, "bad")
+        );
       }
+
       scheduleTourEl.addEventListener("change", watchDepartures);
+
+      calendarPrevBtn.addEventListener("click", () => {
+        const today = new Date();
+        const previous = new Date(calendarYear, calendarMonth - 1, 1);
+        const minimum = new Date(today.getFullYear(), today.getMonth(), 1);
+        if (previous < minimum) return;
+        calendarYear = previous.getFullYear();
+        calendarMonth = previous.getMonth();
+        renderCalendar();
+      });
+
+      calendarNextBtn.addEventListener("click", () => {
+        const next = new Date(calendarYear, calendarMonth + 1, 1);
+        calendarYear = next.getFullYear();
+        calendarMonth = next.getMonth();
+        renderCalendar();
+      });
 
       saveDepartureBtn.addEventListener("click", async () => {
         const tourId = scheduleTourEl.value;
@@ -896,22 +1264,85 @@
         const time = scheduleTimeEl.value;
         const price = Number(schedulePriceEl.value);
         const capacity = Number(scheduleCapacityEl.value);
-        if (!tourId) { setMsg(scheduleMsgEl, "Choose a tour.", "bad"); return; }
-        if (!date) { setMsg(scheduleMsgEl, "Date required.", "bad"); return; }
-        if (date < localTodayKey()) { setMsg(scheduleMsgEl, "Past dates cannot be scheduled.", "bad"); return; }
-        if (!time) { setMsg(scheduleMsgEl, "Departure time required.", "bad"); return; }
-        if (!Number.isFinite(price) || price < 0) { setMsg(scheduleMsgEl, "Valid price required.", "bad"); return; }
-        if (!Number.isInteger(capacity) || capacity < 1) { setMsg(scheduleMsgEl, "Valid capacity required.", "bad"); return; }
+
+        if (!tourId) {
+          setMsg(scheduleMsgEl, "Choose a tour.", "bad");
+          return;
+        }
+        if (!date) {
+          setMsg(scheduleMsgEl, "Select a date in the calendar.", "bad");
+          return;
+        }
+        if (date < localTodayKey()) {
+          setMsg(scheduleMsgEl, "Past dates cannot be scheduled.", "bad");
+          return;
+        }
+        if (!time) {
+          setMsg(scheduleMsgEl, "Departure time required.", "bad");
+          return;
+        }
+        if (!Number.isFinite(price) || price < 0) {
+          setMsg(scheduleMsgEl, "Valid price required.", "bad");
+          return;
+        }
+        if (!Number.isInteger(capacity) || capacity < 1) {
+          setMsg(scheduleMsgEl, "Valid capacity required.", "bad");
+          return;
+        }
+
         try {
           const depRef = ref(db, `tours/${tourId}/departures/${date}`);
           const existing = await get(depRef);
           const booked = Math.max(0, Number(existing.val()?.booked) || 0);
-          if (booked > capacity) { setMsg(scheduleMsgEl, `Capacity cannot be lower than ${booked} existing booking(s).`, "bad"); return; }
-          await set(depRef, { date, time, price, capacity, booked, createdAt: existing.val()?.createdAt || Date.now(), updatedAt: serverTimestamp(), updatedBy: adminEmail });
-          setMsg(scheduleMsgEl, `${existing.exists() ? "Departure updated" : "Departure added"}: ${date} at ${time}`, "ok");
-          scheduleDateEl.value = ""; scheduleTimeEl.value = ""; schedulePriceEl.value = ""; scheduleCapacityEl.value = "";
-        } catch (err) { setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad"); }
+
+          if (booked > capacity) {
+            setMsg(scheduleMsgEl, `Capacity cannot be lower than ${booked} existing booking(s).`, "bad");
+            return;
+          }
+
+          await set(depRef, {
+            date,
+            time,
+            price,
+            capacity,
+            booked,
+            createdAt: existing.val()?.createdAt || Date.now(),
+            updatedAt: serverTimestamp(),
+            updatedBy: adminEmail
+          });
+
+          setMsg(
+            scheduleMsgEl,
+            `${existing.exists() ? "Departure updated" : "Departure added"}: ${date} at ${time}`,
+            "ok"
+          );
+
+          saveDepartureBtn.textContent = "Update departure";
+          removeDepartureBtn.classList.add("is-visible");
+        } catch (err) {
+          setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
+        }
       });
+
+      removeDepartureBtn.addEventListener("click", async () => {
+        const tourId = scheduleTourEl.value;
+        const date = scheduleDateEl.value;
+        if (!tourId || !date || !currentDepartures[date]) return;
+
+        if (!confirm(`Remove ${date} departure?`)) return;
+
+        try {
+          await remove(ref(db, `tours/${tourId}/departures/${date}`));
+          clearDepartureForm(false);
+          scheduleDateEl.value = date;
+          setMsg(scheduleMsgEl, `Departure removed: ${date}`, "ok");
+          renderCalendar();
+        } catch (err) {
+          setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad");
+        }
+      });
+
+      renderCalendar();
     }
 
     function bootDriversAdmin(user) {
