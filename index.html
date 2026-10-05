@@ -1812,7 +1812,7 @@ img { width: 100%; display: block; }
   
   }
 
-/* ===== Homepage hero ===== */
+/* ===== Homepage live tour finder ===== */
 .hero-wrapper.home-booking-hero {
   min-height: 0;
   display: flex;
@@ -1821,7 +1821,7 @@ img { width: 100%; display: block; }
   overflow: hidden;
 }
 /* Override the older responsive hero-image height limit so the photograph
-   covers the entire hero section. */
+   covers the entire booking section, right down to its orange bottom frame. */
 .hero-wrapper.home-booking-hero > .hero-image {
   position:absolute;
   inset:0;
@@ -1833,8 +1833,29 @@ img { width: 100%; display: block; }
 .home-booking-hero::after { display:none; }
 .home-booking-shell { position:relative; z-index:2; width:100%; margin:0 auto; padding:38px 0 34px; color:rgba(255,255,255,.94); }
 .home-booking-shell h1 { position:relative; top:auto; left:auto; transform:none; width:100%; color:rgba(255,255,255,0.92); font-size:clamp(51px,10vw,128px); font-weight:800; line-height:0.88; text-align:center; margin:0 0 38px; }
+.home-booking-shell .home-booking-subtitle { position:static; width:auto; color:rgba(255,255,255,.92); font-size:clamp(18px,2.1vw,27px); text-align:center; margin:12px 0 22px; }
+.home-finder { border:0; padding:0; }
+.home-finder-title { margin:0 0 14px; color:#b86b2a; text-align:center; font-size:18px; font-weight:700; letter-spacing:1.4px; }
+.home-finder-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:rgba(184,107,42,.5); }
+.home-finder-field { background:rgba(43,43,43,.44); padding:15px; }
+.home-finder-field label { display:block; margin-bottom:7px; color:#b86b2a; font-size:11px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
+.home-finder-field select,.home-finder-field input { width:100%; border:0; border-bottom:1px solid rgba(184,107,42,.65); border-radius:0; outline:0; background:rgba(255,255,255,.06); color:#fff; padding:12px 10px; font:inherit; }
+.home-finder-field select option { color:#2b2b2b; background:#f3ead8; }
+.home-search-btn {
+  width:100%;
+  border:0;
+  border-radius:0;
+  background:#b86b2a;
+  color:#fff;
+  padding:14px 18px;
+  cursor:pointer;
+  font:700 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+.home-search-btn:hover,.home-search-btn:focus-visible { filter:brightness(1.08); }
 
-/* Homepage hero refinement. */
+/* Homepage hero refinement: contain the entire finder inside the photograph. */
 .hero-wrapper.home-booking-hero {
   min-height: 0;
 }
@@ -1847,14 +1868,66 @@ img { width: 100%; display: block; }
   margin: 0 auto;
   padding: 104px 0 36px;
 }
+.home-booking-shell .home-booking-subtitle {
+  margin-bottom: 24px;
+}
+.home-finder {
+  border-top: 0;
+  border-bottom: 0;
+  padding: 0;
+}
+.home-finder-title {
+  margin-bottom: 14px;
+}
+.home-finder-grid {
+  gap: 0;
+  background: transparent;
+  width: min(900px, calc(100% - 40px));
+  margin: 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.home-finder {
+  width: 100%;
+  background: rgba(43,43,43,.88);
+  padding: 18px 0 0;
+}
+.home-finder-field {
+  background: transparent;
+}
+.home-search-btn {
+  display: block;
+  width: 100%;
+  margin: 12px 0 0;
+}
 /* Earlier tablet image rules capped the hero photograph at 300px. */
 @media screen and (min-width: 601px) and (max-width: 1023px) {
+  .home-finder-grid {
+    width: min(720px, calc(100% - 40px));
+  }
+  .home-finder-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero-wrapper.home-booking-hero .hero-image {
     max-height: none;
     height: 100%;
   }
 }
 @media screen and (max-width:600px){
+  /* iPhone Safari: keep the native date control inside the same field width as the other inputs. */
+  .home-finder-field { min-width: 0; }
+  .home-finder-field select,
+  .home-finder-field input {
+    min-width: 0;
+    max-width: 100%;
+    height: 48px;
+    min-height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+  }
+
+
   .home-booking-shell{width:100%;padding:100px 0 30px;}
   .home-booking-shell h1{font-size:clamp(31px,9vw,54px);font-weight:800;line-height:0.88;white-space:nowrap;margin-bottom:26px;}
   .home-booking-shell h1 .home-slogan-first,
@@ -1865,14 +1938,67 @@ img { width: 100%; display: block; }
     .home-booking-shell h1 .home-slogan-first-comma{display:none;}
     .home-booking-shell h1 .home-slogan-rest{display:block;font-size:1em;line-height:.88;}
   }
+  .home-booking-shell .home-booking-subtitle{font-size:17px;margin-bottom:22px;}
+  .home-finder-grid { width: calc(100% - 32px); }
+  .home-search-btn { width: 100%; }
+  .home-finder-grid{grid-template-columns:1fr;}
 }
 
+
+/* ===== Signature gap beneath homepage search engine ===== */
+.home-search-signature-gap {
+  height: 32px;
+  width: 100%;
+  background: #f3ead8;
+}
 
 /* ===== Homepage company introduction ===== */
 .home-company-intro {
   width: 100%;
   background: #f3ead8;
   color: #2b2b2b;
+}
+.home-company-features {
+  width: min(1180px, calc(100% - 56px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 34px;
+  padding: 42px 0 30px;
+}
+.home-company-feature {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
+.home-company-feature-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b86b2a;
+}
+.home-company-feature-icon svg {
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.home-company-feature-title {
+  margin: 0 0 4px;
+  color: #2b2b2b;
+  font: 700 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.home-company-feature-copy {
+  margin: 0;
+  color: rgba(43,43,43,.76);
+  font: 500 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 .home-company-story {
   width: min(940px, calc(100% - 56px));
@@ -1983,6 +2109,7 @@ img { width: 100%; display: block; }
   line-height: 1;
 }
 @media screen and (max-width: 1023px) {
+  .home-company-features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 38px; }
   .home-tours-from-grid { width: calc(100% - 40px); height: 460px; grid-template-columns: 1fr 1.2fr 1fr; padding-left: 0; padding-right: 0; }
   .home-tours-from-card:nth-child(1) { grid-column: 1; grid-row: 1 / 3; }
   .home-tours-from-card:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
@@ -1990,7 +2117,15 @@ img { width: 100%; display: block; }
   .home-tours-from-card:nth-child(4) { grid-column: 3; grid-row: 2; }
 }
 @media screen and (max-width: 600px) {
-
+  .home-company-features {
+    width: calc(100% - 32px);
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 34px 0 20px;
+  }
+  .home-company-feature { grid-template-columns: 42px 1fr; gap: 13px; }
+  .home-company-feature-icon { width: 40px; height: 40px; }
+  .home-company-feature-icon svg { width: 37px; height: 37px; }
   .home-company-story { width: calc(100% - 32px); padding: 54px 0 52px; }
   .home-company-story h2 { font-size: clamp(27px, 8vw, 36px); margin-bottom: 22px; }
   .home-company-story p { font-size: 15px; line-height: 1.55; }
@@ -2010,94 +2145,6 @@ img { width: 100%; display: block; }
   .home-tours-from-card:nth-child(4) { grid-column: 2; grid-row: 2; }
   .home-tours-from-label { min-height: 48px; padding: 0 10px; gap: 8px; font-size: clamp(13px, 3.6vw, 16px); }
   .home-tours-from-arrow { font-size: 22px; }
-}
-
-
-/* ===== Christmas Tours — same four-card geometry used on Public Tours ===== */
-.home-tours-from-grid.home-tours-from-grid--christmas {
-  height: 537px;
-  grid-template-columns: 1.05fr 1.45fr 1.2fr;
-  grid-template-rows: 1fr 1fr;
-  padding-top: 51px;
-}
-
-.home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1 / 3;
-}
-
-.home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(2) {
-  grid-column: 2 / 4;
-  grid-row: 1;
-}
-
-.home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-@media screen and (max-width: 1023px) {
-  .home-tours-from-grid.home-tours-from-grid--christmas {
-    height: 477px;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    padding-top: 51px;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) {
-    grid-column: 1;
-    grid-row: 1 / 3;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(2) {
-    grid-column: 2 / 4;
-    grid-row: 1;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) {
-    grid-column: 3;
-    grid-row: 2;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .home-tours-from-grid.home-tours-from-grid--christmas {
-    height: 422px;
-    grid-template-columns: 1.12fr .88fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 7px;
-    padding-top: 36px;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(1) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(2) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(3) {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .home-tours-from-grid.home-tours-from-grid--christmas .home-tours-from-card:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
-  }
 }
 
 </style>
@@ -2168,38 +2215,46 @@ img { width: 100%; display: block; }
 <div class="hero-wrapper home-booking-hero">
     <img src="images/DSC_0092.JPG.jpg" alt="Lake District tour view near Windermere" class="hero-image" fetchpriority="high" decoding="async" />
     <div class="home-booking-shell">
-      <h1><span class="home-slogan-first">UP<span class="home-slogan-first-comma">,</span></span> <span class="home-slogan-rest">UP AND AWAY</span></h1>
+      <h1><span class="home-slogan-first">LAKES</span> <span class="home-slogan-rest">AND BEYOND</span></h1>
 
+      <section class="home-finder" aria-label="Find a bookable Tour The Lakes departure">
+        <div class="home-finder-grid">
+          <div class="home-finder-field">
+            <label for="homeCategory">What would you like to do?</label>
+            <select id="homeCategory"><option value="">All tours</option></select>
+          </div>
+          <div class="home-finder-field">
+            <label for="homePickup">Where should we pick you up?</label>
+            <select id="homePickup"><option value="">All locations</option></select>
+          </div>
+        </div>
+        <button id="homeSearch" class="home-search-btn" type="button">Search</button>
+      </section>
     </div>
   </div>
 
-
-  <div class="home-signature-gap" aria-hidden="true"></div>
-
-  <div class="home-tours-from" aria-label="Christmas Tours"><h2>CHRISTMAS MARKETS</h2></div>
-
-  <div class="home-tours-from-grid home-tours-from-grid--christmas" aria-label="Choose a Christmas tour">
-    <a class="home-tours-from-card" href="christmas-market-york.html" aria-label="York Christmas Tour">
-      <img src="images/York.png" alt="York Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>York</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
-    </a>
-    <a class="home-tours-from-card" href="christmas-market-skipton.html" aria-label="Skipton Christmas Tour">
-      <img src="images/Skipton.png" alt="Skipton Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Skipton</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
-    </a>
-    <a class="home-tours-from-card" href="christmas-market-ilkley.html" aria-label="Ilkley Christmas Tour">
-      <img src="images/Ilkley.png" alt="Ilkley Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Ilkley</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
-    </a>
-    <a class="home-tours-from-card" href="christmas-market-knaresborough.html" aria-label="Knaresborough Christmas Tour">
-      <img src="images/knaresborough.png" alt="Knaresborough Christmas tour" loading="lazy" decoding="async" />
-      <span class="home-tours-from-label"><span>Knaresborough</span><span class="home-tours-from-arrow" aria-hidden="true">→</span></span>
-    </a>
-  </div>
-
-  <div class="home-signature-gap" aria-hidden="true"></div>
+  <div class="home-search-signature-gap" aria-hidden="true"></div>
 
 <section class="home-company-intro" aria-labelledby="home-company-heading">
+  <div class="home-company-features">
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M6 36L18 18l6 9 5-7 13 16"/><path d="M4 40h40"/></svg></div>
+      <div><div class="home-company-feature-title">Small group tours</div><p class="home-company-feature-copy">More personal journeys with fewer passengers.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 43s11-10 11-22a11 11 0 1 0-22 0c0 12 11 22 11 22Z"/><circle cx="24" cy="21" r="3.5"/></svg></div>
+      <div><div class="home-company-feature-title">Born in the Lakes</div><p class="home-company-feature-copy">Local knowledge from people who call the area home.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M9 39V22l15-11 15 11v17"/><path d="M6 39h36M18 39V27h12v12"/></svg></div>
+      <div><div class="home-company-feature-title">More than sightseeing</div><p class="home-company-feature-copy">Private tours, days out and tailored travel.</p></div>
+    </div>
+    <div class="home-company-feature">
+      <div class="home-company-feature-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="14" width="30" height="24" rx="2"/><path d="M18 14v-4h12v4M9 24h30M21 24v3h6v-3"/></svg></div>
+      <div><div class="home-company-feature-title">Executive travel</div><p class="home-company-feature-copy">Pre booked travel for business, leisure and special occasions.</p></div>
+    </div>
+  </div>
+
   <div class="home-company-story">
     <h2 id="home-company-heading">A small, family run company with its roots deep in the Lake District.</h2>
     <p>Based in the Lakes, Tour The Lakes was established in 2023 with a simple idea. To offer a more personal way to explore the places we know and call home. From small group sightseeing tours to private days out and executive travel, we keep things friendly, flexible and refreshingly straightforward.</p>
