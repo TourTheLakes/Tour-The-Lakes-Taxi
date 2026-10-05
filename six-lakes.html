@@ -1871,13 +1871,13 @@ html, body {
         input.required = true;
         input.addEventListener("change", () => {
           if (checkoutSummaryPickup) {
-            checkoutSummaryPickup.textContent = `${pickup.label} · ${pickup.time}`;
+            checkoutSummaryPickup.textContent = `${customerPickupLabel(pickup)} · ${pickup.time}`;
           }
         });
 
         const address = document.createElement("span");
         address.className = "booking-pickup-address";
-        address.textContent = pickup.label;
+        address.textContent = customerPickupLabel(pickup);
 
         const time = document.createElement("span");
         time.className = "booking-pickup-time";
@@ -1889,7 +1889,7 @@ html, body {
 
       if (checkoutSummaryPickup) {
         checkoutSummaryPickup.textContent = pickups.length === 1
-          ? `${pickups[0].label} · ${pickups[0].time}`
+          ? `${customerPickupLabel(pickups[0])} · ${pickups[0].time}`
           : "Select below";
       }
 
