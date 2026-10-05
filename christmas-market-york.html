@@ -1719,7 +1719,7 @@ html, body {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import { getDatabase, ref, onValue, push, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   // York booking UI. The page resolves its permanent Firebase tour ID from this slug.
   (() => {
@@ -1937,27 +1937,54 @@ html, body {
       bookingRequestSubmit.disabled = true;
       bookingRequestSubmit.textContent = "Submitting…";
 
+      let seatsReserved = false;
+      const departureTime = String(selectedDeparture.time || "");
+      const capacityRef = ref(db, `tours/${tourId}/dates/${selectedDateKey}/times/${departureTime}/capacity`);
+
       try {
+        // Reserve the seats against the SAME capacity field used by the admin system.
+        // In the existing admin model, capacity is the number of seats currently remaining.
+        const seatTx = await runTransaction(capacityRef, (current) => {
+          const remaining = Number(current);
+          if (!Number.isFinite(remaining) || remaining < quantity) return;
+          return remaining - quantity;
+        });
+
+        if (!seatTx.committed) {
+          bookingRequestError.textContent =
+            "Sorry, there are no longer enough seats available for this departure. Please close this window and choose again.";
+          return;
+        }
+        seatsReserved = true;
+
         const bookingRef = push(ref(db, `bookings/${tourId}`));
         const reference = makeBookingReference(bookingRef.key);
         const total = unitPrice * quantity;
+        const nowMs = Date.now();
 
+        // This matches the booking schema already consumed by admin.html.
         await set(bookingRef, {
           reference,
           tourId,
           tourTitle: TOUR_TITLE,
           dateKey: selectedDateKey,
-          time: selectedDeparture.time || "",
+          time: departureTime,
           qty: quantity,
           name: `${firstName} ${lastName}`.trim(),
           firstName,
           lastName,
           email,
           phone,
-          pickup: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE",
+          pickupLabel: "Brewery Arts",
+          pickupTime: departureTime,
+          pickupPoint: "122A Highgate, Kendal, Cumbria LA9 4HE",
           price: unitPrice,
           total,
-          createdAt: Date.now(),
+          bookingStatus: "active",
+          paymentStatus: "outstanding",
+          bookingSource: "Website",
+          createdAt: nowMs,
+          createdAtMs: nowMs,
           status: "pending"
         });
 
@@ -1972,6 +1999,19 @@ html, body {
         bookingCompleteView.classList.add("is-active");
       } catch (err) {
         console.error(err);
+
+        // If the booking record failed after capacity was reserved, put the seats back.
+        if (seatsReserved && departureTime) {
+          try {
+            await runTransaction(capacityRef, (current) => {
+              const remaining = Number(current);
+              return Number.isFinite(remaining) ? remaining + quantity : current;
+            });
+          } catch (rollbackErr) {
+            console.error("Seat rollback failed:", rollbackErr);
+          }
+        }
+
         bookingRequestError.textContent =
           "Your booking request could not be submitted. Please try again or contact Tour The Lakes.";
       } finally {
@@ -1982,9 +2022,36 @@ html, body {
 
     function connectFirebaseTour() {
       statusEl.textContent = "Loading live availability…";
-      onValue(ref(db, `tours/${TOUR_ID}/departures`), (departuresSnap) => {
-        const obj = departuresSnap.val() || {};
-        setAvailability(Object.values(obj));
+
+      // Read directly from the schedule tree used by the Tour The Lakes admin page:
+      // tours/{tourId}/dates/{YYYY-MM-DD}/times/{HH:MM}
+      onValue(ref(db, `tours/${TOUR_ID}/dates`), (datesSnap) => {
+        const dates = datesSnap.val() || {};
+        const departures = [];
+
+        for (const [dateKeyValue, dateData] of Object.entries(dates)) {
+          const times = dateData?.times || {};
+
+          // York currently has one physical departure per date.
+          // If more are added later, the earliest available time is used by this calendar.
+          const availableTimes = Object.entries(times)
+            .filter(([, slot]) => Number(slot?.capacity) > 0)
+            .sort(([a], [b]) => String(a).localeCompare(String(b)));
+
+          if (!availableTimes.length) continue;
+
+          const [time, slot] = availableTimes[0];
+          departures.push({
+            date: dateKeyValue,
+            time,
+            price: Number(slot?.price),
+            capacity: Number(slot?.capacity),
+            booked: 0,
+            remaining: Number(slot?.capacity)
+          });
+        }
+
+        setAvailability(departures);
       }, (err) => {
         console.error(err);
         statusEl.textContent = "Live availability could not be loaded.";
