@@ -644,12 +644,12 @@
                         <input id="pickupWindermereTime" class="pickup-stop-time" type="time" aria-label="Windermere pickup time" disabled />
                       </div>
                       <div class="pickup-stop">
-                        <label class="pickup-stop-choice"><input id="pickupAmbleside" type="checkbox" /> <span>Ambleside pickup</span></label>
-                        <input id="pickupAmblesideTime" class="pickup-stop-time" type="time" aria-label="Ambleside pickup time" disabled />
-                      </div>
-                      <div class="pickup-stop">
                         <label class="pickup-stop-choice"><input id="pickupBowness" type="checkbox" /> <span>Bowness-on-Windermere pickup</span></label>
                         <input id="pickupBownessTime" class="pickup-stop-time" type="time" aria-label="Bowness pickup time" disabled />
+                      </div>
+                      <div class="pickup-stop">
+                        <label class="pickup-stop-choice"><input id="pickupAmbleside" type="checkbox" /> <span>Ambleside pickup</span></label>
+                        <input id="pickupAmblesideTime" class="pickup-stop-time" type="time" aria-label="Ambleside pickup time" disabled />
                       </div>
                     </div>
                   </div>
@@ -1062,8 +1062,8 @@
       const pickupControls = [
         { id: "kendal", checkbox: document.getElementById("pickupKendal"), time: document.getElementById("pickupKendalTime"), label: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE" },
         { id: "windermere", checkbox: document.getElementById("pickupWindermere"), time: document.getElementById("pickupWindermereTime"), label: "Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH" },
-        { id: "ambleside", checkbox: document.getElementById("pickupAmbleside"), time: document.getElementById("pickupAmblesideTime"), label: "Ambleside pickup" },
-        { id: "bowness", checkbox: document.getElementById("pickupBowness"), time: document.getElementById("pickupBownessTime"), label: "Bowness-on-Windermere pickup" }
+        { id: "bowness", checkbox: document.getElementById("pickupBowness"), time: document.getElementById("pickupBownessTime"), label: "Bowness-on-Windermere pickup" },
+        { id: "ambleside", checkbox: document.getElementById("pickupAmbleside"), time: document.getElementById("pickupAmblesideTime"), label: "Ambleside pickup" }
       ];
       const saveDepartureBtn = document.getElementById("saveDeparture");
       const removeDepartureBtn = document.getElementById("removeDeparture");
