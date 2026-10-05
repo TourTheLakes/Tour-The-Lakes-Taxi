@@ -40,7 +40,7 @@
       overflow-x: hidden;
     }
 
-    button, input { font: inherit; }
+    button, input, select { font: inherit; }
     button { -webkit-tap-highlight-color: transparent; }
 
     .site-header {
@@ -326,8 +326,59 @@
       </nav>
 
       <section id="bookingsPanel" class="admin-panel is-active"></section>
-      <section id="toursPanel" class="admin-panel"></section>
-      <section id="schedulePanel" class="admin-panel"></section>
+
+      <section id="toursPanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Tour setup</div>
+            <h1 class="admin-section-title">Tours</h1>
+            <p class="admin-lead">Create the tour once. Firebase will generate its permanent ID and the tour will then be available in Schedule.</p>
+            <div class="admin-stack">
+              <div class="field-group">
+                <label class="field-label" for="tourName">Tour name</label>
+                <input id="tourName" type="text" class="admin-field" autocomplete="off" placeholder="York Christmas Market" />
+              </div>
+              <div id="tourMsg" class="admin-msg"></div>
+            </div>
+            <div class="admin-actions"><button id="createTour" type="button" class="admin-btn primary">Create tour</button></div>
+          </div>
+        </div>
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Firebase tours</div>
+            <div class="admin-subtitle" style="margin-top:0;">Existing tours</div>
+            <div id="toursListMsg" class="admin-msg">Loading…</div>
+            <div id="toursList" class="admin-list" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="schedulePanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Live availability</div>
+            <h1 class="admin-section-title">Schedule</h1>
+            <p class="admin-lead">Choose a tour and add a departure. Saving the departure writes it directly to that tour in Firebase.</p>
+            <div class="admin-stack">
+              <div class="field-group"><label class="field-label" for="scheduleTour">Tour</label><select id="scheduleTour" class="admin-field"><option value="">Choose a tour</option></select></div>
+              <div class="field-group"><label class="field-label" for="scheduleDate">Date</label><input id="scheduleDate" type="date" class="admin-field" /></div>
+              <div class="field-group"><label class="field-label" for="scheduleTime">Departure</label><input id="scheduleTime" type="time" class="admin-field" /></div>
+              <div class="field-group"><label class="field-label" for="schedulePrice">Price per person</label><input id="schedulePrice" type="number" min="0" step="0.01" class="admin-field" placeholder="39" /></div>
+              <div class="field-group"><label class="field-label" for="scheduleCapacity">Capacity</label><input id="scheduleCapacity" type="number" min="1" step="1" class="admin-field" placeholder="12" /></div>
+              <div id="scheduleMsg" class="admin-msg"></div>
+            </div>
+            <div class="admin-actions"><button id="saveDeparture" type="button" class="admin-btn primary">Add departure</button></div>
+          </div>
+        </div>
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Selected tour</div>
+            <div class="admin-subtitle" style="margin-top:0;">Scheduled departures</div>
+            <div id="departuresListMsg" class="admin-msg">Choose a tour above.</div>
+            <div id="departuresList" class="admin-list" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
 
       <section id="driversPanel" class="admin-panel">
         <div class="admin-section">
@@ -419,6 +470,7 @@
       equalTo,
       get,
       serverTimestamp,
+      remove,
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
     import {
       getAuth,
@@ -546,9 +598,162 @@
 
       if (!booted) {
         booted = true;
+        bootToursAndSchedule(user);
         bootDriversAdmin(user);
       }
     });
+
+    function bootToursAndSchedule(user) {
+      const adminEmail = String(user?.email || "").toLowerCase();
+      const tourNameEl = document.getElementById("tourName");
+      const createTourBtn = document.getElementById("createTour");
+      const tourMsgEl = document.getElementById("tourMsg");
+      const toursListMsgEl = document.getElementById("toursListMsg");
+      const toursListEl = document.getElementById("toursList");
+      const scheduleTourEl = document.getElementById("scheduleTour");
+      const scheduleDateEl = document.getElementById("scheduleDate");
+      const scheduleTimeEl = document.getElementById("scheduleTime");
+      const schedulePriceEl = document.getElementById("schedulePrice");
+      const scheduleCapacityEl = document.getElementById("scheduleCapacity");
+      const saveDepartureBtn = document.getElementById("saveDeparture");
+      const scheduleMsgEl = document.getElementById("scheduleMsg");
+      const departuresListMsgEl = document.getElementById("departuresListMsg");
+      const departuresListEl = document.getElementById("departuresList");
+      let departuresUnsubscribe = null;
+
+      function setMsg(el, text, tone) {
+        if (!el) return;
+        el.classList.remove("ok", "bad");
+        if (tone === "ok") el.classList.add("ok");
+        if (tone === "bad") el.classList.add("bad");
+        el.textContent = String(text || "");
+      }
+
+      function slugify(value) {
+        return String(value || "")
+          .toLowerCase()
+          .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/&/g, " and ")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function localTodayKey() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      }
+      scheduleDateEl.min = localTodayKey();
+
+      function renderTours(toursObj) {
+        toursListEl.innerHTML = "";
+        const previousSelection = scheduleTourEl.value;
+        scheduleTourEl.innerHTML = '<option value="">Choose a tour</option>';
+        const entries = toursObj && typeof toursObj === "object"
+          ? Object.entries(toursObj).map(([id, tour]) => ({ id, tour: tour || {} })).sort((a,b) => String(a.tour.name||"").localeCompare(String(b.tour.name||"")))
+          : [];
+        setMsg(toursListMsgEl, entries.length ? `${entries.length} tour(s)` : "No tours yet.", null);
+
+        for (const { id, tour } of entries) {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = String(tour.name || id);
+          scheduleTourEl.appendChild(option);
+
+          const row = document.createElement("div");
+          row.style.borderBottom = "1px solid var(--line)";
+          row.style.padding = "18px 0";
+          const name = document.createElement("div");
+          name.textContent = String(tour.name || "Unnamed tour");
+          name.style.color = "rgba(255,255,255,0.92)";
+          name.style.fontSize = "17px";
+          name.style.fontWeight = "650";
+          const details = document.createElement("div");
+          details.className = "admin-msg";
+          details.style.marginTop = "6px";
+          details.textContent = `ID: ${id} • Slug: ${String(tour.slug || "")}`;
+          row.append(name, details);
+          toursListEl.appendChild(row);
+        }
+        if ([...scheduleTourEl.options].some(o => o.value === previousSelection)) scheduleTourEl.value = previousSelection;
+      }
+
+      onValue(ref(db, "tours"), (snap) => renderTours(snap.val()), (err) => setMsg(toursListMsgEl, `Error loading tours: ${err?.message || err}`, "bad"));
+
+      createTourBtn.addEventListener("click", async () => {
+        const name = tourNameEl.value.trim();
+        const slug = slugify(name);
+        if (!name) { setMsg(tourMsgEl, "Tour name required.", "bad"); return; }
+        if (!slug) { setMsg(tourMsgEl, "Could not create a valid tour slug.", "bad"); return; }
+        try {
+          const duplicate = query(ref(db, "tours"), orderByChild("slug"), equalTo(slug));
+          const duplicateSnap = await get(duplicate);
+          if (duplicateSnap.exists()) { setMsg(tourMsgEl, "A tour with this name already exists.", "bad"); return; }
+          const tourRef = push(ref(db, "tours"));
+          await set(tourRef, { name, slug, active: true, createdAt: serverTimestamp(), createdBy: adminEmail, updatedAt: serverTimestamp(), updatedBy: adminEmail });
+          tourNameEl.value = "";
+          setMsg(tourMsgEl, `Tour created. Firebase ID: ${tourRef.key}`, "ok");
+        } catch (err) { setMsg(tourMsgEl, `Error: ${err?.message || err}`, "bad"); }
+      });
+
+      function watchDepartures() {
+        if (departuresUnsubscribe) { departuresUnsubscribe(); departuresUnsubscribe = null; }
+        departuresListEl.innerHTML = "";
+        const tourId = scheduleTourEl.value;
+        if (!tourId) { setMsg(departuresListMsgEl, "Choose a tour above.", null); return; }
+        setMsg(departuresListMsgEl, "Loading…", null);
+        departuresUnsubscribe = onValue(ref(db, `tours/${tourId}/departures`), (snap) => {
+          const obj = snap.val();
+          departuresListEl.innerHTML = "";
+          const entries = obj && typeof obj === "object" ? Object.entries(obj).sort(([a],[b]) => a.localeCompare(b)) : [];
+          setMsg(departuresListMsgEl, entries.length ? `${entries.length} departure(s)` : "No departures scheduled.", null);
+          for (const [date, dep] of entries) {
+            const row = document.createElement("div");
+            row.style.display = "grid";
+            row.style.gridTemplateColumns = "minmax(0,1fr) auto";
+            row.style.gap = "16px";
+            row.style.alignItems = "center";
+            row.style.borderBottom = "1px solid var(--line)";
+            row.style.padding = "18px 0";
+            const booked = Math.max(0, Number(dep?.booked) || 0);
+            const capacity = Math.max(0, Number(dep?.capacity) || 0);
+            const info = document.createElement("div");
+            info.innerHTML = `<div style="color:rgba(255,255,255,.92);font-size:17px;font-weight:650;">${date} · ${String(dep?.time || "")}</div><div class="admin-msg" style="margin-top:6px;">£${Number(dep?.price || 0).toFixed(2).replace(".00","")} per person • ${Math.max(0, capacity-booked)} of ${capacity} seats remaining</div>`;
+            const del = document.createElement("button");
+            del.type = "button"; del.className = "admin-btn quiet"; del.textContent = "Remove";
+            del.addEventListener("click", async () => {
+              if (!confirm(`Remove ${date} departure?`)) return;
+              try { await remove(ref(db, `tours/${tourId}/departures/${date}`)); setMsg(scheduleMsgEl, `Departure removed: ${date}`, "ok"); }
+              catch (err) { setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad"); }
+            });
+            row.append(info, del); departuresListEl.appendChild(row);
+          }
+        }, (err) => setMsg(departuresListMsgEl, `Error loading departures: ${err?.message || err}`, "bad"));
+      }
+      scheduleTourEl.addEventListener("change", watchDepartures);
+
+      saveDepartureBtn.addEventListener("click", async () => {
+        const tourId = scheduleTourEl.value;
+        const date = scheduleDateEl.value;
+        const time = scheduleTimeEl.value;
+        const price = Number(schedulePriceEl.value);
+        const capacity = Number(scheduleCapacityEl.value);
+        if (!tourId) { setMsg(scheduleMsgEl, "Choose a tour.", "bad"); return; }
+        if (!date) { setMsg(scheduleMsgEl, "Date required.", "bad"); return; }
+        if (date < localTodayKey()) { setMsg(scheduleMsgEl, "Past dates cannot be scheduled.", "bad"); return; }
+        if (!time) { setMsg(scheduleMsgEl, "Departure time required.", "bad"); return; }
+        if (!Number.isFinite(price) || price < 0) { setMsg(scheduleMsgEl, "Valid price required.", "bad"); return; }
+        if (!Number.isInteger(capacity) || capacity < 1) { setMsg(scheduleMsgEl, "Valid capacity required.", "bad"); return; }
+        try {
+          const depRef = ref(db, `tours/${tourId}/departures/${date}`);
+          const existing = await get(depRef);
+          const booked = Math.max(0, Number(existing.val()?.booked) || 0);
+          if (booked > capacity) { setMsg(scheduleMsgEl, `Capacity cannot be lower than ${booked} existing booking(s).`, "bad"); return; }
+          await set(depRef, { date, time, price, capacity, booked, createdAt: existing.val()?.createdAt || Date.now(), updatedAt: serverTimestamp(), updatedBy: adminEmail });
+          setMsg(scheduleMsgEl, `${existing.exists() ? "Departure updated" : "Departure added"}: ${date} at ${time}`, "ok");
+          scheduleDateEl.value = ""; scheduleTimeEl.value = ""; schedulePriceEl.value = ""; scheduleCapacityEl.value = "";
+        } catch (err) { setMsg(scheduleMsgEl, `Error: ${err?.message || err}`, "bad"); }
+      });
+    }
 
     function bootDriversAdmin(user) {
       const adminEmail = String(user?.email || "").toLowerCase();
