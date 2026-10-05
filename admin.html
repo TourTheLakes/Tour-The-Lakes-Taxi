@@ -325,7 +325,17 @@
         <button type="button" data-admin-panel="driversPanel">Drivers</button>
       </nav>
 
-      <section id="bookingsPanel" class="admin-panel is-active"></section>
+      <section id="bookingsPanel" class="admin-panel is-active">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Customer records</div>
+            <h1 class="admin-section-title">Bookings</h1>
+            <p class="admin-lead">Website bookings appear here automatically. Mark payments when received or cancel a booking to return its seats to the live departure.</p>
+            <div id="bookingsMsg" class="admin-msg">Loading…</div>
+            <div id="bookingsList" class="admin-list" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
 
       <section id="toursPanel" class="admin-panel">
         <div class="admin-section">
@@ -471,6 +481,7 @@
       get,
       serverTimestamp,
       remove,
+      runTransaction,
     } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
     import {
       getAuth,
@@ -598,10 +609,143 @@
 
       if (!booted) {
         booted = true;
+        bootBookingsAdmin(user);
         bootToursAndSchedule(user);
         bootDriversAdmin(user);
       }
     });
+
+    function bootBookingsAdmin(user) {
+      const adminEmail = String(user?.email || "").toLowerCase();
+      const bookingsMsgEl = document.getElementById("bookingsMsg");
+      const bookingsListEl = document.getElementById("bookingsList");
+
+      function setBookingMsg(text, tone) {
+        if (!bookingsMsgEl) return;
+        bookingsMsgEl.classList.remove("ok", "bad");
+        if (tone === "ok") bookingsMsgEl.classList.add("ok");
+        if (tone === "bad") bookingsMsgEl.classList.add("bad");
+        bookingsMsgEl.textContent = String(text || "");
+      }
+
+      function money(value) {
+        const n = Number(value);
+        return Number.isFinite(n) ? `£${n.toFixed(2)}` : "—";
+      }
+
+      function niceDate(key) {
+        const d = new Date(`${key}T12:00:00`);
+        return Number.isNaN(d.getTime()) ? String(key || "") : d.toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
+      }
+
+      async function cancelBooking(tourId, bookingId, booking) {
+        const qty = Math.max(0, Number(booking?.qty) || 0);
+        const dateKey = String(booking?.dateKey || "");
+        if (!tourId || !bookingId || !dateKey || !qty) throw new Error("Booking is missing its tour, date or passenger quantity.");
+
+        const bookingRef = ref(db, `bookings/${tourId}/${bookingId}`);
+        const departureRef = ref(db, `tours/${tourId}/departures/${dateKey}`);
+        const latest = await get(bookingRef);
+        if (!latest.exists()) return;
+        if (String(latest.val()?.bookingStatus || "active") === "cancelled") return;
+
+        const depTx = await runTransaction(departureRef, (dep) => {
+          if (!dep || typeof dep !== "object") return;
+          const booked = Math.max(0, Number(dep.booked) || 0);
+          return { ...dep, booked: Math.max(0, booked - qty), updatedAt: Date.now(), updatedBy: adminEmail };
+        });
+        if (!depTx.committed) throw new Error("The linked departure could not be updated.");
+
+        try {
+          await update(bookingRef, {
+            bookingStatus: "cancelled",
+            status: "cancelled",
+            cancelledAt: serverTimestamp(),
+            cancelledBy: adminEmail,
+            updatedAt: serverTimestamp(),
+            updatedBy: adminEmail,
+          });
+        } catch (err) {
+          await runTransaction(departureRef, (dep) => {
+            if (!dep || typeof dep !== "object") return dep;
+            return { ...dep, booked: Math.max(0, Number(dep.booked) || 0) + qty, updatedAt: Date.now(), updatedBy: adminEmail };
+          });
+          throw err;
+        }
+      }
+
+      function renderBookings(root) {
+        if (!bookingsListEl) return;
+        bookingsListEl.innerHTML = "";
+        const rows = [];
+        if (root && typeof root === "object") {
+          for (const [tourId, tourBookings] of Object.entries(root)) {
+            if (!tourBookings || typeof tourBookings !== "object") continue;
+            for (const [bookingId, booking] of Object.entries(tourBookings)) rows.push({ tourId, bookingId, booking: booking || {} });
+          }
+        }
+        rows.sort((a,b) => String(a.booking.dateKey||"").localeCompare(String(b.booking.dateKey||"")) || String(a.booking.time||"").localeCompare(String(b.booking.time||"")) || Number(b.booking.createdAtMs||0)-Number(a.booking.createdAtMs||0));
+        setBookingMsg(rows.length ? `${rows.length} booking${rows.length === 1 ? "" : "s"}` : "No bookings yet.");
+
+        for (const item of rows) {
+          const b = item.booking;
+          const cancelled = String(b.bookingStatus || b.status || "active").toLowerCase() === "cancelled";
+          const paid = String(b.paymentStatus || "outstanding").toLowerCase() === "paid";
+          const row = document.createElement("div");
+          row.style.borderBottom = "1px solid var(--line)";
+          row.style.padding = "20px 0";
+          row.style.opacity = cancelled ? ".58" : "1";
+
+          const top = document.createElement("div");
+          top.style.display = "grid";
+          top.style.gridTemplateColumns = "minmax(0,1fr) auto";
+          top.style.gap = "16px";
+          top.style.alignItems = "start";
+
+          const info = document.createElement("div");
+          const name = String(b.name || `${b.firstName || ""} ${b.lastName || ""}`).trim() || "Customer";
+          const refText = String(b.reference || item.bookingId);
+          info.innerHTML = `<div style="color:rgba(255,255,255,.92);font-size:18px;font-weight:650;">${name}</div><div class="admin-msg" style="margin-top:6px;">${String(b.tourTitle || item.tourId)} • ${niceDate(b.dateKey)} • ${String(b.time || "")}</div><div class="admin-msg" style="margin-top:4px;">${Number(b.qty)||0} passenger${Number(b.qty)===1?"":"s"} • ${money(b.price)} each • ${money(b.total)} total • ${paid ? "PAID" : "OUTSTANDING"}${cancelled ? " • CANCELLED" : ""}</div><div class="admin-msg" style="margin-top:4px;">${refText} • ${String(b.email || "")} • ${String(b.phone || "")}</div>`;
+
+          const actions = document.createElement("div");
+          actions.style.display = "flex";
+          actions.style.flexWrap = "wrap";
+          actions.style.gap = "8px";
+          actions.style.justifyContent = "flex-end";
+
+          if (!cancelled) {
+            const pay = document.createElement("button");
+            pay.type = "button"; pay.className = paid ? "admin-btn quiet" : "admin-btn primary"; pay.textContent = paid ? "Mark outstanding" : "Mark paid";
+            pay.addEventListener("click", async () => {
+              try {
+                await update(ref(db, `bookings/${item.tourId}/${item.bookingId}`), {
+                  paymentStatus: paid ? "outstanding" : "paid",
+                  paymentAt: paid ? null : serverTimestamp(),
+                  paymentBy: paid ? null : adminEmail,
+                  updatedAt: serverTimestamp(), updatedBy: adminEmail,
+                });
+              } catch (err) { setBookingMsg(`Payment update failed: ${err?.message || err}`, "bad"); }
+            });
+
+            const cancel = document.createElement("button");
+            cancel.type = "button"; cancel.className = "admin-btn quiet"; cancel.textContent = "Cancel booking";
+            cancel.addEventListener("click", async () => {
+              if (!confirm(`Cancel ${refText}? The ${Number(b.qty)||0} seat(s) will be returned to the departure.`)) return;
+              cancel.disabled = true;
+              try { await cancelBooking(item.tourId, item.bookingId, b); setBookingMsg(`Booking cancelled: ${refText}`, "ok"); }
+              catch (err) { setBookingMsg(`Cancellation failed: ${err?.message || err}`, "bad"); cancel.disabled = false; }
+            });
+            actions.append(pay, cancel);
+          }
+
+          top.append(info, actions);
+          row.appendChild(top);
+          bookingsListEl.appendChild(row);
+        }
+      }
+
+      onValue(ref(db, "bookings"), (snap) => renderBookings(snap.val()), (err) => setBookingMsg(`Error loading bookings: ${err?.message || err}`, "bad"));
+    }
 
     function bootToursAndSchedule(user) {
       const adminEmail = String(user?.email || "").toLowerCase();
