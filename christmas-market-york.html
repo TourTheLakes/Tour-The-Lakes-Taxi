@@ -911,12 +911,6 @@ html, body {
       font: 400 26px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    .calendar-nav:disabled {
-      opacity: 0.22;
-      cursor: default;
-      pointer-events: none;
-    }
-
     .calendar-weekdays,
     .calendar-grid {
       display: grid;
@@ -1382,11 +1376,26 @@ html, body {
   </footer>
 
 
-<script>
-  // York booking UI.
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import { getDatabase, ref, onValue, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+  // York booking UI. The page resolves its permanent Firebase tour ID from this slug.
   (() => {
-    const TOUR_KEY = "christmas-market-york";
+    const TOUR_SLUG = "christmas-market-york";
     const availability = new Map();
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+    const app = initializeApp(firebaseConfig, "ttl-york-booking");
+    const db = getDatabase(app);
 
     const title = document.getElementById("calendarTitle");
     const grid = document.getElementById("calendarGrid");
@@ -1406,173 +1415,99 @@ html, body {
     let quantity = 1;
     let selectedDateKey = "";
     let selectedDeparture = null;
-
+    let tourId = "";
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const minimumMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    let visibleMonth = new Date(minimumMonth);
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    let visibleMonth = new Date(currentMonth);
 
-    function dateKey(year, month, day) {
-      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    }
-
-    function money(value) {
-      const amount = Number(value);
-      return Number.isFinite(amount) ? `£${amount.toFixed(2).replace(".00", "")}` : "—";
-    }
+    function dateKey(year, month, day) { return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; }
+    function money(value) { const amount = Number(value); return Number.isFinite(amount) ? `£${amount.toFixed(2).replace(".00", "")}` : "—"; }
+    function isPastDate(year, month, day) { return new Date(year, month, day) < today; }
 
     function renderSelection() {
       qtyValue.textContent = String(quantity);
-
       if (!selectedDeparture || !selectedDateKey) {
-        selectedDateText.textContent = "Not selected";
-        selectedTimeText.textContent = "—";
-        selectedTotalText.textContent = "—";
-        priceEl.textContent = "Select a date";
-        capacityEl.innerHTML = "Live capacity<br />will appear here";
-        continueButton.disabled = true;
-        return;
+        selectedDateText.textContent = "Not selected"; selectedTimeText.textContent = "—"; selectedTotalText.textContent = "—";
+        priceEl.textContent = "Select a date"; capacityEl.innerHTML = "Live capacity<br />will appear here"; continueButton.disabled = true; return;
       }
-
       const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
-      selectedDateText.textContent = selectedDate.toLocaleDateString("en-GB", {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      });
-
+      selectedDateText.textContent = selectedDate.toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
       selectedTimeText.textContent = selectedDeparture.time || "See departure details";
       priceEl.textContent = selectedDeparture.price != null ? `From ${money(selectedDeparture.price)}` : "Price on schedule";
-
       const remaining = Number(selectedDeparture.remaining);
-      capacityEl.textContent = Number.isFinite(remaining)
-        ? `${remaining} seat${remaining === 1 ? "" : "s"} remaining`
-        : "Capacity available";
-
+      capacityEl.textContent = Number.isFinite(remaining) ? `${remaining} seat${remaining === 1 ? "" : "s"} remaining` : "Capacity available";
       const unitPrice = Number(selectedDeparture.price);
       selectedTotalText.textContent = Number.isFinite(unitPrice) ? money(unitPrice * quantity) : "—";
       continueButton.disabled = false;
     }
 
     function selectDate(key) {
-      const departure = availability.get(key);
-      if (!departure) return;
-      selectedDateKey = key;
-      selectedDeparture = departure;
-      renderCalendar();
-      renderSelection();
+      const departure = availability.get(key); if (!departure) return;
+      selectedDateKey = key; selectedDeparture = departure; quantity = Math.min(quantity, Math.max(1, Number(departure.remaining) || 1));
+      renderCalendar(); renderSelection();
     }
 
     function renderCalendar() {
       if (!title || !grid) return;
-
-      const year = visibleMonth.getFullYear();
-      const month = visibleMonth.getMonth();
-
-      if (prev) {
-        const atMinimumMonth = year === minimumMonth.getFullYear() && month === minimumMonth.getMonth();
-        prev.disabled = atMinimumMonth;
-        prev.setAttribute("aria-disabled", atMinimumMonth ? "true" : "false");
-      }
-
-      title.textContent = visibleMonth.toLocaleDateString("en-GB", {
-        month: "long",
-        year: "numeric"
-      });
-
+      if (visibleMonth < currentMonth) visibleMonth = new Date(currentMonth);
+      const year = visibleMonth.getFullYear(); const month = visibleMonth.getMonth();
+      title.textContent = visibleMonth.toLocaleDateString("en-GB", { month:"long", year:"numeric" });
+      const atCurrentMonth = year === currentMonth.getFullYear() && month === currentMonth.getMonth();
+      if (prev) { prev.disabled = atCurrentMonth; prev.style.visibility = atCurrentMonth ? "hidden" : "visible"; prev.setAttribute("aria-disabled", String(atCurrentMonth)); }
       grid.innerHTML = "";
-
-      const firstDay = new Date(year, month, 1);
-      const mondayIndex = (firstDay.getDay() + 6) % 7;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      for (let i = 0; i < mondayIndex; i += 1) {
-        const blank = document.createElement("span");
-        blank.className = "calendar-day";
-        blank.setAttribute("aria-hidden", "true");
-        grid.appendChild(blank);
-      }
-
-      for (let day = 1; day <= daysInMonth; day += 1) {
-        const key = dateKey(year, month, day);
-        const departure = availability.get(key);
-        const calendarDate = new Date(year, month, day);
-        const isPastDate = calendarDate < today;
-
-        if (departure && !isPastDate) {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "calendar-day is-available";
-          if (key === selectedDateKey) button.classList.add("is-selected");
-          button.innerHTML = `${day}<span class="calendar-day-price">${departure.price != null ? money(departure.price) : "Available"}</span>`;
-          button.setAttribute("aria-label", `Select ${key}`);
-          button.addEventListener("click", () => selectDate(key));
-          grid.appendChild(button);
+      const firstDay = new Date(year, month, 1); const mondayIndex = (firstDay.getDay() + 6) % 7; const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let i=0;i<mondayIndex;i+=1) { const blank=document.createElement("span"); blank.className="calendar-day"; blank.setAttribute("aria-hidden","true"); grid.appendChild(blank); }
+      for (let day=1;day<=daysInMonth;day+=1) {
+        const key=dateKey(year,month,day); const departure=availability.get(key); const past=isPastDate(year,month,day);
+        if (departure && !past && Number(departure.remaining) > 0) {
+          const button=document.createElement("button"); button.type="button"; button.className="calendar-day is-available";
+          if (key===selectedDateKey) button.classList.add("is-selected");
+          button.innerHTML=`${day}<span class="calendar-day-price">${departure.price != null ? money(departure.price) : "Available"}</span>`;
+          button.setAttribute("aria-label",`Select ${key}`); button.addEventListener("click",()=>selectDate(key)); grid.appendChild(button);
         } else {
-          const cell = document.createElement("span");
-          cell.className = "calendar-day";
-          cell.textContent = String(day);
+          const cell=document.createElement("span"); cell.className="calendar-day"; cell.textContent=String(day);
+          if (past) { cell.style.opacity="0.35"; cell.setAttribute("aria-disabled","true"); }
           grid.appendChild(cell);
         }
       }
     }
 
-    prev?.addEventListener("click", () => {
-      const previousMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
-      if (previousMonth < minimumMonth) return;
-      visibleMonth = previousMonth;
-      renderCalendar();
-    });
+    prev?.addEventListener("click",()=>{ const candidate=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1); if(candidate<currentMonth)return; visibleMonth=candidate; renderCalendar(); });
+    next?.addEventListener("click",()=>{ visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1); renderCalendar(); });
+    qtyMinus?.addEventListener("click",()=>{ quantity=Math.max(1,quantity-1); renderSelection(); });
+    qtyPlus?.addEventListener("click",()=>{ const max=selectedDeparture&&Number.isFinite(Number(selectedDeparture.remaining))?Math.max(1,Number(selectedDeparture.remaining)):12; quantity=Math.min(max,quantity+1); renderSelection(); });
 
-    next?.addEventListener("click", () => {
-      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
-      renderCalendar();
-    });
+    function setAvailability(departures) {
+      availability.clear();
+      (Array.isArray(departures)?departures:[]).forEach((departure)=>{
+        if(!departure||!departure.date)return;
+        const d=new Date(`${departure.date}T12:00:00`); if(d<today)return;
+        const capacity=Math.max(0,Number(departure.capacity)||0); const booked=Math.max(0,Number(departure.booked)||0);
+        availability.set(String(departure.date),{...departure,remaining:Math.max(0,capacity-booked)});
+      });
+      if(selectedDateKey&&!availability.has(selectedDateKey)){selectedDateKey="";selectedDeparture=null;}
+      const firstAvailableKey=[...availability.entries()].filter(([,d])=>Number(d.remaining)>0).map(([k])=>k).sort()[0];
+      if(firstAvailableKey){const firstDate=new Date(`${firstAvailableKey}T12:00:00`); const firstMonth=new Date(firstDate.getFullYear(),firstDate.getMonth(),1); visibleMonth=firstMonth<currentMonth?new Date(currentMonth):firstMonth; statusEl.textContent="Choose an available date to continue.";}
+      else {visibleMonth=new Date(currentMonth); selectedDateKey="";selectedDeparture=null; statusEl.textContent="No departures are currently available.";}
+      renderCalendar(); renderSelection();
+    }
 
-    qtyMinus?.addEventListener("click", () => {
-      quantity = Math.max(1, quantity - 1);
-      renderSelection();
-    });
+    async function connectFirebaseTour() {
+      statusEl.textContent="Loading live availability…";
+      try {
+        const tourQuery=query(ref(db,"tours"),orderByChild("slug"),equalTo(TOUR_SLUG)); const snap=await get(tourQuery);
+        let match=null; snap.forEach((child)=>{if(!match)match={id:child.key,data:child.val()||{}};});
+        if(!match){statusEl.textContent="This tour is not yet connected to live availability."; setAvailability([]); return;}
+        tourId=match.id;
+        onValue(ref(db,`tours/${tourId}/departures`),(departuresSnap)=>{
+          const obj=departuresSnap.val()||{}; setAvailability(Object.values(obj));
+        },(err)=>{console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);});
+      } catch(err){console.error(err);statusEl.textContent="Live availability could not be loaded.";setAvailability([]);}
+    }
 
-    qtyPlus?.addEventListener("click", () => {
-      const max = selectedDeparture && Number.isFinite(Number(selectedDeparture.remaining))
-        ? Math.max(1, Number(selectedDeparture.remaining))
-        : 12;
-      quantity = Math.min(max, quantity + 1);
-      renderSelection();
-    });
-
-    // Availability interface.
-    window.TTLYorkBooking = {
-      tourKey: TOUR_KEY,
-      setAvailability(departures) {
-        availability.clear();
-
-        (Array.isArray(departures) ? departures : []).forEach((departure) => {
-          if (!departure || !departure.date) return;
-          availability.set(String(departure.date), departure);
-        });
-
-        const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
-        const firstAvailableKey = [...availability.keys()].filter((key) => key >= todayKey).sort()[0];
-        if (firstAvailableKey) {
-          const firstDate = new Date(`${firstAvailableKey}T12:00:00`);
-          visibleMonth = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
-          statusEl.textContent = "Choose an available date to continue.";
-        } else {
-          selectedDateKey = "";
-          selectedDeparture = null;
-          statusEl.textContent = "No departures are currently available.";
-        }
-
-        renderCalendar();
-        renderSelection();
-      }
-    };
-
-    renderCalendar();
-    renderSelection();
+    window.TTLYorkBooking={tourSlug:TOUR_SLUG,get tourId(){return tourId;},setAvailability};
+    renderCalendar(); renderSelection(); connectFirebaseTour();
   })();
 </script>
 
