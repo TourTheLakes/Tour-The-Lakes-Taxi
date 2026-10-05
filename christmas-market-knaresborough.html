@@ -1236,6 +1236,54 @@ html, body {
       box-shadow: 0 0 0 2px rgba(184,107,42,0.10);
     }
 
+    .booking-pickup-field {
+      grid-column: 1 / -1;
+    }
+
+    .booking-pickup-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .booking-pickup-option {
+      display: grid;
+      grid-template-columns: 20px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 11px 12px;
+      border: 1px solid rgba(43,43,43,0.24);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.60);
+      cursor: pointer;
+    }
+
+    .booking-pickup-option input {
+      width: 18px;
+      min-height: 18px;
+      height: 18px;
+      margin: 0;
+      padding: 0;
+      accent-color: #b86b2a;
+    }
+
+    .booking-pickup-address {
+      color: #2b2b2b;
+      font: 600 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-pickup-time {
+      color: #b86b2a;
+      font: 700 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      white-space: nowrap;
+    }
+
+    .booking-pickup-empty {
+      margin: 0;
+      color: rgba(43,43,43,0.66);
+      font: 500 13px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
     .booking-request-error {
       min-height: 20px;
       margin: 16px 0 0;
@@ -1499,7 +1547,7 @@ html, body {
               <span class="tour-fact-icon" aria-hidden="true">P</span>
               <div>
                 <span class="tour-fact-label">Pickup</span>
-                <span class="tour-fact-value">Kendal</span>
+                <span class="tour-fact-value">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</span>
               </div>
             </div>
             <div class="tour-fact">
@@ -1536,7 +1584,7 @@ html, body {
         <section class="tour-section" aria-labelledby="itinerary-heading">
           <h2 class="tour-section-heading" id="itinerary-heading">Itinerary</h2>
 
-          <p class="tour-lead">Kendal</p>
+          <p class="tour-lead">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</p>
 
           <p class="tour-copy">
             We meet up ready to depart at 09:00, where after a rest break, we shall arrive in Knaresborough at approximately 11:30. After leaving you at a designated drop off stop, you can go and enjoy your day.
@@ -1551,13 +1599,13 @@ html, body {
           <h2 class="tour-section-heading" id="meeting-heading">Meeting Point</h2>
 
           <p class="tour-copy">
-            Please arrive at the Kendal pickup point 10 minutes before your scheduled pickup time. Your Tour The Lakes driver will meet you at the designated pickup area. Please remain at the agreed meeting point until your driver arrives.
+            Please arrive at your selected pickup point 10 minutes before your scheduled pickup time. Your Tour The Lakes driver will meet you at the designated pickup area. Please remain at the agreed meeting point until your driver arrives.
           </p>
 
           <p class="tour-copy">
             If you have any difficulty locating your vehicle or driver, please contact Tour The Lakes for assistance. The tour returns to your original pickup area at the end of the day.
           </p>
-        
+
           <p><strong>Kendal</strong><br>Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE. Meet in the main car park by the parking meter.</p>
         </section>
       </article>
@@ -1630,7 +1678,6 @@ html, body {
         </div>
       </aside>
     </div>
-
   </main>
 
   <div class="booking-checkout-backdrop" id="bookingCheckoutBackdrop" aria-hidden="true">
@@ -1666,6 +1713,10 @@ html, body {
                 <label for="bookingPhone">Mobile phone *</label>
                 <input id="bookingPhone" name="phone" type="tel" autocomplete="tel" required />
               </div>
+              <div class="booking-form-field booking-pickup-field" id="bookingPickupField">
+                <label>Pickup location *</label>
+                <div class="booking-pickup-options" id="bookingPickupOptions"></div>
+              </div>
             </div>
 
             <div class="booking-request-error" id="bookingRequestError" aria-live="polite"></div>
@@ -1676,10 +1727,11 @@ html, body {
         <aside class="booking-checkout-summary" aria-label="Booking summary">
           <img class="booking-summary-image" src="images/Knaresborough.png" alt="Knaresborough at Christmas" />
           <h3 class="booking-summary-tour">Knaresborough Christmas Market &amp; Shopping Day</h3>
-          <p class="booking-summary-sub">Pickup from Kendal</p>
+          <p class="booking-summary-sub">Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</p>
 
           <div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div>
           <div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div>
+          <div class="booking-summary-row"><span>Pickup</span><strong id="checkoutSummaryPickup">Select below</strong></div>
           <div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div>
           <div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div>
           <div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div>
@@ -1773,9 +1825,11 @@ html, body {
     const bookingCompleteClose = document.getElementById("bookingCompleteClose");
     const bookingReferenceText = document.getElementById("bookingReferenceText");
     const bookingCompleteSummary = document.getElementById("bookingCompleteSummary");
+    const bookingPickupOptions = document.getElementById("bookingPickupOptions");
 
     const checkoutSummaryDate = document.getElementById("checkoutSummaryDate");
     const checkoutSummaryTime = document.getElementById("checkoutSummaryTime");
+    const checkoutSummaryPickup = document.getElementById("checkoutSummaryPickup");
     const checkoutSummaryQty = document.getElementById("checkoutSummaryQty");
     const checkoutSummaryUnit = document.getElementById("checkoutSummaryUnit");
     const checkoutSummaryTotal = document.getElementById("checkoutSummaryTotal");
@@ -1868,7 +1922,81 @@ html, body {
       bookingRequestError.textContent = "";
     }
 
-    function openCheckout() {
+
+
+    function getDeparturePickups() {
+      const raw = selectedDeparture?.pickups;
+      if (!raw || typeof raw !== "object") return [];
+      return Object.values(raw)
+        .filter((pickup) => pickup && pickup.label && pickup.time)
+        .map((pickup) => ({
+          id: String(pickup.id || ""),
+          label: String(pickup.label || ""),
+          time: String(pickup.time || "")
+        }));
+    }
+
+    function selectedPickup() {
+      const checked = bookingPickupOptions?.querySelector('input[name="pickupChoice"]:checked');
+      if (!checked) return null;
+      return getDeparturePickups().find((pickup) => pickup.id === checked.value) || null;
+    }
+
+    function renderPickupOptions() {
+      if (!bookingPickupOptions) return;
+      bookingPickupOptions.innerHTML = "";
+      const pickups = getDeparturePickups();
+
+      if (!pickups.length) {
+        bookingPickupOptions.innerHTML =
+          '<p class="booking-pickup-empty">No pickup locations have been configured for this departure.</p>';
+        if (checkoutSummaryPickup) checkoutSummaryPickup.textContent = "—";
+        return;
+      }
+
+      pickups.forEach((pickup, index) => {
+        const label = document.createElement("label");
+        label.className = "booking-pickup-option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "pickupChoice";
+        input.value = pickup.id;
+        input.required = true;
+        input.addEventListener("change", () => {
+          if (checkoutSummaryPickup) {
+            checkoutSummaryPickup.textContent = `${pickup.label} · ${pickup.time}`;
+          }
+        });
+
+        const address = document.createElement("span");
+        address.className = "booking-pickup-address";
+        address.textContent = pickup.label;
+
+        const time = document.createElement("span");
+        time.className = "booking-pickup-time";
+        time.textContent = pickup.time;
+
+        label.append(input, address, time);
+        bookingPickupOptions.appendChild(label);
+      });
+
+      if (checkoutSummaryPickup) {
+        checkoutSummaryPickup.textContent = pickups.length === 1
+          ? `${pickups[0].label} · ${pickups[0].time}`
+          : "Select below";
+      }
+
+      if (pickups.length === 1) {
+        const only = bookingPickupOptions.querySelector('input[name="pickupChoice"]');
+        if (only) {
+          only.checked = true;
+          only.dispatchEvent(new Event("change"));
+        }
+      }
+    }
+
+        function openCheckout() {
       if (!selectedDeparture || !selectedDateKey || !tourId) return;
 
       const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
@@ -1884,6 +2012,7 @@ html, body {
       bookingCompleteView.classList.remove("is-active");
       bookingRequestForm.reset();
       bookingRequestError.textContent = "";
+      renderPickupOptions();
 
       checkoutBackdrop?.classList.add("is-open");
       checkoutBackdrop?.setAttribute("aria-hidden", "false");
@@ -1926,6 +2055,13 @@ html, body {
 
       if (!firstName || !lastName || !email || !phone) {
         bookingRequestError.textContent = "Please complete all required contact details.";
+        return;
+      }
+
+      const pickup = selectedPickup();
+      if (!pickup) {
+        bookingRequestError.textContent = "Please choose your pickup location.";
+        bookingPickupOptions?.querySelector('input[name="pickupChoice"]')?.focus();
         return;
       }
 
@@ -1984,10 +2120,11 @@ html, body {
           firstName,
           lastName,
           email,
-          phone,
-          pickupLabel: "Kendal",
-          pickupTime: departureTime,
-          pickupPoint: "122A Highgate, Kendal, Cumbria LA9 4HE",
+          phone, pickupId: pickup.id,
+          pickupLabel: pickup.label,
+          pickupTime: pickup.time,
+          pickupPoint: pickup.label,
+          Kendal, Cumbria LA9 4HE",
           price: unitPrice,
           total,
           bookingStatus: "active",
@@ -2003,7 +2140,7 @@ html, body {
         bookingCompleteSummary.textContent =
           `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
           `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
-          `${selectedDeparture.time || ""} · ${money(total)}`;
+          `Pickup: ${pickup.label} at ${pickup.time} · ${money(total)}`;
 
         checkoutFormView.style.display = "none";
         bookingCompleteView.classList.add("is-active");
@@ -2049,6 +2186,7 @@ html, body {
             price: Number(dep?.price),
             capacity,
             booked,
+            pickups: dep?.pickups && typeof dep.pickups === "object" ? dep.pickups : {},
             remaining: Math.max(0, capacity - booked)
           });
         }
