@@ -2,9 +2,22 @@
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
-  <title>Tour The Lakes</title>
+  <title>Ilkley Christmas Market Coach Trip | Tour The Lakes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow" />
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Join Tour The Lakes for a festive day trip from Kendal to Ilkley, with time to enjoy the Christmas market, independent shops and seasonal atmosphere." />
+  <link rel="canonical" href="https://www.tourthelakes.com/christmas-market-ilkley.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Tour The Lakes" />
+  <meta property="og:title" content="Ilkley Christmas Market Coach Trip | Tour The Lakes" />
+  <meta property="og:description" content="Join Tour The Lakes for a festive day trip from Kendal to Ilkley, with time to enjoy the Christmas market, independent shops and seasonal atmosphere." />
+  <meta property="og:url" content="https://www.tourthelakes.com/christmas-market-ilkley.html" />
+  <meta property="og:image" content="https://www.tourthelakes.com/images/Ilkley.png" />
+  <meta property="og:locale" content="en_GB" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ilkley Christmas Market Coach Trip | Tour The Lakes" />
+  <meta name="twitter:description" content="Join Tour The Lakes for a festive day trip from Kendal to Ilkley, with time to enjoy the Christmas market, independent shops and seasonal atmosphere." />
+  <meta name="twitter:image" content="https://www.tourthelakes.com/images/Ilkley.png" />
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
   <link rel="apple-touch-icon" href="images/TTLFAVIcon.png" />
 
@@ -1746,6 +1759,9 @@ html, body {
         <p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p>
         <div class="booking-reference">Reference <span id="bookingReferenceText"></span></div>
         <p id="bookingCompleteSummary"></p>
+        <p><strong>Full name:</strong> <span id="bookingCompleteName"></span><br>
+        <strong>Email:</strong> <span id="bookingCompleteEmail"></span><br>
+        <strong>Mobile phone:</strong> <span id="bookingCompletePhone"></span></p>
         <p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p>
         <p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p>
         <p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p>
@@ -2155,6 +2171,9 @@ html, body {
 
         const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
         bookingReferenceText.textContent = reference;
+        document.getElementById("bookingCompleteName").textContent = `${firstName} ${lastName}`.trim();
+        document.getElementById("bookingCompleteEmail").textContent = email;
+        document.getElementById("bookingCompletePhone").textContent = phone;
         bookingCompleteSummary.textContent =
           `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
           `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
