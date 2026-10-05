@@ -1939,17 +1939,17 @@ html, body {
 
       let seatsReserved = false;
       const departureTime = String(selectedDeparture.time || "");
-      const departureRef = ref(db, `tours/${tourId}/departures/${selectedDateKey}`);
+      const bookedRef = ref(db, `tours/${tourId}/departures/${selectedDateKey}/booked`);
+      const departureCapacity = Math.max(0, Number(selectedDeparture.capacity) || 0);
 
       try {
-        // Reserve seats against the same departure record used by Admin.
-        // Admin stores total capacity plus the number of seats already booked.
-        const seatTx = await runTransaction(departureRef, (dep) => {
-          if (!dep || typeof dep !== "object") return;
-          const capacity = Math.max(0, Number(dep.capacity) || 0);
-          const booked = Math.max(0, Number(dep.booked) || 0);
-          if ((capacity - booked) < quantity) return;
-          return { ...dep, booked: booked + quantity, updatedAt: Date.now(), updatedBy: "website" };
+        // Reserve only the public-safe booked counter. Admin retains control of
+        // the departure date, time, price and capacity. Firebase serialises this
+        // transaction so simultaneous customers cannot oversell the departure.
+        const seatTx = await runTransaction(bookedRef, (current) => {
+          const booked = Math.max(0, Number(current) || 0);
+          if ((departureCapacity - booked) < quantity) return;
+          return booked + quantity;
         });
 
         if (!seatTx.committed) {
@@ -2005,9 +2005,9 @@ html, body {
         // If the booking record failed after capacity was reserved, put the seats back.
         if (seatsReserved && departureTime) {
           try {
-            await runTransaction(capacityRef, (current) => {
-              const remaining = Number(current);
-              return Number.isFinite(remaining) ? remaining + quantity : current;
+            await runTransaction(bookedRef, (current) => {
+              const booked = Math.max(0, Number(current) || 0);
+              return Math.max(0, booked - quantity);
             });
           } catch (rollbackErr) {
             console.error("Seat rollback failed:", rollbackErr);
