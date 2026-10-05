@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
@@ -1589,9 +1589,11 @@ html, body {
             If you have any difficulty locating your vehicle or driver, please contact Tour The Lakes for assistance. The tour returns to your original pickup area at the end of the day.
           </p>
 
-          <p><strong>Kendal</strong><br>Kendal, Brewery Arts. Meet in the main car park by the parking meter.</p>
-          <p><strong>Windermere Railway Station</strong><br>Station Precinct, Windermere, Cumbria LA23 1AH. Face the railway station and the large yellow Pick Up bay is approximately 20 feet to the left. Your vehicle will meet you there.</p>
-          <p><strong>Bowness Pier</strong><br>Meet immediately outside the Lakes Cruises ticket office at Bowness Pier, in the yellow ground bay marked Coaches.</p>
+          <p><strong>Kendal</strong><br>Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE. Meet in the main car park by the parking meter.</p>
+
+          <p><strong>Windermere Railway Station</strong><br>Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH. Face the railway station and the large yellow Pick Up bay is approximately 20 feet to the left. Your vehicle will meet you there.</p>
+
+          <p><strong>Bowness Pier</strong><br>Bowness Pier, Glebe Road, Bowness-on-Windermere, Cumbria LA23 3HE. Meet immediately outside the Lakes Cruises ticket office, in the yellow ground bay marked Coaches.</p>
         </section>
       </article>
 
@@ -1835,6 +1837,15 @@ html, body {
       const checked = bookingPickupOptions?.querySelector('input[name="pickupChoice"]:checked');
       if (!checked) return null;
       return getDeparturePickups().find((pickup) => pickup.id === checked.value) || null;
+    }
+
+    function customerPickupLabel(pickup) {
+      const text = `${pickup?.id || ""} ${pickup?.label || ""}`.toLowerCase();
+      if (text.includes("kendal") || text.includes("brewery arts")) return "Kendal, Brewery Arts";
+      if (text.includes("windermere") && !text.includes("bowness")) return "Windermere Railway Station";
+      if (text.includes("bowness")) return "Bowness Pier";
+      if (text.includes("ambleside")) return "Ambleside";
+      return String(pickup?.label || "");
     }
 
     function renderPickupOptions() {
