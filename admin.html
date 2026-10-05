@@ -469,6 +469,58 @@
       display: inline-block;
     }
 
+    .pickup-stops {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pickup-stop {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 120px;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,.035);
+      border-bottom: 1px solid rgba(184,107,42,.42);
+    }
+
+    .pickup-stop-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--white);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .pickup-stop-choice input {
+      margin-top: 3px;
+      accent-color: var(--orange);
+    }
+
+    .pickup-stop-time {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid rgba(184,107,42,.62);
+      outline: none;
+      background: rgba(255,255,255,.045);
+      color: var(--white);
+      padding: 10px 8px;
+      color-scheme: dark;
+    }
+
+    .pickup-stop-time:disabled {
+      opacity: .28;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 560px) {
+      .pickup-stop {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 900px) {
       .schedule-layout {
         grid-template-columns: 1fr;
@@ -577,6 +629,29 @@
                   <div class="field-group">
                     <label class="field-label" for="scheduleCapacity">Capacity</label>
                     <input id="scheduleCapacity" type="number" min="1" step="1" class="admin-field" placeholder="Tour capacity" />
+                  </div>
+
+                  <div class="field-group">
+                    <div class="field-label">Pickup stops</div>
+                    <div class="admin-msg">Tick the stops served by this departure and enter the pickup time for each one.</div>
+                    <div class="pickup-stops">
+                      <div class="pickup-stop">
+                        <label class="pickup-stop-choice"><input id="pickupKendal" type="checkbox" /> <span>Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE</span></label>
+                        <input id="pickupKendalTime" class="pickup-stop-time" type="time" aria-label="Kendal pickup time" disabled />
+                      </div>
+                      <div class="pickup-stop">
+                        <label class="pickup-stop-choice"><input id="pickupWindermere" type="checkbox" /> <span>Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH</span></label>
+                        <input id="pickupWindermereTime" class="pickup-stop-time" type="time" aria-label="Windermere pickup time" disabled />
+                      </div>
+                      <div class="pickup-stop">
+                        <label class="pickup-stop-choice"><input id="pickupAmbleside" type="checkbox" /> <span>Ambleside pickup</span></label>
+                        <input id="pickupAmblesideTime" class="pickup-stop-time" type="time" aria-label="Ambleside pickup time" disabled />
+                      </div>
+                      <div class="pickup-stop">
+                        <label class="pickup-stop-choice"><input id="pickupBowness" type="checkbox" /> <span>Bowness-on-Windermere pickup</span></label>
+                        <input id="pickupBownessTime" class="pickup-stop-time" type="time" aria-label="Bowness pickup time" disabled />
+                      </div>
+                    </div>
                   </div>
 
                   <div id="scheduleMsg" class="admin-msg">Choose a tour and select a date from the calendar.</div>
@@ -929,7 +1004,8 @@
           const info = document.createElement("div");
           const name = String(b.name || `${b.firstName || ""} ${b.lastName || ""}`).trim() || "Customer";
           const refText = String(b.reference || item.bookingId);
-          info.innerHTML = `<div style="color:rgba(255,255,255,.92);font-size:18px;font-weight:650;">${name}</div><div class="admin-msg" style="margin-top:6px;">${String(b.tourTitle || item.tourId)} • ${niceDate(b.dateKey)} • ${String(b.time || "")}</div><div class="admin-msg" style="margin-top:4px;">${Number(b.qty)||0} passenger${Number(b.qty)===1?"":"s"} • ${money(b.price)} each • ${money(b.total)} total • ${paid ? "PAID" : "OUTSTANDING"}${cancelled ? " • CANCELLED" : ""}</div><div class="admin-msg" style="margin-top:4px;">${refText} • ${String(b.email || "")} • ${String(b.phone || "")}</div>`;
+          const pickupText = b.pickupLabel ? ` • Pickup: ${String(b.pickupLabel)}${b.pickupTime ? " at " + String(b.pickupTime) : ""}` : "";
+          info.innerHTML = `<div style="color:rgba(255,255,255,.92);font-size:18px;font-weight:650;">${name}</div><div class="admin-msg" style="margin-top:6px;">${String(b.tourTitle || item.tourId)} • ${niceDate(b.dateKey)} • ${String(b.time || "")}${pickupText}</div><div class="admin-msg" style="margin-top:4px;">${Number(b.qty)||0} passenger${Number(b.qty)===1?"":"s"} • ${money(b.price)} each • ${money(b.total)} total • ${paid ? "PAID" : "OUTSTANDING"}${cancelled ? " • CANCELLED" : ""}</div><div class="admin-msg" style="margin-top:4px;">${refText} • ${String(b.email || "")} • ${String(b.phone || "")}</div>`;
 
           const actions = document.createElement("div");
           actions.style.display = "flex";
@@ -983,6 +1059,12 @@
       const scheduleTimeEl = document.getElementById("scheduleTime");
       const schedulePriceEl = document.getElementById("schedulePrice");
       const scheduleCapacityEl = document.getElementById("scheduleCapacity");
+      const pickupControls = [
+        { id: "kendal", checkbox: document.getElementById("pickupKendal"), time: document.getElementById("pickupKendalTime"), label: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE" },
+        { id: "windermere", checkbox: document.getElementById("pickupWindermere"), time: document.getElementById("pickupWindermereTime"), label: "Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH" },
+        { id: "ambleside", checkbox: document.getElementById("pickupAmbleside"), time: document.getElementById("pickupAmblesideTime"), label: "Ambleside pickup" },
+        { id: "bowness", checkbox: document.getElementById("pickupBowness"), time: document.getElementById("pickupBownessTime"), label: "Bowness-on-Windermere pickup" }
+      ];
       const saveDepartureBtn = document.getElementById("saveDeparture");
       const removeDepartureBtn = document.getElementById("removeDeparture");
       const scheduleMsgEl = document.getElementById("scheduleMsg");
@@ -1024,11 +1106,42 @@
         return `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
       }
 
+      function setPickupControls(pickups = {}) {
+        for (const stop of pickupControls) {
+          const saved = pickups && typeof pickups === "object" ? pickups[stop.id] : null;
+          stop.checkbox.checked = !!saved;
+          stop.time.disabled = !saved;
+          stop.time.value = saved ? String(saved.time || "") : "";
+        }
+      }
+
+      function selectedPickups() {
+        const pickups = {};
+        for (const stop of pickupControls) {
+          if (!stop.checkbox.checked) continue;
+          pickups[stop.id] = {
+            id: stop.id,
+            label: stop.label,
+            time: stop.time.value
+          };
+        }
+        return pickups;
+      }
+
+      for (const stop of pickupControls) {
+        stop.checkbox.addEventListener("change", () => {
+          stop.time.disabled = !stop.checkbox.checked;
+          if (!stop.checkbox.checked) stop.time.value = "";
+          if (stop.checkbox.checked) stop.time.focus();
+        });
+      }
+
       function clearDepartureForm(clearDate = false) {
         if (clearDate) scheduleDateEl.value = "";
         scheduleTimeEl.value = "";
         schedulePriceEl.value = "";
         scheduleCapacityEl.value = "";
+        setPickupControls({});
         saveDepartureBtn.textContent = "Add departure";
         removeDepartureBtn.classList.remove("is-visible");
       }
@@ -1041,6 +1154,7 @@
           scheduleTimeEl.value = String(dep.time || "");
           schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
           scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+          setPickupControls(dep.pickups || {});
           saveDepartureBtn.textContent = "Update departure";
           removeDepartureBtn.classList.add("is-visible");
           const booked = Math.max(0, Number(dep.booked) || 0);
@@ -1228,6 +1342,7 @@
               scheduleTimeEl.value = String(dep.time || "");
               schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
               scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+              setPickupControls(dep.pickups || {});
               saveDepartureBtn.textContent = "Update departure";
               removeDepartureBtn.classList.add("is-visible");
             }
@@ -1263,6 +1378,7 @@
         const time = scheduleTimeEl.value;
         const price = Number(schedulePriceEl.value);
         const capacity = Number(scheduleCapacityEl.value);
+        const pickups = selectedPickups();
 
         if (!tourId) {
           setMsg(scheduleMsgEl, "Choose a tour.", "bad");
@@ -1289,6 +1405,13 @@
           return;
         }
 
+        for (const pickup of Object.values(pickups)) {
+          if (!pickup.time) {
+            setMsg(scheduleMsgEl, `Pickup time required for ${pickup.label}.`, "bad");
+            return;
+          }
+        }
+
         try {
           const depRef = ref(db, `tours/${tourId}/departures/${date}`);
           const existing = await get(depRef);
@@ -1304,6 +1427,7 @@
             time,
             price,
             capacity,
+            pickups,
             booked,
             createdAt: existing.val()?.createdAt || Date.now(),
             updatedAt: serverTimestamp(),
