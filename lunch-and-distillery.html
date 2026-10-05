@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tour The Lakes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
+  <link rel="apple-touch-icon" href="images/TTLFAVIcon.png" />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W6JY1LZXTP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-W6JY1LZXTP');
+  </script>
+
+  <style>
+html, body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: transparent;
+      overflow-x: hidden;
+    }
+
+    html {
+      background-color: #2b2b2b;
+    }
+
+    body {
+      position: relative;
+      isolation: isolate;
+      padding-top: 172px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-color: #f3ead8;
+      background-image: none;
+      pointer-events: none;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    @media screen and (min-width: 1024px) {
+      body {
+        padding-top: 0;
+      }
+
+      .site-header {
+        width: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transform: translateY(0);
+        transition: transform 0.22s ease;
+        will-change: transform;
+        background-color: #2b2b2b;
+        background-image:
+          linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+          url("images/Web Paper 5.png");
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+        color: rgba(255,255,255,0.92);
+        border-bottom: 2px solid #b86b2a;
+      }
+
+      .site-header.header-scroll-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(-100%);
+      }
+
+      .site-header.header-scroll-fixed.header-scroll-initializing {
+        transition: none;
+      }
+
+      .site-header.header-scroll-fixed.header-scroll-reveal {
+        transform: translateY(0);
+      }
+
+      .header-scroll-placeholder {
+        display: none;
+        width: 100%;
+      }
+
+      .header-scroll-placeholder.is-active {
+        display: block;
+      }
+    }
+
+    @media screen and (max-width: 1023px) {
+      .site-header {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background-color: #2b2b2b;
+        background-image:
+          linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+          url("images/Web Paper 5.png");
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+        color: rgba(255,255,255,0.92);
+        border-bottom: 2px solid #b86b2a;
+      }
+    }
+
+    .header-inner {
+      min-height: 170px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      padding: 18px 16px 26px;
+    }
+
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .header-home-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .header-logo {
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+    }
+
+    .header-established {
+      color: rgba(255,255,255,0.65);
+      font: 600 9px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .brand {
+      color: rgba(255,255,255,0.92);
+      font: 600 clamp(21px, 3vw, 38px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .header-nav {
+      display: none;
+    }
+
+    .brand-home-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-toggle {
+      display: none;
+      appearance: none;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: default;
+    }
+
+    .mobile-navigation {
+      display: none;
+    }
+
+    .mobile-header-title,
+    .mobile-navigation-backdrop {
+      display: none;
+    }
+
+    @media screen and (min-width: 601px) {
+      .header-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        column-gap: clamp(28px, 4vw, 70px);
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .header-nav {
+        display: flex;
+        align-self: end;
+        gap: clamp(22px, 3vw, 48px);
+        min-width: 0;
+        padding-top: 34px;
+      }
+
+      .header-nav-left {
+        justify-content: flex-end;
+      }
+
+      .header-nav-right {
+        justify-content: flex-start;
+      }
+
+      .header-nav a {
+        color: rgba(255,255,255,0.92);
+        font: 500 clamp(13px, 1.45vw, 17px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 0.2px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .header-nav a:hover,
+      .header-nav a:focus-visible {
+        color: #b86b2a;
+      }
+    }
+
+    img {
+      width: 100%;
+      display: block;
+    }
+
+    .site-footer {
+      width: 100%;
+      margin-top: 64px;
+      border-top: 2px solid #b86b2a;
+      background-color: #2b2b2b;
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+    }
+
+    .footer-inner {
+      min-height: 150px;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1.35fr;
+      gap: 36px;
+      align-items: center;
+      padding: 28px 0;
+    }
+
+    .footer-block {
+      min-width: 0;
+    }
+
+    .footer-title {
+      margin: 0 0 9px;
+      color: #b86b2a;
+      font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .footer-text,
+    .footer-link {
+      color: rgba(255,255,255,0.68);
+      font: 500 14px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.1px;
+    }
+
+    .footer-link {
+      display: block;
+      color: rgba(255,255,255,0.78);
+      text-decoration: none;
+    }
+
+    .footer-link:hover,
+    .footer-link:focus-visible {
+      color: #b86b2a;
+    }
+
+    .footer-copyright {
+      color: rgba(255,255,255,0.48);
+      font: 400 13px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    @media screen and (min-width: 601px) and (max-width: 1023px) {
+      .footer-inner {
+        width: min(940px, calc(100% - 56px));
+        gap: 24px;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .brand-home-link {
+        display: none;
+      }
+
+      body {
+        padding-top: 66px;
+      }
+
+      body.mobile-menu-active {
+        overflow: hidden;
+      }
+
+      .site-header {
+        height: 66px;
+        background-color: #2b2b2b;
+        background-image:
+          linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20)),
+          url("images/Web Paper 5.png");
+        border-bottom: 2px solid #b86b2a;
+      }
+
+      .header-inner {
+        min-height: 64px;
+        height: 64px;
+        width: 100%;
+        padding: 6px 30px;
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr) 48px;
+        align-items: center;
+        justify-content: stretch;
+      }
+
+      .header-brand {
+        display: contents;
+      }
+
+      .header-home-link {
+        grid-column: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        min-width: 46px;
+      }
+
+      .header-logo {
+        width: 40px;
+        height: 40px;
+        margin: 0;
+      }
+
+      .header-established {
+        position: absolute;
+        left: 30px;
+        bottom: 3px;
+        width: 46px;
+        display: block;
+        margin: 0;
+        text-align: center;
+        color: rgba(255,255,255,0.70);
+        font: 600 6px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 0.8px;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+
+      .brand-toggle {
+        grid-column: 3;
+        display: flex;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        align-items: center;
+        justify-content: flex-end;
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: rgba(255,255,255,0.92);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .brand-toggle:focus-visible,
+      .mobile-navigation-close:focus-visible {
+        outline: 1px solid #b86b2a;
+        outline-offset: 3px;
+      }
+
+      .mobile-header-title {
+        display: block;
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        padding: 0 8px;
+        color: rgba(255,255,255,0.92);
+        text-align: center;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font: 600 clamp(20px, 6.2vw, 27px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 0.2px;
+      }
+
+      .mobile-hamburger {
+        position: relative;
+        display: block;
+        width: 29px;
+        height: 20px;
+      }
+
+      .mobile-hamburger::before,
+      .mobile-hamburger::after,
+      .mobile-hamburger span {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 29px;
+        height: 2px;
+        background: currentColor;
+      }
+
+      .mobile-hamburger::before { top: 0; }
+      .mobile-hamburger span { top: 9px; }
+      .mobile-hamburger::after { bottom: 0; }
+
+      .mobile-navigation-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 1090;
+        background: rgba(0,0,0,0.42);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.28s ease, visibility 0s linear 0.28s;
+      }
+
+      .mobile-navigation {
+        display: flex;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1100;
+        width: min(82vw, 330px);
+        height: 100dvh;
+        padding: 0 18px 24px;
+        flex-direction: column;
+        overflow-y: auto;
+        background-color: #f3ead8;
+        background-image: url("images/Web Paper BG.png");
+        background-size: cover;
+        background-position: center center;
+        color: #2b2b2b;
+        box-shadow: -14px 0 34px rgba(0,0,0,0.24);
+        transform: translateX(104%);
+        visibility: hidden;
+        transition: transform 0.32s ease, visibility 0s linear 0.32s;
+      }
+
+      .site-header.mobile-menu-open .mobile-navigation {
+        transform: translateX(0);
+        visibility: visible;
+        transition: transform 0.32s ease, visibility 0s linear 0s;
+      }
+
+      .site-header.mobile-menu-open + .mobile-navigation-backdrop {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition: opacity 0.28s ease, visibility 0s linear 0s;
+      }
+
+      .mobile-navigation-top {
+        min-height: 66px;
+        display: grid;
+        grid-template-columns: minmax(0,1fr) 46px;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid rgba(43,43,43,0.22);
+      }
+
+      .mobile-navigation-slogan {
+        color: #2b2b2b;
+        font: 700 clamp(13px, 4vw, 16px)/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 1.1px;
+        white-space: nowrap;
+      }
+
+      .mobile-navigation-close {
+        width: 46px;
+        height: 46px;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: #2b2b2b;
+        font: 300 38px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        cursor: pointer;
+      }
+
+      .mobile-navigation-links {
+        display: flex;
+        flex-direction: column;
+        padding-top: 12px;
+      }
+
+      .mobile-navigation a.mobile-navigation-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 56px;
+        padding: 0 4px;
+        border-bottom: 1px solid rgba(43,43,43,0.28);
+        color: #2b2b2b;
+        font: 600 clamp(15px, 4.5vw, 18px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 0.15px;
+        text-align: left;
+        text-decoration: none;
+      }
+
+      .mobile-navigation-link::after {
+        content: "›";
+        padding-left: 14px;
+        color: #b86b2a;
+        font-size: 27px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .mobile-navigation a.mobile-navigation-link:active,
+      .mobile-navigation a.mobile-navigation-link:focus-visible {
+        color: #b86b2a;
+      }
+
+      .mobile-navigation-home {
+        margin-top: auto;
+        padding-top: 22px;
+        color: rgba(43,43,43,0.72);
+        font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: 0.8px;
+        text-decoration: none;
+      }
+
+      .footer-inner {
+        width: calc(100% - 32px);
+        min-height: 0;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 28px 0 32px;
+      }
+
+      .footer-title {
+        font-size: 15px;
+      }
+
+      .footer-text,
+      .footer-link {
+        font-size: 13px;
+      }
+    }
+
+
+    /* ===== Lunch and Distillery tour page ===== */
+
+    .tour-hero {
+      position: relative;
+      width: 100%;
+      height: clamp(120px, 14vw, 207px);
+      overflow: hidden;
+      background: #2b2b2b;
+    }
+
+    .tour-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .tour-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0,0,0,0.26) 0%,
+        rgba(0,0,0,0.08) 48%,
+        rgba(0,0,0,0.02) 100%
+      );
+      pointer-events: none;
+    }
+
+    .tour-hero-title-wrap {
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: min(500px, 42vw);
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 16px clamp(30px, 4vw, 64px) 16px clamp(24px, 4vw, 58px);
+      border-radius: 0 72px 72px 0;
+      background: rgba(43,43,43,0.50);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.22);
+    }
+
+    .tour-hero-kicker {
+      margin: 0 0 5px;
+      color: #d9d2c4;
+      font: 600 9px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    .tour-hero-title {
+      margin: 0;
+      color: rgba(255,255,255,0.96);
+      font: 600 clamp(28px, 3vw, 44px)/0.96 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.2px;
+    }
+
+    .tour-page-layout {
+      width: min(1420px, calc(100% - 64px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr);
+      align-items: start;
+      padding-top: 58px;
+    }
+
+    .tour-description-column {
+      min-width: 0;
+      padding: 0 clamp(36px, 5vw, 78px) 0 0;
+    }
+
+    .tour-booking-column {
+      min-width: 0;
+      padding-left: clamp(28px, 3vw, 48px);
+      border-left: 1px solid rgba(43,43,43,0.42);
+    }
+
+    .tour-section {
+      margin-bottom: 54px;
+    }
+
+    .tour-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tour-section-heading {
+      margin: 0 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: #2b2b2b;
+      font: 600 clamp(25px, 2.3vw, 34px)/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.1px;
+    }
+
+    .tour-section-heading::after {
+      content: "";
+      flex: 1 1 auto;
+      height: 1px;
+      background: rgba(43,43,43,0.55);
+    }
+
+    .tour-lead {
+      margin: 0 0 28px;
+      color: #2b2b2b;
+      font: 600 clamp(19px, 1.6vw, 23px)/1.48 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-copy {
+      margin: 0 0 22px;
+      color: rgba(43,43,43,0.88);
+      font: 500 17px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: justify;
+      text-align-last: left;
+    }
+
+    .tour-copy:last-child {
+      margin-bottom: 0;
+    }
+
+    .tour-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 44px;
+      margin: 34px 0 0;
+      border-top: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-fact {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 13px;
+      align-items: start;
+      padding: 22px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-fact-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #b86b2a;
+      border-radius: 50%;
+      color: #b86b2a;
+      font: 600 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-fact-label {
+      display: block;
+      margin-bottom: 4px;
+      color: #b86b2a;
+      font: 600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .tour-fact-value {
+      display: block;
+      color: #2b2b2b;
+      font: 600 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-simple-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid rgba(43,43,43,0.28);
+    }
+
+    .tour-simple-list li {
+      position: relative;
+      padding: 16px 0 16px 25px;
+      border-bottom: 1px solid rgba(43,43,43,0.28);
+      color: rgba(43,43,43,0.88);
+      font: 500 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .tour-simple-list li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 24px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b86b2a;
+    }
+
+    /* ===== Booking side ===== */
+    .booking-panel {
+      position: sticky;
+      top: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(43,43,43,0.46);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 16px 36px rgba(43,43,43,0.08);
+    }
+
+    .booking-panel-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid rgba(43,43,43,0.20);
+      background: rgba(43,43,43,0.50);
+      color: rgba(255,255,255,0.94);
+    }
+
+    .booking-panel-eyebrow {
+      margin: 0 0 5px;
+      color: #d9d2c4;
+      font: 600 11px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .booking-panel-title {
+      margin: 0;
+      font: 600 23px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-panel-body {
+      padding: 24px;
+    }
+
+    .booking-price-line {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(43,43,43,0.20);
+    }
+
+    .booking-price-label {
+      color: rgba(43,43,43,0.68);
+      font: 500 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-price {
+      margin-top: 4px;
+      color: #2b2b2b;
+      font: 700 27px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-capacity {
+      color: rgba(43,43,43,0.68);
+      font: 500 12px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: right;
+    }
+
+    .booking-subheading {
+      margin: 24px 0 14px;
+      color: #2b2b2b;
+      font: 700 15px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .passenger-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.16);
+    }
+
+    .passenger-name {
+      color: #2b2b2b;
+      font: 600 15px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .passenger-note {
+      display: block;
+      margin-top: 3px;
+      color: rgba(43,43,43,0.58);
+      font: 500 12px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .qty-control {
+      display: grid;
+      grid-template-columns: 36px 28px 36px;
+      align-items: center;
+      justify-items: center;
+      gap: 4px;
+    }
+
+    .qty-button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(43,43,43,0.42);
+      border-radius: 50%;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 300 25px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .qty-button:hover,
+    .qty-button:focus-visible {
+      border-color: #b86b2a;
+      color: #b86b2a;
+    }
+
+    .qty-value {
+      color: #2b2b2b;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-calendar {
+      margin-top: 8px;
+      border-top: 1px solid rgba(43,43,43,0.20);
+      padding-top: 22px;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) 36px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .calendar-title {
+      text-align: center;
+      color: #2b2b2b;
+      font: 700 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .calendar-nav {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 400 26px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .calendar-weekdays span {
+      padding: 7px 0;
+      color: rgba(43,43,43,0.52);
+      text-align: center;
+      font: 600 10px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      min-height: 47px;
+      margin: 2px;
+      padding: 4px 2px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(43,43,43,0.32);
+      text-align: center;
+      font: 600 13px/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    button.calendar-day {
+      cursor: pointer;
+    }
+
+    button.calendar-day.is-available {
+      color: #2b2b2b;
+      border-color: rgba(184,107,42,0.38);
+      background: rgba(184,107,42,0.06);
+    }
+
+    button.calendar-day.is-selected {
+      border-color: #b86b2a;
+      background: rgba(184,107,42,0.16);
+      box-shadow: inset 0 0 0 1px #b86b2a;
+    }
+
+    .calendar-day-price {
+      display: block;
+      margin-top: 3px;
+      color: rgba(43,43,43,0.58);
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .booking-status {
+      margin: 16px 0 0;
+      padding: 13px 14px;
+      border: 1px solid rgba(184,107,42,0.30);
+      background: rgba(184,107,42,0.07);
+      color: rgba(43,43,43,0.74);
+      font: 500 12px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-selection {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(43,43,43,0.20);
+    }
+
+    .booking-selection-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 9px;
+      color: rgba(43,43,43,0.70);
+      font: 500 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-selection-row strong {
+      color: #2b2b2b;
+      text-align: right;
+    }
+
+    .booking-continue {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 16px;
+      border: 1px solid #b86b2a;
+      background:
+        linear-gradient(rgba(0,0,0,0.13), rgba(0,0,0,0.13)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      color: rgba(255,255,255,0.94);
+      cursor: pointer;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.3px;
+    }
+
+    .booking-continue:disabled {
+      opacity: 0.46;
+      cursor: not-allowed;
+    }
+
+    @media screen and (min-width: 901px) and (max-width: 1023px) {
+      .tour-page-layout {
+        width: min(960px, calc(100% - 48px));
+        grid-template-columns: minmax(0, 1.7fr) minmax(310px, 1fr);
+      }
+
+      .tour-description-column {
+        padding-right: 34px;
+      }
+
+      .tour-booking-column {
+        padding-left: 28px;
+      }
+
+      .booking-panel {
+        top: 196px;
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .tour-page-layout {
+        width: min(760px, calc(100% - 40px));
+        grid-template-columns: 1fr;
+        padding-top: 44px;
+      }
+
+      .tour-description-column {
+        padding-right: 0;
+      }
+
+      .tour-booking-column {
+        margin-top: 48px;
+        padding: 48px 0 0;
+        border-left: 0;
+        border-top: 1px solid rgba(43,43,43,0.42);
+      }
+
+      .booking-panel {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+
+      .tour-hero {
+        height: 110px;
+      }
+
+      .tour-hero-title-wrap {
+        width: min(78vw, 330px);
+        min-height: 78px;
+        padding: 12px 34px 12px 20px;
+        border-radius: 0 52px 52px 0;
+      }
+
+      .tour-hero-kicker {
+        font-size: 8px;
+        letter-spacing: 1.3px;
+      }
+
+      .tour-hero-title {
+        font-size: clamp(28px, 9vw, 38px);
+      }
+
+      .tour-page-layout {
+        width: calc(100% - 32px);
+        padding-top: 38px;
+      }
+
+      .tour-section {
+        margin-bottom: 44px;
+      }
+
+      .tour-section-heading {
+        gap: 14px;
+        margin-bottom: 20px;
+        font-size: 25px;
+      }
+
+      .tour-lead {
+        font-size: 18px;
+      }
+
+      .tour-copy {
+        font-size: 16px;
+        line-height: 1.58;
+        text-align: left;
+      }
+
+      .tour-facts-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .booking-panel-body,
+      .booking-panel-header {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .calendar-day {
+        min-height: 43px;
+        margin: 1px;
+      }
+    }
+
+    /* ===== Booking request checkout ===== */
+    body.booking-checkout-open {
+      overflow: hidden;
+    }
+
+    .booking-checkout-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(24,24,24,0.58);
+      backdrop-filter: blur(2px);
+    }
+
+    .booking-checkout-backdrop.is-open {
+      display: flex;
+    }
+
+    .booking-checkout {
+      width: min(940px, 100%);
+      max-height: min(760px, calc(100vh - 56px));
+      overflow: auto;
+      border: 1px solid rgba(43,43,43,0.35);
+      border-radius: 13px;
+      background: #f3ead8;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.35);
+      color: #2b2b2b;
+    }
+
+    .booking-checkout-head {
+      min-height: 70px;
+      display: grid;
+      grid-template-columns: 44px minmax(0,1fr) 44px;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(43,43,43,0.22);
+      background: rgba(255,255,255,0.38);
+    }
+
+    .booking-checkout-title {
+      margin: 0;
+      font: 700 22px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-checkout-icon {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      background: transparent;
+      color: #2b2b2b;
+      cursor: pointer;
+      font: 400 30px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-checkout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+      min-height: 470px;
+    }
+
+    .booking-checkout-form {
+      padding: 28px;
+      border-right: 1px solid rgba(43,43,43,0.22);
+      background: rgba(255,255,255,0.26);
+    }
+
+    .booking-checkout-summary {
+      padding: 28px;
+      background: rgba(255,255,255,0.48);
+    }
+
+    .booking-checkout-section-title {
+      margin: 0 0 22px;
+      color: #2b2b2b;
+      font: 700 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .booking-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .booking-form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .booking-form-field label {
+      color: rgba(43,43,43,0.72);
+      font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-field input {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid rgba(43,43,43,0.28);
+      border-radius: 6px;
+      outline: none;
+      background: rgba(255,255,255,0.84);
+      color: #2b2b2b;
+      padding: 0 14px;
+      font: 500 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-form-field input:focus {
+      border-color: #b86b2a;
+      box-shadow: 0 0 0 2px rgba(184,107,42,0.10);
+    }
+
+    .booking-request-error {
+      min-height: 20px;
+      margin: 16px 0 0;
+      color: #9d2d2d;
+      font: 600 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-request-submit {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 14px;
+      border: 1px solid #b86b2a;
+      background:
+        linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)),
+        url("images/Web Paper 5.png");
+      background-size: cover;
+      color: rgba(255,255,255,0.96);
+      cursor: pointer;
+      font: 700 15px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .2px;
+    }
+
+    .booking-request-submit:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .booking-summary-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border: 1px solid rgba(43,43,43,0.20);
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .booking-summary-tour {
+      margin: 0 0 6px;
+      font: 700 19px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-sub {
+      margin: 0 0 20px;
+      color: rgba(43,43,43,0.66);
+      font: 500 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(43,43,43,0.16);
+      color: rgba(43,43,43,0.70);
+      font: 500 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-summary-row strong {
+      color: #2b2b2b;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .booking-summary-total {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 2px solid rgba(184,107,42,0.45);
+      font-size: 16px;
+    }
+
+    .booking-complete {
+      display: none;
+      padding: 48px 34px 44px;
+      text-align: center;
+    }
+
+    .booking-complete.is-active {
+      display: block;
+    }
+
+    .booking-complete-mark {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border: 2px solid #b86b2a;
+      border-radius: 50%;
+      color: #b86b2a;
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .booking-complete h3 {
+      margin: 0 0 12px;
+      font: 700 28px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-complete p {
+      max-width: 620px;
+      margin: 0 auto 12px;
+      color: rgba(43,43,43,0.74);
+      font: 500 15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-reference {
+      margin: 24px auto;
+      padding: 16px 20px;
+      width: fit-content;
+      border: 1px solid rgba(184,107,42,0.42);
+      background: rgba(184,107,42,0.07);
+      font: 700 17px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .booking-complete-close {
+      min-width: 180px;
+      min-height: 50px;
+      margin-top: 8px;
+      border: 1px solid #b86b2a;
+      background: #b86b2a;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      .booking-checkout-backdrop {
+        padding: 12px;
+        align-items: flex-start;
+      }
+
+      .booking-checkout {
+        max-height: calc(100dvh - 24px);
+      }
+
+      .booking-checkout-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-checkout-form {
+        border-right: 0;
+        border-bottom: 1px solid rgba(43,43,43,0.22);
+        padding: 22px 18px;
+      }
+
+      .booking-checkout-summary {
+        padding: 22px 18px;
+      }
+
+      .booking-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-form-field.full {
+        grid-column: auto;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <nav class="header-nav header-nav-left" aria-label="Primary navigation">
+      <a href="private-tours.html">Private Tours</a>
+      <a href="public-tours.html">Public Tours</a>
+    </nav>
+
+    <div class="header-brand">
+      <a href="index.html" class="header-home-link" aria-label="Return to homepage">
+        <img
+          class="header-logo"
+          src="images/TTL%20Vinyl%20Logo.png"
+          alt="Tour The Lakes logo"
+          width="2048"
+          height="2048"
+          decoding="async"
+        />
+      </a>
+
+      <div class="header-established">EST. 2023</div>
+
+      <a href="index.html" class="brand brand-home-link" aria-label="Return to homepage">Tour The Lakes</a>
+      <a href="index.html" class="mobile-header-title" aria-label="Return to homepage">Tour The Lakes</a>
+
+      <button
+        class="brand-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-navigation"
+        aria-label="Open menu"
+      >
+        <span class="mobile-hamburger" aria-hidden="true"><span></span></span>
+      </button>
+    </div>
+
+    <nav class="header-nav header-nav-right" aria-label="Secondary navigation">
+      <a href="executive-travel.html">Executive Travel</a>
+      <a href="private-hire.html">Private Hire</a>
+    </nav>
+  </div>
+
+  <nav
+    id="mobile-navigation"
+    class="mobile-navigation"
+    aria-label="Mobile navigation"
+    aria-hidden="true"
+  >
+    <div class="mobile-navigation-top">
+      <div class="mobile-navigation-slogan">UP, UP AND AWAY</div>
+      <button class="mobile-navigation-close" type="button" aria-label="Close menu">×</button>
+    </div>
+    <div class="mobile-navigation-links">
+      <a class="mobile-navigation-link" href="private-tours.html">Private Tours</a>
+      <a class="mobile-navigation-link" href="public-tours.html">Public Tours</a>
+      <a class="mobile-navigation-link" href="executive-travel.html">Executive Travel</a>
+      <a class="mobile-navigation-link" href="private-hire.html">Private Hire</a>
+    </div>
+    <a class="mobile-navigation-home" href="index.html">TOUR THE LAKES · HOME</a>
+  </nav>
+</header>
+<div class="mobile-navigation-backdrop" aria-hidden="true"></div>
+
+  <main id="page-content">
+    <section class="tour-hero" aria-labelledby="tour-page-title">
+      <img src="images/lunch and distillery.png" alt="Lunch and Distillery in the Lake District" decoding="async" />
+      <div class="tour-hero-title-wrap">
+        <p class="tour-hero-kicker">A Taste Of The Lakes</p>
+        <h1 class="tour-hero-title" id="tour-page-title">Lunch &amp; Distillery</h1>
+      </div>
+    </section>
+
+    <div class="tour-page-layout">
+      <article class="tour-description-column">
+        <section class="tour-section" aria-labelledby="tour-details-heading">
+          <h2 class="tour-section-heading" id="tour-details-heading">At a Glance</h2>
+          <p class="tour-lead">Enjoy a relaxed day in the heart of the Lake District, combining a Michelin Star lunch with a distillery visit and a tasting of locally made spirits.</p>
+          <div class="tour-facts-grid" aria-label="Lunch and Distillery tour facts">
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">D</span><div><span class="tour-fact-label">Duration</span><span class="tour-fact-value">Approx. 4.5 hours</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">T</span><div><span class="tour-fact-label">Tour type</span><span class="tour-fact-value">A Taste Of The Lakes</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">P</span><div><span class="tour-fact-label">Pickup locations</span><span class="tour-fact-value">Ambleside • Kendal • Windermere Railway Station</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">L</span><div><span class="tour-fact-label">Experience</span><span class="tour-fact-value">Michelin Star lunch &amp; Distillery Taste and Tour</span></div></div>
+          </div>
+        </section>
+
+        <section class="tour-section" aria-labelledby="overview-heading">
+          <h2 class="tour-section-heading" id="overview-heading">Overview</h2>
+          <p class="tour-copy">We’ll collect you from your designated pick-up point, so you can sit back, relax and enjoy the day while we take care of the driving.</p>
+          <p class="tour-copy">Our first stop is Forest Side, where you can delight in a Michelin Star four course lunch in beautiful Lake District surroundings.</p>
+          <p class="tour-copy">We will then head to the scenic village of Grasmere, where you can enjoy a Distillery Taste and Tour experience, including award winning Gin, Whisky, Rum and Vodka.</p>
+          <ul class="tour-simple-list">
+            <li>Pickup from Ambleside, Kendal or Windermere Railway Station</li>
+            <li>Michelin Star four course lunch at Forest Side</li>
+            <li>Visit to the scenic village of Grasmere</li>
+            <li>Distillery Taste and Tour experience</li>
+            <li>Locally made Gin, Whisky, Rum and Vodka</li>
+          </ul>
+        </section>
+
+        <section class="tour-section" aria-labelledby="itinerary-heading">
+          <h2 class="tour-section-heading" id="itinerary-heading">Itinerary</h2>
+          <p class="tour-lead">Forest Side &amp; Grasmere</p>
+          <p class="tour-copy">We’ll collect you from your designated pick-up point and take care of the driving throughout the day. Our first stop is Forest Side for a Michelin Star four course lunch in beautiful Lake District surroundings.</p>
+          <p class="tour-copy">We will then continue to Grasmere for a Distillery Taste and Tour experience, including award winning Gin, Whisky, Rum and Vodka, before returning you to your original pickup area.</p>
+        </section>
+
+        <section class="tour-section" aria-labelledby="meeting-heading">
+          <h2 class="tour-section-heading" id="meeting-heading">Meeting Point</h2>
+          <p class="tour-copy">Please arrive at your selected pickup point 10 minutes before your scheduled pickup time. Your Tour The Lakes driver will meet you at the designated pickup area. Please remain at the agreed meeting point until your driver arrives.</p>
+          <p class="tour-copy">If you have any difficulty locating your vehicle or driver, please contact Tour The Lakes for assistance. The tour returns to your original pickup area at the end of the day.</p>
+        </section>
+      </article>
+
+      <aside class="tour-booking-column" aria-label="Book the Lunch and Distillery tour">
+        <div class="booking-panel" id="lunchDistilleryBookingPanel" data-tour-key="lunch-and-distillery">
+          <div class="booking-panel-header"><p class="booking-panel-eyebrow">A Taste Of The Lakes</p><h2 class="booking-panel-title">Book Lunch &amp; Distillery</h2></div>
+          <div class="booking-panel-body">
+            <div class="booking-price-line"><div><div class="booking-price-label">Price</div><div class="booking-price" id="bookingPrice">Select a date</div></div><div class="booking-capacity" id="bookingCapacity">Live capacity<br />will appear here</div></div>
+            <div class="passenger-row"><div><span class="passenger-name">Passengers</span><span class="passenger-note">Choose the number travelling</span></div><div class="qty-control" aria-label="Passenger quantity"><button class="qty-button" id="qtyMinus" type="button" aria-label="Remove passenger">−</button><span class="qty-value" id="qtyValue" aria-live="polite">1</span><button class="qty-button" id="qtyPlus" type="button" aria-label="Add passenger">+</button></div></div>
+            <h3 class="booking-subheading">Choose a date</h3>
+            <div class="booking-calendar"><div class="calendar-header"><button class="calendar-nav" id="calendarPrev" type="button" aria-label="Previous month">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="calendar-nav" id="calendarNext" type="button" aria-label="Next month">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="calendar-grid" id="calendarGrid" aria-label="Available Lunch and Distillery departure dates"></div></div>
+            <p class="booking-status" id="bookingStatus">Select an available departure date.</p>
+            <div class="booking-selection"><div class="booking-selection-row"><span>Date</span><strong id="selectedDateText">Not selected</strong></div><div class="booking-selection-row"><span>Departure</span><strong id="selectedTimeText">—</strong></div><div class="booking-selection-row"><span>Total</span><strong id="selectedTotalText">—</strong></div><button class="booking-continue" id="bookingContinue" type="button" disabled>Continue to booking</button></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="booking-checkout-backdrop" id="bookingCheckoutBackdrop" aria-hidden="true">
+    <section class="booking-checkout" role="dialog" aria-modal="true" aria-labelledby="bookingCheckoutTitle">
+      <div class="booking-checkout-head"><button class="booking-checkout-icon" id="bookingCheckoutBack" type="button" aria-label="Back">‹</button><h2 class="booking-checkout-title" id="bookingCheckoutTitle">Complete booking request</h2><button class="booking-checkout-icon" id="bookingCheckoutClose" type="button" aria-label="Close">×</button></div>
+      <div id="bookingCheckoutFormView" class="booking-checkout-grid">
+        <div class="booking-checkout-form"><h3 class="booking-checkout-section-title">Contact Details</h3><form id="bookingRequestForm" novalidate><div class="booking-form-grid">
+          <div class="booking-form-field"><label for="bookingFirstName">First name *</label><input id="bookingFirstName" name="firstName" type="text" autocomplete="given-name" required /></div>
+          <div class="booking-form-field"><label for="bookingLastName">Last name *</label><input id="bookingLastName" name="lastName" type="text" autocomplete="family-name" required /></div>
+          <div class="booking-form-field full"><label for="bookingEmail">Email *</label><input id="bookingEmail" name="email" type="email" autocomplete="email" required /></div>
+          <div class="booking-form-field full"><label for="bookingPhone">Mobile phone *</label><input id="bookingPhone" name="phone" type="tel" autocomplete="tel" required /></div>
+          <div class="booking-form-field full"><label for="bookingPickup">Pickup location *</label><select id="bookingPickup" name="pickup" required style="width:100%;min-height:52px;border:1px solid rgba(43,43,43,0.28);border-radius:6px;background:rgba(255,255,255,0.84);color:#2b2b2b;padding:0 14px;font:500 16px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;"><option value="">Select your pickup location</option><option value="Ambleside">Ambleside</option><option value="Kendal">Kendal</option><option value="Windermere Railway Station">Windermere Railway Station</option></select></div>
+        </div><div class="booking-request-error" id="bookingRequestError" aria-live="polite"></div><button class="booking-request-submit" id="bookingRequestSubmit" type="submit">Submit booking request</button></form></div>
+        <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="images/lunch and distillery.png" alt="Lunch and Distillery in the Lake District" /><h3 class="booking-summary-tour">Lunch and Distillery</h3><p class="booking-summary-sub">Pickup from Ambleside, Kendal or Windermere Railway Station</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div><div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div><div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div><div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div></aside>
+      </div>
+      <div class="booking-complete" id="bookingCompleteView"><div class="booking-complete-mark">✓</div><h3>Booking received</h3><p><strong>Thank you. Your booking has been received and your places have been reserved.</strong></p><p>Please take a moment to check that the booking details shown below are correct. We will be in touch using the contact details you supplied during booking, so please also make sure your email address and mobile number were entered correctly.</p><p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p><div class="booking-reference">Reference <span id="bookingReferenceText"></span></div><p id="bookingCompleteSummary"></p><p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p><p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p><p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p><button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button></div>
+    </section>
+  </div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-block">
+        <div class="footer-title">Tour The Lakes</div>
+        <div class="footer-text">Lake District tours, executive travel and private hire from Windermere.</div>
+        <div class="footer-copyright">© Tour The Lakes</div>
+      </div>
+
+      <div class="footer-block">
+        <div class="footer-title">Office Enquiries</div>
+        <div class="footer-text">Monday to Friday · 09:00 to 17:00</div>
+        <div class="footer-text">For all enquiries, email or WhatsApp is recommended.</div>
+      </div>
+
+      <div class="footer-block">
+        <div class="footer-title">Contact</div>
+        <a class="footer-link" href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+        <a class="footer-link" href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp: 07432 185516</a>
+      </div>
+    </div>
+  </footer>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import { getDatabase, ref, onValue, push, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+  // Lunch and Distillery booking UI connected to its permanent Firebase tour ID.
+  (() => {
+    const TOUR_ID = "-P3Ag5zLwdsMSLOFqjnw";
+    const TOUR_TITLE = "Lunch and Distillery";
+    const availability = new Map();
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+      authDomain: "tourthelakes-1e165.firebaseapp.com",
+      databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+      projectId: "tourthelakes-1e165",
+      storageBucket: "tourthelakes-1e165.firebasestorage.app",
+      messagingSenderId: "470758171431",
+      appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+      measurementId: "G-W6JY1LZXTP"
+    };
+    const app = initializeApp(firebaseConfig, "ttl-lunch-distillery-booking");
+    const db = getDatabase(app);
+
+    const title = document.getElementById("calendarTitle");
+    const grid = document.getElementById("calendarGrid");
+    const prev = document.getElementById("calendarPrev");
+    const next = document.getElementById("calendarNext");
+    const qtyMinus = document.getElementById("qtyMinus");
+    const qtyPlus = document.getElementById("qtyPlus");
+    const qtyValue = document.getElementById("qtyValue");
+    const priceEl = document.getElementById("bookingPrice");
+    const capacityEl = document.getElementById("bookingCapacity");
+    const statusEl = document.getElementById("bookingStatus");
+    const selectedDateText = document.getElementById("selectedDateText");
+    const selectedTimeText = document.getElementById("selectedTimeText");
+    const selectedTotalText = document.getElementById("selectedTotalText");
+    const continueButton = document.getElementById("bookingContinue");
+
+    const checkoutBackdrop = document.getElementById("bookingCheckoutBackdrop");
+    const checkoutBack = document.getElementById("bookingCheckoutBack");
+    const checkoutClose = document.getElementById("bookingCheckoutClose");
+    const checkoutFormView = document.getElementById("bookingCheckoutFormView");
+    const bookingRequestForm = document.getElementById("bookingRequestForm");
+    const bookingRequestError = document.getElementById("bookingRequestError");
+    const bookingRequestSubmit = document.getElementById("bookingRequestSubmit");
+    const bookingCompleteView = document.getElementById("bookingCompleteView");
+    const bookingCompleteClose = document.getElementById("bookingCompleteClose");
+    const bookingReferenceText = document.getElementById("bookingReferenceText");
+    const bookingCompleteSummary = document.getElementById("bookingCompleteSummary");
+
+    const checkoutSummaryDate = document.getElementById("checkoutSummaryDate");
+    const checkoutSummaryTime = document.getElementById("checkoutSummaryTime");
+    const checkoutSummaryQty = document.getElementById("checkoutSummaryQty");
+    const checkoutSummaryUnit = document.getElementById("checkoutSummaryUnit");
+    const checkoutSummaryTotal = document.getElementById("checkoutSummaryTotal");
+
+    let quantity = 1;
+    let selectedDateKey = "";
+    let selectedDeparture = null;
+    let tourId = TOUR_ID;
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    let visibleMonth = new Date(currentMonth);
+
+    function dateKey(year, month, day) { return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; }
+    function money(value) { const amount = Number(value); return Number.isFinite(amount) ? `£${amount.toFixed(2).replace(".00", "")}` : "—"; }
+    function isPastDate(year, month, day) { return new Date(year, month, day) < today; }
+
+    function renderSelection() {
+      qtyValue.textContent = String(quantity);
+      if (!selectedDeparture || !selectedDateKey) {
+        selectedDateText.textContent = "Not selected"; selectedTimeText.textContent = "—"; selectedTotalText.textContent = "—";
+        priceEl.textContent = "Select a date"; capacityEl.innerHTML = "Live capacity<br />will appear here"; continueButton.disabled = true; return;
+      }
+      const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+      selectedDateText.textContent = selectedDate.toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
+      selectedTimeText.textContent = selectedDeparture.time || "See departure details";
+      priceEl.textContent = selectedDeparture.price != null ? `From ${money(selectedDeparture.price)}` : "Price on schedule";
+      const remaining = Number(selectedDeparture.remaining);
+      capacityEl.textContent = Number.isFinite(remaining) ? `${remaining} seat${remaining === 1 ? "" : "s"} remaining` : "Capacity available";
+      const unitPrice = Number(selectedDeparture.price);
+      selectedTotalText.textContent = Number.isFinite(unitPrice) ? money(unitPrice * quantity) : "—";
+      continueButton.disabled = false;
+    }
+
+    function selectDate(key) {
+      const departure = availability.get(key); if (!departure) return;
+      selectedDateKey = key; selectedDeparture = departure; quantity = Math.min(quantity, Math.max(1, Number(departure.remaining) || 1));
+      renderCalendar(); renderSelection();
+    }
+
+    function renderCalendar() {
+      if (!title || !grid) return;
+      if (visibleMonth < currentMonth) visibleMonth = new Date(currentMonth);
+      const year = visibleMonth.getFullYear(); const month = visibleMonth.getMonth();
+      title.textContent = visibleMonth.toLocaleDateString("en-GB", { month:"long", year:"numeric" });
+      const atCurrentMonth = year === currentMonth.getFullYear() && month === currentMonth.getMonth();
+      if (prev) { prev.disabled = atCurrentMonth; prev.style.visibility = atCurrentMonth ? "hidden" : "visible"; prev.setAttribute("aria-disabled", String(atCurrentMonth)); }
+      grid.innerHTML = "";
+      const firstDay = new Date(year, month, 1); const mondayIndex = (firstDay.getDay() + 6) % 7; const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let i=0;i<mondayIndex;i+=1) { const blank=document.createElement("span"); blank.className="calendar-day"; blank.setAttribute("aria-hidden","true"); grid.appendChild(blank); }
+      for (let day=1;day<=daysInMonth;day+=1) {
+        const key=dateKey(year,month,day); const departure=availability.get(key); const past=isPastDate(year,month,day);
+        if (departure && !past && Number(departure.remaining) > 0) {
+          const button=document.createElement("button"); button.type="button"; button.className="calendar-day is-available";
+          if (key===selectedDateKey) button.classList.add("is-selected");
+          button.innerHTML=`${day}<span class="calendar-day-price">${departure.price != null ? money(departure.price) : "Available"}</span>`;
+          button.setAttribute("aria-label",`Select ${key}`); button.addEventListener("click",()=>selectDate(key)); grid.appendChild(button);
+        } else {
+          const cell=document.createElement("span"); cell.className="calendar-day"; cell.textContent=String(day);
+          if (past) { cell.style.opacity="0.35"; cell.setAttribute("aria-disabled","true"); }
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    prev?.addEventListener("click",()=>{ const candidate=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1); if(candidate<currentMonth)return; visibleMonth=candidate; renderCalendar(); });
+    next?.addEventListener("click",()=>{ visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1); renderCalendar(); });
+    qtyMinus?.addEventListener("click",()=>{ quantity=Math.max(1,quantity-1); renderSelection(); });
+    qtyPlus?.addEventListener("click",()=>{ const max=selectedDeparture&&Number.isFinite(Number(selectedDeparture.remaining))?Math.max(1,Number(selectedDeparture.remaining)):12; quantity=Math.min(max,quantity+1); renderSelection(); });
+
+    function setAvailability(departures) {
+      availability.clear();
+      (Array.isArray(departures)?departures:[]).forEach((departure)=>{
+        if(!departure||!departure.date)return;
+        const d=new Date(`${departure.date}T12:00:00`); if(d<today)return;
+        const capacity=Math.max(0,Number(departure.capacity)||0); const booked=Math.max(0,Number(departure.booked)||0);
+        availability.set(String(departure.date),{...departure,remaining:Math.max(0,capacity-booked)});
+      });
+      if(selectedDateKey&&!availability.has(selectedDateKey)){selectedDateKey="";selectedDeparture=null;}
+      const firstAvailableKey=[...availability.entries()].filter(([,d])=>Number(d.remaining)>0).map(([k])=>k).sort()[0];
+      if(firstAvailableKey){const firstDate=new Date(`${firstAvailableKey}T12:00:00`); const firstMonth=new Date(firstDate.getFullYear(),firstDate.getMonth(),1); visibleMonth=firstMonth<currentMonth?new Date(currentMonth):firstMonth; statusEl.textContent="Choose an available date to continue.";}
+      else {visibleMonth=new Date(currentMonth); selectedDateKey="";selectedDeparture=null; statusEl.textContent="No departures are currently available.";}
+      renderCalendar(); renderSelection();
+    }
+
+    function closeCheckout() {
+      checkoutBackdrop?.classList.remove("is-open");
+      checkoutBackdrop?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("booking-checkout-open");
+      bookingRequestError.textContent = "";
+    }
+
+    function openCheckout() {
+      if (!selectedDeparture || !selectedDateKey || !tourId) return;
+
+      const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+      checkoutSummaryDate.textContent = selectedDate.toLocaleDateString("en-GB", {
+        weekday: "short", day: "numeric", month: "short", year: "numeric"
+      });
+      checkoutSummaryTime.textContent = selectedDeparture.time || "—";
+      checkoutSummaryQty.textContent = `${quantity} passenger${quantity === 1 ? "" : "s"}`;
+      checkoutSummaryUnit.textContent = money(selectedDeparture.price);
+      checkoutSummaryTotal.textContent = money(Number(selectedDeparture.price) * quantity);
+
+      checkoutFormView.style.display = "";
+      bookingCompleteView.classList.remove("is-active");
+      bookingRequestForm.reset();
+      bookingRequestError.textContent = "";
+
+      checkoutBackdrop?.classList.add("is-open");
+      checkoutBackdrop?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("booking-checkout-open");
+      setTimeout(() => document.getElementById("bookingFirstName")?.focus(), 0);
+    }
+
+    function makeBookingReference(firebaseKey) {
+      const suffix = String(firebaseKey || "").replace(/[^a-z0-9]/gi, "").slice(-7).toUpperCase();
+      return `TTL-LUNCH-${suffix || Date.now().toString().slice(-7)}`;
+    }
+
+    continueButton?.addEventListener("click", openCheckout);
+    checkoutClose?.addEventListener("click", closeCheckout);
+    checkoutBack?.addEventListener("click", closeCheckout);
+    bookingCompleteClose?.addEventListener("click", closeCheckout);
+
+    checkoutBackdrop?.addEventListener("click", (event) => {
+      if (event.target === checkoutBackdrop) closeCheckout();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && checkoutBackdrop?.classList.contains("is-open")) closeCheckout();
+    });
+
+    bookingRequestForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      bookingRequestError.textContent = "";
+
+      if (!selectedDeparture || !selectedDateKey || !tourId) {
+        bookingRequestError.textContent = "Please return to the tour and select an available departure.";
+        return;
+      }
+
+      const formData = new FormData(bookingRequestForm);
+      const firstName = String(formData.get("firstName") || "").trim();
+      const lastName = String(formData.get("lastName") || "").trim();
+      const email = String(formData.get("email") || "").trim().toLowerCase();
+      const phone = String(formData.get("phone") || "").trim();
+      const pickup = String(formData.get("pickup") || "").trim();
+
+      if (!firstName || !lastName || !email || !phone || !pickup) {
+        bookingRequestError.textContent = "Please complete all required contact details.";
+        return;
+      }
+
+      const emailInput = document.getElementById("bookingEmail");
+      if (!emailInput?.checkValidity()) {
+        bookingRequestError.textContent = "Please enter a valid email address.";
+        emailInput?.focus();
+        return;
+      }
+
+      const unitPrice = Number(selectedDeparture.price);
+      if (!Number.isFinite(unitPrice)) {
+        bookingRequestError.textContent = "The price for this departure could not be confirmed. Please try again.";
+        return;
+      }
+
+      bookingRequestSubmit.disabled = true;
+      bookingRequestSubmit.textContent = "Submitting…";
+
+      let seatsReserved = false;
+      const departureTime = String(selectedDeparture.time || "");
+      const bookedRef = ref(db, `tours/${tourId}/departures/${selectedDateKey}/booked`);
+      const departureCapacity = Math.max(0, Number(selectedDeparture.capacity) || 0);
+
+      try {
+        // Reserve only the public-safe booked counter. Admin retains control of
+        // the departure date, time, price and capacity. Firebase serialises this
+        // transaction so simultaneous customers cannot oversell the departure.
+        const seatTx = await runTransaction(bookedRef, (current) => {
+          const booked = Math.max(0, Number(current) || 0);
+          if ((departureCapacity - booked) < quantity) return;
+          return booked + quantity;
+        });
+
+        if (!seatTx.committed) {
+          bookingRequestError.textContent =
+            "Sorry, there are no longer enough seats available for this departure. Please close this window and choose again.";
+          return;
+        }
+        seatsReserved = true;
+
+        const bookingRef = push(ref(db, `bookings/${tourId}`));
+        const reference = makeBookingReference(bookingRef.key);
+        const total = unitPrice * quantity;
+        const nowMs = Date.now();
+
+        // Save into the booking tree consumed live by Admin.
+        await set(bookingRef, {
+          reference,
+          tourId,
+          tourTitle: TOUR_TITLE,
+          dateKey: selectedDateKey,
+          time: departureTime,
+          qty: quantity,
+          name: `${firstName} ${lastName}`.trim(),
+          firstName,
+          lastName,
+          email,
+          phone,
+          pickupLabel: pickup,
+          pickupTime: departureTime,
+          pickupPoint: pickup,
+          price: unitPrice,
+          total,
+          bookingStatus: "active",
+          paymentStatus: "outstanding",
+          bookingSource: "Website",
+          createdAt: nowMs,
+          createdAtMs: nowMs,
+          status: "pending"
+        });
+
+        const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
+        bookingReferenceText.textContent = reference;
+        bookingCompleteSummary.textContent =
+          `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
+          `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
+          `${selectedDeparture.time || ""} · ${money(total)}`;
+
+        checkoutFormView.style.display = "none";
+        bookingCompleteView.classList.add("is-active");
+      } catch (err) {
+        console.error(err);
+
+        // If the booking record failed after capacity was reserved, put the seats back.
+        if (seatsReserved && departureTime) {
+          try {
+            await runTransaction(bookedRef, (current) => {
+              const booked = Math.max(0, Number(current) || 0);
+              return Math.max(0, booked - quantity);
+            });
+          } catch (rollbackErr) {
+            console.error("Seat rollback failed:", rollbackErr);
+          }
+        }
+
+        bookingRequestError.textContent =
+          "Your booking request could not be submitted. Please try again or contact Tour The Lakes.";
+      } finally {
+        bookingRequestSubmit.disabled = false;
+        bookingRequestSubmit.textContent = "Submit booking request";
+      }
+    });
+
+    function connectFirebaseTour() {
+      statusEl.textContent = "Loading live availability…";
+
+      // Read directly from the exact departure tree written by Admin:
+      // tours/{tourId}/departures/{YYYY-MM-DD}
+      onValue(ref(db, `tours/${TOUR_ID}/departures`), (departuresSnap) => {
+        const data = departuresSnap.val() || {};
+        const departures = [];
+
+        for (const [dateKeyValue, dep] of Object.entries(data)) {
+          const capacity = Math.max(0, Number(dep?.capacity) || 0);
+          const booked = Math.max(0, Number(dep?.booked) || 0);
+          if ((capacity - booked) <= 0) continue;
+          departures.push({
+            date: dateKeyValue,
+            time: String(dep?.time || ""),
+            price: Number(dep?.price),
+            capacity,
+            booked,
+            remaining: Math.max(0, capacity - booked)
+          });
+        }
+
+        setAvailability(departures);
+      }, (err) => {
+        console.error(err);
+        statusEl.textContent = "Live availability could not be loaded.";
+        setAvailability([]);
+      });
+    }
+
+    window.TTLLunchDistilleryBooking = {
+      tourId: TOUR_ID,
+      setAvailability
+    };
+
+    renderCalendar();
+    renderSelection();
+    connectFirebaseTour();
+  })();
+</script>
+
+<script>
+  const siteHeader = document.querySelector(".site-header");
+  const mobileMenuToggle = document.querySelector(".brand-toggle");
+  const mobileNavigation = document.getElementById("mobile-navigation");
+  const mobileMenuClose = document.querySelector(".mobile-navigation-close");
+  const mobileNavigationBackdrop = document.querySelector(".mobile-navigation-backdrop");
+  const mobileBreakpoint = window.matchMedia("(max-width: 600px)");
+  const desktopHeaderBreakpoint = window.matchMedia("(min-width: 1024px)");
+  const headerScrollPlaceholder = document.createElement("div");
+  headerScrollPlaceholder.className = "header-scroll-placeholder";
+  headerScrollPlaceholder.setAttribute("aria-hidden", "true");
+  siteHeader?.insertAdjacentElement("afterend", headerScrollPlaceholder);
+
+  let headerDirectionAnchorY = Math.max(window.scrollY, 0);
+  let headerScrollTicking = false;
+  const headerDirectionThreshold = 8;
+
+  function setHeaderFixed(fixed) {
+    if (!siteHeader) return;
+
+    if (fixed) {
+      if (!siteHeader.classList.contains("header-scroll-fixed")) {
+        headerScrollPlaceholder.style.height = `${siteHeader.offsetHeight || 172}px`;
+        headerScrollPlaceholder.classList.add("is-active");
+
+        siteHeader.classList.add("header-scroll-initializing");
+        siteHeader.classList.add("header-scroll-fixed");
+
+        // First hand-off is deliberately instantaneous. At this threshold the
+        // in-flow header has already naturally left the viewport, so animating
+        // the switch to fixed positioning creates the one-off initial bounce.
+        void siteHeader.offsetHeight;
+        siteHeader.classList.remove("header-scroll-initializing");
+      }
+      return;
+    }
+
+    siteHeader.classList.remove("header-scroll-fixed", "header-scroll-reveal", "header-scroll-initializing");
+    headerScrollPlaceholder.classList.remove("is-active");
+    headerScrollPlaceholder.style.height = "";
+  }
+
+  function updateHeaderOnScroll() {
+    if (!siteHeader) return;
+
+    const currentScrollY = Math.max(window.scrollY, 0);
+    const headerHeight = headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172);
+    const menuIsOpen = siteHeader.classList.contains("mobile-menu-open");
+
+    if (currentScrollY <= headerHeight) {
+      setHeaderFixed(false);
+      headerDirectionAnchorY = currentScrollY;
+    } else {
+      setHeaderFixed(true);
+
+      if (menuIsOpen) {
+        siteHeader.classList.add("header-scroll-reveal");
+        headerDirectionAnchorY = currentScrollY;
+      } else {
+        const movement = currentScrollY - headerDirectionAnchorY;
+
+        if (movement >= headerDirectionThreshold) {
+          siteHeader.classList.remove("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        } else if (movement <= -headerDirectionThreshold) {
+          siteHeader.classList.add("header-scroll-reveal");
+          headerDirectionAnchorY = currentScrollY;
+        }
+      }
+    }
+
+    headerScrollTicking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!desktopHeaderBreakpoint.matches || headerScrollTicking) return;
+    headerScrollTicking = true;
+    window.requestAnimationFrame(updateHeaderOnScroll);
+  }, { passive: true });
+
+  desktopHeaderBreakpoint.addEventListener("change", (event) => {
+    if (!event.matches) {
+      setHeaderFixed(false);
+      headerScrollTicking = false;
+    } else {
+      headerDirectionAnchorY = Math.max(window.scrollY, 0);
+      updateHeaderOnScroll();
+    }
+  });
+
+  function setMobileMenu(open) {
+    if (!siteHeader || !mobileMenuToggle || !mobileNavigation) return;
+    siteHeader.classList.toggle("mobile-menu-open", open);
+    mobileMenuToggle.setAttribute("aria-expanded", String(open));
+    mobileMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    mobileNavigation.setAttribute("aria-hidden", String(!open));
+    if (open && window.scrollY > (headerScrollPlaceholder.classList.contains("is-active")
+      ? (parseFloat(headerScrollPlaceholder.style.height) || 172)
+      : (siteHeader.offsetHeight || 172))) {
+      setHeaderFixed(true);
+      siteHeader.classList.add("header-scroll-reveal");
+    }
+    document.body.classList.toggle("mobile-menu-active", open);
+  }
+
+  mobileMenuToggle?.addEventListener("click", () => {
+    if (!mobileBreakpoint.matches) return;
+    setMobileMenu(mobileMenuToggle.getAttribute("aria-expanded") !== "true");
+  });
+
+  mobileMenuClose?.addEventListener("click", () => setMobileMenu(false));
+  mobileNavigationBackdrop?.addEventListener("click", () => setMobileMenu(false));
+
+  mobileNavigation?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setMobileMenu(false));
+  });
+
+  mobileBreakpoint.addEventListener("change", (event) => {
+    if (!event.matches) setMobileMenu(false);
+  });
+</script>
+</body>
+</html>
