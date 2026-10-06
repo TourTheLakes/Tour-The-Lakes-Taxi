@@ -849,6 +849,80 @@ html, body {
       }
     }
 
+  
+    /* ===== Mobile Private Hire view tabs — Private Hire / Book ===== */
+    .private-hire-mobile-tabs {
+      display: none;
+    }
+
+    @media screen and (max-width: 600px) {
+      .private-hire-mobile-tabs {
+        width: calc(100% - 32px);
+        margin: 35px auto 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        background: rgba(43,43,43,0.94);
+        border-bottom: 2px solid #b86b2a;
+      }
+
+      .private-hire-mobile-tab {
+        min-height: 54px;
+        position: relative;
+        border: 0;
+        border-right: 1px solid rgba(184,107,42,0.32);
+        background: transparent;
+        color: rgba(255,255,255,0.62);
+        cursor: pointer;
+        font: 650 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        letter-spacing: .4px;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .private-hire-mobile-tab:last-child {
+        border-right: 0;
+      }
+
+      .private-hire-mobile-tab.is-active {
+        color: rgba(255,255,255,0.92);
+        background: rgba(184,107,42,0.16);
+      }
+
+      .private-hire-mobile-tab.is-active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 8px;
+        width: 34px;
+        height: 2px;
+        transform: translateX(-50%);
+        background: #b86b2a;
+      }
+
+      /* Same tour-page mechanic: each existing column becomes its own mobile view. */
+      .private-hire-card-grid {
+        width: calc(100% - 32px);
+        height: 226px;
+        margin: 0 auto;
+        display: block;
+        padding-top: 0;
+      }
+
+      .private-hire-card-grid .private-hire-card,
+      .private-hire-card-grid .private-hire-card-empty {
+        display: none;
+        width: 100%;
+        height: 100%;
+      }
+
+      .private-hire-card-grid[data-mobile-view="private-hire"] .private-hire-card {
+        display: block;
+      }
+
+      .private-hire-card-grid[data-mobile-view="book"] .private-hire-card-empty {
+        display: block;
+      }
+    }
+
   </style>
 </head>
 
@@ -922,7 +996,12 @@ html, body {
       <h1 id="private-hire-title">PRIVATE HIRE</h1>
     </div>
 
-    <div class="private-hire-card-grid" aria-label="Choose a private hire service">
+    <nav class="private-hire-mobile-tabs" aria-label="Private Hire page sections">
+      <button type="button" class="private-hire-mobile-tab is-active" data-private-hire-mobile-view="private-hire" aria-selected="true">Private Hire</button>
+      <button type="button" class="private-hire-mobile-tab" data-private-hire-mobile-view="book" aria-selected="false">Book</button>
+    </nav>
+
+    <div class="private-hire-card-grid" data-mobile-view="private-hire" aria-label="Private hire and booking">
       <div class="private-hire-card" aria-label="Pre-booked private hire for up to 16 passengers">
         <img src="images/1000034957.png" alt="Tour The Lakes private hire travel" loading="lazy" decoding="async" />
         <div class="private-hire-card-sticker">
@@ -1086,5 +1165,34 @@ html, body {
     if (!event.matches) setMobileMenu(false);
   });
 </script>
+
+<script>
+(() => {
+  const mobileTabs = Array.from(document.querySelectorAll(".private-hire-mobile-tab"));
+  const privateHireLayout = document.querySelector(".private-hire-card-grid");
+  if (!mobileTabs.length || !privateHireLayout) return;
+
+  function showPrivateHireMobileView(view, shouldScroll) {
+    privateHireLayout.dataset.mobileView = view;
+    mobileTabs.forEach((button) => {
+      const active = button.dataset.privateHireMobileView === view;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+
+    if (shouldScroll && window.matchMedia("(max-width: 600px)").matches) {
+      const tabs = document.querySelector(".private-hire-mobile-tabs");
+      if (tabs) tabs.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  mobileTabs.forEach((button) => {
+    button.addEventListener("click", () => showPrivateHireMobileView(button.dataset.privateHireMobileView, false));
+  });
+
+  showPrivateHireMobileView("private-hire", false);
+})();
+</script>
+
 </body>
 </html>
