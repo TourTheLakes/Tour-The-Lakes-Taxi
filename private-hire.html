@@ -1402,6 +1402,19 @@ html, body {
     .private-hire-form-status.ok { color:#b9e6ca; }
     .private-hire-form-status.bad { color:#ffb0b0; }
     .private-hire-submit:disabled { opacity:.58; cursor:wait; }
+  
+    .private-hire-confirmation { display:none; padding:34px 30px 36px; color:rgba(255,255,255,.90); }
+    .private-hire-confirmation.is-active { display:block; }
+    .private-hire-confirmation-mark { width:46px;height:46px;display:grid;place-items:center;margin-bottom:18px;border:1px solid #b86b2a;border-radius:50%;color:#b86b2a;font:700 22px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .private-hire-confirmation h2 { margin:0 0 18px;color:#fff;font:650 clamp(24px,2vw,31px)/1.15 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .private-hire-confirmation p { margin:0 0 16px;color:rgba(255,255,255,.78);font:450 13px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .private-hire-confirmation p strong { color:rgba(255,255,255,.94); }
+    .private-hire-confirmation-reference { margin:20px 0;padding:15px 16px;border:1px solid rgba(184,107,42,.65);color:rgba(255,255,255,.76);font:600 12px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;letter-spacing:.3px; }
+    .private-hire-confirmation-reference span { display:block;margin-top:3px;color:#fff;font-size:17px;letter-spacing:.6px; }
+    .private-hire-confirmation-summary { white-space:pre-line;padding:15px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16); }
+    .private-hire-confirmation-office { margin-top:20px !important;padding:15px 16px;border-left:3px solid #b86b2a;background:rgba(255,255,255,.06); }
+    .private-hire-confirmation a { color:#fff;text-decoration:none; }
+
   </style>
 </head>
 
@@ -1593,6 +1606,18 @@ html, body {
             <a href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp 07432 185516</a>
             <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
           </div>
+        </div>
+        <div class="private-hire-confirmation" id="privateHireConfirmation" aria-live="polite">
+          <div class="private-hire-confirmation-mark">✓</div>
+          <h2>Journey request received</h2>
+          <p><strong>Thank you. Your Private Hire journey request has been received.</strong></p>
+          <p>Please take a moment to check that the journey and contact details shown below are correct. We will use the contact details you supplied to respond to your request.</p>
+          <p>Your reference is shown below. We recommend taking a screenshot of this page or making a note of it, as it will help us locate your request quickly should you need to contact us.</p>
+          <div class="private-hire-confirmation-reference">Reference <span id="privateHireConfirmationReference"></span></div>
+          <p class="private-hire-confirmation-summary" id="privateHireConfirmationSummary"></p>
+          <p class="private-hire-confirmation-office"><strong>What happens next</strong><br>Our office operates Monday to Friday, 09:00 to 17:00. Your request will be reviewed during these office hours and we will contact you to confirm the journey and any further arrangements. Requests received outside office hours will be dealt with when the office next opens.</p>
+          <p>If anything shown above is incorrect, please email <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a> and include your reference so we can amend the request.</p>
+          <p><strong>Please note that your journey is not confirmed until you have received confirmation from Tour The Lakes.</strong></p>
         </div>
       </aside>
     </div>
@@ -1798,7 +1823,11 @@ const db = getDatabase(app);
   const timeInput = document.getElementById("ph-time");
   const warning = document.getElementById("ph-time-warning");
   const submit = form?.querySelector(".private-hire-submit");
-  if (!form || !dateInput || !timeInput || !warning || !submit) return;
+  const bookContent = document.querySelector(".private-hire-book-content");
+  const confirmation = document.getElementById("privateHireConfirmation");
+  const confirmationReference = document.getElementById("privateHireConfirmationReference");
+  const confirmationSummary = document.getElementById("privateHireConfirmationSummary");
+  if (!form || !dateInput || !timeInput || !warning || !submit || !bookContent || !confirmation || !confirmationReference || !confirmationSummary) return;
 
   const OPEN = 9, CLOSE = 17, NOTICE_HOURS = 24;
   const status = document.createElement("p");
@@ -1882,8 +1911,23 @@ const db = getDatabase(app);
         status:"new", source:"private-hire.html",
         createdAt:serverTimestamp(), createdAtMs:Date.now()
       });
+      const dateForDisplay = new Date(`${dateInput.value}T12:00:00`);
+      const dateText = dateForDisplay.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+      confirmationReference.textContent = reference;
+      confirmationSummary.textContent =
+        `Name: ${document.getElementById("ph-name").value.trim()}\n` +
+        `Contact: ${document.getElementById("ph-contact").value.trim()}\n` +
+        `Date: ${dateText}\n` +
+        `Collection time: ${timeInput.value}\n` +
+        `Pick up: ${document.getElementById("ph-pickup").value.trim()}\n` +
+        `Destination: ${document.getElementById("ph-destination").value.trim()}\n` +
+        `Passengers: ${document.getElementById("ph-passengers").value}\n` +
+        `Journey: ${document.getElementById("ph-journey").value}`;
+
       form.reset(); applyWindow();
-      status.classList.add("ok"); status.textContent=`Journey request sent. Reference ${reference}.`;
+      bookContent.style.display = "none";
+      confirmation.classList.add("is-active");
+      confirmation.scrollIntoView({ behavior:"smooth", block:"start" });
     } catch (err) {
       console.error(err);
       status.classList.add("bad");
