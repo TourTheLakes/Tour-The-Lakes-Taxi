@@ -857,8 +857,8 @@ html, body {
 
     @media screen and (max-width: 600px) {
       .private-hire-mobile-tabs {
-        width: calc(100% - 32px);
-        margin: 35px auto 0;
+        width: 100%;
+        margin: 0;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         background: rgba(43,43,43,0.94);
@@ -989,17 +989,18 @@ html, body {
 </header>
 <div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
+    <nav class="private-hire-mobile-tabs" aria-label="Private Hire page sections">
+      <button type="button" class="private-hire-mobile-tab is-active" data-private-hire-mobile-view="private-hire" aria-selected="true">Private Hire</button>
+      <button type="button" class="private-hire-mobile-tab" data-private-hire-mobile-view="book" aria-selected="false">Book</button>
+    </nav>
+
+
   <main id="page-content">
     <div class="private-hire-page-gap" aria-hidden="true"></div>
 
     <div class="private-hire-heading" aria-labelledby="private-hire-title">
       <h1 id="private-hire-title">PRIVATE HIRE</h1>
     </div>
-
-    <nav class="private-hire-mobile-tabs" aria-label="Private Hire page sections">
-      <button type="button" class="private-hire-mobile-tab is-active" data-private-hire-mobile-view="private-hire" aria-selected="true">Private Hire</button>
-      <button type="button" class="private-hire-mobile-tab" data-private-hire-mobile-view="book" aria-selected="false">Book</button>
-    </nav>
 
     <div class="private-hire-card-grid" data-mobile-view="private-hire" aria-label="Private hire and booking">
       <div class="private-hire-card" aria-label="Pre-booked private hire for up to 16 passengers">
