@@ -1442,7 +1442,80 @@ html, body {
       }
     }
 
-  </style>
+  
+/* ===== Mobile tour view tabs — Overview / Book ===== */
+.tour-mobile-tabs {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .tour-mobile-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background: rgba(43,43,43,0.94);
+    border-bottom: 2px solid #b86b2a;
+  }
+
+  .tour-mobile-tab {
+    min-height: 54px;
+    position: relative;
+    border: 0;
+    border-right: 1px solid rgba(184,107,42,0.32);
+    background: transparent;
+    color: rgba(255,255,255,0.62);
+    cursor: pointer;
+    font: 650 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: .4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tour-mobile-tab:last-child {
+    border-right: 0;
+  }
+
+  .tour-mobile-tab.is-active {
+    color: rgba(255,255,255,0.92);
+    background: rgba(184,107,42,0.16);
+  }
+
+  .tour-mobile-tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 34px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #b86b2a;
+  }
+
+  /* Tabs now control the two existing columns instead of stacking them. */
+  .tour-page-layout {
+    padding-top: 38px;
+  }
+
+  .tour-page-layout .tour-description-column,
+  .tour-page-layout .tour-booking-column {
+    display: none;
+  }
+
+  .tour-page-layout[data-mobile-view="overview"] .tour-description-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    margin-top: 0;
+    padding: 0;
+    border-top: 0;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -1517,7 +1590,12 @@ html, body {
       </div>
     </section>
 
-    <div class="tour-page-layout">
+    <nav class="tour-mobile-tabs" aria-label="Tour page sections">
+  <button type="button" class="tour-mobile-tab is-active" data-tour-mobile-view="overview" aria-selected="true">Overview</button>
+  <button type="button" class="tour-mobile-tab" data-tour-mobile-view="book" aria-selected="false">Book</button>
+</nav>
+
+<div class="tour-page-layout" data-mobile-view="overview">
       <article class="tour-description-column">
         <section class="tour-section" aria-labelledby="tour-details-heading">
           <h2 class="tour-section-heading" id="tour-details-heading">At a Glance</h2>
@@ -2240,5 +2318,34 @@ html, body {
     if (!event.matches) setMobileMenu(false);
   });
 </script>
+
+<script>
+(() => {
+  const mobileTabs = Array.from(document.querySelectorAll("[data-tour-mobile-view]"));
+  const tourLayout = document.querySelector(".tour-page-layout");
+  if (!mobileTabs.length || !tourLayout) return;
+
+  function showMobileTourView(view, shouldScroll) {
+    tourLayout.dataset.mobileView = view;
+    mobileTabs.forEach((button) => {
+      const active = button.dataset.tourMobileView === view;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+
+    if (shouldScroll && window.matchMedia("(max-width: 600px)").matches) {
+      const tabs = document.querySelector(".tour-mobile-tabs");
+      if (tabs) tabs.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  mobileTabs.forEach((button) => {
+    button.addEventListener("click", () => showMobileTourView(button.dataset.tourMobileView, false));
+  });
+
+  showMobileTourView("overview", false);
+})();
+</script>
+
 </body>
 </html>
