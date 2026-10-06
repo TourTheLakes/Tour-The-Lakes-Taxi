@@ -89,7 +89,7 @@
     .admin-nav {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       background: rgba(43,43,43,0.94);
       border-bottom: 2px solid var(--orange);
       position: sticky;
@@ -542,6 +542,10 @@
       .admin-actions { flex-direction: column; }
       .admin-actions .admin-btn { width: 100%; }
     }
+      @media (max-width:720px) {
+      .admin-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+      .admin-nav button { padding-left:4px;padding-right:4px;font-size:10px; }
+    }
   </style>
 </head>
 
@@ -557,6 +561,7 @@
     <div class="admin-wrap">
       <nav class="admin-nav" aria-label="Admin areas">
         <button type="button" class="is-active" data-admin-panel="bookingsPanel">Bookings</button>
+        <button type="button" data-admin-panel="privateHireBookingsPanel">PH Bookings</button>
         <button type="button" data-admin-panel="toursPanel">Tours</button>
         <button type="button" data-admin-panel="schedulePanel">Schedule</button>
         <button type="button" data-admin-panel="driversPanel">Drivers</button>
@@ -570,6 +575,18 @@
             <p class="admin-lead">Website bookings appear here automatically. Mark payments when received or cancel a booking to return its seats to the live departure.</p>
             <div id="bookingsMsg" class="admin-msg">Loading…</div>
             <div id="bookingsList" class="admin-list" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="privateHireBookingsPanel" class="admin-panel">
+        <div class="admin-section">
+          <div class="admin-content">
+            <div class="eyebrow">Private hire requests</div>
+            <h1 class="admin-section-title">PH Bookings</h1>
+            <p class="admin-lead">Private Hire journey requests from the website appear here automatically.</p>
+            <div id="privateHireBookingsMsg" class="admin-msg">Loading…</div>
+            <div id="privateHireBookingsList" class="admin-list" style="margin-top:16px;"></div>
           </div>
         </div>
       </section>
@@ -909,6 +926,7 @@
       if (!booted) {
         booted = true;
         bootBookingsAdmin(user);
+        bootPrivateHireBookingsAdmin(user);
         bootToursAndSchedule(user);
         bootDriversAdmin(user);
       }
@@ -1045,6 +1063,99 @@
       }
 
       onValue(ref(db, "bookings"), (snap) => renderBookings(snap.val()), (err) => setBookingMsg(`Error loading bookings: ${err?.message || err}`, "bad"));
+    }
+
+    function bootPrivateHireBookingsAdmin(user) {
+      const adminEmail = String(user?.email || "").toLowerCase();
+      const msgEl = document.getElementById("privateHireBookingsMsg");
+      const listEl = document.getElementById("privateHireBookingsList");
+      const safe = (v) => String(v ?? "");
+      const setMsg = (text,tone) => {
+        if (!msgEl) return;
+        msgEl.classList.remove("ok","bad");
+        if (tone) msgEl.classList.add(tone);
+        msgEl.textContent=String(text||"");
+      };
+      const niceDate = (key) => {
+        const d=new Date(`${key}T12:00:00`);
+        return Number.isNaN(d.getTime()) ? safe(key) : d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+      };
+
+      function render(root) {
+        listEl.innerHTML="";
+        const rows = root && typeof root==="object"
+          ? Object.entries(root).map(([id,b])=>({id,b:b||{}})).sort((a,b)=>
+              safe(a.b.dateKey).localeCompare(safe(b.b.dateKey)) ||
+              safe(a.b.time).localeCompare(safe(b.b.time)) ||
+              Number(b.b.createdAtMs||0)-Number(a.b.createdAtMs||0))
+          : [];
+        setMsg(rows.length ? `${rows.length} private hire request${rows.length===1?"":"s"}` : "No private hire requests yet.");
+
+        for (const {id,b} of rows) {
+          const state=safe(b.status||"new").toLowerCase();
+          const row=document.createElement("div");
+          row.style.cssText=`border-bottom:1px solid var(--line);padding:20px 0;opacity:${state==="cancelled"?".58":"1"}`;
+          const top=document.createElement("div");
+          top.style.cssText="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start";
+          const info=document.createElement("div");
+          const name=document.createElement("div");
+          name.style.cssText="color:rgba(255,255,255,.92);font-size:18px;font-weight:650";
+          name.textContent=safe(b.name)||"Customer";
+          const route=document.createElement("div");
+          route.className="admin-msg"; route.style.marginTop="6px";
+          route.textContent=`${niceDate(b.dateKey)} • ${safe(b.time)} • ${safe(b.pickup)} → ${safe(b.destination)}`;
+          const meta=document.createElement("div");
+          meta.className="admin-msg"; meta.style.marginTop="4px";
+          const pax=Math.max(0,Number(b.passengers)||0);
+          meta.textContent=`${pax} passenger${pax===1?"":"s"} • ${safe(b.journey)} • ${state.toUpperCase()}`;
+          const contact=document.createElement("div");
+          contact.className="admin-msg"; contact.style.marginTop="4px";
+          contact.textContent=`${safe(b.reference||id)} • ${safe(b.contact||b.email||b.phone)}`;
+          info.append(name,route,meta,contact);
+          if (safe(b.details)) {
+            const notes=document.createElement("div");
+            notes.className="admin-msg"; notes.style.cssText="margin-top:9px;color:rgba(255,255,255,.82)";
+            notes.textContent=safe(b.details); info.appendChild(notes);
+          }
+
+          const actions=document.createElement("div");
+          actions.style.cssText="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end";
+          if (state!=="cancelled") {
+            const confirmBtn=document.createElement("button");
+            confirmBtn.type="button"; confirmBtn.className=state==="confirmed"?"admin-btn quiet":"admin-btn primary";
+            confirmBtn.textContent=state==="confirmed"?"Mark new":"Confirm";
+            confirmBtn.addEventListener("click",async()=>{
+              try {
+                const next=state==="confirmed"?"new":"confirmed";
+                await update(ref(db,`privateHireBookings/${id}`),{
+                  status:next,
+                  confirmedAt:next==="confirmed"?serverTimestamp():null,
+                  confirmedBy:next==="confirmed"?adminEmail:null,
+                  updatedAt:serverTimestamp(),updatedBy:adminEmail
+                });
+              } catch(err) { setMsg(`Update failed: ${err?.message||err}`,"bad"); }
+            });
+
+            const cancelBtn=document.createElement("button");
+            cancelBtn.type="button"; cancelBtn.className="admin-btn quiet"; cancelBtn.textContent="Cancel";
+            cancelBtn.addEventListener("click",async()=>{
+              if(!confirm(`Cancel private hire request ${safe(b.reference||id)}?`)) return;
+              cancelBtn.disabled=true;
+              try {
+                await update(ref(db,`privateHireBookings/${id}`),{
+                  status:"cancelled",cancelledAt:serverTimestamp(),cancelledBy:adminEmail,
+                  updatedAt:serverTimestamp(),updatedBy:adminEmail
+                });
+                setMsg(`Private hire request cancelled: ${safe(b.reference||id)}`,"ok");
+              } catch(err) { setMsg(`Cancellation failed: ${err?.message||err}`,"bad"); cancelBtn.disabled=false; }
+            });
+            actions.append(confirmBtn,cancelBtn);
+          }
+          top.append(info,actions); row.appendChild(top); listEl.appendChild(row);
+        }
+      }
+
+      onValue(ref(db,"privateHireBookings"),snap=>render(snap.val()),err=>setMsg(`Error loading private hire requests: ${err?.message||err}`,"bad"));
     }
 
     function bootToursAndSchedule(user) {
