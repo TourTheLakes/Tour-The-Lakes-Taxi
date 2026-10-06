@@ -923,6 +923,462 @@ html, body {
       }
     }
 
+  
+    /* ===== Finished Private Hire sales page ===== */
+    .private-hire-page-layout {
+      height: auto;
+      align-items: stretch;
+    }
+
+    .private-hire-main-column {
+      overflow: visible;
+      background: transparent;
+    }
+
+    .private-hire-main-column::after {
+      display: none;
+    }
+
+    .private-hire-main-column:hover img,
+    .private-hire-main-column:focus-visible img {
+      transform: none;
+    }
+
+    .private-hire-hero {
+      position: relative;
+      height: 288px;
+      overflow: hidden;
+      background: #2b2b2b;
+    }
+
+    .private-hire-hero > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .28s ease;
+    }
+
+    .private-hire-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,.06), rgba(0,0,0,.20));
+      pointer-events: none;
+    }
+
+    .private-hire-copy {
+      padding: 42px 0 0;
+      color: #2b2b2b;
+    }
+
+    .private-hire-eyebrow,
+    .private-hire-book-kicker {
+      display: block;
+      margin-bottom: 10px;
+      color: #b86b2a;
+      font: 750 10px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.65px;
+    }
+
+    .private-hire-intro {
+      max-width: 820px;
+    }
+
+    .private-hire-intro h2,
+    .private-hire-feature h2,
+    .private-hire-closing h2,
+    .private-hire-book-content h2 {
+      margin: 0;
+      font: 600 clamp(25px, 2.35vw, 38px)/1.12 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: -.45px;
+    }
+
+    .private-hire-intro p,
+    .private-hire-feature p,
+    .private-hire-closing p {
+      margin: 16px 0 0;
+      max-width: 800px;
+      color: rgba(43,43,43,.76);
+      font: 450 16px/1.72 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-intro .private-hire-lead {
+      color: #2b2b2b;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .private-hire-service-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      margin-top: 44px;
+      border-top: 1px solid rgba(43,43,43,.24);
+      border-left: 1px solid rgba(43,43,43,.24);
+    }
+
+    .private-hire-service {
+      position: relative;
+      min-height: 220px;
+      padding: 28px 28px 30px;
+      border-right: 1px solid rgba(43,43,43,.24);
+      border-bottom: 1px solid rgba(43,43,43,.24);
+    }
+
+    .private-hire-service-number {
+      display: block;
+      margin-bottom: 38px;
+      color: #b86b2a;
+      font: 700 10px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.4px;
+    }
+
+    .private-hire-service h3 {
+      margin: 0 0 10px;
+      color: #2b2b2b;
+      font: 650 19px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-service p {
+      margin: 0;
+      color: rgba(43,43,43,.68);
+      font: 450 14px/1.62 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-feature {
+      margin-top: 44px;
+      padding: 38px 0;
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 44px;
+      align-items: start;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 1px solid rgba(43,43,43,.24);
+    }
+
+    .private-hire-feature p {
+      margin-top: 0;
+    }
+
+    .private-hire-points {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 34px;
+      background: rgba(43,43,43,.94);
+    }
+
+    .private-hire-points > div {
+      min-width: 0;
+      padding: 24px 18px;
+      text-align: center;
+      border-right: 1px solid rgba(184,107,42,.35);
+    }
+
+    .private-hire-points > div:last-child {
+      border-right: 0;
+    }
+
+    .private-hire-points strong,
+    .private-hire-points span {
+      display: block;
+    }
+
+    .private-hire-points strong {
+      color: rgba(255,255,255,.94);
+      font: 650 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-points span {
+      margin-top: 5px;
+      color: rgba(255,255,255,.56);
+      font: 600 9px/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .75px;
+      text-transform: uppercase;
+    }
+
+    .private-hire-closing {
+      padding: 44px 0 10px;
+    }
+
+    .private-hire-booking-column {
+      min-height: 100%;
+      align-self: stretch;
+      overflow: hidden;
+      background: rgba(43,43,43,.50);
+      box-shadow: none;
+    }
+
+    .private-hire-book-label {
+      position: relative;
+    }
+
+    .private-hire-book-content {
+      padding: 30px 24px 28px;
+      color: rgba(255,255,255,.94);
+    }
+
+    .private-hire-book-kicker {
+      color: rgba(255,255,255,.60);
+    }
+
+    .private-hire-book-content h2 {
+      color: #fff;
+      font-size: clamp(22px, 1.8vw, 29px);
+    }
+
+    .private-hire-book-intro {
+      margin: 12px 0 25px;
+      color: rgba(255,255,255,.68);
+      font: 450 13px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-book-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .private-hire-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .private-hire-field label {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,.72);
+      font: 650 10px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+    }
+
+    .private-hire-field input,
+    .private-hire-field select,
+    .private-hire-field textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 0;
+      padding: 11px 11px;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      font: 500 13px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      outline: none;
+    }
+
+    .private-hire-field input,
+    .private-hire-field select {
+      min-height: 43px;
+    }
+
+    .private-hire-field textarea {
+      resize: vertical;
+      min-height: 92px;
+    }
+
+    .private-hire-field input::placeholder,
+    .private-hire-field textarea::placeholder {
+      color: rgba(255,255,255,.40);
+    }
+
+    .private-hire-field input:focus,
+    .private-hire-field select:focus,
+    .private-hire-field textarea:focus {
+      border-color: #b86b2a;
+      box-shadow: 0 0 0 1px #b86b2a;
+    }
+
+    .private-hire-field select option {
+      color: #2b2b2b;
+      background: #f3ead8;
+    }
+
+    .private-hire-submit {
+      min-height: 49px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border: 1px solid #b86b2a;
+      padding: 0 15px;
+      background: #b86b2a;
+      color: #fff;
+      cursor: pointer;
+      font: 700 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+    }
+
+    .private-hire-submit span {
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .private-hire-form-note {
+      margin: 0;
+      color: rgba(255,255,255,.52);
+      font: 450 11px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-book-direct {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+
+    .private-hire-book-direct span,
+    .private-hire-book-direct a {
+      display: block;
+    }
+
+    .private-hire-book-direct span {
+      margin-bottom: 9px;
+      color: rgba(255,255,255,.48);
+      font: 650 9px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+
+    .private-hire-book-direct a {
+      margin-top: 5px;
+      color: rgba(255,255,255,.86);
+      text-decoration: none;
+      font: 550 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-book-direct a:hover,
+    .private-hire-book-direct a:focus-visible {
+      color: #b86b2a;
+    }
+
+    @media screen and (min-width: 601px) and (max-width: 1023px) {
+      .private-hire-hero {
+        height: 258px;
+      }
+
+      .private-hire-service {
+        padding: 24px 22px 26px;
+      }
+
+      .private-hire-feature {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .private-hire-points {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .private-hire-points > div:nth-child(2) {
+        border-right: 0;
+      }
+
+      .private-hire-points > div:nth-child(-n+2) {
+        border-bottom: 1px solid rgba(184,107,42,.35);
+      }
+
+      .private-hire-field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .private-hire-page-layout {
+        height: auto;
+      }
+
+      .private-hire-page-layout[data-mobile-view="private-hire"] {
+        height: auto;
+      }
+
+      .private-hire-page-layout[data-mobile-view="book"] {
+        height: auto;
+      }
+
+      .private-hire-card-grid .private-hire-main-column,
+      .private-hire-card-grid .private-hire-booking-column {
+        height: auto;
+      }
+
+      .private-hire-hero {
+        height: 226px;
+      }
+
+      .private-hire-copy {
+        padding-top: 34px;
+      }
+
+      .private-hire-intro h2,
+      .private-hire-feature h2,
+      .private-hire-closing h2 {
+        font-size: 25px;
+      }
+
+      .private-hire-intro p,
+      .private-hire-feature p,
+      .private-hire-closing p {
+        font-size: 15px;
+        line-height: 1.66;
+      }
+
+      .private-hire-intro .private-hire-lead {
+        font-size: 16px;
+      }
+
+      .private-hire-service-grid {
+        grid-template-columns: 1fr;
+        margin-top: 34px;
+      }
+
+      .private-hire-service {
+        min-height: 0;
+        padding: 24px 20px 26px;
+      }
+
+      .private-hire-service-number {
+        margin-bottom: 25px;
+      }
+
+      .private-hire-feature {
+        margin-top: 34px;
+        padding: 30px 0;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .private-hire-points {
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: 28px;
+      }
+
+      .private-hire-points > div {
+        padding: 20px 10px;
+      }
+
+      .private-hire-points > div:nth-child(2) {
+        border-right: 0;
+      }
+
+      .private-hire-points > div:nth-child(-n+2) {
+        border-bottom: 1px solid rgba(184,107,42,.35);
+      }
+
+      .private-hire-closing {
+        padding-top: 36px;
+      }
+
+      .private-hire-booking-column {
+        min-height: 0;
+      }
+
+      .private-hire-book-content {
+        padding: 28px 18px 26px;
+      }
+
+      .private-hire-field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 
@@ -1002,20 +1458,143 @@ html, body {
       <h1 id="private-hire-title">PRIVATE HIRE</h1>
     </div>
 
-    <div class="private-hire-card-grid" data-mobile-view="private-hire" aria-label="Private hire and booking">
-      <div class="private-hire-card" aria-label="Pre-booked private hire for up to 16 passengers">
-        <img src="images/1000034957.png" alt="Tour The Lakes private hire travel" loading="lazy" decoding="async" />
-        <div class="private-hire-card-sticker">
-          <span class="private-hire-card-kicker">UP TO 16 PASSENGERS</span>
-          <span class="private-hire-card-detail">Pre-booked Private Hire</span>
+    <div class="private-hire-card-grid private-hire-page-layout" data-mobile-view="private-hire" aria-label="Private hire and booking">
+      <section class="private-hire-card private-hire-main-column" aria-label="Pre-booked private hire for up to 16 passengers">
+        <div class="private-hire-hero">
+          <img src="images/1000034957.png" alt="Tour The Lakes private hire travel" loading="eager" decoding="async" />
+          <div class="private-hire-card-sticker">
+            <span class="private-hire-card-kicker">UP TO 16 PASSENGERS</span>
+            <span class="private-hire-card-detail">Pre-booked Private Hire</span>
+          </div>
+          <span class="private-hire-card-label">
+            <span>Private Hire Travel</span>
+          </span>
         </div>
-        <span class="private-hire-card-label">
-          <span>Private Hire Travel</span>
-        </span>
-      </div>
-      <div class="private-hire-card-empty">
+
+        <div class="private-hire-copy">
+          <div class="private-hire-intro">
+            <span class="private-hire-eyebrow">YOUR JOURNEY · YOUR PLANS</span>
+            <h2>Travel arranged around you.</h2>
+            <p class="private-hire-lead">From a table booked across the Lakes to an early airport run, a railway connection or a full group journey, our private hire service is for travel that is better planned in advance.</p>
+            <p>Tell us where you need to be, when you need to be there and who is travelling. We will take care of the journey, with comfortable private transport for individuals, couples, families and groups of up to 16 passengers.</p>
+          </div>
+
+          <div class="private-hire-service-grid" aria-label="Private hire services">
+            <article class="private-hire-service">
+              <span class="private-hire-service-number">01</span>
+              <h3>Airports & Stations</h3>
+              <p>Pre-booked collections and drop offs for airports and railway stations, with the journey arranged around your departure or arrival.</p>
+            </article>
+            <article class="private-hire-service">
+              <span class="private-hire-service-number">02</span>
+              <h3>Hotels & Restaurants</h3>
+              <p>Travel to accommodation, restaurants and venues across the Lake District, whether it is one way or a return later in the evening.</p>
+            </article>
+            <article class="private-hire-service">
+              <span class="private-hire-service-number">03</span>
+              <h3>Evenings & Occasions</h3>
+              <p>Dinners, celebrations, weddings and special occasions without somebody in the group having to worry about the drive home.</p>
+            </article>
+            <article class="private-hire-service">
+              <span class="private-hire-service-number">04</span>
+              <h3>Groups & Events</h3>
+              <p>Private transport for groups of up to 16 passengers, including days out, events and journeys where keeping everybody together simply makes sense.</p>
+            </article>
+          </div>
+
+          <div class="private-hire-feature">
+            <div>
+              <span class="private-hire-eyebrow">LOCAL KNOWLEDGE · PRIVATE TRAVEL</span>
+              <h2>More than getting from A to B.</h2>
+            </div>
+            <p>Lake District journeys do not always fit neatly into a timetable. Rural hotels, evening reservations, luggage, larger groups and onward connections can all make a simple journey less simple. Pre-booking means we can plan the right vehicle, the right collection time and the journey properly before the day.</p>
+          </div>
+
+          <div class="private-hire-points">
+            <div><strong>Up to 16</strong><span>passengers</span></div>
+            <div><strong>One way</strong><span>or return</span></div>
+            <div><strong>Local</strong><span>or long distance</span></div>
+            <div><strong>Pre-booked</strong><span>around your plans</span></div>
+          </div>
+
+          <div class="private-hire-closing">
+            <span class="private-hire-eyebrow">PLAN AHEAD</span>
+            <h2>Know the journey is sorted before you arrive.</h2>
+            <p>Use the booking panel to send us the details of your journey. For anything unusual, multi-stop or still being planned, give us the information you have and we can work from there.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="private-hire-card-empty private-hire-booking-column" aria-label="Book private hire">
         <div class="private-hire-book-label">Book</div>
-      </div>
+        <div class="private-hire-book-content">
+          <span class="private-hire-book-kicker">PRE-BOOK YOUR TRAVEL</span>
+          <h2>Where can we take you?</h2>
+          <p class="private-hire-book-intro">Send us your journey details and we can confirm the arrangements with you.</p>
+
+          <form class="private-hire-book-form" id="private-hire-book-form">
+            <div class="private-hire-field">
+              <label for="ph-name">Your name</label>
+              <input id="ph-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="private-hire-field">
+              <label for="ph-contact">Email or mobile</label>
+              <input id="ph-contact" name="contact" type="text" autocomplete="email" required />
+            </div>
+            <div class="private-hire-field-row">
+              <div class="private-hire-field">
+                <label for="ph-date">Date</label>
+                <input id="ph-date" name="date" type="date" required />
+              </div>
+              <div class="private-hire-field">
+                <label for="ph-time">Collection time</label>
+                <input id="ph-time" name="time" type="time" required />
+              </div>
+            </div>
+            <div class="private-hire-field">
+              <label for="ph-pickup">Pick up</label>
+              <input id="ph-pickup" name="pickup" type="text" placeholder="Address, hotel, station or postcode" required />
+            </div>
+            <div class="private-hire-field">
+              <label for="ph-destination">Destination</label>
+              <input id="ph-destination" name="destination" type="text" placeholder="Where are you travelling to?" required />
+            </div>
+            <div class="private-hire-field-row">
+              <div class="private-hire-field">
+                <label for="ph-passengers">Passengers</label>
+                <select id="ph-passengers" name="passengers" required>
+                  <option value="">Select</option>
+                  <option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option>
+                  <option>9</option><option>10</option><option>11</option><option>12</option>
+                  <option>13</option><option>14</option><option>15</option><option>16</option>
+                </select>
+              </div>
+              <div class="private-hire-field">
+                <label for="ph-journey">Journey</label>
+                <select id="ph-journey" name="journey" required>
+                  <option value="">Select</option>
+                  <option>One way</option>
+                  <option>Return</option>
+                  <option>Multiple stops</option>
+                </select>
+              </div>
+            </div>
+            <div class="private-hire-field">
+              <label for="ph-details">Anything else?</label>
+              <textarea id="ph-details" name="details" rows="4" placeholder="Return time, luggage, flight or train details, extra stops or anything we should know"></textarea>
+            </div>
+            <button class="private-hire-submit" type="submit">Send Journey Details <span aria-hidden="true">›</span></button>
+            <p class="private-hire-form-note">This sends an enquiry rather than taking payment. We will confirm the journey with you before anything is booked.</p>
+          </form>
+
+          <div class="private-hire-book-direct">
+            <span>Prefer to speak to us?</span>
+            <a href="https://wa.me/447432185516" target="_blank" rel="noopener">WhatsApp 07432 185516</a>
+            <a href="mailto:info@tourthelakes.com">info@tourthelakes.com</a>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <div class="private-hire-bottom-gap" aria-hidden="true"></div>
@@ -1192,6 +1771,17 @@ html, body {
   });
 
   showPrivateHireMobileView("private-hire", false);
+})();
+</script>
+
+
+<script>
+(() => {
+  const privateHireForm = document.getElementById("private-hire-book-form");
+  if (!privateHireForm) return;
+  privateHireForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
 })();
 </script>
 
