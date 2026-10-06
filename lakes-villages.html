@@ -1442,7 +1442,80 @@ html, body {
       }
     }
 
-  </style>
+  
+
+/* ===== Mobile tour view tabs — Overview / Book ===== */
+.tour-mobile-tabs {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .tour-mobile-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background: rgba(43,43,43,0.94);
+    border-bottom: 2px solid #b86b2a;
+  }
+
+  .tour-mobile-tab {
+    min-height: 54px;
+    position: relative;
+    border: 0;
+    border-right: 1px solid rgba(184,107,42,0.32);
+    background: transparent;
+    color: rgba(255,255,255,0.62);
+    cursor: pointer;
+    font: 650 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: .4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tour-mobile-tab:last-child {
+    border-right: 0;
+  }
+
+  .tour-mobile-tab.is-active {
+    color: rgba(255,255,255,0.92);
+    background: rgba(184,107,42,0.16);
+  }
+
+  .tour-mobile-tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 34px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #b86b2a;
+  }
+
+  /* Tabs now control the two existing columns instead of stacking them. */
+  .tour-page-layout {
+    padding-top: 38px;
+  }
+
+  .tour-page-layout .tour-description-column,
+  .tour-page-layout .tour-booking-column {
+    display: none;
+  }
+
+  .tour-page-layout[data-mobile-view="overview"] .tour-description-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    margin-top: 0;
+    padding: 0;
+    border-top: 0;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -1517,7 +1590,12 @@ html, body {
       </div>
     </section>
 
-    <div class="tour-page-layout">
+    <nav class="tour-mobile-tabs" aria-label="Tour page sections">
+  <button type="button" class="tour-mobile-tab is-active" data-tour-mobile-view="overview" aria-selected="true">Overview</button>
+  <button type="button" class="tour-mobile-tab" data-tour-mobile-view="book" aria-selected="false">Book</button>
+</nav>
+
+<div class="tour-page-layout" data-mobile-view="overview">
       <article class="tour-description-column">
         <section class="tour-section" aria-labelledby="tour-details-heading">
           <h2 class="tour-section-heading" id="tour-details-heading">At a Glance</h2>
@@ -1618,7 +1696,7 @@ html, body {
         <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="images/DSC_0023.jpg" alt="Central Lakes Villages in the Lake District" /><h3 class="booking-summary-tour">Central Lakes Villages</h3><p class="booking-summary-sub">Pickup from Windermere Railway Station, Kendal or Bowness Pier</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div>
           <div class="booking-summary-row"><span>Pickup</span><strong id="checkoutSummaryPickup">Select below</strong></div><div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div><div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div><div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div></aside>
       </div>
-      <div class="booking-complete" id="bookingCompleteView"><div class="booking-complete-mark">✓</div><h3>Booking received</h3><p><strong>Thank you. Your booking has been received and your places have been reserved.</strong></p><p>Please take a moment to check that the booking details shown below are correct. We will be in touch using the contact details you supplied during booking, so please also make sure your email address and mobile number were entered correctly.</p><p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p><div class="booking-reference">Reference <span id="bookingReferenceText"></span></div><p id="bookingCompleteSummary"></p><p id="bookingCompleteContact" style="white-space:pre-line;"></p><p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p><p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p><p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p><button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button></div>
+      <div class="booking-complete" id="bookingCompleteView"><div class="booking-complete-mark">✓</div><h3>Booking received</h3><p><strong>Thank you. Your booking has been received and your places have been reserved.</strong></p><p>Please take a moment to check that the booking details shown below are correct. We will be in touch using the contact details you supplied during booking, so please also make sure your email address and mobile number were entered correctly.</p><p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p><div class="booking-reference">Reference <span id="bookingReferenceText"></span></div><p id="bookingCompleteSummary"></p><p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p><p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p><p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p><button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button></div>
     </section>
   </div>
 
@@ -2024,7 +2102,6 @@ html, body {
 
         const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
         bookingReferenceText.textContent = reference;
-        bookingCompleteContact.textContent = `Full name: ${firstName} ${lastName}\nEmail: ${email}\nMobile phone: ${phone}`;
         bookingCompleteSummary.textContent =
           `${quantity} passenger${quantity === 1 ? "" : "s"} · ` +
           `${selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })} · ` +
@@ -2220,6 +2297,34 @@ html, body {
   mobileBreakpoint.addEventListener("change", (event) => {
     if (!event.matches) setMobileMenu(false);
   });
+</script>
+
+<script>
+(() => {
+  const mobileTabs = Array.from(document.querySelectorAll("[data-tour-mobile-view]"));
+  const tourLayout = document.querySelector(".tour-page-layout");
+  if (!mobileTabs.length || !tourLayout) return;
+
+  function showMobileTourView(view, shouldScroll) {
+    tourLayout.dataset.mobileView = view;
+    mobileTabs.forEach((button) => {
+      const active = button.dataset.tourMobileView === view;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+
+    if (shouldScroll && window.matchMedia("(max-width: 600px)").matches) {
+      const tabs = document.querySelector(".tour-mobile-tabs");
+      if (tabs) tabs.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  mobileTabs.forEach((button) => {
+    button.addEventListener("click", () => showMobileTourView(button.dataset.tourMobileView, false));
+  });
+
+  showMobileTourView("overview", false);
+})();
 </script>
 </body>
 </html>
