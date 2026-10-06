@@ -659,6 +659,30 @@ html, body {
       background: #f3ead8;
     }
 
+    .private-hire-card-empty {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      background: rgba(43,43,43,0.50);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.22);
+    }
+
+    .private-hire-book-label {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      background: rgba(243,234,216,.90);
+      color: #2b2b2b;
+      font: 700 clamp(17px, 1.55vw, 23px)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
     .private-hire-card {
       position: relative;
       display: block;
@@ -789,6 +813,12 @@ html, body {
         padding-top: 35px;
       }
 
+      .private-hire-book-label {
+        min-height: 48px;
+        padding: 0 10px;
+        font-size: clamp(13px, 3.6vw, 16px);
+      }
+
       .private-hire-card-label {
         min-height: 48px;
         padding: 0 10px;
@@ -903,7 +933,9 @@ html, body {
           <span>Private Hire Travel</span>
         </span>
       </div>
-      <div class="private-hire-card-empty" aria-hidden="true"></div>
+      <div class="private-hire-card-empty">
+        <div class="private-hire-book-label">Book</div>
+      </div>
     </div>
 
     <div class="private-hire-bottom-gap" aria-hidden="true"></div>
