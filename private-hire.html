@@ -1380,6 +1380,28 @@ html, body {
     }
 
   
+  
+    .private-hire-book-notice {
+      margin: -15px 0 25px;
+      color: #a9342f;
+      font: 450 13px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-book-time-warning {
+      display: none;
+      margin: 7px 0 0;
+      color: #a9342f;
+      font: 600 11px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .private-hire-book-time-warning.is-visible {
+      display: block;
+    }
+
+      .private-hire-form-status { margin:0; color:rgba(255,255,255,.72); font:600 12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .private-hire-form-status.ok { color:#b9e6ca; }
+    .private-hire-form-status.bad { color:#ffb0b0; }
+    .private-hire-submit:disabled { opacity:.58; cursor:wait; }
   </style>
 </head>
 
@@ -1500,26 +1522,6 @@ html, body {
             </article>
           </div>
 
-          <div class="private-hire-feature">
-            <div>
-              <span class="private-hire-eyebrow">LOCAL KNOWLEDGE · PRIVATE TRAVEL</span>
-              <h2>More than getting from A to B.</h2>
-            </div>
-            <p>Lake District journeys do not always fit neatly into a timetable. Rural hotels, evening reservations, luggage, larger groups and onward connections can all make a simple journey less simple. Pre-booking means we can plan the right vehicle, the right collection time and the journey properly before the day.</p>
-          </div>
-
-          <div class="private-hire-points">
-            <div><strong>Up to 16</strong><span>passengers</span></div>
-            <div><strong>One way</strong><span>or return</span></div>
-            <div><strong>Local</strong><span>or long distance</span></div>
-            <div><strong>Pre-booked</strong><span>around your plans</span></div>
-          </div>
-
-          <div class="private-hire-closing">
-            <span class="private-hire-eyebrow">PLAN AHEAD</span>
-            <h2>Know the journey is sorted before you arrive.</h2>
-            <p>Use the booking panel to send us the details of your journey. For anything unusual, multi-stop or still being planned, give us the information you have and we can work from there.</p>
-          </div>
         </div>
       </section>
 
@@ -1528,6 +1530,7 @@ html, body {
           <span class="private-hire-book-kicker">PRE-BOOK YOUR TRAVEL</span>
           <h2>Where can we take you?</h2>
           <p class="private-hire-book-intro">Send us your journey details and we can confirm the arrangements with you.</p>
+          <p class="private-hire-book-notice">All bookings require at least 24 hours notice.</p>
 
           <form class="private-hire-book-form" id="private-hire-book-form">
             <div class="private-hire-field">
@@ -1548,6 +1551,7 @@ html, body {
                 <input id="ph-time" name="time" type="time" required />
               </div>
             </div>
+            <p class="private-hire-book-time-warning" id="ph-time-warning" role="alert"></p>
             <div class="private-hire-field">
               <label for="ph-pickup">Pick up</label>
               <input id="ph-pickup" name="pickup" type="text" placeholder="Address, hotel, station or postcode" required />
@@ -1771,12 +1775,123 @@ html, body {
 </script>
 
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getDatabase, ref, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
+  authDomain: "tourthelakes-1e165.firebaseapp.com",
+  databaseURL: "https://tourthelakes-1e165-default-rtdb.firebaseio.com",
+  projectId: "tourthelakes-1e165",
+  storageBucket: "tourthelakes-1e165.firebasestorage.app",
+  messagingSenderId: "470758171431",
+  appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
+  measurementId: "G-W6JY1LZXTP"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 (() => {
-  const privateHireForm = document.getElementById("private-hire-book-form");
-  if (!privateHireForm) return;
-  privateHireForm.addEventListener("submit", (event) => {
+  const form = document.getElementById("private-hire-book-form");
+  const dateInput = document.getElementById("ph-date");
+  const timeInput = document.getElementById("ph-time");
+  const warning = document.getElementById("ph-time-warning");
+  const submit = form?.querySelector(".private-hire-submit");
+  if (!form || !dateInput || !timeInput || !warning || !submit) return;
+
+  const OPEN = 9, CLOSE = 17, NOTICE_HOURS = 24;
+  const status = document.createElement("p");
+  status.className = "private-hire-form-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  submit.insertAdjacentElement("afterend", status);
+
+  function atTime(date, hour) {
+    const d = new Date(date); d.setHours(hour,0,0,0); return d;
+  }
+  function nextOfficeOpening(from) {
+    let d = new Date(from), day = d.getDay(), open = atTime(d, OPEN), close = atTime(d, CLOSE);
+    if (day >= 1 && day <= 5 && d >= open && d < close) return d;
+    if (day >= 1 && day <= 5 && d < open) return open;
+    d.setDate(d.getDate()+1); d = atTime(d, OPEN);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate()+1);
+    return d;
+  }
+  function earliest(now = new Date()) {
+    return new Date(nextOfficeOpening(now).getTime() + NOTICE_HOURS*60*60*1000);
+  }
+  function dateValue(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  function selected() {
+    return dateInput.value && timeInput.value ? new Date(`${dateInput.value}T${timeInput.value}:00`) : null;
+  }
+  function pretty(d) {
+    return new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+  }
+  function applyWindow() {
+    const e = earliest(); dateInput.min = dateValue(e);
+    if (dateInput.value && dateInput.value < dateInput.min) { dateInput.value=""; timeInput.value=""; }
+    return e;
+  }
+  function validate(show = true) {
+    const e = applyWindow(), s = selected();
+    if (!s) {
+      warning.classList.remove("is-visible"); warning.textContent="";
+      dateInput.setCustomValidity(""); timeInput.setCustomValidity(""); return true;
+    }
+    if (s < e) {
+      const msg = `The earliest journey we can currently accept is ${pretty(e)}.`;
+      dateInput.setCustomValidity(msg); timeInput.setCustomValidity(msg);
+      warning.textContent=msg; warning.classList.toggle("is-visible",show); return false;
+    }
+    dateInput.setCustomValidity(""); timeInput.setCustomValidity("");
+    warning.classList.remove("is-visible"); warning.textContent=""; return true;
+  }
+  function splitContact(v) {
+    const c=String(v||"").trim(); return c.includes("@") ? {email:c,phone:""} : {email:"",phone:c};
+  }
+
+  applyWindow();
+  dateInput.addEventListener("change",()=>validate(true));
+  timeInput.addEventListener("change",()=>validate(true));
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    status.className="private-hire-form-status"; status.textContent="";
+    if (!form.reportValidity() || !validate(true)) { form.reportValidity(); return; }
+
+    const bookingRef = push(ref(db,"privateHireBookings"));
+    const reference = `TTL-PH-${String(bookingRef.key||"").slice(-6).toUpperCase()}`;
+    const c = splitContact(document.getElementById("ph-contact").value);
+
+    submit.disabled=true; submit.textContent="Sending…";
+    try {
+      await set(bookingRef,{
+        reference,
+        name:document.getElementById("ph-name").value.trim(),
+        contact:document.getElementById("ph-contact").value.trim(),
+        email:c.email, phone:c.phone,
+        dateKey:dateInput.value, time:timeInput.value,
+        pickup:document.getElementById("ph-pickup").value.trim(),
+        destination:document.getElementById("ph-destination").value.trim(),
+        passengers:Number(document.getElementById("ph-passengers").value),
+        journey:document.getElementById("ph-journey").value,
+        details:document.getElementById("ph-details").value.trim(),
+        status:"new", source:"private-hire.html",
+        createdAt:serverTimestamp(), createdAtMs:Date.now()
+      });
+      form.reset(); applyWindow();
+      status.classList.add("ok"); status.textContent=`Journey request sent. Reference ${reference}.`;
+    } catch (err) {
+      console.error(err);
+      status.classList.add("bad");
+      status.textContent="We could not send your journey request. Please try again or contact us directly.";
+    } finally {
+      submit.disabled=false;
+      submit.innerHTML='Send Journey Details <span aria-hidden="true">›</span>';
+    }
   });
 })();
 </script>
