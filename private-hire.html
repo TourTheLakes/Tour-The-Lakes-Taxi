@@ -652,8 +652,9 @@ html, body {
       height: 288px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 2fr 1fr;
       grid-template-rows: 1fr;
+      gap: 35px;
       padding: 35px 0 0;
       background: #f3ead8;
     }
@@ -892,16 +893,17 @@ html, body {
     </div>
 
     <div class="private-hire-card-grid" aria-label="Choose a private hire service">
-      <div class="private-hire-card" aria-label="Pre-booked private hire for up to 12 passengers">
+      <div class="private-hire-card" aria-label="Pre-booked private hire for up to 16 passengers">
         <img src="images/1000034957.png" alt="Tour The Lakes private hire travel" loading="lazy" decoding="async" />
         <div class="private-hire-card-sticker">
-          <span class="private-hire-card-kicker">UP TO 12 PASSENGERS</span>
+          <span class="private-hire-card-kicker">UP TO 16 PASSENGERS</span>
           <span class="private-hire-card-detail">Pre-booked Private Hire</span>
         </div>
         <span class="private-hire-card-label">
           <span>Private Hire Travel</span>
         </span>
       </div>
+      <div class="private-hire-card-empty" aria-hidden="true"></div>
     </div>
 
     <div class="private-hire-bottom-gap" aria-hidden="true"></div>
