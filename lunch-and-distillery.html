@@ -570,7 +570,7 @@ html, body {
     }
 
 
-    /* ===== Lunch and Distillery tour page ===== */
+    /* ===== Central Lakes Villages tour page ===== */
 
     .tour-hero {
       position: relative;
@@ -1442,7 +1442,80 @@ html, body {
       }
     }
 
-  </style>
+  
+
+/* ===== Mobile tour view tabs — Overview / Book ===== */
+.tour-mobile-tabs {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .tour-mobile-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background: rgba(43,43,43,0.94);
+    border-bottom: 2px solid #b86b2a;
+  }
+
+  .tour-mobile-tab {
+    min-height: 54px;
+    position: relative;
+    border: 0;
+    border-right: 1px solid rgba(184,107,42,0.32);
+    background: transparent;
+    color: rgba(255,255,255,0.62);
+    cursor: pointer;
+    font: 650 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: .4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tour-mobile-tab:last-child {
+    border-right: 0;
+  }
+
+  .tour-mobile-tab.is-active {
+    color: rgba(255,255,255,0.92);
+    background: rgba(184,107,42,0.16);
+  }
+
+  .tour-mobile-tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 34px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #b86b2a;
+  }
+
+  /* Tabs now control the two existing columns instead of stacking them. */
+  .tour-page-layout {
+    padding-top: 38px;
+  }
+
+  .tour-page-layout .tour-description-column,
+  .tour-page-layout .tour-booking-column {
+    display: none;
+  }
+
+  .tour-page-layout[data-mobile-view="overview"] .tour-description-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    display: block;
+  }
+
+  .tour-page-layout[data-mobile-view="book"] .tour-booking-column {
+    margin-top: 0;
+    padding: 0;
+    border-top: 0;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -1510,45 +1583,67 @@ html, body {
 
   <main id="page-content">
     <section class="tour-hero" aria-labelledby="tour-page-title">
-      <img src="images/lunch and distilery.png" alt="Lunch and Distillery in the Lake District" decoding="async" />
+      <img src="images/DSC_0023.jpg" alt="Central Lakes Villages in the Lake District" decoding="async" />
       <div class="tour-hero-title-wrap">
-        <p class="tour-hero-kicker">A Taste Of The Lakes</p>
-        <h1 class="tour-hero-title" id="tour-page-title">Lunch &amp; Distillery</h1>
+        <p class="tour-hero-kicker">Lake District Sightseeing</p>
+        <h1 class="tour-hero-title" id="tour-page-title">Central Lakes Villages</h1>
       </div>
     </section>
 
-    <div class="tour-page-layout">
+    <nav class="tour-mobile-tabs" aria-label="Tour page sections">
+  <button type="button" class="tour-mobile-tab is-active" data-tour-mobile-view="overview" aria-selected="true">Overview</button>
+  <button type="button" class="tour-mobile-tab" data-tour-mobile-view="book" aria-selected="false">Book</button>
+</nav>
+
+<div class="tour-page-layout" data-mobile-view="overview">
       <article class="tour-description-column">
         <section class="tour-section" aria-labelledby="tour-details-heading">
           <h2 class="tour-section-heading" id="tour-details-heading">At a Glance</h2>
-          <p class="tour-lead">Enjoy a relaxed day in the heart of the Lake District, combining a Michelin Star lunch with a distillery visit and a tasting of locally made spirits.</p>
-          <div class="tour-facts-grid" aria-label="Lunch and Distillery tour facts">
-            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">D</span><div><span class="tour-fact-label">Duration</span><span class="tour-fact-value">Approx. 4.5 hours</span></div></div>
-            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">T</span><div><span class="tour-fact-label">Tour type</span><span class="tour-fact-value">A Taste Of The Lakes</span></div></div>
-            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">P</span><div><span class="tour-fact-label">Pickup locations</span><span class="tour-fact-value">Kendal • Windermere Railway Station • Ambleside</span></div></div>
-            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">L</span><div><span class="tour-fact-label">Experience</span><span class="tour-fact-value">Michelin Star lunch &amp; Distillery Taste and Tour</span></div></div>
+          <p class="tour-lead">A full day exploring seven of the Lake District’s best known villages, towns and beauty spots, with generous free time to discover each stop at your own pace.</p>
+          <div class="tour-facts-grid" aria-label="Central Lakes Villages tour facts">
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">D</span><div><span class="tour-fact-label">Duration</span><span class="tour-fact-value">8 hours</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">T</span><div><span class="tour-fact-label">Tour type</span><span class="tour-fact-value">Sightseeing Tour</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">P</span><div><span class="tour-fact-label">Pickup locations</span><span class="tour-fact-value">Kendal • Windermere Railway Station • Bowness Pier</span></div></div>
+            <div class="tour-fact"><span class="tour-fact-icon" aria-hidden="true">L</span><div><span class="tour-fact-label">Tour</span><span class="tour-fact-value">Central Lakes Villages</span></div></div>
           </div>
         </section>
 
         <section class="tour-section" aria-labelledby="overview-heading">
           <h2 class="tour-section-heading" id="overview-heading">Overview</h2>
-          <p class="tour-copy">We’ll collect you from your designated pick-up point, so you can sit back, relax and enjoy the day while we take care of the driving.</p>
-          <p class="tour-copy">Our first stop is Forest Side, where you can delight in a Michelin Star four course lunch in beautiful Lake District surroundings.</p>
-          <p class="tour-copy">We will then head to the scenic village of Grasmere, where you can enjoy a Distillery Taste and Tour experience, including award winning Gin, Whisky, Rum and Vodka.</p>
-          <ul class="tour-simple-list">
-            <li>Pickup from Ambleside, Kendal or Windermere Railway Station</li>
-            <li>Michelin Star four course lunch at Forest Side</li>
-            <li>Visit to the scenic village of Grasmere</li>
-            <li>Distillery Taste and Tour experience</li>
-            <li>Locally made Gin, Whisky, Rum and Vodka</li>
-          </ul>
+          <p class="tour-copy">Through the quiet villages of the Lakes this journey winds, following roads shaped by fell and valley, beside waters that have long reflected the changing skies. Each village has its own story and its own character, with time to wander through old streets and little shops, to a welcoming café or simply wherever curiosity may lead.</p>
+          <p class="tour-copy">The villages are yours to discover in your own way. As the road carries you onward, a clear commentary tells of the places passing by, their history and the mountains, waters and valleys that have made this corner of England what it is. Your driver remains close at hand should you need assistance, while leaving you free to enjoy the Lakes at your own pace.</p>
         </section>
 
         <section class="tour-section" aria-labelledby="itinerary-heading">
           <h2 class="tour-section-heading" id="itinerary-heading">Itinerary</h2>
-          <p class="tour-lead">Forest Side &amp; Grasmere</p>
-          <p class="tour-copy">We’ll collect you from your designated pick-up point and take care of the driving throughout the day. Our first stop is Forest Side for a Michelin Star four course lunch in beautiful Lake District surroundings.</p>
-          <p class="tour-copy">We will then continue to Grasmere for a Distillery Taste and Tour experience, including award winning Gin, Whisky, Rum and Vodka, before returning you to your original pickup area.</p>
+
+          <p class="tour-lead">Hawkshead</p>
+          <p class="tour-copy">Hawkshead is a traditional Lakeland village with cobbled lanes, independent shops and historic buildings. Explore the village centre, visit its cafés and enjoy the relaxed atmosphere.</p>
+          <ul class="tour-simple-list"><li>1 hour</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Coniston</p>
+          <p class="tour-copy">Coniston offers views of the lake and surrounding fells, along with a small village centre to explore. Walk to the lakeshore, visit local cafés or simply enjoy the peaceful setting.</p>
+          <ul class="tour-simple-list"><li>45 minutes</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Ambleside</p>
+          <p class="tour-copy">Ambleside is a lively Lakeland town with shops, cafés and easy walks towards the water. Take time to explore the centre or enjoy the surrounding views.</p>
+          <ul class="tour-simple-list"><li>45 minutes</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Grasmere</p>
+          <p class="tour-copy">Grasmere is a picturesque village surrounded by gentle fells and peaceful lakeside scenery. Browse its small shops, visit a local café or simply enjoy some time exploring the village.</p>
+          <ul class="tour-simple-list"><li>30 minutes</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Keswick</p>
+          <p class="tour-copy">Keswick is a vibrant market town close to Derwentwater, with shops, cafés and scenic walks nearby. Explore the town centre or make your way towards the lake and enjoy the surrounding scenery.</p>
+          <ul class="tour-simple-list"><li>1 hour</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Aira Force</p>
+          <p class="tour-copy">Aira Force is a woodland walk leading to a dramatic waterfall set within a steep gorge. Follow the forest paths, discover the viewpoints and make your way to the falls.</p>
+          <ul class="tour-simple-list"><li>45 minutes</li></ul>
+
+          <p class="tour-lead" style="margin-top:28px;">Glenridding</p>
+          <p class="tour-copy">Glenridding sits on the shore of Ullswater, with lakeside views, small cafés and easy walks towards the water. Relax, explore the village or spend your time beside the lake.</p>
+          <ul class="tour-simple-list"><li>30 minutes</li></ul>
         </section>
 
         <section class="tour-section" aria-labelledby="meeting-heading">
@@ -1564,18 +1659,18 @@ html, body {
 
           <p><strong>Kendal</strong><br>Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE. Meet in the main car park by the parking meter.</p>
           <p><strong>Windermere Railway Station</strong><br>Station Precinct, Windermere, Cumbria LA23 1AH. Face the railway station and the large yellow Pick Up bay is approximately 20 feet to the left. Your vehicle will meet you there.</p>
-          <p><strong>Ambleside</strong><br>Main Bus Interchange, King Street Car Park, Ambleside. Meet near the furthest EV charging point at the yellow Taxi pickup marked on the ground.</p>
+          <p><strong>Bowness Pier</strong><br>Meet immediately outside the Lakes Cruises ticket office at Bowness Pier, in the yellow ground bay marked Coaches.</p>
         </section>
       </article>
 
-      <aside class="tour-booking-column" aria-label="Book the Lunch and Distillery tour">
-        <div class="booking-panel" id="lunchDistilleryBookingPanel" data-tour-key="lunch-and-distillery">
-          <div class="booking-panel-header"><p class="booking-panel-eyebrow">A Taste Of The Lakes</p><h2 class="booking-panel-title">Book Lunch &amp; Distillery</h2></div>
+      <aside class="tour-booking-column" aria-label="Book the Central Lakes Villages tour">
+        <div class="booking-panel" id="lakesVillagesBookingPanel" data-tour-key="central-lakes-villages">
+          <div class="booking-panel-header"><p class="booking-panel-eyebrow">Lake District Sightseeing</p><h2 class="booking-panel-title">Book Central Lakes Villages</h2></div>
           <div class="booking-panel-body">
             <div class="booking-price-line"><div><div class="booking-price-label">Price</div><div class="booking-price" id="bookingPrice">Select a date</div></div><div class="booking-capacity" id="bookingCapacity">Live capacity<br />will appear here</div></div>
             <div class="passenger-row"><div><span class="passenger-name">Passengers</span><span class="passenger-note">Choose the number travelling</span></div><div class="qty-control" aria-label="Passenger quantity"><button class="qty-button" id="qtyMinus" type="button" aria-label="Remove passenger">−</button><span class="qty-value" id="qtyValue" aria-live="polite">1</span><button class="qty-button" id="qtyPlus" type="button" aria-label="Add passenger">+</button></div></div>
             <h3 class="booking-subheading">Choose a date</h3>
-            <div class="booking-calendar"><div class="calendar-header"><button class="calendar-nav" id="calendarPrev" type="button" aria-label="Previous month">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="calendar-nav" id="calendarNext" type="button" aria-label="Next month">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="calendar-grid" id="calendarGrid" aria-label="Available Lunch and Distillery departure dates"></div></div>
+            <div class="booking-calendar"><div class="calendar-header"><button class="calendar-nav" id="calendarPrev" type="button" aria-label="Previous month">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="calendar-nav" id="calendarNext" type="button" aria-label="Next month">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="calendar-grid" id="calendarGrid" aria-label="Available Central Lakes Villages departure dates"></div></div>
             <p class="booking-status" id="bookingStatus">Select an available departure date.</p>
             <div class="booking-selection"><div class="booking-selection-row"><span>Date</span><strong id="selectedDateText">Not selected</strong></div><div class="booking-selection-row"><span>Departure</span><strong id="selectedTimeText">—</strong></div><div class="booking-selection-row"><span>Total</span><strong id="selectedTotalText">—</strong></div><button class="booking-continue" id="bookingContinue" type="button" disabled>Continue to booking</button></div>
           </div>
@@ -1598,7 +1693,7 @@ html, body {
                 <div class="booking-pickup-options" id="bookingPickupOptions"></div>
               </div>
         </div><div class="booking-request-error" id="bookingRequestError" aria-live="polite"></div><button class="booking-request-submit" id="bookingRequestSubmit" type="submit">Submit booking request</button></form></div>
-        <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="/images/lunch%20and%20distillery.png" alt="Lunch and Distillery in the Lake District" /><h3 class="booking-summary-tour">Lunch and Distillery</h3><p class="booking-summary-sub">Pickup from Ambleside, Kendal or Windermere Railway Station</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div>
+        <aside class="booking-checkout-summary" aria-label="Booking summary"><img class="booking-summary-image" src="images/DSC_0023.jpg" alt="Central Lakes Villages in the Lake District" /><h3 class="booking-summary-tour">Central Lakes Villages</h3><p class="booking-summary-sub">Pickup from Windermere Railway Station, Kendal or Bowness Pier</p><div class="booking-summary-row"><span>Date</span><strong id="checkoutSummaryDate">—</strong></div><div class="booking-summary-row"><span>Departure</span><strong id="checkoutSummaryTime">—</strong></div>
           <div class="booking-summary-row"><span>Pickup</span><strong id="checkoutSummaryPickup">Select below</strong></div><div class="booking-summary-row"><span>Passengers</span><strong id="checkoutSummaryQty">—</strong></div><div class="booking-summary-row"><span>Price per person</span><strong id="checkoutSummaryUnit">—</strong></div><div class="booking-summary-row booking-summary-total"><span>Total</span><strong id="checkoutSummaryTotal">—</strong></div></aside>
       </div>
       <div class="booking-complete" id="bookingCompleteView"><div class="booking-complete-mark">✓</div><h3>Booking received</h3><p><strong>Thank you. Your booking has been received and your places have been reserved.</strong></p><p>Please take a moment to check that the booking details shown below are correct. We will be in touch using the contact details you supplied during booking, so please also make sure your email address and mobile number were entered correctly.</p><p>Your booking reference is shown below. We recommend taking a screenshot of this page or making a note of your reference, as it will help us locate your booking quickly should you need to contact us.</p><div class="booking-reference">Reference <span id="bookingReferenceText"></span></div><p id="bookingCompleteSummary"></p><p>If you notice that any of the details you supplied are incorrect, please email <a href="mailto:info@tourthelakes.com" style="color:#2b2b2b; text-decoration:none;">info@tourthelakes.com</a> and include your booking reference. We can then put things right for you.</p><p><strong>If you do spot a mistake, there is no need to worry. Your booking is safely recorded with us and your places remain reserved.</strong></p><p>We will contact you using the details you provided to confirm your booking and provide any further information required. Please keep your booking reference somewhere safe until your journey.</p><button class="booking-complete-close" id="bookingCompleteClose" type="button">Close</button></div>
@@ -1632,10 +1727,10 @@ html, body {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
   import { getDatabase, ref, onValue, push, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
-  // Lunch and Distillery booking UI connected to its permanent Firebase tour ID.
+  // Central Lakes Villages booking UI connected to its permanent Firebase tour ID.
   (() => {
-    const TOUR_ID = "-P3Ag5zLwdsMSLOFqjnw";
-    const TOUR_TITLE = "Lunch and Distillery";
+    const TOUR_ID = "-P3ArHAFv5y0stLzjk68";
+    const TOUR_TITLE = "Central Lakes Villages";
     const availability = new Map();
     const firebaseConfig = {
       apiKey: "AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ",
@@ -1647,7 +1742,7 @@ html, body {
       appId: "1:470758171431:web:f06dd39b0f15b63b2bff02",
       measurementId: "G-W6JY1LZXTP"
     };
-    const app = initializeApp(firebaseConfig, "ttl-lunch-distillery-booking");
+    const app = initializeApp(firebaseConfig, "ttl-lakes-villages-booking");
     const db = getDatabase(app);
 
     const title = document.getElementById("calendarTitle");
@@ -1892,7 +1987,7 @@ html, body {
 
     function makeBookingReference(firebaseKey) {
       const suffix = String(firebaseKey || "").replace(/[^a-z0-9]/gi, "").slice(-7).toUpperCase();
-      return `TTL-LUNCH-${suffix || Date.now().toString().slice(-7)}`;
+      return `TTL-VILLAGES-${suffix || Date.now().toString().slice(-7)}`;
     }
 
     continueButton?.addEventListener("click", openCheckout);
@@ -2069,7 +2164,7 @@ html, body {
       });
     }
 
-    window.TTLLunchDistilleryBooking = {
+    window.TTLLakesVillagesBooking = {
       tourId: TOUR_ID,
       setAvailability
     };
@@ -2202,6 +2297,34 @@ html, body {
   mobileBreakpoint.addEventListener("change", (event) => {
     if (!event.matches) setMobileMenu(false);
   });
+</script>
+
+<script>
+(() => {
+  const mobileTabs = Array.from(document.querySelectorAll("[data-tour-mobile-view]"));
+  const tourLayout = document.querySelector(".tour-page-layout");
+  if (!mobileTabs.length || !tourLayout) return;
+
+  function showMobileTourView(view, shouldScroll) {
+    tourLayout.dataset.mobileView = view;
+    mobileTabs.forEach((button) => {
+      const active = button.dataset.tourMobileView === view;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+
+    if (shouldScroll && window.matchMedia("(max-width: 600px)").matches) {
+      const tabs = document.querySelector(".tour-mobile-tabs");
+      if (tabs) tabs.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  mobileTabs.forEach((button) => {
+    button.addEventListener("click", () => showMobileTourView(button.dataset.tourMobileView, false));
+  });
+
+  showMobileTourView("overview", false);
+})();
 </script>
 </body>
 </html>
