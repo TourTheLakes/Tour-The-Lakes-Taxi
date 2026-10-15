@@ -1736,7 +1736,7 @@ html, body {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getDatabase, ref, onValue, push, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+  import { getDatabase, ref, onValue, push, set, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   // Central Lakes Villages booking UI connected to its permanent Firebase tour ID.
   (() => {
@@ -1835,7 +1835,7 @@ html, body {
     }
 
     function selectDate(key) {
-      const departure = availability.get(key); if (!departure || key < earliestBookableDateKey()) return;
+      const departure = availability.get(key); if (!departure || key < earliestBookableDateKey() || departure.sold || Number(departure.remaining) <= 0) return;
       selectedDateKey = key; selectedDeparture = departure; quantity = Math.min(quantity, Math.max(1, Number(departure.remaining) || 1));
       renderCalendar(); renderSelection();
     }
@@ -1855,13 +1855,15 @@ html, body {
       for (let i=0;i<mondayIndex;i+=1) { const blank=document.createElement("span"); blank.className="calendar-day"; blank.setAttribute("aria-hidden","true"); grid.appendChild(blank); }
       for (let day=1;day<=daysInMonth;day+=1) {
         const key=dateKey(year,month,day); const departure=availability.get(key); const past=isPastDate(year,month,day);
-        if (departure && !past && Number(departure.remaining) > 0) {
+        if (departure && !past && !departure.sold && Number(departure.remaining) > 0) {
           const button=document.createElement("button"); button.type="button"; button.className="calendar-day is-available";
           if (key===selectedDateKey) button.classList.add("is-selected");
           button.innerHTML=`${day}<span class="calendar-day-price">${departure.price != null ? money(departure.price) : "Available"}</span>`;
           button.setAttribute("aria-label",`Select ${key}`); button.addEventListener("click",()=>selectDate(key)); grid.appendChild(button);
         } else {
-          const cell=document.createElement("span"); cell.className="calendar-day"; cell.textContent=String(day);
+          const cell=document.createElement("span"); cell.className="calendar-day";
+          if (departure && !past && (departure.sold || Number(departure.remaining) <= 0)) { cell.innerHTML = `${day}<span class="calendar-day-price">SOLD</span>`; cell.setAttribute("aria-label", `${key} SOLD`); }
+          else { cell.textContent=String(day); }
           if (past) { cell.style.opacity="0.35"; cell.setAttribute("aria-disabled","true"); }
           grid.appendChild(cell);
         }
@@ -1881,8 +1883,9 @@ html, body {
         const capacity=Math.max(0,Number(departure.capacity)||0); const booked=Math.max(0,Number(departure.booked)||0);
         availability.set(String(departure.date),{...departure,remaining:Math.max(0,capacity-booked)});
       });
-      if(selectedDateKey&&(!availability.has(selectedDateKey)||selectedDateKey<earliestBookableDateKey())){selectedDateKey="";selectedDeparture=null;}
-      const firstAvailableKey=[...availability.entries()].filter(([k,d])=>k>=earliestBookableDateKey()&&Number(d.remaining)>0).map(([k])=>k).sort()[0];
+      if(selectedDateKey&&(!availability.has(selectedDateKey)||selectedDateKey<earliestBookableDateKey()||availability.get(selectedDateKey).sold||Number(availability.get(selectedDateKey).remaining)<=0)){selectedDateKey="";selectedDeparture=null;}
+      if (selectedDateKey) selectedDeparture = availability.get(selectedDateKey) || null;
+      const firstAvailableKey=[...availability.entries()].filter(([k,d])=>k>=earliestBookableDateKey()&&!d.sold&&Number(d.remaining)>0).map(([k])=>k).sort()[0];
       if(firstAvailableKey){const firstDate=new Date(`${firstAvailableKey}T12:00:00`); const firstMonth=new Date(firstDate.getFullYear(),firstDate.getMonth(),1); visibleMonth=firstMonth<currentMonth?new Date(currentMonth):firstMonth; statusEl.textContent="Choose an available date to continue.";}
       else {visibleMonth=new Date(currentMonth); selectedDateKey="";selectedDeparture=null; statusEl.textContent="No departures are currently available.";}
       renderCalendar(); renderSelection();
@@ -2082,6 +2085,11 @@ html, body {
         // Reserve only the public-safe booked counter. Admin retains control of
         // the departure date, time, price and capacity. Firebase serialises this
         // transaction so simultaneous customers cannot oversell the departure.
+        const liveDeparture = (await get(ref(db, `tours/${tourId}/departures/${selectedDateKey}`))).val();
+        if (!liveDeparture || liveDeparture.sold === true || Math.max(0, Number(liveDeparture.capacity) || 0) - Math.max(0, Number(liveDeparture.booked) || 0) < quantity) {
+          bookingRequestError.textContent = "Sorry, this departure is SOLD or no longer has enough seats available.";
+          return;
+        }
         const seatTx = await runTransaction(bookedRef, (current) => {
           const booked = Math.max(0, Number(current) || 0);
           if ((departureCapacity - booked) < quantity) return;
@@ -2171,13 +2179,14 @@ html, body {
         for (const [dateKeyValue, dep] of Object.entries(data)) {
           const capacity = Math.max(0, Number(dep?.capacity) || 0);
           const booked = Math.max(0, Number(dep?.booked) || 0);
-          if ((capacity - booked) <= 0) continue;
+          
           departures.push({
             date: dateKeyValue,
             time: String(dep?.time || ""),
             price: Number(dep?.price),
             capacity,
             booked,
+            sold: dep?.sold === true,
             pickups: dep?.pickups && typeof dep.pickups === "object" ? dep.pickups : {},
             remaining: Math.max(0, capacity - booked)
           });
