@@ -1933,10 +1933,23 @@ html, body {
 
     function dateKey(year, month, day) { return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; }
     function money(value) { const amount = Number(value); return Number.isFinite(amount) ? `£${amount.toFixed(2).replace(".00", "")}` : "—"; }
-    function isPastDate(year, month, day) { return new Date(year, month, day) < today; }
+    // Booking rule: bookings close at 17:00 UK time on the day before departure.
+    function earliestBookableDateKey() {
+      const parts = Object.fromEntries(new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", hourCycle: "h23"
+      }).formatToParts(new Date()).filter(part => part.type !== "literal").map(part => [part.type, part.value]));
+      const ukDay = new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)));
+      ukDay.setUTCDate(ukDay.getUTCDate() + (Number(parts.hour) >= 17 ? 2 : 1));
+      return ukDay.toISOString().slice(0, 10);
+    }
+    function isPastDate(year, month, day) { return dateKey(year, month, day) < earliestBookableDateKey(); }
 
     function renderSelection() {
       qtyValue.textContent = String(quantity);
+      if (selectedDateKey && selectedDateKey < earliestBookableDateKey()) {
+        selectedDateKey = ""; selectedDeparture = null;
+      }
       if (!selectedDeparture || !selectedDateKey) {
         selectedDateText.textContent = "Not selected"; selectedTimeText.textContent = "—"; selectedTotalText.textContent = "—";
         priceEl.textContent = "Select a date"; capacityEl.innerHTML = "Live capacity<br />will appear here"; continueButton.disabled = true; return;
@@ -1953,7 +1966,7 @@ html, body {
     }
 
     function selectDate(key) {
-      const departure = availability.get(key); if (!departure) return;
+      const departure = availability.get(key); if (!departure || key < earliestBookableDateKey()) return;
       selectedDateKey = key; selectedDeparture = departure; quantity = Math.min(quantity, Math.max(1, Number(departure.remaining) || 1));
       renderCalendar(); renderSelection();
     }
@@ -1961,6 +1974,9 @@ html, body {
     function renderCalendar() {
       if (!title || !grid) return;
       if (visibleMonth < currentMonth) visibleMonth = new Date(currentMonth);
+      if (selectedDateKey && selectedDateKey < earliestBookableDateKey()) {
+        selectedDateKey = ""; selectedDeparture = null; renderSelection();
+      }
       const year = visibleMonth.getFullYear(); const month = visibleMonth.getMonth();
       title.textContent = visibleMonth.toLocaleDateString("en-GB", { month:"long", year:"numeric" });
       const atCurrentMonth = year === currentMonth.getFullYear() && month === currentMonth.getMonth();
@@ -1992,12 +2008,12 @@ html, body {
       availability.clear();
       (Array.isArray(departures)?departures:[]).forEach((departure)=>{
         if(!departure||!departure.date)return;
-        const d=new Date(`${departure.date}T12:00:00`); if(d<today)return;
+        if(String(departure.date) < earliestBookableDateKey())return;
         const capacity=Math.max(0,Number(departure.capacity)||0); const booked=Math.max(0,Number(departure.booked)||0);
         availability.set(String(departure.date),{...departure,remaining:Math.max(0,capacity-booked)});
       });
-      if(selectedDateKey&&!availability.has(selectedDateKey)){selectedDateKey="";selectedDeparture=null;}
-      const firstAvailableKey=[...availability.entries()].filter(([,d])=>Number(d.remaining)>0).map(([k])=>k).sort()[0];
+      if(selectedDateKey&&(!availability.has(selectedDateKey)||selectedDateKey<earliestBookableDateKey())){selectedDateKey="";selectedDeparture=null;}
+      const firstAvailableKey=[...availability.entries()].filter(([k,d])=>k>=earliestBookableDateKey()&&Number(d.remaining)>0).map(([k])=>k).sort()[0];
       if(firstAvailableKey){const firstDate=new Date(`${firstAvailableKey}T12:00:00`); const firstMonth=new Date(firstDate.getFullYear(),firstDate.getMonth(),1); visibleMonth=firstMonth<currentMonth?new Date(currentMonth):firstMonth; statusEl.textContent="Choose an available date to continue.";}
       else {visibleMonth=new Date(currentMonth); selectedDateKey="";selectedDeparture=null; statusEl.textContent="No departures are currently available.";}
       renderCalendar(); renderSelection();
@@ -2104,7 +2120,7 @@ html, body {
     }
 
         function openCheckout() {
-      if (!selectedDeparture || !selectedDateKey || !tourId) return;
+      if (!selectedDeparture || !selectedDateKey || !tourId || selectedDateKey < earliestBookableDateKey()) { renderCalendar(); renderSelection(); return; }
 
       const selectedDate = new Date(`${selectedDateKey}T12:00:00`);
       checkoutSummaryDate.textContent = selectedDate.toLocaleDateString("en-GB", {
@@ -2149,8 +2165,8 @@ html, body {
       event.preventDefault();
       bookingRequestError.textContent = "";
 
-      if (!selectedDeparture || !selectedDateKey || !tourId) {
-        bookingRequestError.textContent = "Please return to the tour and select an available departure.";
+      if (!selectedDeparture || !selectedDateKey || !tourId || selectedDateKey < earliestBookableDateKey()) {
+        bookingRequestError.textContent = "This departure is past the 5pm UK booking cut-off. Please select a later date.";
         return;
       }
 
