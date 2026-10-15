@@ -2380,10 +2380,10 @@ img { width: 100%; display: block; }
 .home-booking-hero + .home-signature-gap {
   height: 35px;
 }
-.home-tours-from[aria-label="Autumn and Winter Tours"] {
+.home-tours-from[aria-label="Winter and Spring Tours"] {
   padding-top: 0;
 }
-.home-tours-from[aria-label="Autumn and Winter Tours"] + .home-tours-from-grid {
+.home-tours-from[aria-label="Winter and Spring Tours"] + .home-tours-from-grid {
   padding-top: 35px;
 }
 .home-company-story + .home-tours-from {
@@ -2482,6 +2482,21 @@ img { width: 100%; display: block; }
 }
 
 
+/* Keep the seasonal heading fully visible on narrow screens */
+@media screen and (max-width: 600px) {
+  .home-tours-from[aria-label="Winter and Spring Tours"] {
+    gap: 12px;
+  }
+  .home-tours-from[aria-label="Winter and Spring Tours"] h2 {
+    min-width: 0;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(19px, 5.5vw, 27px);
+    line-height: 1.2;
+    letter-spacing: 1.2px;
+  }
+}
+
 /* Autumn and Winter featured tours: existing card design, three-card arrangement */
 .home-tours-from-grid.home-tours-from-grid--seasonal .home-tours-from-card:nth-child(3) {
   grid-column: 2 / 4;
@@ -2575,7 +2590,7 @@ img { width: 100%; display: block; }
 
   <div class="home-signature-gap" aria-hidden="true"></div>
 
-  <div class="home-tours-from" aria-label="Autumn and Winter Tours"><h2>AUTUMN AND WINTER 26/27</h2></div>
+  <div class="home-tours-from" aria-label="Winter and Spring Tours"><h2>WINTER &amp; SPRING 26/27</h2></div>
 
   <div class="home-tours-from-grid home-tours-from-grid--christmas home-tours-from-grid--seasonal" aria-label="Choose an autumn or winter tour">
     <a class="home-tours-from-card" href="six-lakes.html" aria-label="Six Lakes Splendour">
