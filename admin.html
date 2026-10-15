@@ -646,6 +646,7 @@
                   <div class="field-group">
                     <label class="field-label" for="scheduleCapacity">Capacity</label>
                     <input id="scheduleCapacity" type="number" min="1" step="1" class="admin-field" placeholder="Tour capacity" />
+                    <label class="field-label" style="display:flex;align-items:center;gap:10px;margin-top:14px;cursor:pointer;"><input id="scheduleSold" type="checkbox" /> SOLD — display departure but prevent bookings</label>
                   </div>
 
                   <div class="field-group">
@@ -1170,6 +1171,7 @@
       const scheduleTimeEl = document.getElementById("scheduleTime");
       const schedulePriceEl = document.getElementById("schedulePrice");
       const scheduleCapacityEl = document.getElementById("scheduleCapacity");
+      const scheduleSoldEl = document.getElementById("scheduleSold");
       const pickupControls = [
         { id: "kendal", checkbox: document.getElementById("pickupKendal"), time: document.getElementById("pickupKendalTime"), label: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE" },
         { id: "windermere", checkbox: document.getElementById("pickupWindermere"), time: document.getElementById("pickupWindermereTime"), label: "Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH" },
@@ -1252,6 +1254,7 @@
         scheduleTimeEl.value = "";
         schedulePriceEl.value = "";
         scheduleCapacityEl.value = "";
+        scheduleSoldEl.checked = false;
         setPickupControls({});
         saveDepartureBtn.textContent = "Add departure";
         removeDepartureBtn.classList.remove("is-visible");
@@ -1265,6 +1268,7 @@
           scheduleTimeEl.value = String(dep.time || "");
           schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
           scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+          scheduleSoldEl.checked = dep.sold === true;
           setPickupControls(dep.pickups || {});
           saveDepartureBtn.textContent = "Update departure";
           removeDepartureBtn.classList.add("is-visible");
@@ -1453,6 +1457,7 @@
               scheduleTimeEl.value = String(dep.time || "");
               schedulePriceEl.value = Number.isFinite(Number(dep.price)) ? Number(dep.price) : "";
               scheduleCapacityEl.value = Number.isFinite(Number(dep.capacity)) ? Number(dep.capacity) : "";
+          scheduleSoldEl.checked = dep.sold === true;
               setPickupControls(dep.pickups || {});
               saveDepartureBtn.textContent = "Update departure";
               removeDepartureBtn.classList.add("is-visible");
@@ -1490,6 +1495,7 @@
         const price = Number(schedulePriceEl.value);
         const capacity = Number(scheduleCapacityEl.value);
         const pickups = selectedPickups();
+        const sold = scheduleSoldEl.checked;
 
         if (!tourId) {
           setMsg(scheduleMsgEl, "Choose a tour.", "bad");
@@ -1540,6 +1546,7 @@
             capacity,
             pickups,
             booked,
+            sold,
             createdAt: existing.val()?.createdAt || Date.now(),
             updatedAt: serverTimestamp(),
             updatedBy: adminEmail
