@@ -431,6 +431,12 @@
       background: #fff;
     }
 
+    .schedule-calendar-day.is-multi-selected {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+      box-shadow: inset 0 0 0 2px #2b2b2b;
+    }
+
     .schedule-calendar-day.is-selected {
       outline: 2px solid #fff;
       outline-offset: 2px;
@@ -631,6 +637,14 @@
                     <select id="scheduleTour" class="admin-field"><option value="">Choose a tour</option></select>
                   </div>
 
+                  <div class="field-group">
+                    <div class="field-label">Date entry mode</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;">
+                      <label style="cursor:pointer;"><input type="radio" name="scheduleDateMode" value="single" checked /> Single date</label>
+                      <label style="cursor:pointer;"><input type="radio" name="scheduleDateMode" value="multiple" /> Multiple dates</label>
+                    </div>
+                    <div id="scheduleMultiCount" class="admin-msg" hidden>0 dates selected</div>
+                  </div>
                   <input id="scheduleDate" type="date" />
 
                   <div class="field-group">
@@ -697,7 +711,7 @@
                     <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
                   </div>
                   <div id="scheduleCalendarGrid" class="schedule-calendar-grid"></div>
-                  <div class="schedule-calendar-key"><strong>Orange dates</strong> already have a departure. Select one to load and amend it.</div>
+                  <div class="schedule-calendar-key"><strong>Orange dates</strong> already have a departure. In multiple dates mode, click dates to select or deselect them. Each selected date is saved separately.</div>
                 </div>
 
                 <div id="departuresList" hidden></div>
@@ -1172,6 +1186,25 @@
       const schedulePriceEl = document.getElementById("schedulePrice");
       const scheduleCapacityEl = document.getElementById("scheduleCapacity");
       const scheduleSoldEl = document.getElementById("scheduleSold");
+      const dateModeEls = Array.from(document.querySelectorAll('input[name="scheduleDateMode"]'));
+      const multiCountEl = document.getElementById("scheduleMultiCount");
+      const multiDates = new Set();
+      const isMultiple = () => dateModeEls.some(el => el.value === "multiple" && el.checked);
+      function updateMultiState() {
+        multiCountEl.hidden = !isMultiple();
+        multiCountEl.textContent = `${multiDates.size} date${multiDates.size === 1 ? "" : "s"} selected`;
+        if (isMultiple()) {
+          saveDepartureBtn.textContent = "Save selected dates";
+          removeDepartureBtn.classList.remove("is-visible");
+        }
+      }
+      dateModeEls.forEach(el => el.addEventListener("change", () => {
+        multiDates.clear();
+        clearDepartureForm(true);
+        updateMultiState();
+        setMsg(scheduleMsgEl, isMultiple() ? "Select dates, enter the shared departure details, then save." : "Select a date from the calendar.", null);
+        renderCalendar();
+      }));
       const pickupControls = [
         { id: "kendal", checkbox: document.getElementById("pickupKendal"), time: document.getElementById("pickupKendalTime"), label: "Brewery Arts, 122A Highgate, Kendal, Cumbria LA9 4HE" },
         { id: "windermere", checkbox: document.getElementById("pickupWindermere"), time: document.getElementById("pickupWindermereTime"), label: "Windermere Railway Station, Station Precinct, Windermere, Cumbria LA23 1AH" },
@@ -1258,9 +1291,17 @@
         setPickupControls({});
         saveDepartureBtn.textContent = "Add departure";
         removeDepartureBtn.classList.remove("is-visible");
+        if (isMultiple()) updateMultiState();
       }
 
       function loadDeparture(date) {
+        if (isMultiple()) {
+          if (multiDates.has(date)) multiDates.delete(date);
+          else multiDates.add(date);
+          updateMultiState();
+          renderCalendar();
+          return;
+        }
         scheduleDateEl.value = date;
         const dep = currentDepartures[date];
 
@@ -1315,7 +1356,8 @@
 
           if (key === today) button.classList.add("is-today");
           if (currentDepartures[key]) button.classList.add("has-departure");
-          if (scheduleDateEl.value === key) button.classList.add("is-selected");
+          if (isMultiple() && multiDates.has(key)) button.classList.add("is-multi-selected");
+          if (!isMultiple() && scheduleDateEl.value === key) button.classList.add("is-selected");
 
           if (key < today) {
             button.disabled = true;
@@ -1427,7 +1469,9 @@
         }
 
         currentDepartures = {};
+        multiDates.clear();
         clearDepartureForm(true);
+        updateMultiState();
         renderCalendar();
 
         const tourId = scheduleTourEl.value;
@@ -1451,7 +1495,7 @@
               null
             );
 
-            if (scheduleDateEl.value && currentDepartures[scheduleDateEl.value]) {
+            if (!isMultiple() && scheduleDateEl.value && currentDepartures[scheduleDateEl.value]) {
               const selected = scheduleDateEl.value;
               const dep = currentDepartures[selected];
               scheduleTimeEl.value = String(dep.time || "");
@@ -1491,6 +1535,7 @@
       saveDepartureBtn.addEventListener("click", async () => {
         const tourId = scheduleTourEl.value;
         const date = scheduleDateEl.value;
+        const dates = isMultiple() ? [...multiDates].sort() : [date];
         const time = scheduleTimeEl.value;
         const price = Number(schedulePriceEl.value);
         const capacity = Number(scheduleCapacityEl.value);
@@ -1501,11 +1546,11 @@
           setMsg(scheduleMsgEl, "Choose a tour.", "bad");
           return;
         }
-        if (!date) {
+        if (!dates.length || dates.some(d => !d)) {
           setMsg(scheduleMsgEl, "Select a date in the calendar.", "bad");
           return;
         }
-        if (date < localTodayKey()) {
+        if (dates.some(d => d < localTodayKey())) {
           setMsg(scheduleMsgEl, "Past dates cannot be scheduled.", "bad");
           return;
         }
@@ -1527,6 +1572,40 @@
             setMsg(scheduleMsgEl, `Pickup time required for ${pickup.label}.`, "bad");
             return;
           }
+        }
+
+        if (isMultiple()) {
+          const existingDates = dates.filter(d => currentDepartures[d]);
+          if (existingDates.length && !confirm(`${existingDates.length} selected date(s) already have departures. Update their time, price, capacity, pickup stops and SOLD setting? Existing booked counts will be retained.`)) return;
+          saveDepartureBtn.disabled = true;
+          let saved = 0;
+          const failures = [];
+          try {
+            for (const key of dates) {
+              try {
+                const depRef = ref(db, `tours/${tourId}/departures/${key}`);
+                const result = await runTransaction(depRef, current => {
+                  const booked = Math.max(0, Number(current?.booked) || 0);
+                  if (booked > capacity) return;
+                  return {
+                    ...(current && typeof current === "object" ? current : {}),
+                    date: key, time, price, capacity, pickups, booked, sold,
+                    createdAt: current?.createdAt || Date.now(),
+                    updatedAt: Date.now(), updatedBy: adminEmail
+                  };
+                }, { applyLocally: false });
+                if (!result.committed) throw new Error("Existing bookings exceed the chosen capacity");
+                saved++;
+                multiDates.delete(key);
+              } catch (err) { failures.push(`${key}: ${err?.message || err}`); }
+            }
+            updateMultiState();
+            renderCalendar();
+            setMsg(scheduleMsgEl, failures.length
+              ? `${saved} saved; ${failures.length} failed. ${failures.join(" | ")}`
+              : `${saved} independent departures saved to Firebase.`, failures.length ? "bad" : "ok");
+          } finally { saveDepartureBtn.disabled = false; }
+          return;
         }
 
         try {
