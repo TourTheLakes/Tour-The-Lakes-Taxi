@@ -89,7 +89,7 @@
     .admin-nav {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       background: rgba(43,43,43,0.94);
       border-bottom: 2px solid var(--orange);
       position: sticky;
@@ -549,7 +549,7 @@
       .admin-actions .admin-btn { width: 100%; }
     }
       @media (max-width:720px) {
-      .admin-nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .admin-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
       .admin-nav button { padding-left:4px;padding-right:4px;font-size:10px; }
     }
   </style>
@@ -568,6 +568,7 @@
       <nav class="admin-nav" aria-label="Admin areas">
         <button type="button" class="is-active" data-admin-panel="bookingsPanel">Bookings</button>
 
+        <button type="button" data-admin-panel="privateHirePanel">PH Requests</button>
         <button type="button" data-admin-panel="toursPanel">Tours</button>
         <button type="button" data-admin-panel="schedulePanel">Schedule</button>
         <button type="button" data-admin-panel="driversPanel">Drivers</button>
@@ -585,6 +586,8 @@
         </div>
       </section>
 
+
+      <section id="privateHirePanel" class="admin-panel"><div class="admin-section"><div class="admin-content"><div class="eyebrow">Private hire enquiries</div><h1 class="admin-section-title">Private Hire Requests</h1><p class="admin-lead">Incoming requests from the Private Hire page. Requests are not confirmed bookings until you have agreed them with the customer.</p><div id="phAdminMsg" class="admin-msg">Loading requests…</div><div id="phAdminList" class="admin-list" style="margin-top:16px;"></div></div></div></section>
       <section id="toursPanel" class="admin-panel">
         <div class="admin-section">
           <div class="admin-content">
@@ -929,11 +932,29 @@
       if (!booted) {
         booted = true;
         bootBookingsAdmin(user);
+        bootPrivateHireRequests(user);
 
         bootToursAndSchedule(user);
         bootDriversAdmin(user);
       }
     });
+
+
+    function bootPrivateHireRequests(user) {
+      const list=document.getElementById('phAdminList'),message=document.getElementById('phAdminMsg');
+      const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      onValue(ref(db,'privateHireRequests'),snapshot=>{
+        const data=snapshot.val()||{};const entries=Object.entries(data).sort((a,b)=>(Number(b[1]?.createdAt)||0)-(Number(a[1]?.createdAt)||0));
+        list.replaceChildren();message.textContent=entries.length?`${entries.length} private hire request(s)`:'No private hire requests yet.';
+        for(const [id,r] of entries){const row=document.createElement('article');row.style.cssText='padding:20px 0;border-bottom:1px solid var(--line)';
+          row.innerHTML=`<div style="font-size:19px;font-weight:700">${esc(r.name)} <span style="font-size:13px;color:var(--orange)">${esc(r.status||'new').toUpperCase()}</span></div><div class="admin-msg" style="margin-top:9px">${esc(r.vehicle)} · ${esc(r.date)} at ${esc(r.time)} · ${esc(r.passengers)} passenger(s) · ${esc(r.journeyType)}</div><div class="admin-msg">From: ${esc(r.pickup)}<br>To: ${esc(r.dropoff)}</div><div class="admin-msg">Email: ${esc(r.email)} · Phone: ${esc(r.phone)}</div><div class="admin-msg" style="white-space:pre-wrap;margin-top:7px">${esc(r.details)}</div>`;
+          const actions=document.createElement('div');actions.className='admin-actions';
+          const reply=document.createElement('a');reply.className='admin-btn quiet';reply.textContent='Reply by email';reply.href='mailto:'+encodeURIComponent(String(r.email||''));reply.style.textDecoration='none';actions.append(reply);
+          const statusSelect=document.createElement('select');statusSelect.className='admin-field';statusSelect.style.maxWidth='220px';for(const s of ['new','contacted','quoted','confirmed','declined','closed']){const o=document.createElement('option');o.value=s;o.textContent=s[0].toUpperCase()+s.slice(1);statusSelect.append(o);}statusSelect.value=['new','contacted','quoted','confirmed','declined','closed'].includes(r.status)?r.status:'new';
+          const save=document.createElement('button');save.type='button';save.className='admin-btn primary';save.textContent='Update status';save.addEventListener('click',async()=>{save.disabled=true;try{await update(ref(db,`privateHireRequests/${id}`),{status:statusSelect.value,updatedAt:serverTimestamp(),updatedBy:user.email||''});}catch(err){alert('Could not update request: '+(err?.message||err));}finally{save.disabled=false;}});actions.append(statusSelect,save);row.append(actions);list.append(row);
+        }
+      },err=>{message.textContent='Unable to load private hire requests: '+(err?.message||err);message.className='admin-msg bad';});
+    }
 
     function bootBookingsAdmin(user) {
       const adminEmail = String(user?.email || "").toLowerCase();
