@@ -1576,7 +1576,27 @@ html, body {
       }
       .ph-options li:last-child { border-bottom: 0; }
     }
-  </style>
+  
+/* Private hire enquiry, full-width and without split panels */
+.ph-request { width:min(1180px,calc(100% - 56px)); margin:52px auto 70px; border-top:1px solid #b86b2a; padding-top:38px; color:#2b2b2b; }
+.ph-request h2 {font-size:clamp(25px,2.6vw,36px);font-weight:600;margin:0 0 16px;text-align:center;}
+.ph-request .ph-request-intro {max-width:860px;margin:0 auto 28px;text-align:center;line-height:1.7;font-size:16px;}
+.ph-request .ph-urgent {max-width:920px;margin:0 auto 30px;padding:17px 20px;border-top:1px solid #b86b2a;border-bottom:1px solid #b86b2a;line-height:1.65;text-align:center;}
+.ph-request a {color:#92511d;text-underline-offset:3px;}
+.ph-form {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px;}
+.ph-field {display:flex;flex-direction:column;gap:8px;min-width:0;}
+.ph-field label {font-size:13px;font-weight:700;letter-spacing:.3px;}
+.ph-field input,.ph-field select,.ph-field textarea {width:100%;min-width:0;background:rgba(255,255,255,.45);border:1px solid rgba(43,43,43,.28);border-bottom:2px solid #b86b2a;border-radius:0;padding:13px 12px;color:#2b2b2b;font:inherit;font-size:16px;}
+.ph-field textarea {resize:vertical;min-height:110px;}
+.ph-span {grid-column:1/-1;}
+.ph-form button {justify-self:start;border:0;background:#2b2b2b;color:#f3ead8;border-bottom:3px solid #b86b2a;padding:16px 28px;font:700 14px system-ui;cursor:pointer;}
+.ph-form button:disabled {opacity:.55;cursor:wait;}
+.ph-form-status {grid-column:1/-1;min-height:20px;line-height:1.6;}
+.ph-consent {display:flex;align-items:flex-start;gap:10px;line-height:1.55;font-size:14px;}
+.ph-consent input {margin-top:4px;accent-color:#b86b2a;}
+@media(max-width:700px){.ph-request{width:calc(100% - 32px);margin:35px auto 48px;padding-top:28px}.ph-form{grid-template-columns:1fr;gap:18px}.ph-request .ph-request-intro,.ph-request .ph-urgent{text-align:left}}
+
+</style>
 </head>
 
 <body>
@@ -1670,6 +1690,27 @@ html, body {
           <p>Pre-booked journeys throughout the wider area and further afield when required.</p>
         </li>
       </ul>
+    </section>
+
+    <section class="ph-request" aria-labelledby="ph-request-title">
+      <h2 id="ph-request-title">Request Private Hire</h2>
+      <p class="ph-request-intro">Tell us about your journey and we will get back to you with availability and a quotation. <strong>All online private hire requests must be made at least 48 hours in advance, with our 5pm working-day cut-off applied.</strong> Sending a request does not confirm a booking.</p>
+      <p class="ph-urgent"><strong>Need transport sooner?</strong> Please contact us directly by <a href="mailto:info@tourthelakes.com">email</a> or <a href="https://wa.me/447432185516" target="_blank" rel="noopener noreferrer">WhatsApp</a>. We are often out driving and may not be able to answer the telephone straight away. Email and WhatsApp are monitored throughout the day and are the best ways to reach us for an urgent enquiry. Availability cannot be guaranteed.</p>
+      <form id="phRequestForm" class="ph-form">
+        <div class="ph-field"><label for="phName">Full name *</label><input id="phName" name="name" autocomplete="name" maxlength="120" required></div>
+        <div class="ph-field"><label for="phEmail">Email address *</label><input id="phEmail" name="email" type="email" autocomplete="email" maxlength="180" required></div>
+        <div class="ph-field"><label for="phPhone">Contact telephone *</label><input id="phPhone" name="phone" type="tel" autocomplete="tel" maxlength="40" required></div>
+        <div class="ph-field"><label for="phVehicle">Transport required *</label><select id="phVehicle" name="vehicle" required><option value="">Choose an option</option><option>Hackney Carriage</option><option>8 Seater Minibus</option><option>Executive Private Hire</option><option>Not sure, please advise</option></select></div>
+        <div class="ph-field"><label for="phDate">Journey date *</label><input id="phDate" name="date" type="date" required><small id="phDateHint" aria-live="polite"></small></div>
+        <div class="ph-field"><label for="phTime">Requested pickup time *</label><input id="phTime" name="time" type="time" required></div>
+        <div class="ph-field"><label for="phPassengers">Passengers *</label><input id="phPassengers" name="passengers" type="number" min="1" max="8" step="1" required></div>
+        <div class="ph-field"><label for="phReturn">Journey type *</label><select id="phReturn" name="journeyType" required><option value="One way">One way</option><option value="Return">Return</option></select></div>
+        <div class="ph-field"><label for="phPickup">Pickup location *</label><input id="phPickup" name="pickup" maxlength="250" required placeholder="Address or location"></div>
+        <div class="ph-field"><label for="phDropoff">Destination *</label><input id="phDropoff" name="dropoff" maxlength="250" required placeholder="Address or location"></div>
+        <div class="ph-field ph-span"><label for="phDetails">Additional journey details</label><textarea id="phDetails" name="details" maxlength="2000" placeholder="Return journey date and time, luggage, stops or any other requirements"></textarea></div>
+        <label class="ph-consent ph-span"><input id="phConsent" type="checkbox" required><span>I understand this is a request for a quotation and availability, not a confirmed booking. I agree to be contacted about my enquiry using the details provided. *</span></label>
+        <button id="phSubmit" type="submit">Send Private Hire Request</button><div id="phRequestStatus" class="ph-form-status" role="status" aria-live="polite"></div>
+      </form>
     </section>
   </main>
 
@@ -1819,5 +1860,20 @@ html, body {
   });
 </script>
 
+
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js';
+import {getDatabase,ref,push,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js';
+const app=initializeApp({apiKey:'AIzaSyA9EdglxWetAv81qe1GnwlMf7HbPccjXxQ',authDomain:'tourthelakes-1e165.firebaseapp.com',databaseURL:'https://tourthelakes-1e165-default-rtdb.firebaseio.com',projectId:'tourthelakes-1e165',storageBucket:'tourthelakes-1e165.firebasestorage.app',messagingSenderId:'470758171431',appId:'1:470758171431:web:f06dd39b0f15b63b2bff02'});
+const db=getDatabase(app),form=document.getElementById('phRequestForm'),dateEl=document.getElementById('phDate'),timeEl=document.getElementById('phTime'),hint=document.getElementById('phDateHint'),status=document.getElementById('phRequestStatus'),button=document.getElementById('phSubmit');
+const londonParts=(d)=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return {date:`${p.year}-${p.month}-${p.day}`,hour:+p.hour,minute:+p.minute};};
+const plusDays=(ymd,n)=>{const d=new Date(ymd+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+const working=(ymd)=>{const w=new Date(ymd+'T12:00:00Z').getUTCDay();return w!==0&&w!==6;};
+// Requests require 48 elapsed hours AND two complete Mon–Fri business days, with 17:00 UK cutoff.
+function earliest(){const now=new Date(),uk=londonParts(now);let cursor=uk.date;if(uk.hour>=17 || !working(cursor))cursor=plusDays(cursor,1);let count=0;while(count<2){if(working(cursor))count++;cursor=plusDays(cursor,1);}const businessMin=cursor;const elapsed=londonParts(new Date(now.getTime()+48*3600000)).date;return businessMin>elapsed?businessMin:elapsed;}
+function refresh(){const min=earliest();dateEl.min=min;hint.textContent=`Earliest request date: ${new Date(min+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}. Weekends and the 5pm UK cut-off are considered.`;if(dateEl.value&&dateEl.value<min)dateEl.value='';}
+refresh();dateEl.addEventListener('focus',refresh);dateEl.addEventListener('change',refresh);
+form.addEventListener('submit',async e=>{e.preventDefault();refresh();if(!form.reportValidity())return;const fd=new FormData(form),value=k=>String(fd.get(k)||'').trim(),min=earliest();if(value('date')<min){status.textContent='Please select a later date in accordance with the 48-hour and working-day policy.';return;}if(value('vehicle')==='8 Seater Minibus'&&+value('passengers')>8){status.textContent='The minibus accommodates up to eight passengers.';return;}button.disabled=true;status.textContent='Sending your request…';try{await push(ref(db,'privateHireRequests'),{name:value('name'),email:value('email'),phone:value('phone'),vehicle:value('vehicle'),date:value('date'),time:value('time'),passengers:+value('passengers'),journeyType:value('journeyType'),pickup:value('pickup'),dropoff:value('dropoff'),details:value('details'),status:'new',source:'private-hire.html',createdAt:serverTimestamp()});form.reset();refresh();status.textContent='Your request has been submitted. This is not a confirmed booking. We will respond as soon as we can.';}catch(err){console.error('Private hire request failed',err);status.textContent='We could not submit your request. Please email info@tourthelakes.com or use WhatsApp instead.';}finally{button.disabled=false;}});
+</script>
 </body>
 </html>
