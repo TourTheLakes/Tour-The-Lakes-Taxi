@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Private Hire in the Lake District | Tour The Lakes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Private hire transport in the Lake District with Tour The Lakes. Find out about private travel in Windermere, Ambleside, Kendal and the surrounding area." />
+  <meta name="description" content="Pre-booked private hire across the Lake District and beyond. Hackney carriage, eight-seat passenger minibus and executive private hire transport from Tour The Lakes." />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://www.tourthelakes.com/private-hire.html" />
   <meta name="author" content="Tour The Lakes" />
@@ -13,11 +13,11 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Tour The Lakes" />
   <meta property="og:title" content="Private Hire in the Lake District | Tour The Lakes" />
-  <meta property="og:description" content="Private hire transport in the Lake District with Tour The Lakes, serving Windermere, Ambleside, Kendal and the surrounding area." />
+  <meta property="og:description" content="Pre-booked Hackney carriage, eight-seat minibus and executive transport across the Lake District and surrounding areas." />
   <meta property="og:url" content="https://www.tourthelakes.com/private-hire.html" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Private Hire in the Lake District | Tour The Lakes" />
-  <meta name="twitter:description" content="Private hire transport in the Lake District with Tour The Lakes." />
+  <meta name="twitter:description" content="Hackney carriage, eight-seat minibus and executive private hire transport across the Lake District." />
   <link rel="icon" type="image/png" href="images/TTLFAVIcon.png" />
   <link rel="apple-touch-icon" href="images/TTLFAVIcon.png" />
 
@@ -70,7 +70,7 @@
       "@id": "https://www.tourthelakes.com/private-hire.html#webpage",
       "url": "https://www.tourthelakes.com/private-hire.html",
       "name": "Private Hire in the Lake District | Tour The Lakes",
-      "description": "Private hire transport in the Lake District with Tour The Lakes.",
+      "description": "Hackney carriage, eight-seat minibus and executive private hire transport across the Lake District.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://www.tourthelakes.com/#website"
@@ -86,7 +86,7 @@
       "@type": "Service",
       "@id": "https://www.tourthelakes.com/#private-hire-service",
       "name": "Private Hire",
-      "serviceType": "Private hire transport",
+      "serviceType": "Pre-booked Hackney carriage, eight-seat minibus and executive private hire transport",
       "provider": {
         "@id": "https://www.tourthelakes.com/#tour-operator"
       },
@@ -1516,6 +1516,63 @@ html, body {
     .private-hire-confirmation-office { margin-top:20px !important;padding:15px 16px;border-left:3px solid #b86b2a;background:rgba(255,255,255,.06); }
     .private-hire-confirmation a { color:#fff;text-decoration:none; }
 
+
+    /* ===== Private Hire introduction: one full-width content area ===== */
+    .ph-introduction {
+      width: min(1180px, calc(100% - 56px));
+      margin: 0 auto;
+      padding: 35px 0 22px;
+      color: #2b2b2b;
+    }
+    .ph-introduction-lead {
+      max-width: 900px;
+      margin: 0 0 32px;
+      font: 450 clamp(16px, 1.6vw, 19px)/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .ph-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 2px solid #b86b2a;
+      border-bottom: 1px solid rgba(43,43,43,.24);
+    }
+    .ph-options li {
+      min-width: 0;
+      padding: 26px 23px 30px;
+      border-right: 1px solid rgba(43,43,43,.22);
+    }
+    .ph-options li:first-child { padding-left: 0; }
+    .ph-options li:last-child { border-right: 0; padding-right: 0; }
+    .ph-options h2 {
+      margin: 0 0 12px;
+      font: 650 clamp(17px, 1.6vw, 21px)/1.25 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .ph-options p {
+      margin: 0;
+      color: rgba(43,43,43,.76);
+      font: 450 14px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    @media screen and (max-width: 800px) {
+      .ph-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ph-options li { padding: 24px 20px; }
+      .ph-options li:nth-child(2) { border-right: 0; }
+      .ph-options li:nth-child(-n+2) { border-bottom: 1px solid rgba(43,43,43,.22); }
+      .ph-options li:nth-child(3) { padding-left: 0; }
+    }
+    @media screen and (max-width: 600px) {
+      .ph-introduction { width: calc(100% - 32px); padding-top: 26px; }
+      .ph-introduction-lead { margin-bottom: 24px; }
+      .ph-options { grid-template-columns: 1fr; }
+      .ph-options li, .ph-options li:first-child, .ph-options li:nth-child(3), .ph-options li:last-child {
+        padding: 22px 0 24px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(43,43,43,.22);
+      }
+      .ph-options li:last-child { border-bottom: 0; }
+    }
   </style>
 </head>
 
@@ -1582,10 +1639,7 @@ html, body {
 </header>
 <div class="mobile-navigation-backdrop" aria-hidden="true"></div>
 
-    <nav class="private-hire-mobile-tabs" aria-label="Private Hire page sections">
-      <button type="button" class="private-hire-mobile-tab is-active" data-private-hire-mobile-view="private-hire" aria-selected="true">Private Hire</button>
-      <button type="button" class="private-hire-mobile-tab" data-private-hire-mobile-view="book" aria-selected="false">Book</button>
-    </nav>
+
 
 
   <main id="page-content">
@@ -1593,6 +1647,27 @@ html, body {
     <div class="private-hire-heading" aria-labelledby="private-hire-title">
       <h1 id="private-hire-title">PRIVATE HIRE</h1>
     </div>
+    <section class="ph-introduction" aria-label="Our private hire transport options">
+      <p class="ph-introduction-lead">Pre-booked transport throughout the Lake District and beyond, with a choice of vehicles to suit your journey.</p>
+      <ul class="ph-options">
+        <li>
+          <h2>Hackney Carriage</h2>
+          <p>Practical, comfortable transport for local journeys and planned travel across the Lakes.</p>
+        </li>
+        <li>
+          <h2>8 Seater Minibus</h2>
+          <p>Passenger transport for groups travelling together, with room for up to eight passengers.</p>
+        </li>
+        <li>
+          <h2>Executive Private Hire</h2>
+          <p>A more refined option for business travel, special occasions and journeys planned in advance.</p>
+        </li>
+        <li>
+          <h2>Beyond the Lakes</h2>
+          <p>Pre-booked journeys throughout the wider area and further afield when required.</p>
+        </li>
+      </ul>
+    </section>
   </main>
 
 <footer class="site-footer">
